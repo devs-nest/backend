@@ -1,0 +1,241 @@
+{
+	"info": {
+		"_postman_id": "7225b284-ac77-4198-82c5-7ce51a1525df",
+		"name": "Devsnest-Backend-rails",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "Signup User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": {\n        \"name\": \"aa\",\n        \"email\": \"aa@gmail.com\",\n        \"password\": \"123\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"signup"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Aditii",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "aa@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "aaa",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": {\n        \"email\": \"aditi@gmail.com\",\n        \"password\": \"123\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjA4NTY4NTMyLCJleHAiOjE2MDg2NTQ5MzIsImp0aSI6ImI3ZmUxYmM2LWE0YjEtNGEyNi05YTM3LWI1NDNhY2NlZjQ1ZiJ9.6Sq86pk1xS-cUqfmcicul6FSvYobCACc0CQC1rxa5zU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET user by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjA4NTY4NTMyLCJleHAiOjE2MDg2NTQ5MzIsImp0aSI6ImI3ZmUxYmM2LWE0YjEtNGEyNi05YTM3LWI1NDNhY2NlZjQ1ZiJ9.6Sq86pk1xS-cUqfmcicul6FSvYobCACc0CQC1rxa5zU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjA4NTY5Mjk4LCJleHAiOjE2MDg2NTU2OTgsImp0aSI6Ijc0MjMxNjU4LTNlNDEtNDM3MC04YWE0LTVjYTc3ZjRiYzBkNiJ9.enCDB3TsyFq0TqKwMESXuqn91d4qc37wbnfl57_mQBk",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjA4NjMyMDM0LCJleHAiOjE2MDg3MTg0MzQsImp0aSI6ImIzMzVkM2M4LWRjNzUtNGFlZS04NWYyLTAxNTZhOTg3MDZiMCJ9.RG9-u-vhAgQCYg9Q_gyE0m2vTmhGPX3pGpYFU0KIWHI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjA4NTY4NTMyLCJleHAiOjE2MDg2NTQ5MzIsImp0aSI6ImI3ZmUxYmM2LWE0YjEtNGEyNi05YTM3LWI1NDNhY2NlZjQ1ZiJ9.6Sq86pk1xS-cUqfmcicul6FSvYobCACc0CQC1rxa5zU",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"id\": \"1\",\n        \"type\": \"users\",\n        \"attributes\": {\n            \"email\": \"aditi@gmail.com\",\n            \"name\": \"Aditiii\",\n            \"password\": \"123\",\n            \"bio\": \"\",\n            \"image-url\": \"\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
