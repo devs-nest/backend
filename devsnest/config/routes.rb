@@ -20,6 +20,8 @@ Rails.application.routes.draw do
       jsonapi_resources :mentor_feedbacks
       jsonapi_resources :mentee_feedbacks
       jsonapi_resources :contents, only: %i[index show]
+      jsonapi_resources :groupcalls
+
     end
   end
 end

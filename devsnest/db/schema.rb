@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_13_192903) do
+ActiveRecord::Schema.define(version: 2021_01_17_080231) do
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "unique_id"
@@ -27,12 +27,11 @@ ActiveRecord::Schema.define(version: 2021_01_13_192903) do
     t.index ["unique_id"], name: "index_contents_on_unique_id"
   end
 
-  create_table "gbus", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.text "description"
+  create_table "groupcalls", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id"
+    t.integer "choice"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["created_at"], name: "index_gbus_on_created_at"
   end
 
   create_table "jwt_blacklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
