@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 2021_01_17_080231) do
   create_table "groupcalls", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id"
     t.integer "choice"
+    t.integer "group_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

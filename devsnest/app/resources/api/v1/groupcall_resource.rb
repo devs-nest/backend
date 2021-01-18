@@ -5,6 +5,7 @@ module Api
             attributes :user_id, :choice
 
             filter :choice, default: "yes"
+            # filter :created_at, 
         end
     end
 end
