@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
+
+  include ApiRenderConcern
+  
   def render_resource(resource)
     if resource.errors.empty?
       render json: resource
@@ -21,4 +24,6 @@ class ApplicationController < ActionController::API
       ]
     }, status: :bad_request
   end
+
+  
 end

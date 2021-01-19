@@ -18,16 +18,18 @@ module Api
 
 
             def create
-
+                
                 discord_id = params["data"]["attributes"]["discord_id"]
                 user = User.find_by(discord_id: discord_id)
-                return render_error('User not found') if user.nil?#render_error
+                # return render_error('User not found') if user.nil?#render_error
 
                 meeting = Groupcall.find_or_create_by(user_id: user.id)
                 meeting.choice = params["data"]["attributes"]["choice"]
                 meeting.save 
 
-                # render_success(meeting.as_json.merge("type":"groupcalls"))
+                # byebug
+                # render_success
+                return render_success(meeting.as_json.merge("type":"groupcalls"))
 
                 # render_success(meeting.as_json) #meeting.as_json.merge("type": "groupcalls"))
             end
