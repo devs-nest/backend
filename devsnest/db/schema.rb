@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2021_01_15_133157) do
+ActiveRecord::Schema.define(version: 2021_01_20_175959) do
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "unique_id"
@@ -24,6 +23,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_133157) do
     t.string "extra_link2"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "score"
     t.index ["parent_id"], name: "index_contents_on_parent_id"
     t.index ["unique_id"], name: "index_contents_on_unique_id"
   end
@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_133157) do
     t.integer "mentor_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["mentor_id"], name: "index_mmts_on_mentor_id"
+    t.index ["mentor_id"], name: "index_mmts_on_mentor_id", unique: true
     t.index ["user_id"], name: "index_mmts_on_user_id", unique: true
   end
 
@@ -70,16 +70,6 @@ ActiveRecord::Schema.define(version: 2021_01_15_133157) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "content_id"], name: "index_submissions_on_user_id_and_content_id", unique: true
-  end
-
-  create_table "user_progresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "user_id"
-    t.string "unique_id"
-    t.boolean "question_status"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["question_status"], name: "index_user_progresses_on_question_status"
-    t.index ["unique_id"], name: "index_user_progresses_on_unique_id", unique: true
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -99,6 +89,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_133157) do
     t.string "discord_id", default: "", null: false
     t.boolean "active"
     t.integer "role"
+    t.integer "score"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
