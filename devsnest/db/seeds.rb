@@ -33,8 +33,6 @@
 # Content.create(unique_id: 'Q11', parent_id: 'String', name: 'Valid Palindrome', data_type: 0, link: 'https://leetcode.com/problems/valid-palindrome-ii/ ', priority: 14)
 # Content.create(unique_id: 'Q12', parent_id: 'String', name: 'Palindromic Substrings', data_type: 0, link: 'https://leetcode.com/problems/palindromic-substrings/', priority: 15)
 
-groupcalls.create(id: 'manish', user_id: 'abcde', choice: '123450', email: 'manish1250@gmail.com')
-
 # filter get apis
 # http://localhost:3000/api/v1/contents/								=>show Algo(default) subtopics
 
@@ -42,23 +40,17 @@ groupcalls.create(id: 'manish', user_id: 'abcde', choice: '123450', email: 'mani
 # http://localhost:3000/api/v1/contents?filter[parent_id="Array"  =>arrays question
 
 
-
-
-
 User.create(name: 'manish', discord_id: 'abe', password: '123450', email: 'manish1250@gmail.com')
 User.create(name: 'ajjr', discord_id: 'afd', password: '1234501', email: 'ajjr251@gmail.com')
 User.create(name: 'test', discord_id: 'qwe', password: '1237801', email: 'test@gmail.com')
-
 
 User.create(name: 'neha', discord_id: 'bcde', password: '123450', email: 'neha1250@gmail.com')
 User.create(name: 'ayushi', discord_id: 'sbcd', password: '1234501', email: 'ayushi51@gmail.com')
 User.create(name: 'aditi', discord_id: 'qwer', password: '1237801', email: 'aditi@gmail.com')
 
-
 User.create(name: 'priya', discord_id: 'ccde', password: '123450', email: 'priya@gmail.com')
 User.create(name: 'pawni', discord_id: 'fbcd', password: '1234501', email: 'pawni1251@gmail.com')
 User.create(name: 'ayush', discord_id: 'bwer', password: '1237801', email: 'ayush@gmail.com')
-
 
 User.create(name: 'prachi', discord_id: 'dcde', password: '123450', email: 'prachi1250@gmail.com')
 User.create(name: 'udit', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')

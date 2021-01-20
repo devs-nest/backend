@@ -1,42 +1,28 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  has_one :mmt
-  devise :database_authenticatable,
-         :jwt_authenticatable,
-         :registerable,
-         jwt_revocation_strategy: JwtBlacklist
-  serialize :role, Array
+  devise :database_authenticatable, :registerable, :omniauthable,
+         :recoverable, :rememberable, :validatable
+  devise :omniauthable, omniauth_providers: %i[discord]
 
-  def assign_mentor
-    mentor_list = [8, 9, 10]
-    id = self.id
-    index = id % mentor_list.length
-    mmt = Mmt.new(user_id: id, mentor_id: mentor_list[index])
-    mmt.save
-    @user = User.find_by(id: mentor_list[index])
-    mentor_name = @user.name
-  end
+  def self.find_for_discord(discord_hash)
+    email = discord_hash.info['email'] || discord_hash.extra.raw_info.email
+    username = discord_hash.extra.raw_info.username
+    user = User.where(discord_id: discord_hash.uid).first
 
-  def self.assign_mentor_all
-    scorecard = User.get_scorecard
-    count = scorecard.count
-    # add logic for first 2 people
-    2.upto(count - 1).each do |i|
-      user_id = scorecard[i]
-      mentor_id = scorecard[i - 2]
-      mmt = Mmt.find_by(user_id: user_id)
-      if mmt
-        mmt.mentor_id = mentor_id
-      else
-        mmt = Mmt.new(user_id: user_id, mentor_id: mentor_id)
-      end
-      mmt.save
+    if user.present?
+      user.update(email: email, provider: discord_hash.provider, web_active: true) if user.email != email
+      return user
     end
-  end
 
-  def self.get_scorecard
-    # change it to actual scorecard
-    User.pluck(:id).sort
+    User.create(
+      name: discord_hash.info['name'],
+      username: username,
+      email: email,
+      discord_id: discord_hash.uid,
+      provider: discord_hash.provider,
+      password: Devise.friendly_token[0, 20],
+      web_active: true
+    )
   end
 end
