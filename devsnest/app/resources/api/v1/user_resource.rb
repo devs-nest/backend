@@ -6,6 +6,7 @@ module Api
       attributes :email, :name, :password, :discord_id, :active, :role, :username, :buddy, :score
       attributes :mentor_name, :mentor_discord_id
 
+
       def mentor_name
         mentor = Mmt.where(user_id: @model.id).first
         mentor.present? ? User.where(id: mentor.mentor_id).first.name : nil

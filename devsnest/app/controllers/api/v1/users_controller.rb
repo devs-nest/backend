@@ -23,6 +23,7 @@ module Api
         pages_count = User.count%10 == 0? User.count/10 : User.count/10 + 1
         render json: { scoreboard: scoreboard, count: pages_count }
       end
+      
     end
   end
 end
