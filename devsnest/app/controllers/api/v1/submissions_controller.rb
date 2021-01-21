@@ -6,7 +6,6 @@ module Api
       include JSONAPI::ActsAsResourceController
 
       def create
-        #byebug
         discord_id = params['data']['attributes']['discord_id']
         question_unique_id = params['data']['attributes']['question_unique_id']
         user = User.find_by(discord_id: discord_id)
@@ -14,14 +13,9 @@ module Api
         choice = params['data']['attributes']['status']
 
         return render_error('User or Content not found') if user.nil? || content.nil?
-        
+
         submission = Submission.create_submission(user.id, content.id, choice)
-
-        # submission = Submission.find_or_create_by(user_id: user.id, content_id: content.id)
-        # submission.status = params['data']['attributes']['status']
-    
-
-        # render_success(submission.as_json.merge("type": 'submission'))
+        render json: submission
       end
     end
   end
