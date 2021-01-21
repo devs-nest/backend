@@ -6,7 +6,6 @@ module Api
       include JSONAPI::ActsAsResourceController
 
       def create
-        #byebug
         discord_id = params['data']['attributes']['discord_id']
         question_unique_id = params['data']['attributes']['question_unique_id']
         user = User.find_by(discord_id: discord_id)
