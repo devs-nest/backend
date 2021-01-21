@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
 
       def create
-        byebug
+        #byebug
         discord_id = params['data']['attributes']['discord_id']
         question_unique_id = params['data']['attributes']['question_unique_id']
         user = User.find_by(discord_id: discord_id)
@@ -21,7 +21,7 @@ module Api
         # submission.status = params['data']['attributes']['status']
     
 
-        render_success(submission.as_json.merge("type": 'submission'))
+        # render_success(submission.as_json.merge("type": 'submission'))
       end
     end
   end
