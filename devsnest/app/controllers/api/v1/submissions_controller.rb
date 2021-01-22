@@ -15,6 +15,7 @@ module Api
         return render_error('User or Content not found') if user.nil? || content.nil?
 
         submission = Submission.create_submission(user.id, content.id, choice)
+        submission = User.update_percent(user.id)
         render json: submission
       end
     end

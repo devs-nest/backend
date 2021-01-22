@@ -5,7 +5,7 @@ class Submission < ApplicationRecord
 
   def self.create_submission(user_id, content_id, choice)
     submission = Submission.find_by(user_id: user_id, content_id: content_id)
-    user = User.find(user_id).first
+    user = User.find(user_id)
 
     unless submission.present?
       Submission.create(user_id: user_id, content_id: content_id, status: choice)
