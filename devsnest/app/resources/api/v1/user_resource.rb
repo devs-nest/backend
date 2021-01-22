@@ -16,7 +16,6 @@ module Api
         User.where(id: mentor_id).first.discord_id
       end
 
-
       def fetchable_fields
         super - [:password]
       end

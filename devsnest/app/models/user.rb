@@ -8,7 +8,7 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtBlacklist
   serialize :role, Array
   after_create :assign_mentor
-
+  after_initialize :set_defaults
 
   def assign_mentor
     mentorList = [9, 10, 11]
@@ -46,7 +46,12 @@ class User < ApplicationRecord
     user = User.find(user_id)
     count_of_completed_task = Submission.where(status: :done, user_id: user_id).count
     count_of_total_question = Content.where(data_type: 0).count
-    User.where(id: user_id).update(percent_complete: Counter.calculate_percent_complete(count_of_completed_task,count_of_total_question))
+    User.where(id: user_id).update(percent_complete: Counter.calculate_percent_complete(count_of_completed_task, count_of_total_question))
   end
-end
 
+  def set_defaults
+    self.percent_complete ||= 0.0
+    self.score ||= 0
+  end
+
+end
