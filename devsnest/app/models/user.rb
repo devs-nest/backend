@@ -46,8 +46,7 @@ class User < ApplicationRecord
     user = User.find(user_id)
     count_of_completed_task = Submission.where(status: :done, user_id: user_id).count
     count_of_total_question = Content.where(data_type: 0).count
-    User.update(percent_complete: Counter.calculate_percent_complete(count_of_completed_task,count_of_total_question) )
+    User.update(percent_complete: Counter.calculate_percent_complete(count_of_completed_task,count_of_total_question))
   end
-
 end
 
