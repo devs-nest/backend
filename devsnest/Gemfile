@@ -45,6 +45,9 @@ gem 'dotenv', '~> 2.7', '>= 2.7.6'
 gem 'rest-client', '~> 1.8'
 
 gem 'jsonapi-resources', '~> 0.10.2'
+gem 'devise'
+gem 'omniauth', '~>1.9.1'
+gem 'omniauth-google-oauth2'
 
 gem 'devise-jwt', '~> 0.8.0'
 gem 'redis'

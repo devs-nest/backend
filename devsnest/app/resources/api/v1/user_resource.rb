@@ -16,7 +16,6 @@ module Api
         mentor.present? ? User.where(id: mentor.mentor_id).first.discord_id : nil
       end
 
-
       def fetchable_fields
         super - [:password]
       end
