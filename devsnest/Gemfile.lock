@@ -160,6 +160,8 @@ GEM
       nio4r (~> 2.0)
     raabro (1.4.0)
     rack (2.2.3)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (6.0.3.4)
@@ -288,6 +290,7 @@ DEPENDENCIES
   omniauth (~> 1.9.1)
   omniauth-google-oauth2
   puma (~> 4.1)
+  rack-cors
   rails (~> 6.0.3, >= 6.0.3.4)
   redis
   redis-namespace

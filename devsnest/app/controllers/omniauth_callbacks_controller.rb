@@ -7,6 +7,5 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
 	else
 		render "There was an error while trying to authenticate you..."
 	end
-
 	end
 end
