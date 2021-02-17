@@ -8,35 +8,35 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtBlacklist
   devise :omniauthable, omniauth_providers: [:google_oauth2]
   serialize :role, Array
-  after_create :assign_mentor
+  #after_create :assign_mentor
 
-  def assign_mentor
-    mentor_list = [8, 9, 10]
-    id = self.id
-    index = id % mentor_list.length
-    mmt = Mmt.new(user_id: id, mentor_id: mentor_list[index])
+  # def assign_mentor
+  #   mentor_list = [8, 9, 10]
+  #   id = self.id
+  #   index = id % mentor_list.length
+  #   mmt = Mmt.new(user_id: id, mentor_id: mentor_list[index])
 
-    mmt.save
-    @user = User.find_by(id: mentor_list[index])
-    mentor_name = @user.name
-  end
+  #   mmt.save
+  #   @user = User.find_by(id: mentor_list[index])
+  #   mentor_name = @user.name
+  # end
 
-  def self.assign_mentor_all
-    scorecard = User.get_scorecard
-    count = scorecard.count
-    # add logic for first 2 people
-    2.upto(count - 1).each do |i|
-      user_id = scorecard[i]
-      mentor_id = scorecard[i - 2]
-      mmt = Mmt.find_by(user_id: user_id)
-      if mmt
-        mmt.mentor_id = mentor_id
-      else
-        mmt = Mmt.new(user_id: user_id, mentor_id: mentor_id)
-      end
-      mmt.save
-    end
-  end
+  # def self.assign_mentor_all
+  #   scorecard = User.get_scorecard
+  #   count = scorecard.count
+  #   # add logic for first 2 people
+  #   2.upto(count - 1).each do |i|
+  #     user_id = scorecard[i]
+  #     mentor_id = scorecard[i - 2]
+  #     mmt = Mmt.find_by(user_id: user_id)
+  #     if mmt
+  #       mmt.mentor_id = mentor_id
+  #     else
+  #       mmt = Mmt.new(user_id: user_id, mentor_id: mentor_id)
+  #     end
+  #     mmt.save
+  #   end
+  # end
 
   def self.get_scorecard
     # change it to actual scorecard
