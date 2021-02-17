@@ -4,8 +4,9 @@ class User < ApplicationRecord
   has_one :mmt
   devise :database_authenticatable,
          :jwt_authenticatable,
-         :registerable, :omniauthable,
+         :registerable,
          jwt_revocation_strategy: JwtBlacklist
+  devise :omniauthable, omniauth_providers: [:google_oauth2]
   serialize :role, Array
   after_create :assign_mentor
 
