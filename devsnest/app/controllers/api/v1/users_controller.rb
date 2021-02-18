@@ -24,6 +24,10 @@ module Api
         render json: { scoreboard: scoreboard, count: pages_count }
       end
       
+      # def update
+      #   new_discord_id = params['data']['attributes']['discord_id']
+      # end
+
     end
   end
 end

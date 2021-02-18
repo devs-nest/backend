@@ -57,4 +57,10 @@ class User < ApplicationRecord
     end
     user
 end
+
+  def self.update_discord_id(uid)
+    user = User.find_by(uid: uid)
+    byebug
+  end
+
 end
