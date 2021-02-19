@@ -9,6 +9,7 @@ Rails.application.routes.draw do
                registration: 'signup'
              },
              controllers: {
+               sessions: 'sessions',
                registrations: 'registrations',
                omniauth_callbacks: "omniauth_callbacks"
              }

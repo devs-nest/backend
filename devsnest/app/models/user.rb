@@ -60,7 +60,8 @@ end
 
   def self.update_discord_id(uid)
     user = User.find_by(uid: uid)
-    byebug
+    user.update(discord_id: new_discord_id)
+    return user
   end
 
 end
