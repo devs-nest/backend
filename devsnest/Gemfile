@@ -49,7 +49,7 @@ gem 'devise'
 gem 'omniauth', '~>1.9.1'
 gem 'omniauth-google-oauth2'
 
-gem 'devise-jwt', '~> 0.8.0'
+#gem 'devise-jwt', '~> 0.8.0'
 gem 'redis'
 gem 'redis-namespace'
 gem 'redis-rails'

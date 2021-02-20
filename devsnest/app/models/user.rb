@@ -2,10 +2,8 @@
 
 class User < ApplicationRecord
   has_one :mmt
-  devise :database_authenticatable,
-         :jwt_authenticatable,
-         :registerable,
-         jwt_revocation_strategy: JwtBlacklist
+   devise :database_authenticatable, :registerable,:omniauthable,
+         :recoverable, :rememberable, :validatable
   devise :omniauthable, omniauth_providers: [:google_oauth2]
   serialize :role, Array
   #after_create :assign_mentor
@@ -57,11 +55,10 @@ class User < ApplicationRecord
     end
     user
 end
-
-  def self.update_discord_id(uid)
-    user = User.find_by(uid: uid)
-    user.update(discord_id: new_discord_id)
-    return user
-  end
-
 end
+
+  # def self.update_discord_id(uid)
+  #   user = User.find_by(uid: uid)
+  #   user.update(discord_id: new_discord_id)
+  #   return user
+  # end

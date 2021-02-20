@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::API
   include ApiRenderConcern
+  before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user! 
   def render_resource(resource)
     if resource.errors.empty?
@@ -24,14 +25,9 @@ class ApplicationController < ActionController::API
     }, status: :bad_request
   end
 
-      def context
-        { user: current_user }
-      end
-
   # def after_sign_in_path_for(resource)
-  #   byebug
   #   if current_user.discord_id == ""
-  #     redirect_to_discord_id_update_page
+  #     redirect_to_api_v1_users
   #   else
   #     redirect_to_root
   #   end
@@ -41,5 +37,12 @@ class ApplicationController < ActionController::API
   def discord_authorize
     return render_forbidden if current_user.discord_id == ""
     #or redirect to update page if discord_id is null
+  end
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :password, :password_confirmation, :name, :discord_id])
   end
 end
