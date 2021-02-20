@@ -38,7 +38,6 @@ class ApplicationController < ActionController::API
     return render_forbidden if current_user.discord_id == ""
     #or redirect to update page if discord_id is null
   end
-  before_action :configure_permitted_parameters, if: :devise_controller?
 
   protected
 
