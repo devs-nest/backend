@@ -4,7 +4,7 @@ module Api
   module V1
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      #before_action :discord_authorize, except: [:update]
+      # before_action :discord_authorize, except: [:update]
 
       def report
         discord_id = params[:discord_id]
@@ -18,7 +18,6 @@ module Api
       end
 
       def leaderboard
-        byebug
         page = params[:page].to_i
         offset = (page - 1)* 10
         scoreboard = User.order(score: :desc).limit(10).offset(offset)
@@ -29,7 +28,6 @@ module Api
       def logged_user
         render json: current_user
       end
-
     end
   end
 end

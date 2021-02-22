@@ -57,7 +57,3 @@ User.create(name: 'ayush', discord_id: 'bwer', password: '1237801', email: 'ayus
 User.create(name: 'prachi', discord_id: 'dcde', password: '123450', email: 'prachi1250@gmail.com')
 User.create(name: 'udit', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
 User.create(name: 'vedansh', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
-<<<<<<< HEAD
-=======
-
->>>>>>> 27895a193cf8ae18c2ca4ab0bdb1ce6ecadb8f30
