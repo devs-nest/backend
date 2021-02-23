@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  enum active: %i[left_server is_active]
   has_one :mmt
   devise :database_authenticatable,
          :jwt_authenticatable,

@@ -23,6 +23,16 @@ module Api
         pages_count = User.count%10 == 0? User.count/10 : User.count/10 + 1
         render json: { scoreboard: scoreboard, count: pages_count }
       end
+
+      def update_status
+        discord_id = params['data']['attributes']['discord_id']
+        user = User.find_by(discord_id: discord_id)
+        active = params['data']['attributes']['active']
+        user.active= active
+        user.save
+        render json: { status: "status updated"}
+      end
+
     end
   end
 end
