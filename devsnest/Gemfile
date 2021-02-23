@@ -41,6 +41,10 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
+gem "sentry-ruby"
+gem "sentry-rails"
+gem "sentry-sidekiq"
+
 gem 'dotenv', '~> 2.7', '>= 2.7.6'
 gem 'rest-client', '~> 1.8'
 

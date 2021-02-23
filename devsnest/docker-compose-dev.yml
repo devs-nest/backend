@@ -1,0 +1,41 @@
+version: "3"
+services:
+  "backend":
+    build: .
+    ports:
+      - "8000:3000"
+    container_name: backend
+    env_file:
+      - '.env'
+  mysql:
+    image: mysql
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: devsnest
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+
+    ports:
+      - "3308:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - /var/lib/redis

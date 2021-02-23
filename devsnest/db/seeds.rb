@@ -12,7 +12,6 @@
 # User.create(name: 'kohit', email:'manish124@gmail.com', password: '123458')
 # User.create(name: 'rohit', email:'manish125@gmail.com', password: '123459')
 
-
 # #Mmt.create(user_id: 1, mentor_id: 2)
 
 # Content.create(unique_id: 'algo', parent_id: nil, name: 'Algorithims', data_type: 3, link: nil, priority: 0)
@@ -45,6 +44,7 @@ groupcalls.create(id: 'manish', user_id: 'abcde', choice: '123450', email: 'mani
 
 
 
+
 User.create(name: 'manish', discord_id: 'abe', password: '123450', email: 'manish1250@gmail.com')
 User.create(name: 'ajjr', discord_id: 'afd', password: '1234501', email: 'ajjr251@gmail.com')
 User.create(name: 'test', discord_id: 'qwe', password: '1237801', email: 'test@gmail.com')
@@ -63,4 +63,3 @@ User.create(name: 'ayush', discord_id: 'bwer', password: '1237801', email: 'ayus
 User.create(name: 'prachi', discord_id: 'dcde', password: '123450', email: 'prachi1250@gmail.com')
 User.create(name: 'udit', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
 User.create(name: 'vedansh', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
-

@@ -11,7 +11,6 @@ module Api
         return render_error('User not found') if user.nil?
 
         days = params[:days].to_i || nil
-
         res = Submission.user_report(days, user.id)
         render json: res
       end
