@@ -3,7 +3,7 @@
 module Api
   module V1
     class UserResource < JSONAPI::Resource
-      attributes :email, :name, :password, :discord_id, :active, :role, :username, :buddy, :score
+      attributes :email, :name, :password, :discord_id, :discord_active, :role, :username, :buddy, :score, :web_active
       attributes :mentor_name, :mentor_discord_id
 
       def mentor_name

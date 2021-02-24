@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_20_175959) do
+ActiveRecord::Schema.define(version: 2021_02_24_164938) do
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "unique_id"
@@ -97,9 +97,10 @@ ActiveRecord::Schema.define(version: 2021_01_20_175959) do
     t.string "username", default: "", null: false
     t.integer "buddy", default: 0
     t.string "discord_id", default: "", null: false
-    t.boolean "active"
     t.integer "role"
     t.integer "score"
+    t.boolean "discord_active", default: false
+    t.boolean "web_active", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

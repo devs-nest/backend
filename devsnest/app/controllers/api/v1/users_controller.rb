@@ -5,6 +5,17 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
 
+      def create
+        discord_id = params['data']['attributes']['discord_id']
+        user = User.find_by(discord_id: discord_id)
+        if user
+          user.discord_active= true
+          user.save
+          return render json: { status: "status updated", data: {attributes: user}}
+        end
+        super
+      end
+
       def report
         discord_id = params[:discord_id]
         user = User.find_by(discord_id: discord_id)
@@ -26,12 +37,11 @@ module Api
       def update_status
         discord_id = params['data']['attributes']['discord_id']
         user = User.find_by(discord_id: discord_id)
-        active = params['data']['attributes']['active']
-        user.active= active
+        discord_active = params['data']['attributes']['discord_active']
+        user.discord_active= discord_active
         user.save
-        render json: { status: "status updated"}
+        render json: { status: "status updated", data: user}
       end
-
     end
   end
 end
