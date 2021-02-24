@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::API
   include ApiRenderConcern
   before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :authenticate_user! 
+  before_action :authenticate_user!
   def render_resource(resource)
     if resource.errors.empty?
       render json: resource
@@ -35,13 +35,13 @@ class ApplicationController < ActionController::API
   #   end
 
   def discord_authorize
-    return render_forbidden if current_user.discord_id == ""
-    #or redirect to update page if discord_id is null
+    return render_forbidden if current_user.discord_id == ''
+    # or redirect to update page if discord_id is null
   end
 
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :password, :password_confirmation, :name, :discord_id])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[email password password_confirmation name discord_id])
   end
 end

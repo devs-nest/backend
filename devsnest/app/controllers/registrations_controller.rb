@@ -3,13 +3,7 @@
 class RegistrationsController < Devise::RegistrationsController
   respond_to :json
 
-   # GET /resource/sign_up
-  def new
-    super
-  end
+  # GET /resource/sign_up
 
   # POST /resource
-  def create
-    super
-  end
 end

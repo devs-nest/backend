@@ -10,7 +10,7 @@ Rails.application.routes.draw do
              },
              controllers: {
                registrations: 'registrations',
-               omniauth_callbacks: "omniauth_callbacks"
+               omniauth_callbacks: 'omniauth_callbacks'
              }
 
   namespace :api do
