@@ -5,6 +5,7 @@ module Api
     class SubmissionsController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: [:create]
+      before_action :user_auth, only: [:index, :create]
 
       def create
         discord_id = params['data']['attributes']['discord_id']
@@ -17,6 +18,11 @@ module Api
 
         submission = Submission.create_submission(user.id, content.id, choice)
         render_success(submission.as_json.merge("type": 'submissions'))
+      end
+
+      def index
+        @submissions=Submission.where(user_id: @current_user.id)
+        render json:@submissions
       end
     end
   end
