@@ -35,15 +35,15 @@ module Devsnest
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-      Sentry.init do |config|
-        config.dsn = ENV["SENTRY_DSN"]
-        config.breadcrumbs_logger = [:active_support_logger]
+    Sentry.init do |config|
+      config.dsn = ENV['SENTRY_DSN']
+      config.breadcrumbs_logger = [:active_support_logger]
 
       # To activate performance monitoring, set one of these options.
       # We recommend adjusting the value in production:
       config.traces_sample_rate = 0.5
       # or
-      config.traces_sampler = lambda do |context|
+      config.traces_sampler = lambda do |_context|
         true
       end
     end

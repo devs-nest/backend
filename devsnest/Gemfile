@@ -41,9 +41,9 @@ group :development do
   gem 'rack-cors', '~> 1.1.1'
 end
 
-gem "sentry-ruby"
-gem "sentry-rails"
-gem "sentry-sidekiq"
+gem 'sentry-rails'
+gem 'sentry-ruby'
+gem 'sentry-sidekiq'
 
 gem 'devise', '~> 4.7.3'
 

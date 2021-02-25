@@ -296,7 +296,7 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
   config.omniauth :discord, ENV['DISCORD_CLIENT_ID'], ENV['DISCORD_CLIENT_SECRET'],
-                  scope: 'email identify', callback_url: '#{RAILS_URL}/auth/discord/callback'
+                  scope: 'email identify', callback_url: '127.0.0.1/api/v1/auth/discord/callback'
   # ==> Turbolinks configuration
   # If your app is using Turbolinks, Turbolinks::Controller needs to be included to make redirection work correctly:
   #

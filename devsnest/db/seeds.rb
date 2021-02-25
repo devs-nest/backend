@@ -39,7 +39,6 @@
 # http://localhost:3000/api/v1/contents?filter[parent_id="String"  =>string question
 # http://localhost:3000/api/v1/contents?filter[parent_id="Array"  =>arrays question
 
-
 User.create(name: 'manish', discord_id: 'abe', password: '123450', email: 'manish1250@gmail.com')
 User.create(name: 'ajjr', discord_id: 'afd', password: '1234501', email: 'ajjr251@gmail.com')
 User.create(name: 'test', discord_id: 'qwe', password: '1237801', email: 'test@gmail.com')

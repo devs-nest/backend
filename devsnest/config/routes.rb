@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  devise_for :users,
-             path: '',
-             path_names: {
-               registration: 'signup'
-             },
-             controllers: {
-               registrations: 'registrations',
-               omniauth_callbacks: 'omniauth_callbacks'
-             }
-
   namespace :api do
     namespace :v1 do
+      devise_for :users,
+                 controllers: {
+                   registrations: 'api/v1/registrations',
+                   omniauth_callbacks: 'api/v1/omniauth_callbacks'
+                 }
       jsonapi_resources :users, only: %i[index show update create] do
         collection do
           get :report, :leaderboard
@@ -25,3 +20,7 @@ Rails.application.routes.draw do
     end
   end
 end
+# devise_for :users, controllers: {
+#              omniauth_callbacks: "users/omniauth_callbacks",
+#             registrations: 'users/registrations'
+#              }
