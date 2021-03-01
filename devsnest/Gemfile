@@ -18,6 +18,7 @@ gem 'puma', '~> 4.1'
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
+gem 'devise-jwt', '~> 0.8.0'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
@@ -44,18 +45,13 @@ gem 'sentry-rails'
 gem 'sentry-ruby'
 gem 'sentry-sidekiq'
 
-gem 'devise', '~> 4.7.3'
-
 gem 'dotenv', '~> 2.7', '>= 2.7.6'
 gem 'jsonapi-resources', '~> 0.10.2'
-gem 'rest-client', '~> 1.8'
-
-gem 'omniauth', '~>1.9.1'
-gem 'omniauth-discord', '~> 1.0.0'
 
 gem 'redis'
 gem 'redis-namespace'
 gem 'redis-rails'
 gem 'sidekiq-cron'
+gem 'httparty'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]

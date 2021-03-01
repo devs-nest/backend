@@ -3,7 +3,6 @@
 class ApplicationController < ActionController::API
   include ApiRenderConcern
   before_action :set_current_user
-  before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :validate_bot_user
   def render_resource(resource)
     if resource.errors.empty?
@@ -50,16 +49,11 @@ class ApplicationController < ActionController::API
   end
 
   def set_current_user
-    if current_api_v1_user.present?
-      @current_user = current_api_v1_user
-    end
+    @current_user = nil
+    # if current_api_v1_user.present?
+    #   @current_user = current_api_v1_user
+    # end
   end
-
-  def after_sign_in_path_for(resource)
-    set_current_user
-    @current_user.present? ? "#{ENV['FRONTEND_URL']}/dashboard?login=true" : "#{ENV['FRONTEND_URL']}/login?error=true"
-  end
-
   protected
 
   def configure_permitted_parameters

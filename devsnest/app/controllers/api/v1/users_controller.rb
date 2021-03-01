@@ -30,11 +30,6 @@ module Api
         render json: { scoreboard: scoreboard, count: pages_count }
       end
 
-      def log_out
-        reset_session
-        render json: { notice: 'You logged out successfuly' }
-      end
-
       def create
         discord_id = params['data']['attributes']['discord_id']
         user = User.find_by(discord_id: discord_id)
@@ -52,6 +47,25 @@ module Api
         user.discord_active = false
         user.save
         render_success(user.as_json.merge({ "type": 'users', status: 'status updated' }))
+      end
+
+      def logout
+        reset_session
+        render json: { notice: 'You logged out successfuly' }
+      end
+
+      def login
+        # code = params['code']
+        user = User.first
+        # User.fetch_discord_user(code)
+        byebug
+        if user.present?
+          sign_in('User', user)
+
+        else
+          return render_forbidden
+        end
+        render json: { notice: 'You are logged in correctly' }
       end
     end
   end
