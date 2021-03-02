@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report show]
       before_action :bot_auth, only: %i[left_discord create index]
-      before_action :user_auth, only: [:log_out, :me]
+      before_action :user_auth, only: [:logout, :me]
 
       def me
         render_success(@current_user.as_json.merge({ "type": 'users' }))
@@ -50,22 +50,18 @@ module Api
       end
 
       def logout
-        reset_session
         render json: { notice: 'You logged out successfuly' }
       end
 
       def login
-        # code = params['code']
-        user = User.first
-        # User.fetch_discord_user(code)
-        byebug
+        code = params['code']
+        user = User.fetch_discord_user(code)
         if user.present?
-          sign_in('User', user)
-
-        else
-          return render_forbidden
+          sign_in(user)
+          set_current_user
+          return render_success(user.as_json.merge({ "type": 'users'})) if @current_user.present?
         end
-        render json: { notice: 'You are logged in correctly' }
+        return render_error({message: "Error occured while authenticating"})
       end
     end
   end

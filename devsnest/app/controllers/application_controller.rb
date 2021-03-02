@@ -50,9 +50,9 @@ class ApplicationController < ActionController::API
 
   def set_current_user
     @current_user = nil
-    # if current_api_v1_user.present?
-    #   @current_user = current_api_v1_user
-    # end
+    if current_api_v1_user.present?
+      @current_user = current_api_v1_user
+    end
   end
   protected
 

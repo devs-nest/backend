@@ -5,8 +5,19 @@ class User < ApplicationRecord
          :jwt_authenticatable,
          jwt_revocation_strategy: JwtBlacklist
 
+  def self.fetch_discord_user(code)
+    token = fetch_access_token(code)
+    return if token.nil?
+
+    user_details = fetch_user_details(token)
+    return if user_details.nil?
+
+    user = create_user(user_details)
+    return user
+  end
+
   def self.create_user(user_details)
-    email = user_details['email']
+    email = user_details['email'] || "#{rand(36**14).to_s(36)}@discord.com"
     username = user_details['username']
     user = User.where(discord_id: user_details['id']).first
     avatar = "https://cdn.discordapp.com/avatars/#{user_details['id']}/#{user_details['avatar']}.png"
@@ -26,15 +37,6 @@ class User < ApplicationRecord
     )
   end
 
-  def self.fetch_discord_user(code)
-    token = fetch_access_token("HK3cYp5D7PTy8quXIEH1avkw8K4VkQ")
-    return if token.nil?
-
-    user_details = fetch_user_details(token)
-    user = create_user(user_details)
-    return user
-  end
-
   def self.fetch_access_token(code)
     url = URI("https://discordapp.com/api/oauth2/token")
     token = "Basic "+ Base64.strict_encode64("#{ENV['DISCORD_CLIENT_ID']}:#{ENV['DISCORD_CLIENT_SECRET']}")
@@ -51,18 +53,16 @@ class User < ApplicationRecord
     response.code == "200" ? JSON(response.read_body)["access_token"] : nil
   end
 
-
   def self.fetch_user_details(token)
     url = "http://discordapp.com/api/users/@me"
     headers = {
       'Content-Type' => 'application/json',
-      Authorization: token
+      Authorization: "Bearer #{token}"
     }
 
     response = HTTParty.post(url, :body => {}, :headers => headers)
-    JSON.parse(response.body)
+    response.code == 200 ? JSON(response.read_body) : nil
   end
-
 end
 
 
