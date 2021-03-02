@@ -17,10 +17,13 @@ class User < ApplicationRecord
   end
 
   def self.create_user(user_details)
-    email = user_details['email'] || "#{rand(36**14).to_s(36)}@discord.com"
+    email = user_details['email']
     username = user_details['username']
     user = User.where(discord_id: user_details['id']).first
-    avatar = "https://cdn.discordapp.com/avatars/#{user_details['id']}/#{user_details['avatar']}.png"
+    avatar = nil
+    if user_details['avatar'].present?
+      avatar = "https://cdn.discordapp.com/avatars/#{user_details['id']}/#{user_details['avatar']}.png"
+    end
     if user.present?
       user.update(email: email, web_active: true, image_url: avatar) if user.email != email
       return user
