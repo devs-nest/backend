@@ -5,10 +5,10 @@ module Api
     class ContentsController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[index show]
-    end
 
-    def context
-      { user: @current_user }
+      def context
+        { user: @current_user }
+      end
     end
   end
 end
