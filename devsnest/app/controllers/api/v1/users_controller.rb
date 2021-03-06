@@ -8,6 +8,10 @@ module Api
       before_action :bot_auth, only: %i[left_discord create index]
       before_action :user_auth, only: [:logout, :me]
 
+      def context
+        { user: @current_user }
+      end
+
       def me
         render_success(@current_user.as_json.merge({ "type": 'users' }))
       end

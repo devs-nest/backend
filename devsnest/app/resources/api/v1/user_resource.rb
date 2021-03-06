@@ -6,7 +6,11 @@ module Api
       attributes :email, :name, :password, :discord_id, :web_active, :username, :score, :discord_active
 
       def fetchable_fields
-        super - [:password]
+        if context[:user].nil? || context[:user].id == @model.id
+          super - [:password]
+        else
+          super - [:password, :email]
+        end
       end
     end
   end
