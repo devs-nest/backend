@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_24_123155) do
+ActiveRecord::Schema.define(version: 2021_03_08_102347) do
+
+  create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "owner_id"
+    t.string "name", default: "", null: false
+    t.integer "members_count"
+    t.integer "student_mentor_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "unique_id"
@@ -28,12 +37,35 @@ ActiveRecord::Schema.define(version: 2021_02_24_123155) do
     t.index ["unique_id"], name: "index_contents_on_unique_id"
   end
 
+  create_table "group_members", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.boolean "scrum_master"
+    t.boolean "owner"
+    t.boolean "student_mentor"
+    t.integer "user_id"
+    t.integer "group_id"
+    t.integer "batch_id"
+    t.integer "members_count"
+    t.integer "student_mentor_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "groupcalls", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id"
     t.integer "choice"
     t.integer "week"
     t.integer "year"
     t.integer "group_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "owner_id"
+    t.integer "batch_id"
+    t.string "name", default: "", null: false
+    t.integer "members_count"
+    t.integer "student_mentor_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

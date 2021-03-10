@@ -15,6 +15,8 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :contents, only: %i[index show]
       jsonapi_resources :submissions, only: %i[create]
+      jsonapi_resources :groups, only: %i[show]
+      jsonapi_resources :group_members, only: %i[index show]
     end
   end
 end

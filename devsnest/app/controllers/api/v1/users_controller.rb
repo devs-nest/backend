@@ -31,7 +31,8 @@ module Api
 
       def leaderboard
         page = params[:page].to_i
-        size = params[:size].to_i || 10
+        size = params[:size] || 10
+        size = size.to_i
         offset = [(page - 1) * size, 0].max
         scoreboard = User.order(score: :desc).limit(size).offset(offset)
         pages_count = (User.count % size).zero? ? User.count / size : User.count / size + 1

@@ -54,3 +54,7 @@ User.create(name: 'ayush', discord_id: 'bwer', password: '1237801', email: 'ayus
 User.create(name: 'prachi', discord_id: 'dcde', password: '123450', email: 'prachi1250@gmail.com')
 User.create(name: 'udit', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
 User.create(name: 'vedansh', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
+
+Group.create(owner_id: User.last.id, name: "first one")
+GroupMember.create(user_id: User.first.id, group_id: Group.last.id)
+GroupMember.create(user_id: User.second.id, group_id: Group.last.id)
