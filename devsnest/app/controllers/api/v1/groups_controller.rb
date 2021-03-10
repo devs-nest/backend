@@ -4,8 +4,8 @@ module Api
   module V1
     class GroupsController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      # before_action :simple_auth
-      # before_action :check_authorization
+      before_action :simple_auth
+      before_action :check_authorization
 
       def context
         { user: @current_user }
