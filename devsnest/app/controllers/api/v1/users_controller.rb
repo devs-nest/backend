@@ -60,18 +60,35 @@ module Api
       end
 
       def logout
-        render json: { notice: 'You logged out successfuly' }
+        render json: { notice: 'You logged out successfully' }
       end
 
       def login
-        code = params['code']
-        user = User.fetch_discord_user(code)
-        if user.present?
-          sign_in(user)
-          set_current_user
-          return render_success(user.as_json.merge({ "type": 'users' })) if @current_user.present?
+        type = params['type']
+
+        if type == 'discord'
+          user = User.fetch_discord_user(code,context)
+          if user.present? && @current_user == nil
+            sign_in(user)
+            set_current_user
+            return render_success
+          elsif @current_user
+            return render_success
+          end
+        elsif type == 'google'
+          googleId = params['googleId']
+          if !googleId
+            return render_error({message: "googleId parameter not specified"})
+          end
+          user = User.fetch_google_user(code, googleId)
+          if user.present?
+            sign_in(user)
+            set_current_user
+            return render_success(user.as_json.merge({ "type": 'users'})) if @current_user.present?
+          end
+
         end
-        render_error({ message: 'Error occured while authenticating' })
+        return render_error({message: "Error occurred while authenticating"})
       end
 
       def update_college

@@ -3,8 +3,9 @@
 module Api
   module V1
     class UserResource < JSONAPI::Resource
-      attributes :email, :name, :password, :discord_id, :web_active, :username, :score, :discord_active, :batch, :grad_status, :grad_specialization, :grad_year, :grad_start, :grad_end,
-                 :github_url, :linkedin_url, :resume_url, :dob, :registration_num, :college_id, :image_url
+      attributes :email, :name, :password, :discord_id, :web_active, :username, :score, :discord_active,
+                 :batch, :grad_status, :grad_specialization, :grad_year, :grad_start, :grad_end, :github_url,
+                 :linkedin_url, :resume_url, :dob, :registration_num, :college_id, :image_url, :google_id
       attributes :group_id, :group_name
       attributes :college_name
       attributes :solved, :total_by_difficulty

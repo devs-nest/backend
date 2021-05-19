@@ -6,27 +6,73 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtBlacklist
 
 
-  def self.fetch_discord_user(code)
-    token = fetch_access_token(code)
+  def self.fetch_discord_user(code,context)
+    token = fetch_discord_access_token(code)
     return if token.nil?
 
-    user_details = fetch_user_details(token)
+    user_details = fetch_discord_user_details(token)
     return if user_details.nil?
 
-    user = create_user(user_details)
+    user = create_discord_user(user_details,context)
     return user
   end
 
-  def self.create_user(user_details)
+  def self.fetch_google_user(code, googleId)
+    user_details = fetch_google_user_details(code)
+    return if user_details.nil?
+
+    user = create_google_user(user_details, googleId)
+    return user
+  end
+
+  def self.fetch_google_user_details(code)
+    url = URI('https://oauth2.googleapis.com/tokeninfo?id_token=' + code)
+    https = Net::HTTP.new(url.host, url.port)
+    https.use_ssl = true
+    request = Net::HTTP::Post.new(url)
+    response = https.request(request)
+    data = JSON(response.read_body)
+    return data
+  end
+
+  def self.create_google_user(user_details, googleId)
+    email = user_details['email']
+    name = user_details['name']
+    user = User.where(email: email).first
+    avatar = nil
+    if user_details['picture'].present?
+      avatar = user_details['picture']
+    end
+    if user.present?
+      user.update(web_active: true, image_url: avatar, google_id: googleId)
+      return user
+    end
+
+    User.create(
+      name: name,
+      username: name,
+      email: email,
+      password: Devise.friendly_token[0, 20],
+      web_active: true,
+      image_url: avatar,
+      google_id: googleId
+    )
+  end
+
+  def self.create_discord_user(user_details,context)
     email = user_details['email']
     username = user_details['username']
     user = User.where(discord_id: user_details['id']).first
+    byebug
+    if user.nil?
+      user = User.where(id: context[:user].id)
+    end
     avatar = nil
     if user_details['avatar'].present?
       avatar = "https://cdn.discordapp.com/avatars/#{user_details['id']}/#{user_details['avatar']}.png"
     end
     if user.present?
-      user.update(email: email, web_active: true, image_url: avatar) if user.email != email
+      user.update(web_active: true, image_url: avatar,discord_id: user_details['id'])
       return user
     end
 
@@ -41,7 +87,7 @@ class User < ApplicationRecord
     )
   end
 
-  def self.fetch_access_token(code)
+  def self.fetch_discord_access_token(code)
     url = URI("https://discordapp.com/api/oauth2/token")
     token = "Basic "+ Base64.strict_encode64("#{ENV['DISCORD_CLIENT_ID']}:#{ENV['DISCORD_CLIENT_SECRET']}")
 
@@ -52,12 +98,11 @@ class User < ApplicationRecord
     request["Authorization"] = token
     request["Content-Type"] = "application/x-www-form-urlencoded"
     request.body = "code=#{code}&grant_type=authorization_code&redirect_uri=#{ENV['DISCORD_REDIRECT_URI']}"
-
     response = https.request(request)
     response.code == "200" ? JSON(response.read_body)["access_token"] : nil
   end
 
-  def self.fetch_user_details(token)
+  def self.fetch_discord_user_details(token)
     url = "http://discordapp.com/api/users/@me"
     headers = {
       'Content-Type' => 'application/json',
@@ -68,5 +113,3 @@ class User < ApplicationRecord
     response.code == 200 ? JSON(response.read_body) : nil
   end
 end
-
-

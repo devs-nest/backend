@@ -13,14 +13,28 @@ module Api
         else
           user = @current_user
         end
-        question_unique_id = params['data']['attributes']['question_unique_id']
-        content = Content.find_by(unique_id: question_unique_id)
-        choice = params['data']['attributes']['status']
+        if user.discord_active?
+          discord_id = params['data']['attributes']['discord_id']
+          question_unique_id = params['data']['attributes']['question_unique_id']
+          content = Content.find_by(unique_id: question_unique_id)
+          choice = params['data']['attributes']['status']
 
-        return render_error('User or Content not found') if user.nil? || content.nil?
+          return render_error('User or Content not found') if user.nil? || content.nil?
 
-        submission = Submission.create_submission(user.id, content.id, choice)
-        return render_success(submission.as_json.merge("type": 'submissions'))
+          submission = Submission.create_submission(user.id, content.id, choice)
+          return render_success(submission.as_json.merge("type": 'submissions'))
+        else
+          byebug
+          user_id = params['data']['attributes']['user_id']
+          question_unique_id = params['data']['attributes']['question_unique_id']
+          content = Content.find_by(unique_id: question_unique_id)
+          choice = params['data']['attributes']['status']
+
+          return render_error('User or Content not found') if user.nil? || content.nil?
+
+          submission = Submission.create_submission(user.id, content.id, choice)
+          return render_success(submission.as_json.merge("type": 'submissions'))
+        end
       end
     end
   end
