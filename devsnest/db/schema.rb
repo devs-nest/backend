@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_15_234220) do
+ActiveRecord::Schema.define(version: 2021_05_20_142451) do
 
-  create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "owner_id"
     t.string "name", default: "", null: false
     t.integer "members_count"
@@ -21,7 +21,12 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.integer "user_id"
+  end
+
+  create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "unique_id"
     t.string "parent_id"
     t.string "name"
@@ -39,7 +44,7 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.index ["unique_id"], name: "index_contents_on_unique_id"
   end
 
-  create_table "group_members", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "group_members", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.boolean "scrum_master"
     t.boolean "owner"
     t.boolean "student_mentor"
@@ -52,7 +57,7 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "groupcalls", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "groupcalls", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "choice"
     t.integer "week"
@@ -62,7 +67,7 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "owner_id"
     t.integer "batch_id"
     t.string "name", default: "", null: false
@@ -72,13 +77,13 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "jwt_blacklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "jwt_blacklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "jti", null: false
     t.datetime "exp"
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
-  create_table "mentee_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "mentee_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "user_id"
     t.integer "mentee_id"
     t.text "feedback"
@@ -88,7 +93,7 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "mentor_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "mentor_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "user_id"
     t.integer "mentor_id"
     t.text "feedback"
@@ -98,16 +103,16 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "mmts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "mmts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "mentor_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["mentor_id"], name: "index_mmts_on_mentor_id", unique: true
+    t.index ["mentor_id"], name: "index_mmts_on_mentor_id"
     t.index ["user_id"], name: "index_mmts_on_user_id", unique: true
   end
 
-  create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "content_id"
     t.integer "status"
@@ -116,7 +121,7 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.index ["user_id", "content_id"], name: "index_submissions_on_user_id_and_content_id", unique: true
   end
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "name", default: ""
@@ -136,11 +141,15 @@ ActiveRecord::Schema.define(version: 2021_03_15_234220) do
     t.string "provider"
     t.boolean "discord_active", default: false
     t.boolean "web_active", default: false
+    t.string "batch"
+    t.string "grad_status"
+    t.string "grad_specialization"
+    t.integer "grad_year"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "writeups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "writeups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.text "description"
     t.integer "week"

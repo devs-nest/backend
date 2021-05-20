@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :jwt_authenticatable,
          jwt_revocation_strategy: JwtBlacklist
+  has_one :college
+
 
   def self.fetch_discord_user(code)
     token = fetch_access_token(code)
