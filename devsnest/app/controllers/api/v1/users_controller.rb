@@ -72,6 +72,20 @@ module Api
         end
         return render_error({message: "Error occured while authenticating"})
       end
+
+      def update
+        user_id = params['data']['id']
+        user = params['data']['attributes']
+        group_name = params['data']['attributes']['group_name']
+        college_name = params['data']['attributes']['college']
+        if group_name.present?
+          Group.update_group_name(user_id, group_name)
+        end 
+        if college_name.present?
+           College.update_college_name(user_id, college_name) 
+        end   
+        return render_success({message: "User updated Successfully"})      
+      end        
     end
   end
 end

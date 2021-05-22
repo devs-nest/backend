@@ -51,4 +51,15 @@ class Submission < ApplicationRecord
       user.save
     end
   end
+
+  def self.count_solved(user_id, difficulty_level)
+    content = Submission.where(user_id: user_id, status: 0).pluck(:content_id)
+    count = 0
+    for content_id in content do 
+     if Content.where(id: content_id).first.difficulty == difficulty_level then
+       count +=1
+     end  
+    end 
+    count 
+  end  
 end
