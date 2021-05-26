@@ -10,31 +10,20 @@ module Api
         if @bot.present?
           discord_id = params['data']['attributes']['discord_id']
           user = User.find_by(discord_id: discord_id)
+
+          return render :json => {'data': {'error': 'user_not_active_web' } } if user.nil? || !user.web_active
         else
           user = @current_user
         end
-        if user.discord_active?
-          discord_id = params['data']['attributes']['discord_id']
-          question_unique_id = params['data']['attributes']['question_unique_id']
-          content = Content.find_by(unique_id: question_unique_id)
-          choice = params['data']['attributes']['status']
 
-          return render_error('User or Content not found') if user.nil? || content.nil?
+        user_id = user.id
+        question_unique_id = params['data']['attributes']['question_unique_id']
+        content = Content.find_by(unique_id: question_unique_id)
+        choice = params['data']['attributes']['status']
 
-          submission = Submission.create_submission(user.id, content.id, choice)
-          return render_success(submission.as_json.merge("type": 'submissions'))
-        else
-          byebug
-          user_id = params['data']['attributes']['user_id']
-          question_unique_id = params['data']['attributes']['question_unique_id']
-          content = Content.find_by(unique_id: question_unique_id)
-          choice = params['data']['attributes']['status']
-
-          return render_error('User or Content not found') if user.nil? || content.nil?
-
-          submission = Submission.create_submission(user.id, content.id, choice)
-          return render_success(submission.as_json.merge("type": 'submissions'))
-        end
+        return render_error('User or Content not found') if user.nil? || content.nil?
+        submission = Submission.create_submission(user.id, content.id, choice)
+        return render_success(submission.as_json.merge("type": 'submissions'))
       end
     end
   end

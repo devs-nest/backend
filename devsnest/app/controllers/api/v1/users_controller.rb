@@ -5,7 +5,7 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report show]
-      before_action :bot_auth, only: %i[left_discord create index]
+      before_action :bot_auth, only: %i[left_discord create index get_token]
       before_action :user_auth, only: %i[logout me update]
       before_action :update_college, only: %i[update]
 
@@ -15,6 +15,15 @@ module Api
 
       def me
         redirect_to api_v1_user_url(@current_user)
+      end
+
+      def get_token
+        discord_id = params['data']['attributes']['discord_id']
+        user = User.find_by(discord_id: discord_id)
+        if user.present?
+          return render json: {bot_token: user.bot_token}
+        end
+        render_error('User not found')
       end
 
       def report
@@ -103,6 +112,16 @@ module Api
         params['data']['attributes']['college_id'] = College.find_by(name: college_name).id
 
         params['data']['attributes'].delete 'college_name'
+      end
+
+      def update_bot_token_to_google_user
+        token = params['data']['attributes']['bot_token']
+        temp_user = User.find_by(bot_token: token)
+        if temp_user.nil?
+          render_error
+        end
+        user = @current_user
+        user = User.update_discord_id(user,temp_user) if @current_user.present?
       end
     end
   end
