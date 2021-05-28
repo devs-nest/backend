@@ -6,14 +6,7 @@ class Submission < ApplicationRecord
 
   def self.user_report(days, user_id)
     total_ques = Content.where(data_type: 0).count
-    dates = Hash.new
-    Submission.where(status:0,user_id:user_id).or(Submission.where(status:2,user_id:user_id)).all.each do |user|
-      if dates.key?(user.updated_at.to_date)
-        dates[user.updated_at.to_date] += 1
-      else
-        dates[user.updated_at.to_date] = 1
-      end
-    end
+    
     res = Content.joins(:submission).where(submissions: { status: 0, user_id: user_id }, contents: { data_type: 0 })
     total_solved_ques = res.count
 
@@ -22,7 +15,7 @@ class Submission < ApplicationRecord
 
     res['total_ques'] = total_ques
     res['total_solved_ques'] = total_solved_ques
-    res['activity'] = dates
+
     res
   end
 

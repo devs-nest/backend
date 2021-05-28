@@ -13,8 +13,12 @@ module Api
       end
 
       def me
+        #render json: @current_user
         redirect_to api_v1_user_url(@current_user)
       end
+
+
+
 
       def report
         if @current_user.present?

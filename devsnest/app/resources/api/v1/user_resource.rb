@@ -7,6 +7,7 @@ module Api
       attributes :group_id, :group_name 
       attributes :college
       attributes :easy_solved, :medium_solved, :hard_solved
+      attributes :activity
 
       def fetchable_fields
         if context[:user].nil? || context[:user].id == @model.id
@@ -50,6 +51,23 @@ module Api
         return nil if context[:user].nil?
         Submission.count_solved(context[:user].id, "hard")
       end  
+      
+      def activity
+        return nil if context[:user].nil?
+
+        dates = Hash.new
+        # should marked as doubt be included too?
+        Submission.where(status:"done",user_id:context[:user].id).all.each do |user|
+          if dates.key?(user.updated_at.to_date)
+            dates[user.updated_at.to_date] += 1
+          else
+            dates[user.updated_at.to_date] = 1
+          end
+
+        end
+        return dates
+      end
+
 
     end
   end
