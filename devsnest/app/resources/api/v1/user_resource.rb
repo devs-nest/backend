@@ -55,9 +55,7 @@ module Api
       
       def activity
         return nil if context[:user].nil?
-
         dates = Hash.new
-        # should marked as doubt be included too?
         Submission.where(status:"done",user_id:context[:user].id).or(Submission.where(status:"doubt",user_id:context[:user].id)).all.each do |user|
           if dates.key?(user.updated_at.to_date)
             dates[user.updated_at.to_date] += 1
