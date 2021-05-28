@@ -58,7 +58,7 @@ module Api
 
         dates = Hash.new
         # should marked as doubt be included too?
-        Submission.where(status:"done",user_id:context[:user].id).all.each do |user|
+        Submission.where(status:"done",user_id:context[:user].id).or(Submission.where(status:"doubt",user_id:context[:user].id)).all.each do |user|
           if dates.key?(user.updated_at.to_date)
             dates[user.updated_at.to_date] += 1
           else
@@ -68,8 +68,6 @@ module Api
         end
         return dates
       end
-
-
     end
   end
 end

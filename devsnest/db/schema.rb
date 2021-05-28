@@ -106,6 +106,7 @@ ActiveRecord::Schema.define(version: 2021_05_28_061553) do
     t.string "grad_status"
     t.string "grad_specialization"
     t.integer "grad_year"
+    t.string "google_id", default: "", null: false
     t.string "github_url"
     t.string "linkedin_url"
     t.string "resume_url"
