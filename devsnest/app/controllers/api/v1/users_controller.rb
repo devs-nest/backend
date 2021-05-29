@@ -72,32 +72,30 @@ module Api
         render json: { notice: 'You logged out successfully' }
       end
 
-      def login
-        type = params['type']
+      def connect_discord
+        code = params['code']
+        discord_id = User.fetch_discord_id(code)
+        user = merge_discord_user(discord_id, user)
 
-        if type == 'discord'
-          user = User.fetch_discord_user(code,context)
-          if user.present? && @current_user == nil
-            sign_in(user)
-            set_current_user
-            return render_success
-          elsif @current_user
-            return render_success
-          end
-        elsif type == 'google'
-          googleId = params['googleId']
-          if !googleId
-            return render_error({message: "googleId parameter not specified"})
-          end
-          user = User.fetch_google_user(code, googleId)
-          if user.present?
-            sign_in(user)
-            set_current_user
+          if user.discord_id != nil
             return render_success(user.as_json.merge({ "type": 'users'})) if @current_user.present?
+          else
+            return render_error({message: "failed to connect discord"})
           end
+      end
 
+      def login
+        code = params['code']
+        googleId = params['googleId']
+        if !googleId
+          return render_error({message: "googleId parameter not specified"})
         end
-        return render_error({message: "Error occurred while authenticating"})
+        user = User.fetch_google_user(code, googleId)
+        if user.present?
+          sign_in(user)
+          set_current_user
+          return render_success(user.as_json.merge({ "type": 'users'})) if @current_user.present?
+        end
       end
 
       def update_college
@@ -118,7 +116,7 @@ module Api
         token = params['data']['attributes']['bot_token']
         temp_user = User.find_by(bot_token: token)
         if temp_user.nil?
-          render_error
+          render_error({message: "Could not find user of provided token"})
         end
         user = @current_user
         user = User.update_discord_id(user,temp_user) if @current_user.present?

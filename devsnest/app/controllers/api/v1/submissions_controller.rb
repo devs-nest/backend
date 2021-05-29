@@ -11,7 +11,7 @@ module Api
           discord_id = params['data']['attributes']['discord_id']
           user = User.find_by(discord_id: discord_id)
 
-          return render :json => {'data': {'error': 'user_not_active_web' } } if user.nil? || !user.web_active
+          return render_error('user_not_active_web') if user.nil? || !user.web_active
         else
           user = @current_user
         end

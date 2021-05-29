@@ -38,6 +38,14 @@ class Submission < ApplicationRecord
     submission
   end
 
+  def self.merge_submission(temp_user,user)
+    temp_user_submission = Submission.where(discord_id: discord_id)
+    temp_user_submission.each do |element|
+      Submission.update(user_id: user.id, content_id: element.content_id, status:  element.status)
+    end
+    temp_user_submission.destroy_all
+  end
+
   def self.recalculate_all_scores
     User.update_all(score: 0)
     sub_stats = Submission.where(status: 0).group(:user_id).count

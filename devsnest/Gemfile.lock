@@ -178,7 +178,6 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.20.3, < 2.0)
     rake (13.0.1)
-    random-word (2.1.1)
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
@@ -284,7 +283,6 @@ DEPENDENCIES
   puma (~> 4.1)
   rack-cors (~> 1.1.1)
   rails (~> 6.0.3, >= 6.0.3.4)
-  random-word
   redis
   redis-namespace
   redis-rails

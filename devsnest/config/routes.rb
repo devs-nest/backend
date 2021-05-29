@@ -9,7 +9,7 @@ Rails.application.routes.draw do
         collection do
           get :report, :leaderboard, :me, :get_token
           put :left_discord, :update_bot_token_to_google_user
-          post :login
+          post :login, :connect_discord
           delete :logout
         end
       end

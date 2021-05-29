@@ -4,17 +4,19 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :jwt_authenticatable,
          jwt_revocation_strategy: JwtBlacklist
+  after_create :create_bot_token
 
-
-  def self.fetch_discord_user(code,context)
+  def self.fetch_discord_id(code)
     token = fetch_discord_access_token(code)
     return if token.nil?
 
     user_details = fetch_discord_user_details(token)
     return if user_details.nil?
 
-    user = create_discord_user(user_details,context)
-    return user
+    return user_details["id"]
+
+    # user = update_discord_user(user_details)
+    # return user
   end
 
   def self.fetch_google_user(code, googleId)
@@ -59,31 +61,13 @@ class User < ApplicationRecord
     )
   end
 
-  def self.create_discord_user(user_details,context)
-    email = user_details['email']
-    username = user_details['username']
-    user = User.where(discord_id: user_details['id']).first
-    if user.nil?
-      user = User.where(id: context[:user].id)
-    end
-    avatar = nil
-    if user_details['avatar'].present?
-      avatar = "https://cdn.discordapp.com/avatars/#{user_details['id']}/#{user_details['avatar']}.png"
-    end
-    if user.present?
-      user.update(web_active: true, image_url: avatar,discord_id: user_details['id'])
-      return user
-    end
+  def self.merge_discord_user(discord_id, user)
+    temp_user = User.where(discord_id: discord_id).first
+    user.update(discord_id: discord_id)
+    return true if temp_user.nil?
 
-    User.create(
-      name: user_details['username'],
-      username: username,
-      email: email,
-      discord_id: user_details['id'],
-      password: Devise.friendly_token[0, 20],
-      web_active: true,
-      image_url: avatar
-    )
+    Submission.merge_submission(temp_user,user)
+    temp_user.destroy
   end
 
   def self.fetch_discord_access_token(code)
@@ -111,13 +95,15 @@ class User < ApplicationRecord
     response = HTTParty.post(url, :body => {}, :headers => headers)
     response.code == 200 ? JSON(response.read_body) : nil
   end
-  
+
   def self.update_discord_id(user,temp_user)
     user.discord_id = temp_user.discord_id
-    user.bot_token = temp_user.bot_token
     user.save
-    user
-    temp_user_id = temp_user.id
-    temp_user = User.destroy(temp_user_id)
+    temp_user.destroy
+  end
+
+  def create_bot_token
+    self.bot_token = Digest::SHA1.hexdigest([Time.now, rand].join)
+    self.save
   end
 end

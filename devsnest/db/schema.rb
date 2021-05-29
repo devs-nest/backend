@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_27_180300) do
+ActiveRecord::Schema.define(version: 2021_05_24_150158) do
 
   create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "owner_id"
@@ -68,24 +68,6 @@ ActiveRecord::Schema.define(version: 2021_05_27_180300) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
-  create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "group_id"
-    t.integer "user_id"
-    t.integer "group_member_id"
-    t.boolean "attendance"
-    t.string "data"
-    t.boolean "saw_last_lecture"
-    t.string "till_which_tha_you_are_done"
-    t.string "what_cover_today"
-    t.string "reason_for_backlog"
-    t.integer "rate_yesterday_class"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["group_id"], name: "index_scrums_on_group_id"
-    t.index ["group_member_id"], name: "index_scrums_on_group_member_id"
-    t.index ["user_id"], name: "index_scrums_on_user_id"
-  end
-
   create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id"
     t.integer "content_id"
@@ -115,7 +97,6 @@ ActiveRecord::Schema.define(version: 2021_05_27_180300) do
     t.string "provider"
     t.boolean "discord_active", default: false
     t.boolean "web_active", default: false
-    t.integer "group_id"
     t.string "google_id", default: "", null: false
     t.string "bot_token", default: "", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
