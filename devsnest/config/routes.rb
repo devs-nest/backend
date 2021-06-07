@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       jsonapi_resources :users, only: %i[index show update create] do
         collection do
           get :report, :leaderboard, :me, :get_token
-          put :left_discord, :update_bot_token_to_google_user
+          put :left_discord
           post :login, :connect_discord
           delete :logout
         end

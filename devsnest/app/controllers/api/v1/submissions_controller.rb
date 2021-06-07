@@ -16,7 +16,6 @@ module Api
           user = @current_user
         end
 
-        user_id = user.id
         question_unique_id = params['data']['attributes']['question_unique_id']
         content = Content.find_by(unique_id: question_unique_id)
         choice = params['data']['attributes']['status']
