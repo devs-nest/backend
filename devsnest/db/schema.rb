@@ -114,6 +114,7 @@ ActiveRecord::Schema.define(version: 2021_06_05_145138) do
     t.integer "grad_start"
     t.integer "grad_end"
     t.string "bot_token"
+    t.string "google_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
