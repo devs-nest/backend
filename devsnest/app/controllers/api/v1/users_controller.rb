@@ -72,29 +72,24 @@ module Api
       end
 
       def connect_discord
+        unless params['code'].present? || params['data']['attributes']['bot_token'].present?
+          return render_error({ message: "Please Connect with Discord or enter bot-token" })
+        end
+
         if params['code'].present?
-          code = params['code']
-          discord_id = User.fetch_discord_id(code)
+          discord_id = User.fetch_discord_id(params['code'])
           return render_error({ message: 'Incorrect code from discord' }) if discord_id.nil?
 
-          tmp_user = User.find_by(discord_id: discord_id)
-          return render_error({ message: 'Discord User is already connected to another user' }) if tmp_user.present? && tmp_user.web_active?
-
-          user = User.merge_discord_user(discord_id, @current_user)
-          return render_error({ message: 'Failed to connect discord' }) if user.discord_id.nil?
-
-          render_success(user.as_json.merge({ "type": 'users' }))
+          temp_user = User.find_by(discord_id: discord_id)
         elsif params['data']['attributes']['bot_token'].present?
-          token = params['data']['attributes']['bot_token']
-          temp_user = User.find_by(bot_token: token)
-          return render_error({ message: 'Could not find user of provided token' }) if temp_user.nil?
-          return render_error({ message: 'Discord User is already connected to another user' }) if temp_user.web_active?
-
-          User.update_discord_id(@current_user, temp_user)
-          render_success(@current_user.as_json.merge({ "type": 'users' }))
-        else
-          render_error({ message: 'Please send either the token or discord code' })
+          temp_user = User.find_by(bot_token: params['data']['attributes']['bot_token'])
+          return render_error({ message: 'Could Not find User of Provided token' }) if temp_user.nil?
         end
+        message = 'Discord user is already connected to another user'
+        return render_error({ message: message }) if temp_user.web_active?
+
+        @current_user.merge_discord_user(temp_user.discord_id, temp_user)
+        render_success(@current_user.as_json.merge({ "type": 'users' }))
       end
 
       def login

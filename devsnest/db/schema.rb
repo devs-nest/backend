@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_05_145138) do
+ActiveRecord::Schema.define(version: 2021_06_15_051811) do
 
   create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "owner_id"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 2021_06_05_145138) do
     t.integer "grad_start"
     t.integer "grad_end"
     t.integer "user_type", default: 0
+    t.string "google_id"
     t.string "bot_token"
     t.string "google_id"
     t.index ["email"], name: "index_users_on_email", unique: true

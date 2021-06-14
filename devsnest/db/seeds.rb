@@ -42,15 +42,15 @@
 # User.create(name: 'manish', discord_id: 'abe', password: '123450', email: 'manish1250@gmail.com')
 # User.create(name: 'ajjr', discord_id: 'afd', password: '1234501', email: 'ajjr251@gmail.com')
 # User.create(name: 'test', discord_id: 'qwe', password: '1237801', email: 'test@gmail.com')
-#
+
 # User.create(name: 'neha', discord_id: 'bcde', password: '123450', email: 'neha1250@gmail.com')
 # User.create(name: 'ayushi', discord_id: 'sbcd', password: '1234501', email: 'ayushi51@gmail.com')
 # User.create(name: 'aditi', discord_id: 'qwer', password: '1237801', email: 'aditi@gmail.com')
-#
+
 # User.create(name: 'priya', discord_id: 'ccde', password: '123450', email: 'priya@gmail.com')
 # User.create(name: 'pawni', discord_id: 'fbcd', password: '1234501', email: 'pawni1251@gmail.com')
 # User.create(name: 'ayush', discord_id: 'bwer', password: '1237801', email: 'ayush@gmail.com')
-#
+
 # User.create(name: 'prachi', discord_id: 'dcde', password: '123450', email: 'prachi1250@gmail.com')
 # User.create(name: 'udit', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
 # User.create(name: 'vedansh', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
@@ -58,4 +58,3 @@
 # Group.create(owner_id: User.last.id, name: "first one")
 # GroupMember.create(user_id: User.first.id, group_id: Group.last.id)
 # GroupMember.create(user_id: User.second.id, group_id: Group.last.id)
- Submission.create(user_id: 30, content_id: 8, status:1)

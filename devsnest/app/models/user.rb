@@ -55,17 +55,14 @@ class User < ApplicationRecord
     )
   end
 
-  def self.merge_discord_user(discord_id, user)
-    temp_user = User.where(discord_id: discord_id).first
-    user.update(discord_id: discord_id)
-    user.save
+  def merge_discord_user(discord_id, temp_user)
+    self.update(discord_id: discord_id, discord_active: true)
     if temp_user.present?
       group_member = GroupMember.find_by(user_id: temp_user.id)
-      group_member.update(user_id: user.id) if group_member.present?
-      Submission.merge_submission(temp_user, user)
+      group_member.update(user_id: self.id) if group_member.present?
+      Submission.merge_submission(temp_user, self)
       temp_user.destroy
     end
-    user
   end
 
   def self.fetch_discord_access_token(code)
@@ -95,18 +92,11 @@ class User < ApplicationRecord
   end
 
   def fetch_group_ids
-    if user_type == 'user'
-      Group.where(batch_leader_id: id).pluck(:id) + GroupMember.where(user_id: id).pluck(:group_id)
-    elsif user_type == 'admin'
+    if self.user_type == 'user'
+      Group.where(batch_leader_id: self.id).pluck(:id) + GroupMember.where(user_id: self.id).pluck(:group_id)
+    elsif self.user_type == 'admin'
       Group.all.ids
     end
-  end
-
-  def self.update_discord_id(user, temp_user)
-    user.discord_id = temp_user.discord_id
-    Submission.merge_submission(temp_user, user)
-    user.save
-    temp_user.destroy
   end
 
   def create_bot_token
