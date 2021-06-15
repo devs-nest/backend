@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_15_051811) do
+ActiveRecord::Schema.define(version: 2021_06_04_064000) do
 
   create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "owner_id"
@@ -54,7 +54,6 @@ ActiveRecord::Schema.define(version: 2021_06_15_051811) do
     t.integer "student_mentor_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "co_owner"
   end
 
   create_table "groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -67,6 +66,7 @@ ActiveRecord::Schema.define(version: 2021_06_15_051811) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "co_owner_id"
     t.integer "batch_leader_id"
+    t.string "slug"
   end
 
   create_table "jwt_blacklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -117,8 +117,8 @@ ActiveRecord::Schema.define(version: 2021_06_15_051811) do
     t.integer "grad_start"
     t.integer "grad_end"
     t.integer "user_type", default: 0
-    t.string "bot_token"
     t.string "google_id"
+    t.string "bot_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
