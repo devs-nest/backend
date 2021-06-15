@@ -14,6 +14,7 @@ default: &default
   password: <%= ENV["MYSQL_PASSWORD"] %>
   encoding: utf8
 
+
 development:
   <<: *default
 
@@ -21,7 +22,10 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
+  adapter: mysql2
+  database: devsnest_test
+  username: <%= ENV["MYSQL_USERNAME"]  %>
+  encoding: utf8
 
 
 production:

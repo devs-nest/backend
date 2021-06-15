@@ -1,0 +1,17 @@
+language: ruby
+rvm:
+- 2.7.2
+
+service: 
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE devsnest_test'
+
+script:
+ - cd devsnest
+ - bundle install
+ - bundle exec rake db:create
+ - bundle exec rake db:migrate
+ - bundle exec rspec
+

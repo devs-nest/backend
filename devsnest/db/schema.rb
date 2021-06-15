@@ -119,7 +119,6 @@ ActiveRecord::Schema.define(version: 2021_06_15_051811) do
     t.integer "user_type", default: 0
     t.string "google_id"
     t.string "bot_token"
-    t.string "google_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
