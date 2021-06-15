@@ -84,9 +84,7 @@ module Api
         elsif params['data']['attributes']['bot_token'].present?
           temp_user = User.find_by(bot_token: params['data']['attributes']['bot_token'])
           return render_error({ message: 'Could Not find User of Provided token' }) if temp_user.nil?
-
         end
-
         message = 'Discord user is already connected to another user'
         return render_error({ message: message }) if temp_user.web_active?
 
