@@ -1,0 +1,4 @@
+class Scrum < ApplicationRecord
+
+    
+end
