@@ -6,7 +6,11 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtBlacklist
   after_create :create_bot_token
   enum user_type: [:user, :admin] 
-
+  after_create :create_username
+  def create_username
+    curr_name = self.email.split('@')[0]
+    update_attribute(:username, curr_name)
+  end
   def self.fetch_discord_id(code)
     token = fetch_discord_access_token(code)
     return if token.nil?

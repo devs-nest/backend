@@ -4,11 +4,12 @@ module Api
   module V1
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :simple_auth, only: %i[leaderboard report show]
+      before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token]
       before_action :user_auth, only: %i[logout me update connect_discord]
       before_action :update_college, only: %i[update]
       before_action :update_username, only: %i[update]
+      before_action :get_by_username, only: %i[show]
 
       def context
         { user: @current_user }
@@ -127,19 +128,33 @@ module Api
       end
 
       def update_username
+        byebug
+        # continue if !!params['data']['id'].match(/^\d{1,99}$/)
         id = params['data']['id']
-        unless User.find_by(id:id).name == params['data']['attributes']['name']
+        unless User.find_by(id: id).username == params['data']['attributes']['username']
           user = User.find_by(id: id)
-          if user.update_count >= 2 || params['data']['attributes']['name'].index( /[^[:alnum:]]/ ) != nil
-            params['data']['attributes']['name'] = user.name
+          return render_error({ message: 'username format missmatched' }) unless !!params['data']['attributes']['username'].match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,29}$/)
+
+          if user.update_count >= 10
+            params['data']['attributes']['username'] = user.username
           else
             user.update_count = user.update_count + 1
           end
           user.save
         end
-        
+      end
 
+      def get_by_username
+        unless !!params['id'].match(/^\d{1,99}$/)
+          # dodging teh params/id call
+          # return render_error({ message: 'No user data found' }) unless !!params['id'].match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,29}$/)
 
+          username = params[:id]
+          user = User.find_by(username: username)
+          return render_not_found unless user.present?
+
+          params[:id] = user.id
+        end
       end
     end
   end
