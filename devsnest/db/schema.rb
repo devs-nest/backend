@@ -54,8 +54,8 @@ ActiveRecord::Schema.define(version: 2021_06_20_062808) do
     t.integer "data_type"
     t.string "link"
     t.integer "priority"
-    t.string "extra_link1"
-    t.string "extra_link2"
+    t.string "youtube_link"
+    t.string "reference_link"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "score"

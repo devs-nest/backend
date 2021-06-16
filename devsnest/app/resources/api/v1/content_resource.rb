@@ -3,7 +3,7 @@
 module Api
   module V1
     class ContentResource < JSONAPI::Resource
-      attributes :unique_id, :parent_id, :name, :data_type, :link, :priority, :score, :difficulty, :question_type
+      attributes :unique_id, :parent_id, :name, :data_type, :link, :priority, :score, :difficulty, :question_type, :youtube_link, :reference_link
       attributes :status
 
       filter :parent_id
