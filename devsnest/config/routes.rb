@@ -7,7 +7,7 @@ Rails.application.routes.draw do
       devise_for :users, skip: [:registrations]
       jsonapi_resources :users, only: %i[index show update create] do
         collection do
-          get :report, :leaderboard, :me, :get_token
+          get :report, :leaderboard, :me, :get_token, :visit
           put :left_discord, :update_bot_token_to_google_user
           post :login, :connect_discord
           delete :logout

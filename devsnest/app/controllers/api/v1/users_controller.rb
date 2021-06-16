@@ -4,10 +4,11 @@ module Api
   module V1
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :simple_auth, only: %i[leaderboard report show]
+      before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token]
       before_action :user_auth, only: %i[logout me update connect_discord]
       before_action :update_college, only: %i[update]
+      before_action :update_username, only: %i[update]
 
       def context
         { user: @current_user }
@@ -15,6 +16,13 @@ module Api
 
       def me
         redirect_to api_v1_user_url(@current_user)
+      end
+
+      def visit
+        user = User.find_by(username: params[:id])
+        return render_not_found unless user.present?
+
+        redirect_to api_v1_user_url(user)
       end
 
       def get_token
@@ -72,9 +80,7 @@ module Api
       end
 
       def connect_discord
-        unless params['code'].present? || params['data']['attributes']['bot_token'].present?
-          return render_error({ message: "Please Connect with Discord or enter bot-token" })
-        end
+        return render_error({ message: 'Please Connect with Discord or enter bot-token' }) unless params['code'].present? || params['data']['attributes']['bot_token'].present?
 
         if params['code'].present?
           discord_id = User.fetch_discord_id(params['code'])
@@ -118,6 +124,21 @@ module Api
         params['data']['attributes']['college_id'] = College.find_by(name: college_name).id
 
         params['data']['attributes'].delete 'college_name'
+      end
+      
+      def update_username
+        # byebug
+        return render_error({ message: 'Unauthorized request' }) unless context[:user].id == params['data']['id'].to_i
+        return render_error({ message: 'username format missmatched' }) unless check_username(params['data']['attributes']['username'])
+        unless context[:user].username == params['data']['attributes']['username']
+
+          if context[:user].update_count >= 2
+            render_error({ message: 'Update count Exceeded for username' })
+          else
+            params['data']['attributes']['update_count'] = context[:user].update_count + 1
+          end
+
+        end
       end
     end
   end
