@@ -21,6 +21,7 @@ module Api
       end
 
       def deslug
+        # byebug
         slug_name = params[:id]
         group = Group.find_by(slug: slug_name)
         return render_not_found unless group.present?
