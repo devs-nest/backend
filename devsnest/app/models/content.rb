@@ -2,6 +2,7 @@
 
 # content class
 class Content < ApplicationRecord
+  serialize :video_questions, Array
   enum data_type: %i[question video article topic subtopic]
   enum difficulty: %i[easy medium hard]
   enum question_type: %i[class assignment]
