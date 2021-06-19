@@ -60,6 +60,6 @@ class ApplicationController < ActionController::API
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[email password password_confirmation name discord_id])
   end
   def check_username(username)
-    !!username.match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,29}$/)
+    !username.match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,29}$/).nil?
   end
 end

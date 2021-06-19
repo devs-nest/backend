@@ -6,13 +6,18 @@ Rails.application.routes.draw do
     namespace :v1 do
       devise_for :users, skip: [:registrations]
       jsonapi_resources :users, only: %i[index show update create] do
+        member do
+          get :get_by_username
+        end
         collection do
-          get :report, :leaderboard, :me, :get_token, :visit
+          get :report, :leaderboard, :me, :get_token
           put :left_discord, :update_bot_token_to_google_user
           post :login, :connect_discord
           delete :logout
         end
+      
       end
+      
       jsonapi_resources :contents, only: %i[index show]
       jsonapi_resources :submissions, only: %i[create]
       jsonapi_resources :groups, only: %i[show index] do
