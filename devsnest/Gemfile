@@ -62,3 +62,5 @@ gem 'mimemagic', github: 'mimemagicrb/mimemagic', ref: '01f92d86d15d85cfd0f20dab
 gem 'rubocop', '~> 1.16', require: false
 
 gem 'newrelic_rpm', '~> 7.1'
+
+gem "audited", "~> 4.9"
