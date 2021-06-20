@@ -55,6 +55,7 @@ Content.create(unique_id: 'Q12', parent_id: 'String', name: 'Palindromic Substri
 # User.create(name: 'udit', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
 # User.create(name: 'vedansh', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
 
-# Group.create(owner_id: User.last.id, name: "first one")
-# GroupMember.create(user_id: User.first.id, group_id: Group.last.id)
-# GroupMember.create(user_id: User.second.id, group_id: Group.last.id)
+Group.create(owner_id: User.last.id, name: "first one")
+Group.create(owner_id: 2, name: "sec one")
+GroupMember.create(user_id: User.first.id, group_id: Group.last.id)
+GroupMember.create(user_id: 2, group_id: Group.last.id)

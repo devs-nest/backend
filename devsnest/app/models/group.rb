@@ -2,6 +2,7 @@
 
 class Group < ApplicationRecord
   # belongs_to :batch
+  audited
   has_many :group_members
   after_create :parameterize
 
