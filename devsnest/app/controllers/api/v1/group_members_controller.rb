@@ -13,7 +13,6 @@ module Api
       end
 
       def check_authorization
-        byebug
         group = Group.find_by(id: params[:group_id])
         return render_not_found unless group.present?
 

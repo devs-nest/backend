@@ -58,4 +58,4 @@
 # Group.create(owner_id: User.last.id, name: "first one")
 # GroupMember.create(user_id: User.first.id, group_id: Group.last.id)
 # GroupMember.create(user_id: User.second.id, group_id: Group.last.id)
- Submission.create(user_id: 30, content_id: 8, status:1)
+#  Submission.create(user_id: 30, content_id: 8, status:1)
