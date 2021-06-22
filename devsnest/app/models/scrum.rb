@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Scrum < ApplicationRecord
+    validates :user_id, uniqueness: { scope: :date}
 
     def self.check_scrum_auth(user_id,group)
         user = User.find_by(id:user_id)

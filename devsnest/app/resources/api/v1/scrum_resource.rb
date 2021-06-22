@@ -4,7 +4,7 @@ module Api
   module V1
     class ScrumResource < JSONAPI::Resource
       attributes :user_id, :group_id, :attendance, :saw_last_lecture,
-                  :till_which_tha_you_are_done, :what_will_you_cover_today, :reason_for_backlog_if_any, :rate_yesterday_class
+                  :till_which_tha_you_are_done, :what_will_you_cover_today, :reason_for_backlog_if_any, :rate_yesterday_class, :date
 
       def self.creatable_fields(context)
         group = Group.find_by(id: context[:group_id])

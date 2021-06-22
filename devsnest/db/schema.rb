@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_16_064407) do
+ActiveRecord::Schema.define(version: 2021_06_22_121957) do
 
   create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "owner_id"
@@ -86,6 +86,8 @@ ActiveRecord::Schema.define(version: 2021_06_16_064407) do
     t.integer "rate_yesterday_class"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.date "date", default: "2021-06-22"
+    t.index ["user_id", "date"], name: "index_scrums_on_user_id_and_date", unique: true
   end
 
   create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
