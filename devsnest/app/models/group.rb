@@ -13,7 +13,6 @@ class Group < ApplicationRecord
     if self.group_members.where(user_id: user.id).present? || self.batch_leader_id == user.id || user.user_type == 'admin'  
       return true
     end
-
     false
   end
 end
