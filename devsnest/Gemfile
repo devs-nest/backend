@@ -63,4 +63,4 @@ gem 'rubocop', '~> 1.16', require: false
 
 gem 'newrelic_rpm', '~> 7.1'
 
-gem "audited", "~> 4.9"
+gem 'audited', '~> 4.9'
