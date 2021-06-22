@@ -2,3 +2,13 @@ plugins:
   rubocop:
     enabled: true
     channel: rubocop-1-10-0
+    checks:
+      Rubocop/Style/CaseLikeIf:
+        enabled: false
+
+      Rubocop/Style/StringConcatenation:
+        enabled: false
+
+exclude_patterns:
+  - "devsnest/spec/"
+  - "devsnest/db/schema.rb"
