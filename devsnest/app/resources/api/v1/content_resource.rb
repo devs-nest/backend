@@ -3,8 +3,8 @@
 module Api
   module V1
     class ContentResource < JSONAPI::Resource
-      attributes :unique_id, :parent_id, :name, :data_type, :link, :priority, :score, :difficulty, :question_type, :reference_link, :questions_list, :video_questions
-      attributes :status, :youtube_link
+      attributes :unique_id, :parent_id, :name, :data_type, :link, :priority, :score, :difficulty, :question_type, :reference_data
+      attributes :status , :questions_list, :video_questions 
 
       filter :parent_id
       filter :unique_id
@@ -16,9 +16,17 @@ module Api
       end
 
       def questions_list
-        Content.where(id: video_questions.map(&:to_i)).as_json
-      end
+        contents = Content.where(id: video_questions)
+        return [] if video_questions.nil?
+        questions = []
+        contents.each do |c|
+          sub = Submission.where(user_id: context[:user].id, content_id: c.id).first
 
+          questions.push c.as_json.merge(status: sub != nil ? sub.status: "notdone")
+        end
+        questions
+      end
+      
       def status
         return "notdone" if context[:user].nil?
 
