@@ -5,7 +5,7 @@ module Api
       before_action :user_auth
       before_action :authorize_get, only: %i[index]
       before_action :authorize_update, only: %i[update]
-      before_action :group_auth, only: %i[create]
+      before_action :group_auth, :update_date, only: %i[create]
 
       def context
         {
@@ -32,6 +32,10 @@ module Api
         unless group.group_members.where(user_id: user_id).present?
           render_error('message': 'User is not a Part of Group')
         end
+      end
+
+      def update_date
+        params['data']['attributes']['date'] = Date.current
       end
     end
   end
