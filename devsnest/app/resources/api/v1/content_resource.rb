@@ -22,7 +22,7 @@ module Api
         contents.each do |c|
           sub = Submission.where(user_id: context[:user].id, content_id: c.id).first
 
-          questions.push c.as_json.merge(status: sub != nil ? sub.status: "notdone")
+          questions.push c.as_json.merge(status: sub.present? ? sub.status: "notdone")
         end
         questions
       end
