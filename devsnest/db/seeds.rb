@@ -13,6 +13,7 @@
 # User.create(name: 'rohit', email:'manish125@gmail.com', password: '123459')
 
 # #Mmt.create(user_id: 1, mentor_id: 2)
+
 Content.create(unique_id: 'algo', parent_id: nil, name: 'Algorithims', data_type: 3, link: nil, priority: 0)
 Content.create(unique_id: 'arrays', parent_id: 'algo', name: 'Arrays', data_type: 4, link: nil, priority: 2)
 Content.create(unique_id: 'Q1', parent_id: 'arrays', name: 'Q1', data_type: 0, link: 'https://leetcode.com/problems/palindrome-number/', priority: 3)
