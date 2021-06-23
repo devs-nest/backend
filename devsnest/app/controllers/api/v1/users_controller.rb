@@ -129,7 +129,7 @@ module Api
 
       def update_username
         return render_unauthorized unless @current_user.id.to_s == params['data']['id']
-        return render_error({ message: 'Username format missmatched' }) unless check_username(params['data']['attributes']['username'])
+        return render_error unless check_username(params['data']['attributes']['username']) || User.find_by(username:params['data']['attributes']['username'])
 
         return true if params['data']['attributes']['username'].nil? || context[:user].username == params['data']['attributes']['username']
 

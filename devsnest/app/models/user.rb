@@ -9,7 +9,10 @@ class User < ApplicationRecord
   after_create :create_username
 
   def create_username
-    update_attribute(:username, email.split('@')[0])
+    username = ''
+    count = 1
+    username = (count += 1).to_s while User.find_by(username: email.split('@')[0] + username)
+    update_attribute(:username, email.split('@')[0] + username)
   end
 
   def self.fetch_discord_id(code)
@@ -107,6 +110,4 @@ class User < ApplicationRecord
   def create_bot_token
     update(bot_token: Digest::SHA1.hexdigest([Time.now, rand].join))
   end
-
-  
 end
