@@ -54,14 +54,15 @@ ActiveRecord::Schema.define(version: 2021_06_20_062808) do
     t.integer "data_type"
     t.string "link"
     t.integer "priority"
-    t.string "youtube_link"
-    t.string "reference_link"
+    t.string "extra_link1"
+    t.string "extra_link2"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "score"
     t.integer "difficulty"
     t.integer "question_type"
-    t.text "video_questions"
+    t.json "video_questions"
+    t.json "reference_data"
     t.index ["parent_id"], name: "index_contents_on_parent_id"
     t.index ["unique_id"], name: "index_contents_on_unique_id"
   end
