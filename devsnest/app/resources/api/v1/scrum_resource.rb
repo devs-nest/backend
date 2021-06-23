@@ -8,21 +8,21 @@ module Api
 
       def self.creatable_fields(context)
         group = Group.find_by(id: context[:group_id])
-        user_id = context[:user].id
-        unless Scrum.check_scrum_auth(user_id,group)
+        user = context[:user]
+        unless group.check_scrum_edit_auth(user)
           super - %i[attendance]
         else
-          super - %i[]
+          super
         end
       end
 
       def self.updatable_fields(context)
         group = Group.find_by(id: context[:group_id])
-        user_id = context[:user].id
-        if Scrum.check_scrum_auth(user_id,group)
-          super - %i[user_id group_id]
+        user = context[:user]
+        if group.check_scrum_edit_auth(user)
+          super - %i[user_id group_id date]
         else
-          super - %i[attendance user_id group_id]
+          super - %i[attendance user_id group_id date]
         end
       end
 

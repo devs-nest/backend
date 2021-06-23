@@ -10,9 +10,12 @@ class Group < ApplicationRecord
   end
 
   def check_auth(user)
-    if self.group_members.where(user_id: user.id).present? || self.batch_leader_id == user.id || user.user_type == 'admin'  
-      return true
-    end
+    return true if self.group_members.where(user_id: user.id).present? || self.batch_leader_id == user.id || user.user_type == 'admin'  
+    false
+  end
+
+  def check_scrum_edit_auth(user)
+    return true if user.id == self.owner_id || user.id == self.co_owner_id || user.id == self.batch_leader_id || user.user_type == 'admin'
     false
   end
 end
