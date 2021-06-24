@@ -14,7 +14,7 @@ class Group < ApplicationRecord
     false
   end
 
-  def check_scrum_edit_auth(user)
+  def admin_rights_auth(user)
     return true if user.id == self.owner_id || user.id == self.co_owner_id || user.id == self.batch_leader_id || user.user_type == 'admin'
     false
   end
