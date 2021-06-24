@@ -32,6 +32,7 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :college, only: %i[index]
+      jsonapi_resources :scrums, only: %i[create index update]
     end
   end
 end
