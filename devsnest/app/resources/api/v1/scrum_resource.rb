@@ -27,7 +27,8 @@ module Api
       end
 
       def self.records(options = {})
-        group_id = options[:context][:group_id] if options[:context][:user].user_type == 'admin'
+        group = Group.where(id:options[:context][:group_id]).first
+        group_id = options[:context][:group_id] if options[:context][:user].user_type == 'admin' || options[:context][:user].id == group.batch_leader_id
         group_id = GroupMember.find_by(user_id: options[:context][:user].id).group_id if options[:context][:user].user_type == 'user'
         
         super(options).where(group_id: group_id, created_at: Date.current.beginning_of_day..Date.current.end_of_day)
