@@ -15,9 +15,8 @@ Rails.application.routes.draw do
           post :login, :connect_discord
           delete :logout
         end
-      
       end
-      
+
       jsonapi_resources :contents, only: %i[index show]
       jsonapi_resources :submissions, only: %i[create]
       jsonapi_resources :groups, only: %i[show index] do
