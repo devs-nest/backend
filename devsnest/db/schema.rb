@@ -156,6 +156,8 @@ ActiveRecord::Schema.define(version: 2021_06_24_163547) do
     t.integer "grad_start"
     t.integer "grad_end"
     t.integer "user_type", default: 0
+    t.integer "update_count", default: 0
+    t.integer "login_count", default: 0
     t.string "bot_token"
     t.integer "update_count", default: 0
     t.integer "login_count", default: 0
