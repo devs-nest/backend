@@ -12,8 +12,7 @@ module Api
       def context
         {
           user:  @current_user,
-          group_id: params[:data][:attributes][:group_id],
-          scrum: Scrum.find_by(id: params[:data][:id])
+          params: params
         }
       end
 

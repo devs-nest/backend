@@ -7,7 +7,7 @@ module Api
                  :tha_progress, :topics_to_cover, :backlog_reasons, :class_rating, :creation_date
 
       def self.creatable_fields(context)
-        group = Group.find_by(id: context[:group_id])
+        group = Group.find_by(id: context[:params][:data][:attributes][:group_id])
         user = context[:user]
         if group.admin_rights_auth(user)
           super
@@ -17,9 +17,9 @@ module Api
       end
 
       def self.updatable_fields(context)
-        group = Group.find_by(id: context[:scrum].group_id)
-        user = context[:user]
-        if group.admin_rights_auth(user)
+        scrum = Scrum.find_by(id: context[:params][:id])
+        group = Group.find_by(id: scrum.group_id)
+        if group.admin_rights_auth(context[:user])
           super - %i[user_id group_id creation_date]
         else
           super - %i[attendance user_id group_id creation_date]
@@ -27,13 +27,18 @@ module Api
       end
 
       def self.records(options = {})
-        group = Group.where(id: options[:context][:scrum].group_id).first
-        group_id = 0
-        if GroupMember.find_by(user_id: options[:context][:user].id) || options[:context][:user].user_type == 'admin' || options[:context][:user].id == group.batch_leader_id
-          group_id = group.id
+        if options[:context][:params][:action] == 'create'
+          group = Group.find_by(id: options[:context][:params][:data][:attributes][:group_id])
+        elsif options[:context][:params][:action] == 'update'
+          scrum = Scrum.find_by(id: options[:context][:params][:id])
+          group = Group.find_by(id: scrum.group_id)
+        else
+          group = Group.find_by(id: options[:context][:params][:group_id])
         end
-
-        super(options).where(group_id: group_id, creation_date: Date.current)
+        user = options[:context][:user]
+        if (GroupMember.find_by(user_id: user.id).present? || user.user_type == 'admin' || user.id == group.batch_leader_id)
+          super(options).where(group_id: group.id, creation_date: Date.current)
+        end
       end
     end
   end
