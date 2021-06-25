@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   def create_username
     username = ''
-    count = 1
+    count = 0
     username = (count += 1).to_s while User.find_by(username: email.split('@')[0] + username)
     update_attribute(:username, email.split('@')[0] + username)
   end
@@ -53,7 +53,6 @@ class User < ApplicationRecord
       return user
     end
 
-    
     User.create(
       name: name,
       username: name,

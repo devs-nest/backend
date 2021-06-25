@@ -60,6 +60,6 @@ class ApplicationController < ActionController::API
   end
 
   def check_username(username)
-    !username.match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,29}$/).nil?
+    username.match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,29}$/).nil?
   end
 end

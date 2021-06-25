@@ -115,22 +115,20 @@ module Api
 
       def update_college
         college_name = params['data']['attributes']['college_name']
-
         unless college_name.present?
           params['data']['attributes'].delete 'college_name'
           return true
         end
-
         College.create_college(college_name) unless College.exists?(name: college_name)
         params['data']['attributes']['college_id'] = College.find_by(name: college_name).id
-
         params['data']['attributes'].delete 'college_name'
       end
 
       def update_username
         return render_unauthorized unless @current_user.id.to_s == params['data']['id']
-        return render_error unless check_username(params['data']['attributes']['username']) || User.find_by(username: params['data']['attributes']['username'])
+        return render_error if check_username(params['data']['attributes']['username'])
 
+        return render_error if User.find_by(username: params['data']['attributes']['username']).present?
         return true if params['data']['attributes']['username'].nil? || context[:user].username == params['data']['attributes']['username']
 
         if context[:user].update_count >= 2
