@@ -17,7 +17,7 @@ module Api
       end
 
       def self.updatable_fields(context)
-        group = Group.find_by(id: context[:group_id])
+        group = Group.find_by(id: context[:scrum].group_id)
         user = context[:user]
         if group.admin_rights_auth(user)
           super - %i[user_id group_id creation_date]
@@ -27,13 +27,10 @@ module Api
       end
 
       def self.records(options = {})
-        group = Group.where(id: options[:context][:group_id]).first
+        group = Group.where(id: options[:context][:scrum].group_id).first
         group_id = 0
-        if options[:context][:user].user_type == 'admin' || options[:context][:user].id == group.batch_leader_id
-          group_id = options[:context][:group_id]
-        else
-          member = GroupMember.find_by(user_id: options[:context][:user].id)
-          group_id = member.group_id unless member.nil?
+        if GroupMember.find_by(user_id: options[:context][:user].id) || options[:context][:user].user_type == 'admin' || options[:context][:user].id == group.batch_leader_id
+          group_id = group.id
         end
 
         super(options).where(group_id: group_id, creation_date: Date.current)
