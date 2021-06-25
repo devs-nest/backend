@@ -24,7 +24,7 @@ module Api
       def authorize_update
         scrum = Scrum.find_by(id: params[:data][:id])
         group = Group.find_by(id: scrum.group_id)
-        return true if @current_user.id == scrum.user_id || group.admin_rights_auth(@current_user)
+        return true if (@current_user.id == scrum.user_id || group.admin_rights_auth(@current_user)) && scrum.creation_date == Date.current
 
         render_error('message': 'You Cannot Update this Scrum.')
       end
@@ -32,7 +32,7 @@ module Api
       def authorize_create
         user_id = params[:data][:attributes][:user_id]
         group = Group.find_by(id: params[:data][:attributes][:group_id])
-        return true if @current_user.id == user_id || group.admin_rights_auth(@current_user)
+        return true if (@current_user.id == user_id && group.group_members.where(user_id: user_id).present?) || group.admin_rights_auth(@current_user)
 
         render_error('message': 'Permission Denied')
       end

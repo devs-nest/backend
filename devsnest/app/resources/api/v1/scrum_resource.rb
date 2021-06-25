@@ -27,17 +27,10 @@ module Api
       end
 
       def self.records(options = {})
-        if options[:context][:params][:action] == 'create'
-          group = Group.find_by(id: options[:context][:params][:data][:attributes][:group_id])
-        elsif options[:context][:params][:action] == 'update'
-          scrum = Scrum.find_by(id: options[:context][:params][:id])
-          group = Group.find_by(id: scrum.group_id)
+        if options[:context][:params][:action] == 'index'
+          super(options).where(group_id: options[:context][:params][:group_id], creation_date: Date.current)
         else
-          group = Group.find_by(id: options[:context][:params][:group_id])
-        end
-        user = options[:context][:user]
-        if (GroupMember.find_by(user_id: user.id).present? || user.user_type == 'admin' || user.id == group.batch_leader_id)
-          super(options).where(group_id: group.id, creation_date: Date.current)
+          super(options)
         end
       end
     end
