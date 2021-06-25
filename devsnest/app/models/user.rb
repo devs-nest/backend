@@ -53,6 +53,7 @@ class User < ApplicationRecord
       return user
     end
 
+    
     User.create(
       name: name,
       username: name,
