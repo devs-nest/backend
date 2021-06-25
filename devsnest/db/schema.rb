@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_20_062808) do
+ActiveRecord::Schema.define(version: 2021_06_25_081542) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -141,6 +141,8 @@ ActiveRecord::Schema.define(version: 2021_06_20_062808) do
     t.integer "user_type", default: 0
     t.string "bot_token"
     t.string "google_id"
+    t.integer "login_count", default: 0
+    t.integer "update_count", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

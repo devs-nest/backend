@@ -6,6 +6,15 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtBlacklist
   after_create :create_bot_token
   enum user_type: %i[user admin]
+  after_create :create_username
+  validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }
+
+  def create_username
+    username = ''
+    count = 1
+    username = (count += 1).to_s while User.find_by(username: email.split('@')[0] + username)
+    update_attribute(:username, email.split('@')[0] + username)
+  end
 
   def self.fetch_discord_id(code)
     token = fetch_discord_access_token(code)
@@ -48,6 +57,7 @@ class User < ApplicationRecord
       name: name,
       username: name,
       email: email,
+      dob:Date.today,
       password: Devise.friendly_token[0, 20],
       web_active: true,
       image_url: avatar,
@@ -56,10 +66,10 @@ class User < ApplicationRecord
   end
 
   def merge_discord_user(discord_id, temp_user)
-    self.update(discord_id: discord_id, discord_active: true)
+    update(discord_id: discord_id, discord_active: true)
     if temp_user.present?
       group_member = GroupMember.find_by(user_id: temp_user.id)
-      group_member.update(user_id: self.id) if group_member.present?
+      group_member.update(user_id: id) if group_member.present?
       Submission.merge_submission(temp_user, self)
       temp_user.destroy
     end
@@ -92,9 +102,9 @@ class User < ApplicationRecord
   end
 
   def fetch_group_ids
-    if self.user_type == 'user'
-      Group.where(batch_leader_id: self.id).pluck(:id) + GroupMember.where(user_id: self.id).pluck(:group_id)
-    elsif self.user_type == 'admin'
+    if user_type == 'user'
+      Group.where(batch_leader_id: id).pluck(:id) + GroupMember.where(user_id: id).pluck(:group_id)
+    elsif user_type == 'admin'
       Group.all.ids
     end
   end

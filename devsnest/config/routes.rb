@@ -6,6 +6,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       devise_for :users, skip: [:registrations]
       jsonapi_resources :users, only: %i[index show update create] do
+        member do
+          get :get_by_username
+        end
         collection do
           get :report, :leaderboard, :me, :get_token
           put :left_discord, :update_bot_token_to_google_user

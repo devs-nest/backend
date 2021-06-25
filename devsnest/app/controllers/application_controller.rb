@@ -4,6 +4,11 @@ class ApplicationController < ActionController::API
   include ApiRenderConcern
   before_action :set_current_user
   before_action :validate_bot_user
+
+  def check_username(username)
+    !username.match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,29}$/).nil?
+  end
+
   def render_resource(resource)
     if resource.errors.empty?
       render json: resource
@@ -50,10 +55,9 @@ class ApplicationController < ActionController::API
 
   def set_current_user
     @current_user = nil
-    if current_api_v1_user.present?
-      @current_user = current_api_v1_user
-    end
+    @current_user = current_api_v1_user if current_api_v1_user.present?
   end
+
   protected
 
   def configure_permitted_parameters
