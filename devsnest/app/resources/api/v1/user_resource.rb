@@ -9,8 +9,6 @@ module Api
       attributes :college_name
       attributes :solved, :total_by_difficulty
       attributes :activity
-      
-      
 
       def fetchable_fields
         if context[:user].nil? || context[:user].id == @model.id

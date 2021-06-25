@@ -57,7 +57,7 @@ class User < ApplicationRecord
       name: name,
       username: name,
       email: email,
-      dob:Date.today,
+      dob: Date.today,
       password: Devise.friendly_token[0, 20],
       web_active: true,
       image_url: avatar,
