@@ -10,7 +10,8 @@ RSpec.describe Api::V1::UsersController, type: :controller do
         data: {
           type: 'users',
           attributes: {
-            discord_id: discord_id
+            discord_id: discord_id,
+            email:"test78@gmail.com"
                       }
               }
       }
