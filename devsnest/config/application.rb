@@ -26,6 +26,8 @@ module Devsnest
     config.load_defaults 6.0
     Dotenv.load
 
+    config.time_zone = 'Asia/Kolkata'
+    config.active_record.default_timezone = :local
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

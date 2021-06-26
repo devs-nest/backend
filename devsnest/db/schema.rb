@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_20_062808) do
+ActiveRecord::Schema.define(version: 2021_06_24_163547) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -99,6 +99,21 @@ ActiveRecord::Schema.define(version: 2021_06_20_062808) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
+  create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "group_id"
+    t.boolean "attendance"
+    t.boolean "saw_last_lecture"
+    t.string "tha_progress"
+    t.string "topics_to_cover"
+    t.string "backlog_reasons"
+    t.integer "class_rating"
+    t.date "creation_date"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "creation_date"], name: "index_scrums_on_user_id_and_creation_date", unique: true
+  end
+
   create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "content_id"
@@ -141,10 +156,12 @@ ActiveRecord::Schema.define(version: 2021_06_20_062808) do
     t.integer "grad_start"
     t.integer "grad_end"
     t.integer "user_type", default: 0
-    t.string "google_id"
+    t.integer "update_count", default: 0
+    t.integer "login_count", default: 0
     t.string "bot_token"
     t.integer "update_count", default: 0
     t.integer "login_count", default: 0
+    t.string "google_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
