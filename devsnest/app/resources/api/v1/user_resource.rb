@@ -3,7 +3,7 @@
 module Api
   module V1
     class UserResource < JSONAPI::Resource
-      attributes :email, :name, :password, :discord_id, :web_active, :username, :score, :discord_active, :batch, :grad_status, :grad_specialization, :grad_year, :grad_start, :grad_end,
+      attributes :email, :name, :password, :web_active, :username, :score, :discord_active, :batch, :grad_status, :grad_specialization, :grad_year, :grad_start, :grad_end,
                  :github_url, :linkedin_url, :resume_url, :dob, :registration_num, :college_id, :image_url, :google_id, :bot_token, :update_count, :login_count
       attributes :group_id, :group_name
       attributes :college_name
@@ -37,31 +37,21 @@ module Api
       end
 
       def college_name
-        user = context[:user]
-        return nil if user.nil?
+        return nil if @model.college.nil?
 
-        user.reload
-        return nil if user.college_id.nil?
-
-        College.find_by(id: user.college_id).name
+        @model.college.name
       end
 
       def solved
-        return nil if context[:user].nil?
-
-        Submission.count_solved(context[:user].id)
+        Submission.count_solved(@model.id)
       end
 
       def total_by_difficulty
-        return nil if context[:user].nil?
-
         Content.split_by_difficulty
       end
 
       def activity
-        return nil if context[:user].nil?
-
-        Submission.user_activity(context[:user])
+        Submission.user_activity(@model)
       end
     end
   end

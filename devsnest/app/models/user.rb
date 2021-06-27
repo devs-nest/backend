@@ -8,6 +8,7 @@ class User < ApplicationRecord
   enum user_type: %i[user admin]
   after_create :create_username
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
+  belongs_to :college, optional: true
 
   def create_username
     username = ''
