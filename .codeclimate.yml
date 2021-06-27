@@ -12,3 +12,4 @@ plugins:
 exclude_patterns:
   - "devsnest/spec/"
   - "devsnest/db/schema.rb"
+  - "devsnest/lib/tasks/youtube.rake"

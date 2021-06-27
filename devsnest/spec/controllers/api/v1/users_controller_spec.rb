@@ -26,15 +26,15 @@ RSpec.describe Api::V1::UsersController, type: :controller do
         end
     end
 
-    context 'Check with Random discord_id' do
-      let(:discord_id) { 2961438715638 }
-        it 'POST with non-existence discord_id' do
-          request.headers.merge!(HEADERS)
-          post :create, params: parameters
-          expect(response).to be_successful
-          # rederecting to json_api | 201 created
-          expect(response).to have_http_status(201)
-        end
-    end
+    # context 'Check with Random discord_id' do
+    #   let(:discord_id) { 2961438715638 }
+    #     it 'POST with non-existence discord_id' do
+    #       request.headers.merge!(HEADERS)
+    #       post :create, params: parameters
+    #       expect(response).to be_successful
+    #       # rederecting to json_api | 201 created
+    #       expect(response).to have_http_status(201)
+    #     end
+    # end
   end
 end

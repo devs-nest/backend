@@ -1,0 +1,36 @@
+Unique Id,Parent,Yname,Ylink,Qid,class,class-diff,assignment,assign-diff,REF
+YT1,arrays,"DSA | Day 1 | Arrays | Two Sum , Best Time to Buy and Sell Stock",https://www.youtube.com/watch?v=OSQk34Rtgx0,104/106/105/107,,,,,
+YT2,arrays,DSA | Day 2 | Time Complexities,https://www.youtube.com/watch?v=XGyR_BKBSmg,,,,,,"[{""link"":""https://pastebin.com/3Ps99JeT"",""type"":""code"",""title"":""Time Complexity""}]"
+YT3,arrays,"DSA | Day 3 | Arrays | valid parenthesis , Max subarray",https://www.youtube.com/watch?v=D6tOCMtUGRY,108/110/109/111,,,,,
+YT4,interval-array,"DSA | Day 4 | Interval Arrays | Container With Most Water , Merge Intervals",https://www.youtube.com/watch?v=cEziCzm7mo4,113/115/117/116,,,,,
+YT5,matrix-array,"DSA | Day 5 | Matrices | Set Matrix Zeroes , Rotate Image",https://www.youtube.com/watch?v=7rQQzfavigE,119/121/120/122,,,,,
+YT6,stacks,DSA | Day 6 | Stacks & Queues | Introductory Questions,https://www.youtube.com/watch?v=_MJSOidSSXU,124/125,https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/,Easy,,,
+YT7,binary-search,DSA | Day 7 | Binary Search| Median of sorted arrays of different sizes,https://www.youtube.com/watch?v=9GXT1gc953c,127/122,,,,,"[{""link"":""https://pastebin.com/4MvmZnuv"",""type"":""code"",""title"":""Median of 2 Sorted Arrays""}]"
+YT8,string,DSA | Day 8 | Strings | Longest Substring Without Repeating Characters,https://www.youtube.com/watch?v=J2vZe59Wl3M,130/131/133,,,,,
+YT9,string,"DSA | Day 9 | Strings | Valid Anagram, Valid Palindrome",https://www.youtube.com/watch?v=GNSJ_nPRqWY,169/137/135,,,,,
+YT10,string,DSA | Day 10 | Strings & Recursions | Subsets,https://www.youtube.com/watch?v=v4R0F-IQzT0,140/141,,,,,
+YT11,bitmap,"DSA | Day 11 | Bitwise Operations | Missing Number , Sum of Two Integers",https://www.youtube.com/watch?v=Lkv_cqxyjcc,143/145/144/146,,,,,
+YT12,string,"DSA | Day 12 | Strings , Math| Minimum Window Substring, Pow X N, Integer To English Words",https://www.youtube.com/watch?v=U2-Kz6Ilx3E,132/148/150/149,,,,,
+YT13,"linked-list",DSA | Day 13 | Linked Lists | Intro and Basic Operations,https://www.youtube.com/watch?v=f5cN4Blv6kA,152/153,,,,,
+YT14,"linked-list","DSA | Day 14 | Linked Lists | reorder list , add two numbers ii",https://www.youtube.com/watch?v=x2zog9S1dSM,155/157/154/156,,,,,
+YT15,tree,"DSA | Day 15 | Trees | Intro , Traversals, Diameter of a Binary Tree",https://www.youtube.com/watch?v=R8cSg_2Q3Ko,159/160,https://leetcode.com/problems/diameter-of-binary-tree/,Easy,,,
+,,,,,https://leetcode.com/problems/maximum-width-of-binary-tree/,Medium,,,
+YT16,tree,"DSA | Day 16 | Trees | Max Depth, Min Depth, Inorder Sequence, Merge 2 Binary Trees",https://www.youtube.com/watch?v=-a8a1wiJD_0,161/162/164,https://leetcode.com/problems/minimum-depth-of-binary-tree/,Easy,,,"[{""link"":""https://leetcode.com/problems/merge-two-binary-trees/"",""type"":""code"",""title"":""Merge Two Binary Trees""}]"
+YT17,tree,"DSA | Day 17 | Trees | level order traversal, serialize deserialize binary tree",https://www.youtube.com/watch?v=_rvVw0WrOWA,165/167/166/168,,,,,
+YT18,"binary-search","DSA | Day 18 | Binary Search Trees | Intro, Valid BST, Searching, Array to BST, Two Sum for BST",https://www.youtube.com/watch?v=vFwqnIKM4po,169/173,https://leetcode.com/problems/search-in-a-binary-search-tree/,Easy,,,"[{""link"":""https://leetcode.com/problems/range-sum-of-bst/"",""type"":""code"",""title"":""Range Sum Of Bst""},{""link"":""https://leetcode.com/problems/delete-node-in-a-bst/"",""type"":""code"",""title"":""Delete Node In A Bst""}]"
+,,,,,https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/,Easy,,,
+YT19,"binary-search","DSA | Day 19 | Binary Search Trees | Greater Sum BST, Inorder Successor
+",https://www.youtube.com/watch?v=kp1qG3OhqlE,172/174,https://leetcode.com/problems/binary-search-tree-to-greater-sum-tree/,Medium,,,
+YT20,heap,"DSA | Day 20 | Heaps | Introduction, insertion, creation, heapsort",https://www.youtube.com/watch?v=UBX-jeZftyY,176,,,,,"[{""link"":""https://pastebin.com/Zrgu2xzi"",""type"":""code"",""title"":""Heap Time Complexity""}]"
+YT21,heap,"DSA | Day 21 | Heaps | Merge k Sorted Lists, Top K Frequent Elements",https://www.youtube.com/watch?v=NGiWLL50R38,177/179/178,,,,,"[{""link"":""https://pastebin.com/Zrgu2xzi"",""type"":""code"",""title"":""Heap Time Complexity""}]"
+YT22,graph,"DSA | Day 22 | Graphs | Intro, DFS, BFS, Cycle Detection",https://www.youtube.com/watch?v=jCwq6Q4pVuQ,181/182,,,,,"[{""link"":""https://pastebin.com/fMWA048b"",""type"":""code"",""title"":""Cycle Detection""}]"
+YT23,graph,DSA | Day 23 | Graphs | Dijkstra Algorithm,https://www.youtube.com/watch?v=YsMwEwLAeiQ,193,,,,,"[{""link"":""https://pastebin.com/Y4hNjTAn"",""type"":""code"",""title"":""Dijkstra's Algorithm""}]"
+,,,,,,,https://leetcode.com/problems/path-with-minimum-effort/,Medium,
+YT24,graph,DSA | Day 24 | Graphs | Bellman Ford Algorithm,https://www.youtube.com/watch?v=oNhnZ9epnlM,,,,,,"[{""link"":""https://pastebin.com/ZyawxJXT"",""type"":""article"",""title"":""Bellman Ford Algorithm""}]"
+YT25,graph,"DSA | Day 25 | Graphs | Town Judge , Center of Star Graph , All paths , Pacific Atlantic Flow",https://www.youtube.com/watch?v=4Nw9Yw5kpMQ,185/186/188,https://leetcode.com/problems/find-the-town-judge/,Easy,,,"[{""link"":""https://leetcode.com/problems/all-paths-from-source-to-target/"",""type"":""code"",""title"":""All Paths From Source To Target""},{""link"":""https://leetcode.com/problems/find-center-of-star-graph/"",""type"":""code"",""title"":""Find Center Of Star Graph""},{""link"":""https://leetcode.com/problems/minimum-number-of-vertices-to-reach-all-nodes/"",""type"":""code"",""title"":"" Minimum Number Of Vertices To Reach All Nodes""}]"
+YT26,graph,DSA | Day 26 | Graphs | Union Find & Topological Sort Concepts and Questions,https://www.youtube.com/watch?v=u3tEt3TERZY,183/181,https://leetcode.com/problems/course-schedule-ii/,Medium,,,"[{""link"":""https://leetcode.com/problems/surrounded-regions/"",""type"":""code"",""title"":""Surrounded Regions""},{""link"":""https://leetcode.com/problems/longest-increasing-path-in-a-matrix/"",""type"":""code"",""title"":""Longest Increasing Path In A Matrix""}]"
+,,,,,https://leetcode.com/problems/number-of-provinces/,Medium,,,
+YT27,graph,DSA | Day 27 | Graphs | Minimum Spanning Tree : Prims & Kruskal's Algorithm,https://www.youtube.com/watch?v=5eB48wwodu4,,,,,,
+YT28,string,DSA | Day 28 | STRING PATTERN SEARCHING | Rabin Karp Algorithm,https://www.youtube.com/watch?v=lgW7r8SA9Fw,,,,,,
+YT29,string,DSA | Day 29 | STRING PATTERN SEARCHING | Knuth Morris Pratt ( KMP ) Algorithm,https://www.youtube.com/watch?v=9TGnxtS4acA,195,,,https://leetcode.com/problems/longest-happy-prefix/,Hard,"[{""link"":""https://pastebin.com/VAWwHqVL"",""type"":""code"",""title"":""KMP Algorithm""}]"
+YT30,backtracking,DSA | Day 30 | BackTracking | N Queens Problem,https://www.youtube.com/watch?v=0zrLD2_eFhA,200/201,,,,,

@@ -126,10 +126,11 @@ module Api
 
       def update_username
         return render_unauthorized unless @current_user.id.to_s == params['data']['id']
-        return render_error if check_username(params['data']['attributes']['username'])
-
-        return render_error if User.find_by(username: params['data']['attributes']['username']).present?
         return true if params['data']['attributes']['username'].nil? || context[:user].username == params['data']['attributes']['username']
+
+        return render_error({ message: 'Username pattern mismatched' })  if check_username(params['data']['attributes']['username'])
+
+        return render_error({ message: 'User already exists' }) if User.find_by(username: params['data']['attributes']['username']).present?
 
         if context[:user].update_count >= 2
           render_error({ message: 'Update count Exceeded for username' })
