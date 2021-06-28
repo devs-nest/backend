@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :college, only: %i[index]
       jsonapi_resources :scrums, only: %i[create index update]
+      jsonapi_resources :batch_leader_sheet, only: %i[create index update]
     end
   end
 end

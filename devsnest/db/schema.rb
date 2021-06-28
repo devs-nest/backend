@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_24_163547) do
+ActiveRecord::Schema.define(version: 2021_06_28_101446) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -32,6 +32,26 @@ ActiveRecord::Schema.define(version: 2021_06_24_163547) do
     t.index ["created_at"], name: "index_audits_on_created_at"
     t.index ["request_uuid"], name: "index_audits_on_request_uuid"
     t.index ["user_id", "user_type"], name: "user_index"
+  end
+
+  create_table "batch_leader_sheets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "group_id"
+    t.integer "tha_by_owner"
+    t.integer "tha_by_co_owner"
+    t.boolean "scrum_sheet_filled"
+    t.boolean "meet_with_industry_mentor"
+    t.boolean "owner_active"
+    t.boolean "co_owner_active"
+    t.string "remarks"
+    t.string "topics_to_cover"
+    t.integer "rating"
+    t.date "creation_date"
+    t.text "active_members"
+    t.text "par_active_members"
+    t.text "inactive_members"
+    t.text "extra_activity"
+    t.text "doubt_session_taker"
   end
 
   create_table "batches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -159,8 +179,6 @@ ActiveRecord::Schema.define(version: 2021_06_24_163547) do
     t.integer "update_count", default: 0
     t.integer "login_count", default: 0
     t.string "bot_token"
-    t.integer "update_count", default: 0
-    t.integer "login_count", default: 0
     t.string "google_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
