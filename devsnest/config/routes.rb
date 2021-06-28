@@ -38,6 +38,7 @@ Rails.application.routes.draw do
           get :streak
         end
       end
+      jsonapi_resources :batch_leader_sheet, only: %i[create index update]
     end
   end
 end
