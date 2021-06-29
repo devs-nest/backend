@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :onboard do
+    
+  end
+
   factory :content do
     sequence(:name) { |n| "Test Q #{n}" }
     sequence(:link) { |n| "Test link #{n}" }
