@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 class BatchLeaderSheet < ApplicationRecord
+  validates :group_id, uniqueness: { scope: :creation_week }
+
   serialize :doubt_session_taker, Array
   serialize :active_members, Array
   serialize :par_active_members, Array
   serialize :inactive_members, Array
-  serialize :extra_activity, Array
+
+  before_create do
+    self.creation_week = Date.current.at_beginning_of_week
+  end
 end
