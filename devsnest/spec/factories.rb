@@ -33,4 +33,15 @@ FactoryBot.define do
     sequence(:web_active) { |_n| true }
     sequence(:image_url) { |n| "test.com/#{n}.png" }
   end
+
+  factory :batch_leader_sheet do
+    sequence(:user_id) { |n| n }
+    sequence(:group_id) { |n| n }
+  end
+
+  factory :group do
+    sequence(:name) { |n| "#{n} group" }
+    sequence(:batch_leader_id) { |n| n }
+    sequence(:owner_id) { |n| n }
+  end
 end
