@@ -2,7 +2,15 @@
 
 FactoryBot.define do
   factory :onboard do
-    
+    sequence(:discord_username) { |n| "User#{n}" }
+    sequence(:discord_id) { |n| n }
+    sequence(:name) { |n| "Name#{n}" }
+    sequence(:college) { |n| "College#{n}" }
+    sequence(:college_year) { |n| 2000 + n }
+    sequence(:work_exp) { [0, 1, 2, 3].sample }
+    sequence(:dsa_skill) { [0, 1, 2, 3, 4, 5].sample }
+    sequence(:webd_skill) { [0, 1, 2, 3, 4, 5].sample }
+    sequence(:user_id) { |n| n }
   end
 
   factory :content do
@@ -11,6 +19,7 @@ FactoryBot.define do
     sequence(:data_type) { [0, 1, 2, 3, 4].sample }
     sequence(:difficulty) { [0, 1, 2].sample }
   end
+
   factory :weekly_todo do
     sequence(:group_id) { |n| n }
     sequence(:creation_week) { Date.today.at_beginning_of_week }
@@ -41,5 +50,9 @@ FactoryBot.define do
   factory :batch_leader_sheet do
     sequence(:user_id) { |n| n }
     sequence(:group_id) { |n| n }
+  end
+
+  factory :college do
+    sequence(:name) { |n| "#{n}'th college"}
   end
 end

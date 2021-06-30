@@ -62,4 +62,10 @@ class ApplicationController < ActionController::API
   def check_username(username)
     username.match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,29}$/).nil?
   end
+
+  def admin_auth
+    return true if @current_user.user_type == 'admin'
+
+    render_unauthorized
+  end
 end
