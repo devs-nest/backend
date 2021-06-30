@@ -79,4 +79,3 @@ User.create(name: 'vedansh', discord_id: 'ywer', password: '1237801', email: 've
 # Group.create(owner_id: User.last.id, name: 'first one')
 # Group.create(owner_id: 2, name: 'sec one')
 # GroupMember.create(user_id: User.first.id, group_id: Group.last.id)
-# GroupMember.create(user_id: 2, group_id: Group.last.id)
