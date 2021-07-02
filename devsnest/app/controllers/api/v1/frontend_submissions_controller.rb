@@ -5,17 +5,20 @@ module Api
     # frontend submission controller
     class FrontendSubmissionsController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :simple_auth, only: [:create]
+      before_action :check_submission, only: %i[create]
 
-      def create
-        user = @current_user
-        question_unique_id = params['data']['attributes']['question_unique_id']
-        content = Content.find_by(unique_id: question_unique_id)
+      def check_submission
+        content = Content.find_by(unique_id: params[:data][:attributes][:question_unique_id])
+        return render_error('Content not found') unless content.present?
 
-        return render_error('User or Content not found') if user.nil? || content.nil?
- 
-        submission = FrontendSubmission.create_submission(user.id, content.id, params['data']['attributes']['submission_link'])
-        render_success(submission.as_json.merge("type": 'submissions'))
+        submission = FrontendSubmission.find_by(user_id: @current_user.id, content_id: content.id)
+        if submission.present?
+          submission.update(submission_link: params[:data][:attributes][:submission_link])
+          render_success(submission.as_json.merge('type': 'frontend_submissions'))
+        end
+        params[:data][:attributes][:content_id] = content.id
+        params[:data][:attributes][:user_id] = @current_user.id
+        params[:data][:attributes].delete 'question_unique_id'
       end
     end
   end

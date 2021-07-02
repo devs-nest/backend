@@ -26,7 +26,6 @@ test:
   database: devsnest_test
   username: <%= ENV["MYSQL_USERNAME"]  %>
   encoding: utf8
-  password: <%= ENV["MYSQL_PASSWORD"] %>
 
 
 production:
