@@ -13,7 +13,7 @@ module Api
       filter :question_type
       filter :difficulty
       def self.default_sort
-        [{ field: 'priority', direction: :asc }]
+        [{ field: "priority", direction: :asc }]
       end
 
       def questions_list
@@ -22,19 +22,22 @@ module Api
 
         questions = []
         contents.each do |c|
+          links = FrontendSubmission.where(user_id: context[:user].id, content_id: c.id).first
           sub = Submission.where(user_id: context[:user].id, content_id: c.id).first
 
-          questions.push c.as_json.merge(status: sub.present? ? sub.status : 'notdone')
+          questions.push c.as_json.merge(status: sub.present? ? sub.status : "notdone", submission_link: links.present? ? links.submission_link : "null")
         end
         questions
       end
 
       def status
-        return 'notdone' if context[:user].nil?
+        return "notdone" if context[:user].nil?
 
         user_id = context[:user].id
         submission = Submission.where(user_id: user_id, content_id: @model.id).first
         return submission.status if submission.present?
+
+        return 'notdone'
       end
 
       def submission_link
