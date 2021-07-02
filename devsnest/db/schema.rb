@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_24_163547) do
+ActiveRecord::Schema.define(version: 2021_07_01_035706) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -65,6 +65,15 @@ ActiveRecord::Schema.define(version: 2021_06_24_163547) do
     t.json "reference_data"
     t.index ["parent_id"], name: "index_contents_on_parent_id"
     t.index ["unique_id"], name: "index_contents_on_unique_id"
+  end
+
+  create_table "frontend_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "content_id"
+    t.integer "submission_link"
+    t.integer "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "group_members", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -159,8 +168,6 @@ ActiveRecord::Schema.define(version: 2021_06_24_163547) do
     t.integer "update_count", default: 0
     t.integer "login_count", default: 0
     t.string "bot_token"
-    t.integer "update_count", default: 0
-    t.integer "login_count", default: 0
     t.string "google_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
