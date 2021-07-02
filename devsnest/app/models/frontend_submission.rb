@@ -8,7 +8,7 @@ class FrontendSubmission < ApplicationRecord
     user = User.find(user_id)
 
     unless submission.present?
-      submission = Submission.create(user_id: user_id, content_id: content_id, submission_link: submission_link ,status: 'True')
+      submission = FrontendSubmission.create(user_id: user_id, content_id: content_id, submission_link: submission_link )
     end
   end
 end
