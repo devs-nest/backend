@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Api::V1::UsersController, type: :controller do
@@ -11,19 +13,19 @@ RSpec.describe Api::V1::UsersController, type: :controller do
           type: 'users',
           attributes: {
             discord_id: discord_id,
-            email:"test78@gmail.com"
-                      }
-              }
+            email: 'test78@gmail.com'
+          }
+        }
       }
     end
 
     context 'Check with Factory discord_id' do
       let(:discord_id) { current_user.discord_id }
-        it 'POST with valid discord_id' do
-          post :create, params: parameters
-          expect(response).to have_http_status(200)
-          expect(response).to be_successful
-        end
+      it 'POST with valid discord_id' do
+        post :create, params: parameters
+        expect(response).to have_http_status(200)
+        expect(response).to be_successful
+      end
     end
 
     # context 'Check with Random discord_id' do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_24_163547) do
+ActiveRecord::Schema.define(version: 2021_06_29_162155) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -162,6 +162,20 @@ ActiveRecord::Schema.define(version: 2021_06_24_163547) do
     t.string "google_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "weekly_todos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "group_id"
+    t.boolean "sheet_filled"
+    t.date "creation_week"
+    t.integer "batch_leader_rating"
+    t.integer "group_activity_rating"
+    t.string "extra_activity"
+    t.string "comments"
+    t.integer "moral_status"
+    t.string "obstacles"
+    t.json "todo_list"
+    t.index ["group_id", "creation_week"], name: "index_weekly_todos_on_group_id_and_creation_week", unique: true
   end
 
 end

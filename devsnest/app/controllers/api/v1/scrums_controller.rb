@@ -2,6 +2,7 @@
 
 module Api
   module V1
+    # Scrum Controller
     class ScrumsController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
@@ -11,7 +12,7 @@ module Api
 
       def context
         {
-          user:  @current_user,
+          user: @current_user,
           params: params
         }
       end

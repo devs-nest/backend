@@ -33,6 +33,11 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :college, only: %i[index]
       jsonapi_resources :scrums, only: %i[create index update]
+      jsonapi_resources :weekly_todo, only: %i[create index update] do
+        member do
+          get :streak
+        end
+      end
     end
   end
 end
