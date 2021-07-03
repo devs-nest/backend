@@ -70,8 +70,7 @@ class User < ApplicationRecord
     if temp_user.present?
       group_member = GroupMember.find_by(user_id: temp_user.id)
       group_member.update(user_id: id) if group_member.present?
-      group = Group.where(batch_leader_id: temp_user.id)
-      group.update(batch_leader_id: id) if group.present?
+      Group.where(batch_leader_id: temp_user.id).update_all(batch_leader_id: id)
       Submission.merge_submission(temp_user, self)
       temp_user.destroy
     end
