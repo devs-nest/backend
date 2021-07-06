@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_162155) do
+ActiveRecord::Schema.define(version: 2021_07_05_181526) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -115,22 +115,6 @@ ActiveRecord::Schema.define(version: 2021_06_29_162155) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
-  create_table "onboards", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "discord_username", default: "", null: false
-    t.string "discord_id", default: "", null: false
-    t.string "name", default: "", null: false
-    t.string "college", default: "", null: false
-    t.string "college_year", default: "", null: false
-    t.string "school", default: ""
-    t.string "work_exp", default: "", null: false
-    t.string "known_from", default: "", null: false
-    t.integer "dsa_skill", default: 0, null: false
-    t.integer "webd_skill", default: 0, null: false
-    t.integer "user_id"
-  end
-
   create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "group_id"
@@ -188,10 +172,17 @@ ActiveRecord::Schema.define(version: 2021_06_29_162155) do
     t.integer "grad_start"
     t.integer "grad_end"
     t.integer "user_type", default: 0
-    t.string "bot_token"
-    t.string "google_id"
     t.integer "update_count", default: 0
     t.integer "login_count", default: 0
+    t.string "bot_token"
+    t.string "google_id"
+    t.string "discord_username"
+    t.string "school"
+    t.string "work_exp"
+    t.string "known_from"
+    t.integer "dsa_skill", default: 0
+    t.integer "webd_skill", default: 0
+    t.boolean "is_discord_form_filled", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

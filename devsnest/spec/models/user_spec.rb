@@ -45,4 +45,10 @@ RSpec.describe User, type: :model do
       expect(User.find_by(google_id: 9000)).to be_present
     end
   end
+
+  context 'check to_csv method' do
+    it 'checks for empty csv' do
+      expect(described_class.to_csv).to eq "id,discord_username,discord_id,name,grad_year,school,work_exp,known_from,dsa_skill,webd_skill\n"
+    end
+  end
 end

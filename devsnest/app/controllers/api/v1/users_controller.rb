@@ -6,8 +6,8 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token]
-      before_action :user_auth, only: %i[logout me update connect_discord]
-      before_action :update_college, only: %i[update]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard]
+      before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
       def context
@@ -137,6 +137,18 @@ module Api
         else
           params['data']['attributes']['update_count'] = context[:user].update_count + 1
         end
+      end
+
+      def onboard
+        updatable_params = params.require(:data).permit(attributes: [:discord_username, :discord_id, :name, :work_exp, :known_from, :grad_year, :dsa_skill, :webd_skill, :is_discord_form_filled, :college_id])
+        return render_error({ message: 'Discord form already filled' }) if @current_user.is_discord_form_filled
+
+        return render_error({ message: "Discord isn't connected" }) unless @current_user.discord_active
+
+        return render_error({ message: 'User already in a group' }) if GroupMember.find_by(user_id: @current_user.id)
+
+        @current_user.update!(updatable_params[:attributes])
+        render_success({ message: 'Form filled' })
       end
     end
   end

@@ -64,7 +64,7 @@ class ApplicationController < ActionController::API
   end
 
   def admin_auth
-    return true if @current_user.user_type == 'admin'
+    return true if @current_user.present? && @current_user.user_type == 'admin'
 
     render_unauthorized
   end

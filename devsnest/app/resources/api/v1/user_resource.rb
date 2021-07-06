@@ -9,6 +9,7 @@ module Api
       attributes :college_name
       attributes :solved, :total_by_difficulty
       attributes :activity
+      attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
 
       def fetchable_fields
         if context[:user].nil? || context[:user].id == @model.id
