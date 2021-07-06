@@ -1,17 +1,6 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :onboard do
-    sequence(:discord_username) { |n| "User#{n}" }
-    sequence(:discord_id) { |n| n }
-    sequence(:name) { |n| "Name#{n}" }
-    sequence(:college) { |n| "College#{n}" }
-    sequence(:college_year) { |n| 2000 + n }
-    sequence(:work_exp) { [0, 1, 2, 3].sample }
-    sequence(:dsa_skill) { [0, 1, 2, 3, 4, 5].sample }
-    sequence(:webd_skill) { [0, 1, 2, 3, 4, 5].sample }
-    sequence(:user_id) { |n| n }
-  end
 
   factory :content do
     sequence(:name) { |n| "Test Q #{n}" }
@@ -53,6 +42,6 @@ FactoryBot.define do
   end
 
   factory :college do
-    sequence(:name) { |n| "#{n}'th college"}
+    sequence(:name) { |n| "#{n}'th college" }
   end
 end

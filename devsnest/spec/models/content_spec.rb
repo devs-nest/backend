@@ -15,8 +15,6 @@ RSpec.describe Content, type: :model do
     end
   end
 
-  
-
   context "check difficulty split" do
     
     before{ 

@@ -113,4 +113,15 @@ class User < ApplicationRecord
   def create_bot_token
     update(bot_token: Digest::SHA1.hexdigest([Time.now, rand].join))
   end
+
+  def self.to_csv
+    attributes = %w[id discord_username discord_id name grad_year school work_exp known_from dsa_skill webd_skill]
+
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+      all.each do |user|
+        csv << attributes.map { |attr| user.send(attr) }
+      end
+    end
+  end
 end
