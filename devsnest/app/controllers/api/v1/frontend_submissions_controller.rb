@@ -14,7 +14,7 @@ module Api
         submission = FrontendSubmission.find_by(user_id: @current_user.id, content_id: content.id)
         if submission.present?
           submission.update(submission_link: params[:data][:attributes][:submission_link])
-          render_success(submission.as_json.merge('type': 'frontend_submissions'))
+          return render_success(submission.as_json.merge('type': 'frontend_submissions'))
         end
         params[:data][:attributes][:content_id] = content.id
         params[:data][:attributes][:user_id] = @current_user.id
