@@ -25,7 +25,6 @@ test:
   adapter: mysql2
   database: devsnest_test
   username: <%= ENV["MYSQL_USERNAME"]  %>
-  password: <%= ENV["MYSQL_PASSWORD"] %>
   encoding: utf8
 
 
