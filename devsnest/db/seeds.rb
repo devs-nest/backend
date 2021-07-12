@@ -75,8 +75,8 @@
 # User.create(name: 'udit', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
 # User.create(name: 'vedansh', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
 
-Group.create(owner_id: User.last.id, co_owner_id:User.first.id, name: 'first one')
-Group.create(owner_id: 2, co_owner_id:4, name: 'sec one')
+Group.create(owner_id: User.last.id, co_owner_id: User.first.id, name: 'first one')
+Group.create(owner_id: 2, co_owner_id: 4, name: 'sec one')
 GroupMember.create(user_id: 1, group_id: Group.first.id)
 GroupMember.create(user_id: 6, group_id: Group.first.id)
 GroupMember.create(user_id: 7, group_id: Group.first.id)
@@ -86,9 +86,7 @@ GroupMember.create(user_id: 3, group_id: Group.last.id)
 GroupMember.create(user_id: 4, group_id: Group.last.id)
 GroupMember.create(user_id: 5, group_id: Group.last.id)
 
-User.last.update(user_type:1)
+User.last.update(user_type: 1)
 
-Group.first.update(batch_leader_id:1)
-Group.last.update(batch_leader_id:4)
-
-
+Group.first.update(batch_leader_id: 1)
+Group.last.update(batch_leader_id: 4)
