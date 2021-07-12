@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Model
 class BatchLeaderSheet < ApplicationRecord
   validates :group_id, uniqueness: { scope: :creation_week }
 
