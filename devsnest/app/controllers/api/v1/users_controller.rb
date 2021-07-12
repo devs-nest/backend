@@ -140,7 +140,10 @@ module Api
       end
 
       def onboard
-        updatable_params = params.require(:data).permit(attributes: [:discord_username, :discord_id, :name, :work_exp, :known_from, :grad_year, :dsa_skill, :webd_skill, :is_discord_form_filled, :college_id])
+        updatable_params = params.require(:data).permit(attributes: %i[
+                                                          discord_username discord_id name work_exp known_from grad_year
+                                                          dsa_skill webd_skill is_discord_form_filled college_id
+                                                        ])
         return render_error({ message: 'Discord form already filled' }) if @current_user.is_discord_form_filled
 
         return render_error({ message: "Discord isn't connected" }) unless @current_user.discord_active

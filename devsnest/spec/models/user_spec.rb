@@ -50,5 +50,12 @@ RSpec.describe User, type: :model do
     it 'checks for empty csv' do
       expect(described_class.to_csv).to eq "id,discord_username,discord_id,name,grad_year,school,work_exp,known_from,dsa_skill,webd_skill\n"
     end
+
+    # it 'checks for some fields' do
+    #   create(:user, discord_username: "testuser", discord_id: "24422", grad_year: 2, work_exp: "2",known_from: "Friend", dsa_skill: 5, webd_skill: 3, is_discord_form_filled: true)
+    #   create(:user, discord_username: "testuser1", discord_id: "223233", grad_year: 4, work_exp: "4 year",known_from: "Linkdin", dsa_skill: 2, webd_skill: 4, is_discord_form_filled: false)
+    #   expect(described_class.to_csv).to eq "id,discord_username,discord_id,name,grad_year,school,work_exp,known_from,dsa_skill,webd_skill\n204,testuser,24422,8 user,2,,2,Friend,5,3\n205,testuser1,223233,9 user,4,,4 year,Linkdin,2,4\n"
+
+    # end
   end
 end
