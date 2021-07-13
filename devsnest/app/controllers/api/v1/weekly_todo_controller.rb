@@ -5,7 +5,7 @@ module Api
     # Controller For Weekly Todo
     class WeeklyTodoController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :authorize_index, only: %i[index]
+      before_action :authorize_index, only: %i[index streak]
       before_action :authorize_create, only: %i[create]
       before_action :authorize_update, only: %i[update]
 
@@ -33,7 +33,13 @@ module Api
       end
 
       def authorize_index
-        curr_group = Group.find(params[:group_id])
+        curr_group = if params[:id].present?
+                       Group.find(params[:id])
+
+                     else
+                       Group.find(params[:group_id])
+                     end
+
         render_forbidden unless !curr_group.present? || curr_group.check_auth(@current_user)
       end
 

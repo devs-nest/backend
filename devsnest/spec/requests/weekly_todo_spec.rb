@@ -196,7 +196,7 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
         expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
       end
 
-      it 'retruns  error when user is the group_co_owner ' do
+      it 'retruns no error when user is the group_co_owner ' do
         sign_in(co_owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
@@ -210,35 +210,31 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
         expect(body[:data][:attributes][:comments]).to eq(parameters_update[:data][:attributes][:comments])
         expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
       end
+    end
 
-      it 'retruns error when group_owner wants to change creation week ' do
-        sign_in(owner)
-        put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
-        expect(response).to have_http_status(200)
-        body = JSON.parse(response.body, symbolize_names: true)
-        expect(body[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
-        expect(body[:data][:attributes][:batch_leader_rating]).to eq(parameters_update[:data][:attributes][:batch_leader_rating])
-        expect(body[:data][:attributes][:extra_activity]).to eq(parameters_update[:data][:attributes][:extra_activity])
-        expect(body[:data][:attributes][:group_activity_rating]).to eq(parameters_update[:data][:attributes][:group_activity_rating])
-        expect(body[:data][:attributes][:moral_status]).to eq(parameters_update[:data][:attributes][:moral_status])
-        expect(body[:data][:attributes][:obstacles]).to eq(parameters_update[:data][:attributes][:obstacles])
-        expect(body[:data][:attributes][:comments]).to eq(parameters_update[:data][:attributes][:comments])
-        expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
+    context 'Authorize streak' do
+      it 'retruns error when user does not belongs to the group and nither an admin nor the group batchleader' do
+        sign_in(user2)
+        get "/api/v1/weekly-todo/#{group1.id}/streak", params: parameters_index, headers: HEADERS
+        expect(response).to have_http_status(403)
       end
 
-      it 'retruns error when group_owner wants to change group_id ' do
-        sign_in(owner)
-        put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
+      it 'retruns no error when user does belongs to the group' do
+        sign_in(user1)
+        get "/api/v1/weekly-todo/#{group1.id}/streak", params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(200)
-        body = JSON.parse(response.body, symbolize_names: true)
-        expect(body[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
-        expect(body[:data][:attributes][:batch_leader_rating]).to eq(parameters_update[:data][:attributes][:batch_leader_rating])
-        expect(body[:data][:attributes][:extra_activity]).to eq(parameters_update[:data][:attributes][:extra_activity])
-        expect(body[:data][:attributes][:group_activity_rating]).to eq(parameters_update[:data][:attributes][:group_activity_rating])
-        expect(body[:data][:attributes][:moral_status]).to eq(parameters_update[:data][:attributes][:moral_status])
-        expect(body[:data][:attributes][:obstacles]).to eq(parameters_update[:data][:attributes][:obstacles])
-        expect(body[:data][:attributes][:comments]).to eq(parameters_update[:data][:attributes][:comments])
-        expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
+      end
+
+      it 'retruns no error when user does not belongs to the group but an admin ' do
+        sign_in(admin)
+        get "/api/v1/weekly-todo/#{group1.id}/streak", params: parameters_index, headers: HEADERS
+        expect(response).to have_http_status(200)
+      end
+
+      it 'retruns no error when user does not belongs to the group but group batchleader ' do
+        sign_in(batch_leader)
+        get "/api/v1/weekly-todo/#{group1.id}/streak", params: parameters_index, headers: HEADERS
+        expect(response).to have_http_status(200)
       end
     end
   end
