@@ -7,7 +7,22 @@ FactoryBot.define do
     sequence(:data_type) { [0, 1, 2, 3, 4].sample }
     sequence(:difficulty) { [0, 1, 2].sample }
   end
+  factory :weekly_todo do
+    sequence(:group_id) { |n| n }
+    sequence(:creation_week) { Date.today.at_beginning_of_week }
+  end
 
+  factory :group do
+    sequence(:name) { |n| "#{n} group" }
+    sequence(:batch_leader_id) { |n| n }
+    sequence(:owner_id) { |n| n }
+    sequence(:co_owner_id) { |n| n }
+  end
+  factory :group_member do
+    sequence(:user_id) { |n| n }
+    sequence(:group_id) { |n| n }
+    sequence(:owner) { [true, false].sample }
+  end
   factory :user do
     sequence(:name) { |n| "#{n} user" }
     sequence(:email) { |n| "#{n}@test.com" }
