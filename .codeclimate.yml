@@ -18,4 +18,5 @@ plugins:
 exclude_patterns:
   - "devsnest/db/schema.rb"
   - "devsnest/lib/tasks/youtube.rake"
+  - "devsnest/lib/tasks/frontend.rake"
 

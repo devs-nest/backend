@@ -101,7 +101,6 @@ Content.create(unique_id: 'YT11', parent_id: 'bst', name: 'DSA | Day 12 | BST | 
 # User.create(name: 'udit', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
 # User.create(name: 'vedansh', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
 
-<<<<<<< HEAD
 Group.create(owner_id: User.last.id, co_owner_id: User.first.id, name: 'first one')
 Group.create(owner_id: 2, co_owner_id: 4, name: 'sec one')
 GroupMember.create(user_id: 1, group_id: Group.first.id)
@@ -117,8 +116,6 @@ User.last.update(user_type: 1)
 
 Group.first.update(batch_leader_id: 1)
 Group.last.update(batch_leader_id: 4)
-=======
 # Group.create(owner_id: User.last.id, name: 'first one')
 # Group.create(owner_id: 2, name: 'sec one')
 # GroupMember.create(user_id: User.first.id, group_id: Group.last.id)
->>>>>>> ✨ adding new feature
