@@ -1,0 +1,27 @@
+Unique Id,Parent,Yname,Ylink,assignment,name,REF
+YT31,html,Frontend Day 1 - Introduction to HTML,https://www.youtube.com/watch?v=KnZa_Ri_B18&t=1378s,https://drive.google.com/file/d/1KiZnTNhUaQpeIkRcvvsbGrR1SxF9Urhf/vieww,Take Home Assignment 1,
+YT32,css,Frontend Day 2 - Introduction to CSS,https://www.youtube.com/watch?v=porf5cZwExI,https://drive.google.com/file/d/1KiZnTNhUaQpeIkRcvvsbGrR1SxF9Urhf/view,Take Home Assignment 2,
+YT33,css,Frontend Day 3-Continuing with CSS,https://www.youtube.com/watch?v=EmXf7YcFmhs&t=2096s,https://drive.google.com/file/d/1htU3hI1chl4dPbxKuwp7SxM6UsQ5fyMF/view,Take Home Assignment 3,
+YT34,css,Frontend Day 4- Positions | Display | Overflow,https://www.youtube.com/watch?v=Tl2yie4qDLQ,https://drive.google.com/file/d/1P08tbZMr_7A2y46rRsFQWEGEyqIZhuQ8/view,Take Home Assignment 4,
+YT35,js,Frontend Day 5- Introduction to Javascript,https://www.youtube.com/watch?v=KCPkrGCq9B8,,,
+YT36,js,"Frontend Day 6 - Arrays | Introduction to Javascript",https://www.youtube.com/watch?v=Yxj54m8dGNg,https://docs.google.com/document/d/1ocDYa2B27H2tZVI7f_i-7Ze6SIX_2g2N-jUJJ9t__0g/edit,Take Home Assignment 5,
+YT37,js,"Frontend Day 7- Objects | Introduction to Javascript",https://www.youtube.com/watch?v=_eSDbbGmgAU,https://docs.google.com/document/d/1ElC4HVna2FO6SqeSd2zuUEuIC2CnnQQqsnOTpL9hydk/edit,Take Home Assignment 6,
+YT38,js,"Frontend Day 8- Objects | Introduction to Javascript",https://www.youtube.com/watch?v=2eDK5zWjR64,https://100dayscss.com/?dayIndex=46,Take Home Assignment 7,
+YT39,js,"Frontend Day 9 | this Keyword | Call | Apply | Bind
+",https://www.youtube.com/watch?v=j9gacsYnjWE,https://docs.google.com/document/d/1guR5EqC4HzMyfgBxr8z_U_EM0ZNDJZsBLg__taRSnOA/edit,Take Home Assignment 8,
+YT40,js,"Frontend Day 10-Functions | Introduction to Javascript",https://www.youtube.com/watch?v=zYOVF6B8nUc,https://www.helpfulgames.com/subjects/brain-training/memory.html,Take Home Assignment 9,
+YT41,js,"Frontend Day 11-Prototypal Inheritance | Introduction to Javascript",https://www.youtube.com/watch?v=yIaxA6pT7c8,https://drive.google.com/file/d/1Uw71fhhR65Yh3NQlK6cVEJo5BmLX6_r8/view,Take Home Assignment 10,
+YT42,js,"Frontend Day 12-Synchronous and Asynchronous JS",https://www.youtube.com/watch?v=2C1VPgskIvs,https://docs.google.com/document/d/1KaoMU4eYmH6h014n53M81H9ebwp8fX7biur5b4ybURE/edit,Take Home Assignment 11,
+YT43,js,"Frontend Day 13-Promises | Async await | Introduction to Javascript",https://www.youtube.com/watch?v=tc1WsVjdepE,https://docs.google.com/document/d/1YtylFqsCA10uKyZgyAWqk2iRgrNP-T8T2MqaZyqN7ew/edit,Take Home Assignment 12,
+YT44,js,"Frontend Day 14-Event Handling | Introduction to Javascript",https://www.youtube.com/watch?v=txYqo0XGKUk,https://drive.google.com/drive/folders/1yDkdzkxUSPz2t2f-38GsqaRuF8dwNo9K,Take Home Assignment 13,
+YT45,js,"Frontend Day 15- React Basics",https://www.youtube.com/watch?v=RZoyvVo3yy8,,,"[{""link"":""https://csb-v46lz.netlify.app/"",""type"":""code"",""title"":""React Without Any Tooling""},{""link"":""https://codesandbox.io/s/1-bare-bones-react-v46lz?file=%2Findex.html"",""type"":""code"",""title"":""React Without Any Tooling (CodeSandbox)""}]"
+YT46,js,"Frontend Day 16-install React and functional component",https://www.youtube.com/watch?v=W7DawSsXit4,https://csb-uoiio.netlify.app/,Take Home Assignment 14,
+,,,,https://csb-9vj0n.netlify.app/,Take Home Assignment 15,
+YT47,js,"Frontend Day 17-JSX and React Props",https://www.youtube.com/watch?v=vywdQL-mA5c,https://csb-r1d6n.netlify.app/,Take Home Assignment 16,
+YT48,js,"Frontend Day 18-Inline styling and reusable components",https://www.youtube.com/watch?v=-qN1DjwKhcY,https://csb-9vj0n.netlify.app//,Take Home Assignment 17,
+YT49,js,"Frontend| Day 19 | Life cycle methods | Class based components | Webpacks",https://www.youtube.com/watch?v=PMgrledBK-8,https://csb-6q2dd.netlify.app/,Take Home Assignment 18,
+YT50,js,"Frontend| Day 20 | Hooks | Events | States",https://www.youtube.com/watch?v=IeL-dtvCkAA,https://csb-ng5sw.netlify.app/,Take Home Assignment 19,
+YT51,js,"Frontend| Day 21 | APIs | Forms",https://www.youtube.com/watch?v=tlqOPxa_1cA,https://h9o69.csb.app/,Take Home Assignment 20,"[{""link"":""https://material.io/design/introduction"",""type"":""article"",""title"":""Material Design Introduction""},{""link"":""https://jsonplaceholder.typicode.com/"",""type"":""article"",""title"":""JSON Placeholder""}]
+"
+YT52,js,"Frontend| Day 22 | Meme Generator Project",https://www.youtube.com/watch?v=z_CmPK0x4FU,https://meme-gen-lol.netlify.app/,Take Home Assignment 21,"[{""link"":""https://material.io/design/introduction"",""type"":""article"",""title"":""Material Design Introduction""},{""link"":""https://jsonplaceholder.typicode.com/"",""type"":""article"",""title"":""JSON Placeholder""}]
+"
