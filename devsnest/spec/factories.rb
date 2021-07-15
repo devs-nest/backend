@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+
   factory :content do
     sequence(:name) { |n| "Test Q #{n}" }
     sequence(:link) { |n| "Test link #{n}" }
@@ -42,10 +43,5 @@ FactoryBot.define do
 
   factory :college do
     sequence(:name) { |n| "#{n}'th college" }
-  end
-
-  factory :frontend_submission do
-    sequence(:user_id) { |n| n }
-    sequence(:content_id) { |n| n }
   end
 end
