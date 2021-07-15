@@ -36,7 +36,7 @@ module Api
         submission = Submission.where(user_id: user_id, content_id: @model.id).first
         return submission.status if submission.present?
 
-        return 'notdone'
+        'notdone'
       end
     end
   end
