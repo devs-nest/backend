@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_27_092546) do
+ActiveRecord::Schema.define(version: 2021_07_21_175353) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -127,6 +127,10 @@ ActiveRecord::Schema.define(version: 2021_07_27_092546) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
+  create_table "markdowns", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.text "template"
+  end
+
   create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "group_id"
@@ -196,6 +200,7 @@ ActiveRecord::Schema.define(version: 2021_07_27_092546) do
     t.integer "dsa_skill", default: 0
     t.integer "webd_skill", default: 0
     t.boolean "is_discord_form_filled", default: false
+    t.text "markdown"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

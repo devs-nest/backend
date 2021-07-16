@@ -7,5 +7,6 @@ class AddDiscordUsernameToUser < ActiveRecord::Migration[6.0]
     add_column :users, :dsa_skill, :integer, default: 0
     add_column :users, :webd_skill, :integer, default: 0
     add_column :users, :is_discord_form_filled, :boolean, default:false
+    add_column :users, :markdown, :text
   end
 end

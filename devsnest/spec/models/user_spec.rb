@@ -6,8 +6,6 @@ RSpec.describe User, type: :model do
   let(:user) { create(:user) }
   let(:user2) { create(:user) }
 
-  
-
   context 'basic tests' do
     it 'test new user' do
       expect(user.email).to be_present
@@ -34,7 +32,7 @@ RSpec.describe User, type: :model do
 
   context 'create user test' do
     before do
-      @new_user = User.create_google_user(valid_user,9000)
+      @new_user = User.create_google_user(valid_user, 9000)
     end
 
     it 'creates a discord user' do
