@@ -201,10 +201,10 @@ ActiveRecord::Schema.define(version: 2021_07_05_181526) do
     t.date "creation_week"
     t.integer "batch_leader_rating"
     t.integer "group_activity_rating"
-    t.string "extra_activity"
-    t.string "comments"
+    t.text "extra_activity"
+    t.text "comments"
     t.integer "moral_status"
-    t.string "obstacles"
+    t.text "obstacles"
     t.json "todo_list"
     t.index ["group_id", "creation_week"], name: "index_weekly_todos_on_group_id_and_creation_week", unique: true
   end

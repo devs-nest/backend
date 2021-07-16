@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
+RSpec.describe WeeklyTodo, type: :request do
   context 'Weekly Todo - request specs' do
     let(:user1) { create(:user) }
     let(:user2) { create(:user) }
@@ -71,25 +71,25 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
     end
 
     context 'Authorize Index' do
-      it 'retruns error when user does not belongs to the group and nither an admin nor the group batchleader' do
+      it 'returns error when user does not belongs to the group and nither an admin nor the group batchleader' do
         sign_in(user2)
         get '/api/v1/weekly-todo', params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(403)
       end
 
-      it 'retruns no error when user does belongs to the group' do
+      it 'returns no error when user does belongs to the group' do
         sign_in(user1)
         get '/api/v1/weekly-todo', params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(200)
       end
 
-      it 'retruns no error when user does not belongs to the group but an admin ' do
+      it 'returns no error when user does not belongs to the group but an admin ' do
         sign_in(admin)
         get '/api/v1/weekly-todo', params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(200)
       end
 
-      it 'retruns no error when user does not belongs to the group but group batchleader ' do
+      it 'returns no error when user does not belongs to the group but group batchleader ' do
         sign_in(batch_leader)
         get '/api/v1/weekly-todo', params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(200)
@@ -101,13 +101,13 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
         WeeklyTodo.last.destroy
       end
 
-      it 'retruns error when user does not belongs to the group and nither an admin nor the group batchleader' do
+      it 'returns error when user does not belongs to the group and nither an admin nor the group batchleader' do
         sign_in(user2)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(400)
       end
 
-      it 'retruns no error when user does belongs to the group' do
+      it 'returns no error when user does belongs to the group' do
         sign_in(user1)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
@@ -122,7 +122,7 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
         expect(body[:data][:attributes][:todo_list]).to eq(parameters_create[:data][:attributes][:todo_list])
       end
 
-      it 'retruns no error when user does not belongs to the group but an admin ' do
+      it 'returns no error when user does not belongs to the group but an admin ' do
         sign_in(admin)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
@@ -137,7 +137,7 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
         expect(body[:data][:attributes][:todo_list]).to eq(parameters_create[:data][:attributes][:todo_list])
       end
 
-      it 'retruns no error when user does not belongs to the group but group batchleader ' do
+      it 'returns no error when user does not belongs to the group but group batchleader ' do
         sign_in(batch_leader)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
@@ -154,19 +154,19 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
     end
 
     context ' Authoize Update ' do
-      it 'retruns error when user does not belongs to the group and not an admin or group_owner or group_co_owner ' do
+      it 'returns error when user does not belongs to the group and not an admin or group_owner or group_co_owner ' do
         sign_in(user2)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(403)
       end
 
-      it 'retruns error when user does belongs to the group and not an admin or group_owner or group_co_owner ' do
+      it 'returns error when user does belongs to the group and not an admin or group_owner or group_co_owner ' do
         sign_in(user1)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(403)
       end
 
-      it 'retruns no error when user does not belongs to the group but an admin ' do
+      it 'returns no error when user does not belongs to the group but an admin ' do
         sign_in(admin)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
@@ -181,7 +181,7 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
         expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
       end
 
-      it 'retruns no error when user is the group_owner ' do
+      it 'returns no error when user is the group_owner ' do
         sign_in(owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
@@ -196,7 +196,7 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
         expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
       end
 
-      it 'retruns no error when user is the group_co_owner ' do
+      it 'returns no error when user is the group_co_owner ' do
         sign_in(co_owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
@@ -213,25 +213,25 @@ RSpec.describe 'Api::V1::WeeklyTodo', type: :request do
     end
 
     context 'Authorize streak' do
-      it 'retruns error when user does not belongs to the group and nither an admin nor the group batchleader' do
+      it 'returns error when user does not belongs to the group and nither an admin nor the group batchleader' do
         sign_in(user2)
         get "/api/v1/weekly-todo/#{group1.id}/streak", params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(403)
       end
 
-      it 'retruns no error when user does belongs to the group' do
+      it 'returns no error when user does belongs to the group' do
         sign_in(user1)
         get "/api/v1/weekly-todo/#{group1.id}/streak", params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(200)
       end
 
-      it 'retruns no error when user does not belongs to the group but an admin ' do
+      it 'returns no error when user does not belongs to the group but an admin ' do
         sign_in(admin)
         get "/api/v1/weekly-todo/#{group1.id}/streak", params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(200)
       end
 
-      it 'retruns no error when user does not belongs to the group but group batchleader ' do
+      it 'returns no error when user does not belongs to the group but group batchleader ' do
         sign_in(batch_leader)
         get "/api/v1/weekly-todo/#{group1.id}/streak", params: parameters_index, headers: HEADERS
         expect(response).to have_http_status(200)

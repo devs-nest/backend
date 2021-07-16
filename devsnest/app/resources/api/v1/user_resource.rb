@@ -10,6 +10,7 @@ module Api
       attributes :solved, :total_by_difficulty
       attributes :activity
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
+      attributes :frontend_activity
 
       def fetchable_fields
         if context[:user].nil? || context[:user].id == @model.id
@@ -51,6 +52,10 @@ module Api
 
       def activity
         Submission.user_activity(@model)
+      end
+
+      def frontend_activity
+        FrontendSubmission.where(user_id: @model.id).group('DATE(updated_at)').count
       end
     end
   end
