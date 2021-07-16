@@ -11,6 +11,7 @@ module Api
       attributes :activity
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
       attributes :frontend_activity
+      attributes :markdown
 
       def fetchable_fields
         if context[:user].nil? || context[:user].id == @model.id

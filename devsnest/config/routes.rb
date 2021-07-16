@@ -40,6 +40,7 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :batch_leader_sheet, only: %i[create index update]
+      jsonapi_resources :markdown, only: %i[index]
       resources :admin, only: %i[] do
         collection do
           get :onboard_details
