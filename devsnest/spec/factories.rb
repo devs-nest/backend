@@ -48,4 +48,9 @@ FactoryBot.define do
     sequence(:user_id) { |n| n }
     sequence(:content_id) { |n| n }
   end
+
+  factory :scrum do
+    sequence(:user_id) { |n| n }
+    sequence(:group_id) { |n| n }
+  end
 end
