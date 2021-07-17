@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::V1::FrontendSubmission', type: :request do
+RSpec.describe FrontendSubmission, type: :request do
   context 'create frontend submission' do
     let(:user) { create(:user) }
     let(:content) { create(:content, unique_id: 'Q1') }
