@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Model for Group
 class Group < ApplicationRecord
   # belongs_to :batch
   audited
@@ -24,6 +25,12 @@ class Group < ApplicationRecord
 
   def admin_rights_auth(user)
     return true if user.id == owner_id || user.id == co_owner_id || user.id == batch_leader_id || user.user_type == 'admin'
+
+    false
+  end
+
+  def scrum_history_auth(user)
+    return true if user.id == batch_leader_id || user.user_type == 'admin'
 
     false
   end
