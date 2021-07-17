@@ -9,11 +9,15 @@ module Api
       before_action :authorize_get, only: %i[index]
       before_action :authorize_update, only: %i[update]
       before_action :authorize_create, only: %i[create]
+      before_action :check_updatable_scrum, only: %i[update]
 
       def context
         {
           user: @current_user,
-          params: params
+          group_id_get: params[:group_id],
+          group_id_create: (params.dig 'data', 'attributes', 'group_id'),
+          scrum_id: params[:id],
+          date: params[:date]
         }
       end
 
@@ -36,6 +40,13 @@ module Api
         return true if (@current_user.id == user_id && group.group_members.where(user_id: user_id).present?) || group.admin_rights_auth(@current_user)
 
         render_error('message': 'Permission Denied')
+      end
+
+      def check_updatable_scrum
+        scrum = Scrum.find_by(id: params[:data][:id])
+        return true if scrum.creation_date == Date.current
+
+        render_error('message': 'You cannot Update this Scrum')
       end
     end
   end
