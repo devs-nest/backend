@@ -43,9 +43,10 @@ Rails.application.routes.draw do
       jsonapi_resources :markdown, only: %i[index]
       resources :admin, only: %i[] do
         collection do
-          get :onboard_details
+          get :onboard_details, :feedback_details
         end
       end
+      jsonapi_resources :internal_feedback, only: %i[create update]
     end
   end
 end
