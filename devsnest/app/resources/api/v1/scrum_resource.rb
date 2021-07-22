@@ -28,12 +28,11 @@ module Api
       end
 
       def self.records(options = {})
-        if options[:context][:group_id_get].present?
-          if Group.find_by(id: options[:context][:group_id_get]).scrum_history_auth(options[:context][:user])
-            super(options).where(group_id: options[:context][:group_id_get], creation_date: Date.parse(options[:context][:date]))
-          else
-            super(options).where(group_id: options[:context][:group_id_get], creation_date: Date.current)
-          end
+        group = Group.find_by(id: options[:context][:group_id_get])
+        if group.present? && group.scrum_history_auth(options[:context][:user])
+          super(options).where(group_id: group.id, creation_date: Date.parse(options[:context][:date]))
+        elsif group.present?
+          super(options).where(group_id: group.id, creation_date: Date.current)
         else
           super(options)
         end
