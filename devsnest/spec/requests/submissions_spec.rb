@@ -40,7 +40,8 @@ RSpec.describe 'Api::V1::Submission', type: :request do
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:status]).to eq('done')
     end
 
-    it 'should create submission if user is not logged in and user is submitting through bot' do
+    it 'should create submission if user is logged in and user is submitting through bot' do
+      sign_in(user)
       post '/api/v1/submissions', params: params.to_json, headers: bot_headers
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:status]).to eq('done')
