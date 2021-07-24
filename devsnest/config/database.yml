@@ -8,7 +8,7 @@
 default: &default
   adapter: mysql2
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  database: <%= ENV.fetch("MYSQL_NAME") { devsnest } %>
+  database: <%= ENV["MYSQL_NAME"] { devsnest } %>
   host: <%= ENV["MYSQL_HOST"]  { localhost } %>
   username: <%= ENV["MYSQL_USERNAME"]  %>
   password: <%= ENV["MYSQL_PASSWORD"] %>
