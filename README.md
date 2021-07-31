@@ -6,7 +6,7 @@
 
 ![workflow](https://github.com/devs-nest/backend/actions/workflows/ruby.yml/badge.svg)
 
-> Uses:  
+Uses:  
 <p align="left">
 <img alt="Ruby" src="https://img.shields.io/static/v1?label=Ruby&message=2.7.2&color=red"/>
 <img alt="MySQL" src="https://img.shields.io/static/v1?label=MySQL&message=8.0&color=blue"/>
