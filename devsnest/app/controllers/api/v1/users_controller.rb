@@ -52,7 +52,7 @@ module Api
         size = params[:size] || 10
         size = size.to_i
         offset = [(page - 1) * size, 0].max
-        data = User.order(score: :desc)
+        data = User.order(score: :desc, id: :asc)
         rank = data.pluck(:id).index(@current_user.id)
         scoreboard = data.limit(size).offset(offset)
         pages_count = (User.count % size).zero? ? User.count / size : User.count / size + 1
