@@ -52,8 +52,9 @@ module Api
         size = params[:size] || 10
         size = size.to_i
         offset = [(page - 1) * size, 0].max
-        rank = User.all.order(score: :desc).pluck(:id).index(@current_user.id)
-        scoreboard = User.order(score: :desc).limit(size).offset(offset)
+        data = User.order(score: :desc)
+        rank = data.pluck(:id).index(@current_user.id)
+        scoreboard = data.limit(size).offset(offset)
         pages_count = (User.count % size).zero? ? User.count / size : User.count / size + 1
         render json: { user: @current_user, rank: rank + 1, scoreboard: scoreboard, count: pages_count }
       end
