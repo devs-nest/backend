@@ -52,7 +52,7 @@ module Api
         batch_leader = User.find_by(discord_id: params['data']['attributes']['discord_id'])
         return render_error('Group not found') if group.nil?
 
-        group.update(batch_leader_id: batch_leader.nil? ? '' : batch_leader.id)
+        group.update(batch_leader_id: batch_leader.nil? ? nil : batch_leader.id)
       end
     end
   end
