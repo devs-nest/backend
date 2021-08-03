@@ -10,6 +10,7 @@ jobs:
       MYSQL_NAME: devsnest_test
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: root
+      DISCORD_TOKEN: 1234567890qwertyuiop
       CC_TEST_REPORTER_ID: 8f0038687a9ad7675365b6a1ecde37608d55e4fa148d2da81a0653dc1dc6937d
       CC_TEST_REPORTER_URL: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
 
