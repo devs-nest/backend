@@ -15,7 +15,7 @@ module Api
       end
 
       def me
-        @current_user.update(login_count: @current_user.login_count + 1) if @current_user.login_count < 2
+        @current_user.update(login_count: @current_user.login_count + 1) if @current_user.login_count < 3
         redirect_to api_v1_user_url(@current_user)
       end
 
