@@ -137,7 +137,7 @@ module Api
 
         return render_error({ message: 'User already exists' }) if User.find_by(username: params['data']['attributes']['username']).present?
 
-        if context[:user].update_count >= 2
+        if context[:user].update_count >= 4
           render_error({ message: 'Update count Exceeded for username' })
         else
           params['data']['attributes']['update_count'] = context[:user].update_count + 1
