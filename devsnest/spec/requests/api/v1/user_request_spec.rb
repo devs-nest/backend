@@ -262,9 +262,9 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(response.status).to eq(400)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User already exists')
     end
-    it 'render error if user update count is equals to 2' do
+    it 'render error if user update count is equals to 4' do
       sign_in(user)
-      user.update(update_count: 2)
+      user.update(update_count: 4)
       put "/api/v1/users/#{user.id}", params: {
         "data": {
           "id": user.id.to_s,
