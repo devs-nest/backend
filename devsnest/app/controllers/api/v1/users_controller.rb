@@ -164,8 +164,6 @@ module Api
 
         return render_error({ message: 'User does not exist' }) if user.nil?
 
-        render_success({ message: 'User Updated' }) if params['data']['attributes']['discord_id'] == user.discord_username
-
         user.update(discord_username: params['data']['attributes']['discord_username'])
       end
     end
