@@ -1,0 +1,56 @@
+name: Ruby
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      MYSQL_NAME: devsnest_test
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      CC_TEST_REPORTER_ID: 8f0038687a9ad7675365b6a1ecde37608d55e4fa148d2da81a0653dc1dc6937d
+      CC_TEST_REPORTER_URL: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@473e4d8fe5dd94ee328fdfca9f8c9c7afc9dae5e        
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
+
+
+      - name: Start mysqld
+        run: sudo systemctl start mysql.service
+      - name: Create database
+        run: mysql -u root --password=root -e 'create database devsnest_test';
+
+
+      - name: Download test coverage reporter
+        working-directory: ./devsnest
+        run: curl -L $CC_TEST_REPORTER_URL > cc-test-reporter
+
+      - name: Give test coverage reporter executable permissions
+        working-directory: ./devsnest
+        run: chmod +x cc-test-reporter
+
+      - name: Run Tests
+        env:
+          RAILS_ENV: test
+        working-directory: ./devsnest
+        run: |
+            bundle install --jobs 4 --retry 3
+            bundle exec rake db:create
+            bundle exec rake db:migrate
+            bundle exec rspec spec
+            
+      - name: Upload results to Code Climate
+        working-directory: ./devsnest
+        run: |
+          ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.json
+          ./cc-test-reporter upload-coverage
