@@ -53,10 +53,13 @@ module Api
         size = size.to_i
         offset = [(page - 1) * size, 0].max
         data = User.order(score: :desc, id: :asc)
-        rank = data.pluck(:id).index(@current_user.id)
         scoreboard = data.limit(size).offset(offset)
         pages_count = (User.count % size).zero? ? User.count / size : User.count / size + 1
-        render json: { user: @current_user, rank: rank + 1, scoreboard: scoreboard, count: pages_count }
+        if @current_user
+          rank = data.pluck(:id).index(@current_user.id)
+          return render json: { user: @current_user, rank: rank + 1, scoreboard: scoreboard, count: pages_count }
+        end
+        render json: { scoreboard: scoreboard, count: pages_count }
       end
 
       def create
