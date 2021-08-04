@@ -11,7 +11,7 @@ module Api
         user = User.find_by(id: @model.user_id)
         return {} unless user.present?
 
-        { 'username': user.username, 'avatar': user.image_url }
+        { 'username': user.username, 'name': user.name, 'avatar': user.image_url }
       end
     end
   end
