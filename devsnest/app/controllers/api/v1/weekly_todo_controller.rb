@@ -12,6 +12,7 @@ module Api
       def context
         {
           user: @current_user,
+          date: params[:date].present? ? params[:date] : Date.current.to_s,
           group_id: params[:group_id]
         }
       end
