@@ -9,6 +9,7 @@ class User < ApplicationRecord
   after_create :create_username
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
+  has_many :internal_feedbacks
 
   def create_username
     username = ''

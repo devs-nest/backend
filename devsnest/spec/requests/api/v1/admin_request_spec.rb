@@ -19,7 +19,7 @@ RSpec.describe Api::V1::AdminController, type: :request do
           expect(response.status).to eq(200)
           expect(response.body).to eq("id,discord_username,discord_id,name,grad_year,school,work_exp,known_from,dsa_skill,webd_skill\n")
           expect(headers["Content-Type"].split[0]).to eq("text/csv;")
-          expect(headers["Content-Disposition"]).to eq("attachment; filename=onboard_result.csv")
+          expect(headers["Content-Disposition"]).to eq("attachment; filename=onboard_results_#{Date.current}.csv")
         end
 
         it 'checks for users with filled forms' do
@@ -30,7 +30,7 @@ RSpec.describe Api::V1::AdminController, type: :request do
           expect(response.status).to eq(200)
           expect(response.body).to eq("id,discord_username,discord_id,name,grad_year,school,work_exp,known_from,dsa_skill,webd_skill\n#{user1.id},u1,#{user1.discord_id},#{user1.name},3,,,Friend,3,0\n")
           expect(headers["Content-Type"].split[0]).to eq("text/csv;")
-          expect(headers["Content-Disposition"]).to eq("attachment; filename=onboard_result.csv")
+          expect(headers["Content-Disposition"]).to eq("attachment; filename=onboard_results_#{Date.current}.csv")
         end
 
         it 'check for the data that was created 15 days ago' do
@@ -41,7 +41,7 @@ RSpec.describe Api::V1::AdminController, type: :request do
           expect(response.status).to eq(200)
           expect(response.body).to eq("id,discord_username,discord_id,name,grad_year,school,work_exp,known_from,dsa_skill,webd_skill\n#{user2.id},u2,#{user2.discord_id},#{user2.name},4,,,Linkedin,2,0\n")
           expect(headers["Content-Type"].split[0]).to eq("text/csv;")
-          expect(headers["Content-Disposition"]).to eq("attachment; filename=onboard_result.csv")
+          expect(headers["Content-Disposition"]).to eq("attachment; filename=onboard_results_#{Date.current}.csv")
         end
 
         it 'checks for non admin users' do

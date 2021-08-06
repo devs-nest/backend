@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :internal_feedback do
+    sequence(:issue_type) { |n| "Internal #{n}" }
+    sequence(:issue_described) { 'This is the description' }
+    sequence(:feedback) { 'feedback for the team' }
+    sequence(:issue_scale) { rand(1..10) }
+  end
+
   factory :content do
     sequence(:name) { |n| "Test Q #{n}" }
     sequence(:link) { |n| "Test link #{n}" }
@@ -27,7 +34,7 @@ FactoryBot.define do
   factory :user do
     sequence(:name) { |n| "#{n} user" }
     sequence(:email) { |n| "#{n}@test.com" }
-    sequence(:username) { |n| n.to_s }
+    sequence(:username, &:to_s)
     sequence(:dob) { Time.zone.now - rand(3000).days }
     sequence(:discord_id) { |n| n }
     sequence(:password) { |n| "mypass#{n}" }

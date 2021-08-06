@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_27_092546) do
+ActiveRecord::Schema.define(version: 2021_08_04_060948) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -119,6 +119,18 @@ ActiveRecord::Schema.define(version: 2021_07_27_092546) do
     t.integer "co_owner_id"
     t.integer "batch_leader_id"
     t.string "slug"
+  end
+
+  create_table "internal_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.bigint "user_id"
+    t.boolean "is_resolved", default: false
+    t.string "issue_type", default: ""
+    t.text "issue_described"
+    t.text "feedback"
+    t.integer "issue_scale", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_internal_feedbacks_on_user_id"
   end
 
   create_table "jwt_blacklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
