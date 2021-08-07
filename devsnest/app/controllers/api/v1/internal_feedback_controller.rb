@@ -18,7 +18,7 @@ module Api
 
       def check_feedback
         previous_feedback = InternalFeedback.where(user_id: @current_user.id).order(updated_at: :asc).last
-        threshold_date = Date.today - 7.days
+        threshold_date = (Time.now + 5.hours + 30.minutes).to_date - 7.days
         error_message = 'Active cooldown for submitting new feedback : '
         if previous_feedback.present? && previous_feedback.updated_at >= threshold_date
           render_error({ message: "#{error_message}#{(previous_feedback.updated_at.to_date - threshold_date).to_i} days" })
