@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_04_060948) do
+ActiveRecord::Schema.define(version: 2021_08_07_185424) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 2021_08_04_060948) do
     t.integer "issue_scale", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "user_name"
     t.index ["user_id"], name: "index_internal_feedbacks_on_user_id"
   end
 

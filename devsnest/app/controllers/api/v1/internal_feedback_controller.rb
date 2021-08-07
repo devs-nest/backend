@@ -24,6 +24,7 @@ module Api
           render_error({ message: "#{error_message}#{(previous_feedback.updated_at.to_date - threshold_date).to_i} days" })
         end
         params[:data][:attributes][:user_id] = @current_user.id
+        params[:data][:attributes][:user_name] = @current_user.username
       end
     end
   end
