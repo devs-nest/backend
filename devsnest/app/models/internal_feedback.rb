@@ -7,7 +7,7 @@ class InternalFeedback < ApplicationRecord
   belongs_to :user
 
   def self.to_csv
-    attributes = %w[id user_id issue_type issue_described feedback issue_scale]
+    attributes = %w[id user_id user_name issue_type issue_described feedback issue_scale]
 
     CSV.generate(headers: true) do |csv|
       csv << attributes
