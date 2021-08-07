@@ -101,6 +101,16 @@ RSpec.describe WeeklyTodo, type: :request do
         WeeklyTodo.last.destroy
       end
 
+      it 'should return a error when passing creation_week' do
+        sign_in(user2)
+        group1.update(batch_leader_id: user2.id)
+        parameters_create[:data][:attributes][:creation_week] = Date.current
+
+        post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
+        expect(response).to have_http_status(400)
+        expect(JSON.parse(response.body, symbolize_names: true)[:errors][0][:detail]).to eq('creation_week is not allowed.')
+      end
+
       it 'returns error when user does not belongs to the group and nither an admin nor the group batchleader' do
         sign_in(user2)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
@@ -164,6 +174,26 @@ RSpec.describe WeeklyTodo, type: :request do
         sign_in(user1)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(403)
+      end
+
+      it 'should return a error when passing creation_week' do
+        sign_in(user1)
+        user1.update(user_type: 1)
+        parameters_update[:data][:attributes][:creation_week] = Date.current
+
+        put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
+        expect(response).to have_http_status(400)
+        expect(JSON.parse(response.body, symbolize_names: true)[:errors][0][:detail]).to eq('creation_week is not allowed.')
+      end
+
+      it 'should return a error when passing creation_week' do
+        sign_in(user1)
+        user1.update(user_type: 1)
+        parameters_update[:data][:attributes][:group_id] = 1
+
+        put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
+        expect(response).to have_http_status(400)
+        expect(JSON.parse(response.body, symbolize_names: true)[:errors][0][:detail]).to eq('group_id is not allowed.')
       end
 
       it 'returns no error when user does not belongs to the group but an admin ' do

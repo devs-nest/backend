@@ -5,7 +5,7 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
-      before_action :bot_auth, only: %i[left_discord create index get_token]
+      before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
       before_action :user_auth, only: %i[logout me update connect_discord onboard]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
@@ -15,7 +15,7 @@ module Api
       end
 
       def me
-        @current_user.update(login_count: @current_user.login_count + 1) if @current_user.login_count < 2
+        @current_user.update(login_count: @current_user.login_count + 1) if @current_user.login_count < 3
         redirect_to api_v1_user_url(@current_user)
       end
 
@@ -52,10 +52,14 @@ module Api
         size = params[:size] || 10
         size = size.to_i
         offset = [(page - 1) * size, 0].max
-        rank = User.all.order(score: :desc).pluck(:id).index(@current_user.id)
-        scoreboard = User.order(score: :desc).limit(size).offset(offset)
+        data = User.order(score: :desc, id: :asc)
+        scoreboard = data.limit(size).offset(offset)
         pages_count = (User.count % size).zero? ? User.count / size : User.count / size + 1
-        render json: { user: @current_user, rank: rank + 1, scoreboard: scoreboard, count: pages_count }
+        if @current_user
+          rank = data.pluck(:id).index(@current_user.id)
+          return render json: { user: @current_user, rank: rank + 1, scoreboard: scoreboard, count: pages_count }
+        end
+        render json: { scoreboard: scoreboard, count: pages_count }
       end
 
       def create
@@ -133,7 +137,7 @@ module Api
 
         return render_error({ message: 'User already exists' }) if User.find_by(username: params['data']['attributes']['username']).present?
 
-        if context[:user].update_count >= 2
+        if context[:user].update_count >= 4
           render_error({ message: 'Update count Exceeded for username' })
         else
           params['data']['attributes']['update_count'] = context[:user].update_count + 1
@@ -153,6 +157,14 @@ module Api
 
         @current_user.update!(updatable_params[:attributes])
         render_success({ message: 'Form filled' })
+      end
+
+      def update_discord_username
+        user = User.find_by(discord_id: params['data']['attributes']['discord_id'])
+
+        return render_error({ message: 'User does not exist' }) if user.nil?
+
+        user.update(discord_username: params['data']['attributes']['discord_username'])
       end
     end
   end

@@ -11,7 +11,7 @@ Rails.application.routes.draw do
         end
         collection do
           get :report, :leaderboard, :me, :get_token
-          put :left_discord, :update_bot_token_to_google_user, :onboard
+          put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username
           post :login, :connect_discord
           delete :logout
         end
@@ -24,7 +24,7 @@ Rails.application.routes.draw do
         jsonapi_relationships
         collection do
           delete :delete_group
-          put :update_group_name
+          put :update_group_name, :update_batch_leader
         end
       end
       jsonapi_resources :group_members, only: %i[index show] do
@@ -40,11 +40,13 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :batch_leader_sheet, only: %i[create index update]
+      jsonapi_resources :markdown, only: %i[index]
       resources :admin, only: %i[] do
         collection do
-          get :onboard_details
+          get :onboard_details, :feedback_details
         end
       end
+      jsonapi_resources :internal_feedback, only: %i[create update]
     end
   end
 end

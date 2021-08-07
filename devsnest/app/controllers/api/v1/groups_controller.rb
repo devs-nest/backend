@@ -5,7 +5,7 @@ module Api
     class GroupsController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
-      before_action :bot_auth, only: %i[delete_group update_group_name]
+      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
       before_action :deslug, only: %i[show]
       before_action :check_authorization, only: %i[show]
 
@@ -45,6 +45,14 @@ module Api
         group.update(name: new_group_name)
 
         render_success(group.as_json.merge({ 'type': 'group' }))
+      end
+
+      def update_batch_leader
+        group = Group.find_by(name: params['data']['attributes']['group_name'])
+        batch_leader = User.find_by(discord_id: params['data']['attributes']['discord_id'])
+        return render_error('Group not found') if group.nil?
+
+        group.update(batch_leader_id: batch_leader.nil? ? nil : batch_leader.id)
       end
     end
   end
