@@ -52,6 +52,33 @@ RSpec.describe Scrum, type: :request do
         expect(response.status).to eq(200)
         expect(JSON.parse(response.body, symbolize_names: true)[:data][0][:attributes][:creation_date]).to eq(date.to_s)
       end
+
+      it 'should not return error if User wants to see scrum history and user is batch_leader' do
+        scrum.update(user_id: user.id, group_id: group.id, creation_date: Date.yesterday)
+        group.update(batch_leader_id: user.id)
+        params[:date] = Date.yesterday
+        get '/api/v1/scrums', params: params
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][0][:attributes][:creation_date]).to eq(Date.yesterday.to_s)
+      end
+
+      it 'should not return error if User wants to see scrum history and user is admin' do
+        scrum.update(user_id: user.id, group_id: group.id, creation_date: Date.yesterday)
+        user.update(user_type: 1)
+        params[:date] = Date.yesterday
+        get '/api/v1/scrums', params: params
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][0][:attributes][:creation_date]).to eq(Date.yesterday.to_s)
+      end
+
+      it 'should not return error if User wants to see scrum history and user is member of group' do
+        scrum.update(user_id: user.id, group_id: group.id, creation_date: Date.yesterday)
+        group.group_members.create(user_id: user.id, group_id: group.id)
+        params[:date] = Date.yesterday
+        get '/api/v1/scrums', params: params
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][0][:attributes][:creation_date]).to eq(Date.yesterday.to_s)
+      end
     end
 
     context 'Create Scrums' do
