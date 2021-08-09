@@ -28,10 +28,4 @@ class Group < ApplicationRecord
 
     false
   end
-
-  def scrum_history_auth(user)
-    return true if user.id == batch_leader_id || user.user_type == 'admin'
-
-    false
-  end
 end
