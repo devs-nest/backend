@@ -1,9 +1,11 @@
 require 'rails_helper'
+require 'leaderboard'
 
 RSpec.describe Api::V1::UsersController, type: :request do
   context 'onboarding' do
     let(:user) { create(:user, discord_active: true) }
     let(:controller) { Api::V1::UsersController }
+
     before :each do
       # @mock_controller.stub(:current_user).and_return(User.first)
       sign_in(user)
@@ -116,7 +118,12 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Leaderboard' do
+    let(:spec_leaderboard) { Leaderboard.new(ENV['REDIS_DB'], Leaderboard::DEFAULT_OPTIONS, { redis_connection: Redis.new }) }
     let(:user) { create(:user, discord_active: true, username: 'username') }
+    before :each do
+      User.initialize_leaderboard(spec_leaderboard)
+    end
+
     it ' return unauthorized if user is not logged in or not a known bot' do
       get '/api/v1/users/leaderboard', headers: HEADERS
       expect(response.status).to eq(401)
@@ -126,7 +133,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
       sign_in(user)
       get '/api/v1/users/leaderboard', headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:scoreboard].count).to eq(User.count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
     end
 
     it 'retrun data of logged in users when user is bot ' do
@@ -137,7 +144,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
         'User-Type' => 'Bot'
       }
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:scoreboard].count).to eq(User.count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
     end
   end
 

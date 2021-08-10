@@ -4,6 +4,7 @@ class ApplicationController < ActionController::API
   include ApiRenderConcern
   before_action :set_current_user
   before_action :validate_bot_user
+  before_action :initialize_redis_lb
   def render_resource(resource)
     if resource.errors.empty?
       render json: resource
@@ -67,5 +68,9 @@ class ApplicationController < ActionController::API
     return true if @current_user.present? && @current_user.user_type == 'admin'
 
     render_unauthorized
+  end
+
+  def initialize_redis_lb
+    @leaderboard ||= LeaderboardDevsnest::Initializer::LB
   end
 end
