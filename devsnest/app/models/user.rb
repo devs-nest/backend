@@ -10,6 +10,11 @@ class User < ApplicationRecord
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
+  before_save :markdown_encode
+
+  def markdown_encode
+    self.markdown = markdown.dup.force_encoding('ISO-8859-1').encode('UTF-8') unless markdown.blank?
+  end
 
   def create_username
     username = ''
