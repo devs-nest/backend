@@ -33,10 +33,16 @@ RSpec.describe Hackathon, type: :request do
             "type": 'hackathons',
             "attributes": {
               "title": '2048 Game',
-              "description": "The criteria for this hackathon would be how fun, elegant and intuitive. It should to play the game.\r\n\r\nthings which matter are:\r\n\r\n-well thought-off design."
+              "description": "The criteria for this hackathon would be how fun, elegant and intuitive. It should to play the game.\r\n\r\nthings which matter are:\r\n\r\n-well thought-off design.",
+              "leaderboard": {
+                "enigma": {
+                  "Lakshit": 1,
+                  "Kaydee": 1
+                }
               }
             }
           }
+        }
       end
 
       let(:headers) { { 'Content-Type' => 'application/vnd.api+json' } }
@@ -68,10 +74,16 @@ RSpec.describe Hackathon, type: :request do
             "id": hackathon.id,
             "type": 'hackathons',
             "attributes": {
-              "title": 'New Hackathon'
+              "title": 'New Hackathon',
+              "leaderboard": {
+                "enigma": {
+                  "afae": 1,
+                  "adada": 1
+                }
               }
             }
           }
+        }
       end
 
       let(:headers) { { 'Content-Type' => 'application/vnd.api+json' } }
