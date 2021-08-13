@@ -66,8 +66,13 @@ FactoryBot.define do
     sequence(:user_id) { |n| n }
     sequence(:content_id) { |n| n }
   end
+  
   factory :link do
     sequence(:slug) { |n| n }
     sequence(:address) { |n| n }
+  end
+
+  factory :hackathon do
+    sequence(:title) { |n| n }
   end
 end

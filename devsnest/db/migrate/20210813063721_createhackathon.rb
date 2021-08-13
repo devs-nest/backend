@@ -4,13 +4,13 @@ class Createhackathon < ActiveRecord::Migration[6.0]
       t.string :title
       t.string :tagline
       t.string :reference
-      t.string :description
-      t.string :image
+      t.text :description
+      t.text :image
       t.json :leaderboard
-      t.string :participation
-      t.string :judgement
-      t.string :milestones
-      t.string :prizes
+      t.text :participation
+      t.text :judgement
+      t.text :milestones
+      t.text :prizes
       t.date :starting_date
       t.date :ending_date
     end
