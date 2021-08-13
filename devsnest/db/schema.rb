@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_16_053445) do
+ActiveRecord::Schema.define(version: 2021_08_13_063721) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -119,6 +119,21 @@ ActiveRecord::Schema.define(version: 2021_08_16_053445) do
     t.integer "co_owner_id"
     t.integer "batch_leader_id"
     t.string "slug"
+  end
+
+  create_table "hackathons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.string "tagline"
+    t.string "reference"
+    t.string "description"
+    t.string "image"
+    t.json "leaderboard"
+    t.string "participation"
+    t.string "judgement"
+    t.string "milestones"
+    t.string "prizes"
+    t.date "starting_date"
+    t.date "ending_date"
   end
 
   create_table "internal_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
