@@ -13,6 +13,15 @@ jobs:
       DISCORD_TOKEN: 1234567890qwertyuiop
       CC_TEST_REPORTER_ID: 8f0038687a9ad7675365b6a1ecde37608d55e4fa148d2da81a0653dc1dc6937d
       CC_TEST_REPORTER_URL: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+      REDIS_DB: devsnest_lb_test
+      REDIS_URL: redis://127.0.0.1:6379
+
+
+    services:
+      redis:
+        image: redis
+        ports:
+        - 6379:6379
 
     steps:
 

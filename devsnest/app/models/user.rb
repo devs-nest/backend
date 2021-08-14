@@ -125,4 +125,11 @@ class User < ApplicationRecord
       end
     end
   end
+
+  # Use this to create or reload the redis sorted set
+  def self.initialize_leaderboard(leaderboard)
+    find_each do |user|
+      leaderboard.rank_member(user.username, user.score || 0)
+    end
+  end
 end

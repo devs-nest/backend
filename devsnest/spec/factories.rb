@@ -40,6 +40,7 @@ FactoryBot.define do
     sequence(:password) { |n| "mypass#{n}" }
     sequence(:web_active) { |_n| true }
     sequence(:image_url) { |n| "test.com/#{n}.png" }
+    sequence(:score) { rand(1..100) }
   end
 
   factory :batch_leader_sheet do

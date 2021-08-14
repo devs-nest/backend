@@ -15,6 +15,7 @@ require 'action_view/railtie'
 require 'action_cable/engine'
 # require "sprockets/railtie"
 require 'rails/test_unit/railtie'
+require 'leaderboard'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -55,5 +56,17 @@ module Devsnest
     # config.middleware.use ActionDispatch::Session::CookieStore, config.session_options
     # Rails.application.config.session_store :disabled
     # config.middleware.delete ActionDispatch::Session::CookieStore
+
+    # options for redis
+    REDIS_OPTIONS = {
+      page_size: 20,
+      reverse: false,
+      member_key: :name,
+      rank_key: :rank,
+      score_key: :score,
+      member_data_key: :member_data,
+      member_data_namespace: 'member_data',
+      global_member_data: false
+    }.freeze
   end
 end
