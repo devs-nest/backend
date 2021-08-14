@@ -58,7 +58,7 @@ module Api
         if @current_user
           rank = @leaderboard.rank_for(@current_user.username)
           user = @leaderboard.member_at(rank)
-          return render json: { user: user, rank: rank, scoreboard: scoreboard, count: pages_count }
+          return render json: { user: user, scoreboard: scoreboard, count: pages_count }
         end
         render json: { scoreboard: scoreboard, count: pages_count }
       end
