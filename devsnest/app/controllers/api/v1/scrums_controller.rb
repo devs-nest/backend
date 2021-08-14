@@ -23,7 +23,7 @@ module Api
       def authorize_get
         group = Group.find_by(id: params[:group_id])
         return render_error('message': 'Group Not Found') unless group.present?
-        return render_forbidden unless group.admin_rights_auth(@current_user) || group.check_auth(@current_user)
+        return render_forbidden unless group.check_auth(@current_user)
       end
 
       def authorize_update

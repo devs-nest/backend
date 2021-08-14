@@ -199,6 +199,15 @@ RSpec.describe BatchLeaderSheet, type: :request do
         expect(response).to have_http_status(400)
         expect(JSON.parse(response.body, symbolize_names: true)[:errors][0][:detail]).to eq('creation_week is not allowed.')
       end
+
+      it 'should return a error when updating previous batch leader sheer' do
+        batchleadersheet.update(creation_week: Date.current - 8.days)
+        user.update(user_type: 1)
+
+        put "/api/v1/batch-leader-sheet/#{batchleadersheet.id}", params: params.to_json, headers: headers
+        expect(response).to have_http_status(400)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('You cannot Update this sheet')
+      end
     end
   end
 end
