@@ -141,6 +141,7 @@ module Api
         if context[:user].update_count >= 4
           render_error({ message: 'Update count Exceeded for username' })
         else
+          @leaderboard.remove_member(context[:user].username)
           params['data']['attributes']['update_count'] = context[:user].update_count + 1
         end
       end
