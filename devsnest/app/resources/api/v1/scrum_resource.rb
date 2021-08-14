@@ -30,11 +30,7 @@ module Api
       def self.records(options = {})
         group = Group.find_by(id: options[:context][:group_id_get])
         if group.present?
-          if group.check_auth(options[:context][:user])
-            super(options).where(group_id: group.id, creation_date: Date.parse(options[:context][:date]))
-          else
-            render_forbidden
-          end
+          super(options).where(group_id: group.id, creation_date: Date.parse(options[:context][:date]))
         else
           super(options)
         end

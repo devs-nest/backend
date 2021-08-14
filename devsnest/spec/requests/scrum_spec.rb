@@ -27,6 +27,7 @@ RSpec.describe Scrum, type: :request do
       it 'should return error if User is not member of group' do
         get '/api/v1/scrums', params: params
         expect(response.status).to eq(403)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:code]).to eq('forbidden')
       end
 
       it 'should not return error if User is member of group' do
