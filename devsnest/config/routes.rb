@@ -47,6 +47,7 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :internal_feedback, only: %i[create update]
+      jsonapi_resources :link, only: %i[show]
     end
   end
 end
