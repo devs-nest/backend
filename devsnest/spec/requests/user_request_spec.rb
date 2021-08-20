@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'leaderboard'
 
@@ -382,10 +384,60 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
 
-  # context " Connect discord " do
-  #   it ' Asks to connect with discord if code not present and bot token not present for user' do
-
-  #   end
-  #   it 'Asks to connect with discord '
-  # end
+  context 'Add markdown to the user ' do
+    let!(:user) { create(:user, markdown: 'adhikramm') }
+    it ' Changes the markdown of the user' do
+      sign_in(user)
+      put "/api/v1/users/#{user.id}", params: {
+        "data": {
+          "id": user.id.to_s,
+          "type": 'users',
+          "attributes": {
+            "markdown": 'Software🌈 and Web developer🎯'
+          }
+        }
+      }.to_json, headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:markdown]).to eq('Software🌈 and Web developer🎯')
+    end
+  end
+  context 'Update discord username through bot ' do
+    let!(:user) { create(:user, discord_id: '123', discord_username: 'adhikramm') }
+    let!(:bot_headers) do
+      {
+        'ACCEPT' => 'application/vnd.api+json',
+        'CONTENT-TYPE' => 'application/vnd.api+json',
+        'Token' => ENV['DISCORD_TOKEN'],
+        'User-Type' => 'Bot'
+      }
+    end
+    it ' It returns error if user discord id is invalid' do
+      put '/api/v1/users/update_discord_username', params: {
+        "data": {
+          "type": 'users',
+          "attributes":
+          {
+            "discord_id": 1,
+            "discord_username": 'Arka'
+          }
+        }
+      }.to_json, headers: bot_headers
+      expect(response).to have_http_status(400)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User does not exist')
+    end
+    it ' Changes the discord_username of the user' do
+      put '/api/v1/users/update_discord_username', params: {
+        "data": {
+          "type": 'users',
+          "attributes":
+          {
+            "discord_id": user.discord_id,
+            "discord_username": 'Arka'
+          }
+        }
+      }.to_json, headers: bot_headers
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:discord_username]).to eq('Arka')
+    end
+  end
 end
