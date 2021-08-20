@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -167,6 +167,7 @@ module Api
         return render_error({ message: 'User does not exist' }) if user.nil?
 
         user.update(discord_username: params['data']['attributes']['discord_username'])
+        render_success(user.as_json.merge({ "type": 'users' }))
       end
     end
   end

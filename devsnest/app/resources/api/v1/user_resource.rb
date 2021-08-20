@@ -11,7 +11,11 @@ module Api
       attributes :activity
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
       attributes :frontend_activity
-      attributes :markdown
+      attributes :markdown, :bio
+
+      def markdown
+        @model.markdown.dup.encode('ISO-8859-1').force_encoding('utf-8') unless @model.markdown.blank?
+      end
 
       def fetchable_fields
         if context[:user].nil? || context[:user].id == @model.id

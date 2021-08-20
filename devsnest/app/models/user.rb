@@ -10,6 +10,7 @@ class User < ApplicationRecord
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
+  before_save :markdown_encode, if: :will_save_change_to_markdown?
 
   def create_username
     username = ''
@@ -138,5 +139,9 @@ class User < ApplicationRecord
     find_each do |user|
       leaderboard.rank_member(user.username, user.score || 0)
     end
+  end
+
+  def markdown_encode
+    self.markdown = markdown.dup.force_encoding('ISO-8859-1').encode('UTF-8') unless markdown.blank?
   end
 end
