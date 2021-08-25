@@ -32,6 +32,7 @@ module Api
         if group.present?
           super(options).where(group_id: group.id, creation_date: Date.parse(options[:context][:date]))
         else
+
           super(options)
         end
       end
