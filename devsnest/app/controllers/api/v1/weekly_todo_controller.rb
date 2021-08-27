@@ -18,8 +18,9 @@ module Api
       end
 
       def streak
-        streak = WeeklyTodo.where(group_id: params[:id]).order('creation_week').pluck('creation_week,sheet_filled')
-        return render json: [] if streak.empty?
+        weekly_todo = WeeklyTodo.where(group_id: params[:id])
+        streak = weekly_todo.order('creation_week').pluck('creation_week,sheet_filled')
+        return render_success({ id: weekly_todo.first.id, type: 'weekly_todo_streak', streak: [] }) if streak.empty?
 
         start_date = streak[0][0]
         end_date = streak[-1][0]
@@ -30,7 +31,7 @@ module Api
           start_date += 7
         end
 
-        render json: streak
+        render_success({ id: weekly_todo.first.id, type: 'weekly_todo_streak', streak: streak })
       end
 
       def authorize_index
