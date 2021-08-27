@@ -29,7 +29,7 @@ module Api
       def get_token
         discord_id = params['data']['attributes']['discord_id']
         user = User.find_by(discord_id: discord_id)
-        return render json: { bot_token: user.bot_token } if user.present?
+        return render_success({ id: user.id, type: 'bot_token', bot_token: user.bot_token }) if user.present?
 
         render_error('User not found')
       end
@@ -44,7 +44,7 @@ module Api
         end
         days = params[:days].to_i || nil
         res = Submission.user_report(days, user.id)
-        render json: res
+        render_success({ id: user.id, type: 'report' }.merge(res))
       end
 
       def leaderboard
@@ -58,9 +58,10 @@ module Api
         if @current_user
           rank = @leaderboard.rank_for(@current_user.username)
           user = @leaderboard.member_at(rank)
-          return render json: { user: user, scoreboard: scoreboard, count: pages_count }
+          return render_success({ id: page, type: 'leaderboard', user: user, scoreboard: scoreboard, count: pages_count })
         end
-        render json: { scoreboard: scoreboard, count: pages_count }
+
+        render_success({ id: page, type: 'leaderboard', scoreboard: scoreboard, count: pages_count })
       end
 
       def create
@@ -83,7 +84,7 @@ module Api
       end
 
       def logout
-        render json: { notice: 'You logged out successfully' }
+        render_success(id: @current_user.id, type: 'logout', notice: 'You logged out successfully')
       end
 
       def connect_discord

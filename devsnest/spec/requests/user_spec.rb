@@ -115,7 +115,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
         'User-Type' => 'Bot'
       }
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:bot_token]).to eq(user.bot_token)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:bot_token]).to eq(user.bot_token)
     end
   end
 
@@ -135,7 +135,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
       sign_in(user)
       get '/api/v1/users/leaderboard', headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
     end
 
     it 'retrun data of logged in users when user is bot ' do
@@ -146,7 +146,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
         'User-Type' => 'Bot'
       }
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
     end
   end
 
@@ -173,21 +173,23 @@ RSpec.describe Api::V1::UsersController, type: :request do
         'User-Type' => 'Bot'
       }
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)).to eq({
-                                                                       "total_ques": Content.where(data_type: 0).count,
-                                                                       "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
-                                                                                                                             contents: { data_type: 0 }).count
-                                                                     })
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes]).to eq({
+                                                                                           'id': user.id, 'type': 'report',
+                                                                                           "total_ques": Content.where(data_type: 0).count,
+                                                                                           "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
+                                                                                                                                                 contents: { data_type: 0 }).count
+                                                                                         })
     end
     it 'returns data of logged in users when user is logged in ' do
       sign_in(user)
       get '/api/v1/users/report', params: { "days": 7 }, headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)).to eq({
-                                                                       "total_ques": Content.where(data_type: 0).count,
-                                                                       "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
-                                                                                                                             contents: { data_type: 0 }).count
-                                                                     })
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes]).to eq({
+                                                                                           'id': user.id, 'type': 'report',
+                                                                                           "total_ques": Content.where(data_type: 0).count,
+                                                                                           "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
+                                                                                                                                                 contents: { data_type: 0 }).count
+                                                                                         })
     end
 
     it 'retrun data of logged in users when user is bot ' do
@@ -199,11 +201,12 @@ RSpec.describe Api::V1::UsersController, type: :request do
         'User-Type' => 'Bot'
       }
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)).to eq({
-                                                                       "total_ques": Content.where(data_type: 0).count,
-                                                                       "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
-                                                                                                                             contents: { data_type: 0 }).count
-                                                                     })
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes]).to eq({
+                                                                                           'id': user.id, 'type': 'report',
+                                                                                           "total_ques": Content.where(data_type: 0).count,
+                                                                                           "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
+                                                                                                                                                 contents: { data_type: 0 }).count
+                                                                                         })
     end
   end
 
@@ -340,7 +343,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
       sign_in(user)
       delete '/api/v1/users/logout', headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:notice]).to eq('You logged out successfully')
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:notice]).to eq('You logged out successfully')
     end
   end
 
