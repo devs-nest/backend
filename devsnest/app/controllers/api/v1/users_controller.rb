@@ -50,7 +50,7 @@ module Api
       def leaderboard
         @leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
-        @leaderboard.rank_member(@current_user.username, @current_user.score) if @current_user.present?
+        @leaderboard.rank_member(@current_user.username, @current_user.score || 0) if @current_user.present?
 
         scoreboard = @leaderboard.leaders(page)
         pages_count = @leaderboard.total_pages

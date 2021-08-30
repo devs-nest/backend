@@ -75,30 +75,30 @@ Content.create(unique_id: 'YT11', parent_id: 'bst', name: 'DSA | Day 12 | BST | 
 
 # Users
 
-User.create(name: 'manish', username: 'Manish Gupta', discord_id: 'abe', password: '123450', email: 'manish1250@gmail.com')
-User.create(name: 'Amit', username: 'Ajjr Mishra', discord_id: 'afd', password: '1234501', email: 'ajjr251@gmail.com')
-User.create(name: 'Ramesh', username: 'Ramesh Sharma', discord_id: 'qwe', password: '1237801', email: 'test@gmail.com')
-User.create(name: 'neha', username: 'Neha Arora', discord_id: 'bcde', password: '123450', email: 'neha1250@gmail.com')
+User.create(username: 'manish', name: 'Manish Gupta', discord_id: 'abe', password: '123450', email: 'manish1250@gmail.com')
+User.create(username: 'Amit', name: 'Ajjr Mishra', discord_id: 'afd', password: '1234501', email: 'ajjr251@gmail.com')
+User.create(username: 'Ramesh', name: 'Ramesh Sharma', discord_id: 'qwe', password: '1237801', email: 'test@gmail.com')
+User.create(username: 'neha', name: 'Neha Arora', discord_id: 'bcde', password: '123450', email: 'neha1250@gmail.com')
 
-User.create(name: 'ayushi', username: 'Ayushi Poonia', discord_id: 'sbcd', password: '1234501', email: 'ayushi51@gmail.com')
-User.create(name: 'aditi', username: 'Aditi Gupta', discord_id: 'qwer', password: '1237801', email: 'aditi@gmail.com')
-User.create(name: 'priya', username: 'Priya Patra', discord_id: 'ccde', password: '123450', email: 'priya@gmail.com')
-User.create(name: 'pawni', username: 'Pawni Sharma', discord_id: 'fbcd', password: '1234501', email: 'pawni1251@gmail.com')
+User.create(username: 'ayushi', name: 'Ayushi Poonia', discord_id: 'sbcd', password: '1234501', email: 'ayushi51@gmail.com')
+User.create(username: 'aditi', name: 'Aditi Gupta', discord_id: 'qwer', password: '1237801', email: 'aditi@gmail.com')
+User.create(username: 'priya', name: 'Priya Patra', discord_id: 'ccde', password: '123450', email: 'priya@gmail.com')
+User.create(username: 'pawni', name: 'Pawni Sharma', discord_id: 'fbcd', password: '1234501', email: 'pawni1251@gmail.com')
 
-User.create(name: 'ayush', username: 'Ayush Chand', discord_id: 'bwer', password: '1237801', email: 'ayush@gmail.com')
-User.create(name: 'prachi', username: 'Prachi Raman', discord_id: 'dcde', password: '123450', email: 'prachi1250@gmail.com')
-User.create(name: 'udit', username: 'Udit Narayan', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
-User.create(name: 'vedansh', username: 'Vedansh Garg', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
+User.create(username: 'ayush', name: 'Ayush Chand', discord_id: 'bwer', password: '1237801', email: 'ayush@gmail.com')
+User.create(username: 'prachi', name: 'Prachi Raman', discord_id: 'dcde', password: '123450', email: 'prachi1250@gmail.com')
+User.create(username: 'udit', name: 'Udit Narayan', discord_id: 'ebcd', password: '1234501', email: 'udit1251@gmail.com')
+User.create(username: 'vedansh', name: 'Vedansh Garg', discord_id: 'ywer', password: '1237801', email: 'vedansh@gmail.com')
 
-User.create(name: 'yug', username: 'Yug Gurnani', discord_id: 'ccde', password: '123450', email: 'yug@gmail.com')
-User.create(name: 'kaydee', username: 'Kshitij Dhama', discord_id: 'fbcd', password: '1234501', email: 'kd@gmail.com')
-User.create(name: 'adhikram', username: 'Adhikram Maitra', discord_id: 'bwer', password: '1237801', email: 'adhikram@gmail.com')
-User.create(name: 's2r2', username: 'Sanjay Bhaiya', discord_id: 'dcde', password: '123450', email: 's2r2@gmail.com')
+User.create(username: 'yug', name: 'Yug Gurnani', discord_id: 'ccde', password: '123450', email: 'yug@gmail.com')
+User.create(username: 'kaydee', name: 'Kshitij Dhama', discord_id: 'fbcd', password: '1234501', email: 'kd@gmail.com')
+User.create(username: 'adhikram', name: 'Adhikram Maitra', discord_id: 'bwer', password: '1237801', email: 'adhikram@gmail.com')
+User.create(username: 's2r2', name: 'Sanjay Bhaiya', discord_id: 'dcde', password: '123450', email: 's2r2@gmail.com')
 
-User.create(name: 'lakshit', username: 'Lakshit K. Singh', discord_id: 'ebcd', password: '1234501', email: 'lakshit@gmail.com')
-User.create(name: 'pathetic', username: 'Pathetic Geek', discord_id: 'ywer', password: '1237801', email: 'pathetic@gmail.com')
-User.create(name: 'Araika', username: 'Araika didi', discord_id: 'ebcd', password: '1234501', email: 'araika@gmail.com')
-User.create(name: 'Haider', username: 'Haider Pro', discord_id: 'ywer', password: '1237801', email: 'haider@gmail.com')
+User.create(username: 'lakshit', name: 'Lakshit K. Singh', discord_id: 'ebcd', password: '1234501', email: 'lakshit@gmail.com')
+User.create(username: 'pathetic', name: 'Pathetic Geek', discord_id: 'ywer', password: '1237801', email: 'pathetic@gmail.com')
+User.create(username: 'Araika', name: 'Araika didi', discord_id: 'ebcd', password: '1234501', email: 'araika@gmail.com')
+User.create(username: 'Haider', name: 'Haider Pro', discord_id: 'ywer', password: '1237801', email: 'haider@gmail.com')
 
 # Groups
 
