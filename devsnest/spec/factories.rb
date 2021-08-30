@@ -75,6 +75,7 @@ FactoryBot.define do
   factory :hackathon do
     sequence(:title) { |n| n }
   end
+
   factory :markdown do
     sequence(:template) { |n| n }
   end
