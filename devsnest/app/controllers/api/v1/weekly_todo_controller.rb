@@ -20,7 +20,7 @@ module Api
       def streak
         weekly_todo = WeeklyTodo.where(group_id: params[:id])
         streak = weekly_todo.order('creation_week').pluck('creation_week,sheet_filled')
-        return render_success({ id: weekly_todo.first.id, type: 'weekly_todo_streak', streak: [] }) if streak.empty?
+        return render_success({ id: params[:id], type: 'weekly_todo_streak', streak: [] }) if streak.empty?
 
         start_date = streak[0][0]
         end_date = streak[-1][0]
