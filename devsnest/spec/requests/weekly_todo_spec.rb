@@ -126,21 +126,18 @@ RSpec.describe WeeklyTodo, type: :request do
         sign_in(user1)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
-        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
       end
 
       it 'should not return an error when user does not belongs to the group but an admin' do
         sign_in(admin)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
-        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
       end
 
       it 'should not return an error when user does not belongs to the group but group batchleader ' do
         sign_in(batch_leader)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
-        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
       end
     end
 
