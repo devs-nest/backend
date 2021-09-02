@@ -126,18 +126,24 @@ RSpec.describe WeeklyTodo, type: :request do
         sign_in(user1)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:batch_leader_rating]).to eq(parameters_create[:data][:attributes][:batch_leader_rating])
       end
 
-      it 'should not return an error when user does not belongs to the group but an admin ' do
+      it 'should not return an error when user does not belongs to the group but an admin' do
         sign_in(admin)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:batch_leader_rating]).to eq(parameters_create[:data][:attributes][:batch_leader_rating])
       end
 
       it 'should not return an error when user does not belongs to the group but group batchleader ' do
         sign_in(batch_leader)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:batch_leader_rating]).to eq(parameters_create[:data][:attributes][:batch_leader_rating])
       end
     end
 
@@ -178,18 +184,23 @@ RSpec.describe WeeklyTodo, type: :request do
         sign_in(admin)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
       end
 
       it 'returns no error when user is the group_owner ' do
         sign_in(owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:batch_leader_rating]).to eq(parameters_update[:data][:attributes][:batch_leader_rating])
       end
 
       it 'returns no error when user is the group_co_owner ' do
         sign_in(co_owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:batch_leader_rating]).to eq(parameters_update[:data][:attributes][:batch_leader_rating])
       end
     end
 

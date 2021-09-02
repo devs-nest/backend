@@ -151,27 +151,26 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Report' do
+    let(:bot_headers) do
+      {
+        'ACCEPT' => 'application/vnd.api+json',
+        'CONTENT-TYPE' => 'application/vnd.api+json',
+        'Token' => ENV['DISCORD_TOKEN'],
+        'User-Type' => 'Bot'
+      }
+    end
+
     let!(:user) { create(:user, discord_active: true, discord_id: 123_456_789) }
     it ' return unauthorized if user is not logged in or not a known bot' do
       get '/api/v1/users/report', headers: HEADERS
       expect(response.status).to eq(401)
     end
     it 'retrun error when user not logged ' do
-      get '/api/v1/users/report', params: { "discord_id": '1234' }, headers: {
-        'ACCEPT' => 'application/vnd.api+json',
-        'CONTENT-TYPE' => 'application/vnd.api+json',
-        'Token' => ENV['DISCORD_TOKEN'],
-        'User-Type' => 'Bot'
-      }
+      get '/api/v1/users/report', params: { "discord_id": '1234' }, headers: bot_headers
       expect(response.status).to eq(400)
     end
     it 'returns data of discord users when user is on discord ' do
-      get '/api/v1/users/report', params: { "discord_id": 123_456_789 }, headers: {
-        'ACCEPT' => 'application/vnd.api+json',
-        'CONTENT-TYPE' => 'application/vnd.api+json',
-        'Token' => ENV['DISCORD_TOKEN'],
-        'User-Type' => 'Bot'
-      }
+      get '/api/v1/users/report', params: { "discord_id": 123_456_789 }, headers: bot_headers
       expect(response.status).to eq(200)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes]).to eq({
                                                                                            'id': user.id, 'type': 'report',
