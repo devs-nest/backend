@@ -178,21 +178,18 @@ RSpec.describe WeeklyTodo, type: :request do
         sign_in(admin)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
-        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
       end
 
       it 'returns no error when user is the group_owner ' do
         sign_in(owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
-        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
       end
 
       it 'returns no error when user is the group_co_owner ' do
         sign_in(co_owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
-        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
       end
     end
 
