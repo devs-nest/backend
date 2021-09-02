@@ -29,6 +29,17 @@ RSpec.describe BatchLeaderSheet, type: :request do
         get '/api/v1/batch-leader-sheet', params: params
         expect(response).to have_http_status(200)
       end
+    end
+
+    context 'errors check while getting batch_leader_sheets' do
+      let(:group) { create(:group) }
+      let(:user) { create(:user) }
+      let(:batchleadersheet) { create(:batch_leader_sheet, creation_week: Date.current.at_beginning_of_week) }
+
+      before :each do
+        sign_in(user)
+      end
+      let(:params) { { 'group_id': group.id, 'date': Date.current } }
 
       it 'should return forbidden if the user is not admin and batch leader' do
         group.update(batch_leader_id: 0)
