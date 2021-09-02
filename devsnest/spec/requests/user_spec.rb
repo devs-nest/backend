@@ -193,12 +193,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
 
     it 'retrun data of logged in users when user is bot ' do
       sign_in(user)
-      get '/api/v1/users/report', params: { "days": 7 }, headers: {
-        'ACCEPT' => 'application/vnd.api+json',
-        'CONTENT-TYPE' => 'application/vnd.api+json',
-        'Token' => ENV['DISCORD_TOKEN'],
-        'User-Type' => 'Bot'
-      }
+      get '/api/v1/users/report', params: { "days": 7 }, headers: bot_headers
       expect(response.status).to eq(200)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes]).to eq({
                                                                                            'id': user.id, 'type': 'report',
