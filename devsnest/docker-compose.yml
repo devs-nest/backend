@@ -5,8 +5,20 @@ services:
     ports:
       - "8000:3000"
     container_name: backend
+    volumes:
+      - .:/mnt
     env_file:
       - '.env'
+
+  sidekiq:
+    image: prachipathrayan/devsnestbackend
+    container_name: sidekiq
+    volumes:
+      - .:/mnt
+    env_file:
+      - '.env'
+    command: bundle exec sidekiq -e production -C ./config/sidekiq.yml
+
   redis:
     image: redis:alpine
     container_name: redis
