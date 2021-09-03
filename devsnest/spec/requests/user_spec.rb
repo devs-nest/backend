@@ -4,6 +4,28 @@ require 'rails_helper'
 require 'leaderboard'
 
 RSpec.describe Api::V1::UsersController, type: :request do
+  context 'onboarding basic check' do
+    let(:user) { create(:user, discord_active: true) }
+    let(:controller) { Api::V1::UsersController }
+
+    before :each do
+      # @mock_controller.stub(:current_user).and_return(User.first)
+      sign_in(user)
+    end
+
+    it 'basic first put call' do
+      put '/api/v1/users/onboard', params: USER_SPEC_PARAMS.to_json, headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Form filled')
+    end
+
+    it 'basic put call when user already filled the form' do
+      user.update(is_discord_form_filled: true)
+      put '/api/v1/users/onboard', params: USER_SPEC_PARAMS.to_json, headers: HEADERS
+      expect(response.status).to eq(400)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Discord form already filled')
+    end
+  end
   context 'onboarding' do
     let(:user) { create(:user, discord_active: true) }
     let(:controller) { Api::V1::UsersController }
@@ -13,42 +35,9 @@ RSpec.describe Api::V1::UsersController, type: :request do
       sign_in(user)
     end
 
-    let(:parameters) do
-      {
-        "data": {
-          "type": 'onboards',
-          "attributes": {
-            "discord_username": 'KayDee#8576',
-            "discord_id": '1234567890',
-            "name": 'KayDee',
-            "college_name": 'TestGrp',
-            "grad_year": 2,
-            "work_exp": '2mnth',
-            "known_from": 'Friend',
-            "dsa_skill": 4,
-            "webd_skill": 3,
-            "is_discord_form_filled": true
-          }
-        }
-      }
-    end
-
-    it 'basic first put call' do
-      put '/api/v1/users/onboard', params: parameters.to_json, headers: HEADERS
-      expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Form filled')
-    end
-
-    it 'basic put call when user already filled the form' do
-      user.update(is_discord_form_filled: true)
-      put '/api/v1/users/onboard', params: parameters.to_json, headers: HEADERS
-      expect(response.status).to eq(400)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Discord form already filled')
-    end
-
     it "when user's discord is not connected" do
       user.update(discord_active: false)
-      put '/api/v1/users/onboard', params: parameters.to_json, headers: HEADERS
+      put '/api/v1/users/onboard', params: USER_SPEC_PARAMS.to_json, headers: HEADERS
       expect(response.status).to eq(400)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq("Discord isn't connected")
     end
@@ -56,7 +45,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
     it 'when user is already in group' do
       group = create(:group)
       create(:group_member, user_id: user.id, group_id: group.id)
-      put '/api/v1/users/onboard', params: parameters.to_json, headers: HEADERS
+      put '/api/v1/users/onboard', params: USER_SPEC_PARAMS.to_json, headers: HEADERS
       expect(response.status).to eq(400)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User already in a group')
     end
@@ -151,6 +140,19 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Report' do
+    let!(:user) { create(:user, discord_active: true, discord_id: 123_456_789) }
+    it ' return unauthorized if user is not logged in or not a known bot' do
+      get '/api/v1/users/report', headers: HEADERS
+      expect(response.status).to eq(401)
+    end
+    it 'returns data of logged in users when user is logged in ' do
+      sign_in(user)
+      get '/api/v1/users/report', params: { "days": 7 }, headers: HEADERS
+      expect(response.status).to eq(200)
+    end
+  end
+
+  context 'Report with bot headers' do
     let(:bot_headers) do
       {
         'ACCEPT' => 'application/vnd.api+json',
@@ -159,12 +161,8 @@ RSpec.describe Api::V1::UsersController, type: :request do
         'User-Type' => 'Bot'
       }
     end
-
     let!(:user) { create(:user, discord_active: true, discord_id: 123_456_789) }
-    it ' return unauthorized if user is not logged in or not a known bot' do
-      get '/api/v1/users/report', headers: HEADERS
-      expect(response.status).to eq(401)
-    end
+
     it 'retrun error when user not logged ' do
       get '/api/v1/users/report', params: { "discord_id": '1234' }, headers: bot_headers
       expect(response.status).to eq(400)
@@ -172,35 +170,11 @@ RSpec.describe Api::V1::UsersController, type: :request do
     it 'returns data of discord users when user is on discord ' do
       get '/api/v1/users/report', params: { "discord_id": 123_456_789 }, headers: bot_headers
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes]).to eq({
-                                                                                           'id': user.id, 'type': 'report',
-                                                                                           "total_ques": Content.where(data_type: 0).count,
-                                                                                           "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
-                                                                                                                                                 contents: { data_type: 0 }).count
-                                                                                         })
     end
-    it 'returns data of logged in users when user is logged in ' do
-      sign_in(user)
-      get '/api/v1/users/report', params: { "days": 7 }, headers: HEADERS
-      expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes]).to eq({
-                                                                                           'id': user.id, 'type': 'report',
-                                                                                           "total_ques": Content.where(data_type: 0).count,
-                                                                                           "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
-                                                                                                                                                 contents: { data_type: 0 }).count
-                                                                                         })
-    end
-
     it 'retrun data of logged in users when user is bot ' do
       sign_in(user)
       get '/api/v1/users/report', params: { "days": 7 }, headers: bot_headers
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes]).to eq({
-                                                                                           'id': user.id, 'type': 'report',
-                                                                                           "total_ques": Content.where(data_type: 0).count,
-                                                                                           "total_solved_ques": Content.joins(:submission).where(submissions: { status: 0, user_id: user.id },
-                                                                                                                                                 contents: { data_type: 0 }).count
-                                                                                         })
     end
   end
 
@@ -341,16 +315,8 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
 
-  context 'Create ' do
+  context 'Create without bot token' do
     let!(:user) { create(:user, discord_active: false) }
-    let(:bot_headers) do
-      {
-        'ACCEPT' => 'application/vnd.api+json',
-        'CONTENT-TYPE' => 'application/vnd.api+json',
-        'Token' => ENV['DISCORD_TOKEN'],
-        'User-Type' => 'Bot'
-      }
-    end
     it 'return unauthorized when bot token not set ' do
       post '/api/v1/users', params: {
         "data": {
@@ -364,7 +330,19 @@ RSpec.describe Api::V1::UsersController, type: :request do
       }.to_json, headers: HEADERS
       expect(response.status).to eq(401)
     end
-    it 'updates discord active to true when user login ' do
+  end
+
+  context 'Create while logging in' do
+    let!(:user) { create(:user, discord_active: false) }
+    let(:bot_headers) do
+      {
+        'ACCEPT' => 'application/vnd.api+json',
+        'CONTENT-TYPE' => 'application/vnd.api+json',
+        'Token' => ENV['DISCORD_TOKEN'],
+        'User-Type' => 'Bot'
+      }
+    end
+    it 'updates discord active to true when user login' do
       post '/api/v1/users', params: {
         "data": {
           "type": 'users',
@@ -398,7 +376,8 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:markdown]).to eq('Software🌈 and Web developer🎯')
     end
   end
-  context 'Update discord username through bot ' do
+
+  context 'Update discord username through bot (invalid discord id)' do
     let!(:user) { create(:user, discord_id: '123', discord_username: 'adhikramm') }
     let!(:bot_headers) do
       {
@@ -421,6 +400,17 @@ RSpec.describe Api::V1::UsersController, type: :request do
       }.to_json, headers: bot_headers
       expect(response).to have_http_status(400)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User does not exist')
+    end
+  end
+  context 'Update discord username through bot when user is valid' do
+    let!(:user) { create(:user, discord_id: '123', discord_username: 'adhikramm') }
+    let!(:bot_headers) do
+      {
+        'ACCEPT' => 'application/vnd.api+json',
+        'CONTENT-TYPE' => 'application/vnd.api+json',
+        'Token' => ENV['DISCORD_TOKEN'],
+        'User-Type' => 'Bot'
+      }
     end
     it ' Changes the discord_username of the user' do
       put '/api/v1/users/update_discord_username', params: {
