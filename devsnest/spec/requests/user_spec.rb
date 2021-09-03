@@ -178,11 +178,11 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
 
-  context 'Update Username' do
+  context 'Update Username unauthorized check' do
     let!(:user) { create(:user, username: 'adhikramm') }
     let!(:user2) { create(:user, username: 'adhikrammm') }
-    it 'render unauthorized if user is not logged in' do
-      put "/api/v1/users/#{user.id}", params: {
+    let(:user_params) do
+      {
 
         "data": {
           "id": user.id.to_s,
@@ -192,84 +192,78 @@ RSpec.describe Api::V1::UsersController, type: :request do
             'username': 'adhikrammm'
           }
         }
+      }
+    end
 
-      }.to_json, headers: HEADERS
+    it 'render unauthorized if user is not logged in' do
+      put "/api/v1/users/#{user.id}", params: user_params.to_json, headers: HEADERS
       expect(response.status).to eq(401)
     end
     it 'render unauthorized if user wants to change others username' do
       sign_in(user)
-      put "/api/v1/users/#{user2.id}", params: {
+      user_params[:data][:id] = user2.id.to_s
+      put "/api/v1/users/#{user2.id}", params: user_params.to_json, headers: HEADERS
+      expect(response.status).to eq(401)
+    end
+  end
 
+  context 'Update Username basic username checks' do
+    let!(:user) { create(:user, username: 'adhikramm') }
+    let!(:user2) { create(:user, username: 'adhikrammm') }
+    let(:user_params) do
+      {
         "data": {
-          "id": user2.id.to_s,
+          "id": user.id.to_s,
           "type": 'users',
 
           "attributes": {
-            "username": 'adhikrammm'
+            'username': 'adhikram/m'
           }
         }
-
-      }.to_json, headers: HEADERS
-      expect(response.status).to eq(401)
+      }
     end
 
     it 'render error if username pattern does not match' do
       sign_in(user)
-      put "/api/v1/users/#{user.id}", params: {
-        "data": {
-          "id": user.id.to_s,
-          "type": 'users',
-          "attributes": {
-            "username": 'adhikramm/m'
-          }
-        }
-      }.to_json, headers: HEADERS
-      expect(response.status).to eq(400)
+      put "/api/v1/users/#{user.id}", params: user_params.to_json, headers: HEADERS
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Username pattern mismatched')
     end
     it 'render error if user with same username already exist' do
       sign_in(user)
       user2.update(username: 'adhikram')
-      put "/api/v1/users/#{user.id}", params: {
+      user_params[:data][:attributes][:username] = user2.username
+      put "/api/v1/users/#{user.id}", params: user_params.to_json, headers: HEADERS
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User already exists')
+    end
+  end
+
+  context 'Update Username basic username checks' do
+    let!(:user) { create(:user, username: 'adhikrammaitra') }
+    let!(:user2) { create(:user, username: 'adhikrammm') }
+    let(:user_params) do
+      {
+
         "data": {
           "id": user.id.to_s,
           "type": 'users',
+
           "attributes": {
-            "username": user2.username
+            'username': 'adhikrammm'
           }
         }
-      }.to_json, headers: HEADERS
-      expect(response.status).to eq(400)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User already exists')
+      }
     end
+
     it 'render error if user update count is equals to 4' do
       sign_in(user)
       user.update(update_count: 4)
-      put "/api/v1/users/#{user.id}", params: {
-        "data": {
-          "id": user.id.to_s,
-          "type": 'users',
-          "attributes": {
-            "username": 'adhikramm'
-          }
-        }
-      }.to_json, headers: HEADERS
-      expect(response.status).to eq(400)
+      put "/api/v1/users/#{user.id}", params: user_params.to_json, headers: HEADERS
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Update count Exceeded for username')
     end
     it 'It changes the update count if all autherization passed and update the username' do
       sign_in(user)
-      put "/api/v1/users/#{user.id}", params: {
-        "data": {
-          "id": user.id.to_s,
-          "type": 'users',
-          "attributes": {
-            "username": 'adhikram'
-          }
-        }
-      }.to_json, headers: HEADERS
+      put "/api/v1/users/#{user.id}", params: user_params.to_json, headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:username]).to eq('adhikram')
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:update_count]).to eq(1)
     end
   end
