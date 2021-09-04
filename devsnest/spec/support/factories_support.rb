@@ -22,4 +22,4 @@ USER_SPEC_PARAMS = {
       "is_discord_form_filled": true
     }
   }
-}
+}.freeze

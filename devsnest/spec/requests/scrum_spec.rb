@@ -252,34 +252,6 @@ RSpec.describe Scrum, type: :request do
       put "/api/v1/scrums/#{scrum.id}", params: params.to_json, headers: HEADERS
       expect(response).to have_http_status(200)
     end
-  end
-
-  context 'Create Scrums' do
-    let(:group) { create(:group) }
-    let(:user) { create(:user) }
-    let(:scrum) { create(:scrum, user_id: user.id, group_id: group.id) }
-    let(:group_member) { create(:group_member) }
-    let(:date) { Date.current }
-
-    before :each do
-      sign_in(user)
-    end
-
-    let(:params) do
-      {
-
-        "data":
-        {
-          "id": scrum.id,
-          "attributes":
-            {
-              "saw_last_lecture": 'YsES',
-              "topics_to_cover": 'dppefwp'
-            },
-          "type": 'scrums'
-        }
-      }
-    end
 
     it 'should update if the user is the vice-leader of group' do
       scrum.update(user_id: 0)
