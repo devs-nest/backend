@@ -66,38 +66,8 @@ RSpec.describe 'Api::V1::Submission', type: :request do
     end
   end
 
-  it 'should check if submission status is updated to doubt' do
-    sign_in(user)
-    post '/api/v1/submissions', params: {
-      "data": {
-        "attributes": {
-          "question_unique_id": content2.unique_id,
-          "status": 2
-        },
-        "type": 'submissions'
-      }
-    }.to_json, headers: HEADERS
-    expect(response).to have_http_status(200)
-    expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:status]).to eq('doubt')
-  end
-
-  it 'should check if submission status is updated to doubt through discord BOT' do
-    sign_in(user)
-    post '/api/v1/submissions', params: {
-      "data": {
-        "attributes": {
-          "discord_id": user.discord_id,
-          "question_unique_id": content2.unique_id,
-          "status": 2
-        },
-        "type": 'submissions'
-      }
-    }.to_json, headers: bot_headers
-    expect(response).to have_http_status(200)
-    expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:status]).to eq('doubt')
-  end
-
-  it 'should check if submission status is updated to done' do
+  # to check status update the params status type accordingly (0 : done, 1 : notdonw, 2 : doubt)
+  it 'should check if submission status is updated to done, notdone or doubt' do
     sign_in(user)
     post '/api/v1/submissions', params: {
       "data": {
@@ -112,7 +82,9 @@ RSpec.describe 'Api::V1::Submission', type: :request do
     expect(response).to have_http_status(200)
     expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:status]).to eq('done')
   end
-  it 'should check if submission status is updated to done through discord BOT' do
+
+  # to check status update the params status type accordingly (0 : done, 1 : notdonw, 2 : doubt)
+  it 'should check if submission status is updated to done, notdone or doubt through discord BOT' do
     sign_in(user)
     post '/api/v1/submissions', params: {
       "data": {
@@ -127,38 +99,5 @@ RSpec.describe 'Api::V1::Submission', type: :request do
     }.to_json, headers: bot_headers
     expect(response).to have_http_status(200)
     expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:status]).to eq('done')
-  end
-
-  it 'should check if submission status is updated to done' do
-    sign_in(user)
-    post '/api/v1/submissions', params: {
-      "data": {
-        "attributes": {
-          "question_unique_id": content2.unique_id,
-          "status": 1
-        },
-        "type": 'submissions'
-      }
-
-    }.to_json, headers: HEADERS
-    expect(response).to have_http_status(200)
-    expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:status]).to eq('notdone')
-  end
-
-  it 'should check if submission status is updated to notdone through discord BOT' do
-    sign_in(user)
-    post '/api/v1/submissions', params: {
-      "data": {
-        "attributes": {
-          "discord_id": user.discord_id,
-          "question_unique_id": content2.unique_id,
-          "status": 1
-        },
-        "type": 'submissions'
-      }
-
-    }.to_json, headers: bot_headers
-    expect(response).to have_http_status(200)
-    expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:status]).to eq('notdone')
   end
 end

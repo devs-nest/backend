@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# submission model
 class Submission < ApplicationRecord
   enum status: %i[done notdone doubt]
   has_one :content

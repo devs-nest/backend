@@ -96,12 +96,12 @@ RSpec.describe WeeklyTodo, type: :request do
       end
     end
 
-    context ' Authoize Create ' do
+    context ' Authoize Create (errors)' do
       before(:each) do
         WeeklyTodo.last.destroy
       end
 
-      it 'should return a error when passing creation_week' do
+      it 'should return an error when passing creation_week' do
         sign_in(user2)
         group1.update(batch_leader_id: user2.id)
         parameters_create[:data][:attributes][:creation_week] = Date.current
@@ -111,74 +111,51 @@ RSpec.describe WeeklyTodo, type: :request do
         expect(JSON.parse(response.body, symbolize_names: true)[:errors][0][:detail]).to eq('creation_week is not allowed.')
       end
 
-      it 'returns error when user does not belongs to the group and nither an admin nor the group batchleader' do
+      it 'returns an error when user does not belongs to the group and nither an admin nor the group batchleader' do
         sign_in(user2)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(400)
       end
+    end
 
-      it 'returns no error when user does belongs to the group' do
+    context ' Authoize Create (should not return an error)' do
+      before(:each) do
+        WeeklyTodo.last.destroy
+      end
+      it 'should not return an error when user does belongs to the group' do
         sign_in(user1)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
-        body = JSON.parse(response.body, symbolize_names: true)
-        expect(body[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
-        expect(body[:data][:attributes][:batch_leader_rating]).to eq(parameters_create[:data][:attributes][:batch_leader_rating])
-        expect(body[:data][:attributes][:extra_activity]).to eq(parameters_create[:data][:attributes][:extra_activity])
-        expect(body[:data][:attributes][:group_activity_rating]).to eq(parameters_create[:data][:attributes][:group_activity_rating])
-        expect(body[:data][:attributes][:moral_status]).to eq(parameters_create[:data][:attributes][:moral_status])
-        expect(body[:data][:attributes][:obstacles]).to eq(parameters_create[:data][:attributes][:obstacles])
-        expect(body[:data][:attributes][:comments]).to eq(parameters_create[:data][:attributes][:comments])
-        expect(body[:data][:attributes][:todo_list]).to eq(parameters_create[:data][:attributes][:todo_list])
       end
 
-      it 'returns no error when user does not belongs to the group but an admin ' do
+      it 'should not return an error when user does not belongs to the group but an admin' do
         sign_in(admin)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
-        body = JSON.parse(response.body, symbolize_names: true)
-        expect(body[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
-        expect(body[:data][:attributes][:batch_leader_rating]).to eq(parameters_create[:data][:attributes][:batch_leader_rating])
-        expect(body[:data][:attributes][:extra_activity]).to eq(parameters_create[:data][:attributes][:extra_activity])
-        expect(body[:data][:attributes][:group_activity_rating]).to eq(parameters_create[:data][:attributes][:group_activity_rating])
-        expect(body[:data][:attributes][:moral_status]).to eq(parameters_create[:data][:attributes][:moral_status])
-        expect(body[:data][:attributes][:obstacles]).to eq(parameters_create[:data][:attributes][:obstacles])
-        expect(body[:data][:attributes][:comments]).to eq(parameters_create[:data][:attributes][:comments])
-        expect(body[:data][:attributes][:todo_list]).to eq(parameters_create[:data][:attributes][:todo_list])
       end
 
-      it 'returns no error when user does not belongs to the group but group batchleader ' do
+      it 'should not return an error when user does not belongs to the group but group batchleader ' do
         sign_in(batch_leader)
         post '/api/v1/weekly-todo', params: parameters_create.to_json, headers: HEADERS
         expect(response).to have_http_status(201)
-        body = JSON.parse(response.body, symbolize_names: true)
-        expect(body[:data][:attributes][:sheet_filled]).to eq(parameters_create[:data][:attributes][:sheet_filled])
-        expect(body[:data][:attributes][:batch_leader_rating]).to eq(parameters_create[:data][:attributes][:batch_leader_rating])
-        expect(body[:data][:attributes][:extra_activity]).to eq(parameters_create[:data][:attributes][:extra_activity])
-        expect(body[:data][:attributes][:group_activity_rating]).to eq(parameters_create[:data][:attributes][:group_activity_rating])
-        expect(body[:data][:attributes][:moral_status]).to eq(parameters_create[:data][:attributes][:moral_status])
-        expect(body[:data][:attributes][:obstacles]).to eq(parameters_create[:data][:attributes][:obstacles])
-        expect(body[:data][:attributes][:comments]).to eq(parameters_create[:data][:attributes][:comments])
-        expect(body[:data][:attributes][:todo_list]).to eq(parameters_create[:data][:attributes][:todo_list])
       end
     end
 
-    context ' Authoize Update ' do
-      it 'returns error when user does not belongs to the group and not an admin or group_owner or group_co_owner ' do
+    context ' Authoize Update (errors) ' do
+      it 'returns an error when user does not belongs to the group and not an admin or group_owner or group_co_owner ' do
         sign_in(user2)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(403)
       end
 
-      it 'returns error when user does belongs to the group and not an admin or group_owner or group_co_owner ' do
+      it 'returns an error when user does belongs to the group and not an admin or group_owner or group_co_owner ' do
         sign_in(user1)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(403)
       end
 
-      it 'should return a error when passing creation_week' do
-        sign_in(user1)
-        user1.update(user_type: 1)
+      it 'should return an error when passing creation_week' do
+        sign_in(admin)
         parameters_update[:data][:attributes][:creation_week] = Date.current
 
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
@@ -186,59 +163,33 @@ RSpec.describe WeeklyTodo, type: :request do
         expect(JSON.parse(response.body, symbolize_names: true)[:errors][0][:detail]).to eq('creation_week is not allowed.')
       end
 
-      it 'should return a error when passing creation_week' do
-        sign_in(user1)
-        user1.update(user_type: 1)
+      it 'should return an error when passing creation_week' do
+        sign_in(admin)
         parameters_update[:data][:attributes][:group_id] = 1
 
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(400)
         expect(JSON.parse(response.body, symbolize_names: true)[:errors][0][:detail]).to eq('group_id is not allowed.')
       end
+    end
 
+    context ' Authoize Update (should not return an error) ' do
       it 'returns no error when user does not belongs to the group but an admin ' do
         sign_in(admin)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
-        body = JSON.parse(response.body, symbolize_names: true)
-        expect(body[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
-        expect(body[:data][:attributes][:batch_leader_rating]).to eq(parameters_update[:data][:attributes][:batch_leader_rating])
-        expect(body[:data][:attributes][:extra_activity]).to eq(parameters_update[:data][:attributes][:extra_activity])
-        expect(body[:data][:attributes][:group_activity_rating]).to eq(parameters_update[:data][:attributes][:group_activity_rating])
-        expect(body[:data][:attributes][:moral_status]).to eq(parameters_update[:data][:attributes][:moral_status])
-        expect(body[:data][:attributes][:obstacles]).to eq(parameters_update[:data][:attributes][:obstacles])
-        expect(body[:data][:attributes][:comments]).to eq(parameters_update[:data][:attributes][:comments])
-        expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
       end
 
       it 'returns no error when user is the group_owner ' do
         sign_in(owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
-        body = JSON.parse(response.body, symbolize_names: true)
-        expect(body[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
-        expect(body[:data][:attributes][:batch_leader_rating]).to eq(parameters_update[:data][:attributes][:batch_leader_rating])
-        expect(body[:data][:attributes][:extra_activity]).to eq(parameters_update[:data][:attributes][:extra_activity])
-        expect(body[:data][:attributes][:group_activity_rating]).to eq(parameters_update[:data][:attributes][:group_activity_rating])
-        expect(body[:data][:attributes][:moral_status]).to eq(parameters_update[:data][:attributes][:moral_status])
-        expect(body[:data][:attributes][:obstacles]).to eq(parameters_update[:data][:attributes][:obstacles])
-        expect(body[:data][:attributes][:comments]).to eq(parameters_update[:data][:attributes][:comments])
-        expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
       end
 
       it 'returns no error when user is the group_co_owner ' do
         sign_in(co_owner)
         put "/api/v1/weekly-todo/#{wt1.id}", params: parameters_update.to_json, headers: HEADERS
         expect(response).to have_http_status(200)
-        body = JSON.parse(response.body, symbolize_names: true)
-        expect(body[:data][:attributes][:sheet_filled]).to eq(parameters_update[:data][:attributes][:sheet_filled])
-        expect(body[:data][:attributes][:batch_leader_rating]).to eq(parameters_update[:data][:attributes][:batch_leader_rating])
-        expect(body[:data][:attributes][:extra_activity]).to eq(parameters_update[:data][:attributes][:extra_activity])
-        expect(body[:data][:attributes][:group_activity_rating]).to eq(parameters_update[:data][:attributes][:group_activity_rating])
-        expect(body[:data][:attributes][:moral_status]).to eq(parameters_update[:data][:attributes][:moral_status])
-        expect(body[:data][:attributes][:obstacles]).to eq(parameters_update[:data][:attributes][:obstacles])
-        expect(body[:data][:attributes][:comments]).to eq(parameters_update[:data][:attributes][:comments])
-        expect(body[:data][:attributes][:todo_list]).to eq(parameters_update[:data][:attributes][:todo_list])
       end
     end
 
