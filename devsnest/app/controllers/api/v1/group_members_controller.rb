@@ -54,7 +54,7 @@ module Api
           # User has been removed from a team
           current_group_member.destroy
         end
-
+        user.update(is_discord_form_filled: false)
         render_success({})
       end
     end

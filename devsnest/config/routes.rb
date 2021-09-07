@@ -5,6 +5,10 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       devise_for :users, skip: [:registrations]
+      namespace :admin do
+        jsonapi_resources :internal_feedback, only: %i[index]
+        jsonapi_resources :users, only: %i[index]
+      end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
           get :get_by_username
@@ -41,11 +45,6 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :batch_leader_sheet, only: %i[create index update]
       jsonapi_resources :markdown, only: %i[index]
-      resources :admin, only: %i[] do
-        collection do
-          get :onboard_details, :feedback_details
-        end
-      end
       jsonapi_resources :internal_feedback, only: %i[create update]
       jsonapi_resources :link, only: %i[show]
       jsonapi_resources :hackathon, only: %i[create index update show]
