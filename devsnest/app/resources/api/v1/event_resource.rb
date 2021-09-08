@@ -3,7 +3,7 @@
 module Api
   module V1
     class EventResource < JSONAPI::Resource
-      attributes :name, :message, :bot_type
+      attributes :event_type, :message, :bot_type, :bot_details
     end
   end
 end

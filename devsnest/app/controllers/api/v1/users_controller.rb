@@ -103,6 +103,8 @@ module Api
         return render_error({ message: message }) if temp_user.web_active?
 
         @current_user.merge_discord_user(temp_user.discord_id, temp_user)
+        Event.generate(Event::VERIFIED, @current_user)
+        Event.generate(Event::WELCOME, @current_user)
         render_success(@current_user.as_json.merge({ "type": 'users' }))
       end
 
