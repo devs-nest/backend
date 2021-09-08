@@ -421,4 +421,64 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:discord_username]).to eq('Arka')
     end
   end
+  context 'login' do
+    let!(:user) { create(:user) }
+    let!(:user1) { create(:user, email: '1@devsnest1.com') }
+    let(:login_headers) do
+      {
+        "code": 'code',
+        "googleId": '1234',
+        "type": 'google'
+
+      }.to_json
+    end
+    it ' New Login ' do
+      allow(User).to receive_message_chain(:fetch_google_user_details).and_return({ 'name': 'Adhikram', 'email': '1@devsnest.com' }.as_json)
+      post '/api/v1/users/login', params: login_headers, headers: HEADERS
+      expect(response.status).to eq(200)
+    end
+    it ' Login for already existed user' do
+      allow(User).to receive_message_chain(:fetch_google_user_details).and_return({ 'name': 'Adhikram', 'email': '1@devsnest1.com' }.as_json)
+      post '/api/v1/users/login', params: login_headers, headers: HEADERS
+      expect(response.status).to eq(200)
+    end
+  end
+  context 'Connect discord with code ' do
+    let!(:user) { create(:user) }
+    let!(:discord_user) { create(:user, discord_active: true, web_active: false) }
+    let(:group) { create(:group, co_owner_id: discord_user.id) }
+    let!(:group_member) { create(:group_member, group_id: group.id, user_id: discord_user.id) }
+    it ' Connect discord ' do
+      allow(User).to receive_message_chain(:fetch_discord_access_token).and_return('token')
+      discord_user.update(discord_id: discord_user.id)
+      allow(User).to receive_message_chain(:fetch_discord_user_details).and_return(discord_user.as_json)
+      sign_in(user)
+
+      post '/api/v1/users/connect_discord', params: {
+        "code": 'code'
+
+      }.to_json, headers: HEADERS
+      expect(response.status).to eq(200)
+    end
+  end
+  context 'Connect discord with token' do
+    let!(:user) { create(:user) }
+    let(:discord_user) { create(:user, discord_active: true, web_active: false) }
+    let(:group) { create(:group, owner_id: discord_user.id) }
+    let!(:group_member) { create(:group_member, group_id: group.id, user_id: discord_user.id) }
+    it ' Connect discord ' do
+      sign_in(user)
+      post '/api/v1/users/connect_discord', params: {
+        "data": {
+          "type": 'users',
+          "attributes":
+          {
+            "bot_token": discord_user.bot_token
+
+          }
+        }
+      }.to_json, headers: HEADERS
+      expect(response.status).to eq(200)
+    end
+  end
 end
