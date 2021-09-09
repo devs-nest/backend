@@ -441,6 +441,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
       allow(User).to receive_message_chain(:fetch_google_user_details).and_return({ 'name': 'Adhikram', 'email': '1@devsnest1.com' }.as_json)
       post '/api/v1/users/login', params: login_headers, headers: HEADERS
       expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:email]).to eq(user1.email)
     end
   end
   context 'Connect discord with code ' do
