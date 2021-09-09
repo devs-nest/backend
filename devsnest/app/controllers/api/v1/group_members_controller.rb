@@ -44,6 +44,7 @@ module Api
           else
             # user was not part of any group need to create member
             GroupMember.create(user_id: user.id, group_id: new_group.id)
+            user.update(group_assigned: true)
           end
 
           # update TL status
@@ -53,8 +54,8 @@ module Api
         elsif current_group_member.present?
           # User has been removed from a team
           current_group_member.destroy
+          user.update(group_assigned: false)
         end
-        user.update(group_assigned: true)
         render_success({})
       end
     end
