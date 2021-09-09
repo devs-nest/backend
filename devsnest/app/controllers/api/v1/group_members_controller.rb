@@ -54,7 +54,7 @@ module Api
           # User has been removed from a team
           current_group_member.destroy
         end
-
+        user.update(group_assigned: true)
         render_success({})
       end
     end
