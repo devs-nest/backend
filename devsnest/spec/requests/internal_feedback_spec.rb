@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Api::V1::AdminController, type: :request do
+RSpec.describe 'Api::V1::AdminController', type: :request do
   let(:user) { create(:user, discord_active: true) }
   let(:admin) { create(:user, user_type: 'admin') }
   let(:controller) { Api::V1::InternalFeedbackController }

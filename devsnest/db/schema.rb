@@ -262,6 +262,7 @@ ActiveRecord::Schema.define(version: 2021_09_14_160610) do
     t.boolean "is_discord_form_filled", default: false
     t.text "markdown"
     t.integer "bot_id"
+    t.boolean "group_assigned", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
