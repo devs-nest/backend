@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_01_061201) do
+ActiveRecord::Schema.define(version: 2021_09_09_031944) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -237,6 +237,7 @@ ActiveRecord::Schema.define(version: 2021_09_01_061201) do
     t.integer "webd_skill", default: 0
     t.boolean "is_discord_form_filled", default: false
     t.text "markdown"
+    t.boolean "group_assigned", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
