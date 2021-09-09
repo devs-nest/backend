@@ -5,11 +5,11 @@ require 'rails_helper'
 RSpec.describe 'Onboard_Details', type: :request do
   let(:user) { create(:user, discord_active: true) }
 
-  context 'Onboard_Details - Permission Checks' do
-    before :each do
-      sign_in(user)
-    end
+  before :each do
+    sign_in(user)
+  end
 
+  context 'Onboard_Details - Permission Checks' do
     it 'If User is not Admin' do
       get '/api/v1/admin/users'
       expect(response.status).to eq(401)
