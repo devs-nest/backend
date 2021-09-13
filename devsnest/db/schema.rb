@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_09_094054) do
+ActiveRecord::Schema.define(version: 2021_09_13_070035) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -61,6 +61,10 @@ ActiveRecord::Schema.define(version: 2021_09_09_094054) do
     t.integer "student_mentor_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "bot_token"
   end
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -167,10 +171,10 @@ ActiveRecord::Schema.define(version: 2021_09_09_094054) do
     t.text "template"
   end
 
-  create_table "notification_bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.json "user_id"
-    t.integer "bot_token"
+  create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.text "message"
+    t.boolean "is_sent", default: false
+    t.date "date_to_be_sent"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -245,6 +249,7 @@ ActiveRecord::Schema.define(version: 2021_09_09_094054) do
     t.integer "webd_skill", default: 0
     t.boolean "is_discord_form_filled", default: false
     t.text "markdown"
+    t.integer "bot_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
