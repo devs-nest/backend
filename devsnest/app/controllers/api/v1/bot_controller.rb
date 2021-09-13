@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class NotificationBotController < ApplicationController
+    class BotController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :bot_auth, only: %i[create index]
     end
