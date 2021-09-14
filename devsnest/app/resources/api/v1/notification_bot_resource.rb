@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class BotResource < JSONAPI::Resource
+    class NotificationBotResource < JSONAPI::Resource
       attributes :id, :bot_token
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_13_070035) do
+ActiveRecord::Schema.define(version: 2021_09_14_160610) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -63,10 +63,6 @@ ActiveRecord::Schema.define(version: 2021_09_13_070035) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "bot_token"
-  end
-
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name"
   end
@@ -89,6 +85,14 @@ ActiveRecord::Schema.define(version: 2021_09_13_070035) do
     t.json "reference_data"
     t.index ["parent_id"], name: "index_contents_on_parent_id"
     t.index ["unique_id"], name: "index_contents_on_unique_id"
+  end
+
+  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.text "message"
+    t.string "bot_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "frontend_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -171,8 +175,15 @@ ActiveRecord::Schema.define(version: 2021_09_13_070035) do
     t.text "template"
   end
 
+  create_table "notification_bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "bot_token"
+    t.string "bot_username"
+    t.boolean "is_generic_bot", default: false
+  end
+
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.text "message"
+    t.json "users"
     t.boolean "is_sent", default: false
     t.date "date_to_be_sent"
     t.datetime "created_at", precision: 6, null: false
