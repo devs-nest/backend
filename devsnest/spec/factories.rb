@@ -79,4 +79,12 @@ FactoryBot.define do
   factory :markdown do
     sequence(:template) { |n| n }
   end
+
+  factory :event do
+    sequence(:message) { |n| n }
+  end
+
+  factory :notification_bot do
+    sequence(:bot_username) { |n| n }
+  end
 end

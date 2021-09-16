@@ -11,12 +11,18 @@ class User < ApplicationRecord
   belongs_to :college, optional: true
   has_many :internal_feedbacks
   before_save :markdown_encode, if: :will_save_change_to_markdown?
+  after_create :assign_bot_to_user
 
   def create_username
     username = ''
     count = 0
-    username = (count += 1).to_s while User.find_by(username: email.split('@')[0] + username)
-    update_attribute(:username, email.split('@')[0] + username)
+    temp = email.split('@')[0].gsub(/[^0-9A-Za-z]/, '')
+    username = (count += 1).to_s while User.find_by(username: temp + username)
+    update_attribute(:username, temp + username)
+  end
+
+  def assign_bot_to_user
+    update_attribute(:bot_id, rand(1..20))
   end
 
   def self.fetch_discord_id(code)

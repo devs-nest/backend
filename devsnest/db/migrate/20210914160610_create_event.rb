@@ -3,7 +3,7 @@ class CreateEvent < ActiveRecord::Migration[6.0]
     create_table :events do |t|
       t.string :event_type
       t.text :message
-      t.string :bot_type
+      t.integer :bot_type
       t.string :bot_details
       t.timestamps
     end
