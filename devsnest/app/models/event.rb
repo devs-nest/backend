@@ -4,7 +4,7 @@
 class Event < ApplicationRecord
   enum bot_type: %i[generic user]
   VERIFIED = 'verification'
-  NOTIFICATION = 'notification'
+  WELCOME = 'welcome'
 
   def self.generate(event_type, user)
     event = Event.find_by(event_type: event_type)

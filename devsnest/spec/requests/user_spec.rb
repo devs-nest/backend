@@ -445,7 +445,10 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
   context 'Connect discord with code ' do
-    let!(:user) { create(:user) }
+    let!(:event) { create(:event, event_type: 'welcome', bot_type: 1) }
+    let!(:event1) { create(:event, event_type: 'verification', bot_type: 0) }
+    let!(:bot) { create(:notification_bot, bot_token: 'abchefljfhlf') }
+    let!(:user1) { create(:user) }
     let!(:discord_user) { create(:user, discord_active: true, web_active: false) }
     let(:group) { create(:group, co_owner_id: discord_user.id) }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: discord_user.id) }
@@ -453,7 +456,9 @@ RSpec.describe Api::V1::UsersController, type: :request do
       allow(User).to receive_message_chain(:fetch_discord_access_token).and_return('token')
       discord_user.update(discord_id: discord_user.id)
       allow(User).to receive_message_chain(:fetch_discord_user_details).and_return(discord_user.as_json)
-      sign_in(user)
+
+      user1.update(bot_id: bot.id)
+      sign_in(user1)
 
       post '/api/v1/users/connect_discord', params: {
         "code": 'code'
@@ -463,12 +468,17 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
   context 'Connect discord with token' do
-    let!(:user) { create(:user) }
+    let!(:event) { create(:event, event_type: 'welcome', bot_type: 1) }
+    let!(:event1) { create(:event, event_type: 'verification', bot_type: 0) }
+    let(:bot) { create(:notification_bot, bot_token: 'abchefljfhlf') }
+    let!(:user1) { create(:user) }
     let(:discord_user) { create(:user, discord_active: true, web_active: false) }
     let(:group) { create(:group, owner_id: discord_user.id) }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: discord_user.id) }
     it ' Connect discord ' do
-      sign_in(user)
+      user1.update(bot_id: bot.id)
+      sign_in(user1)
+
       post '/api/v1/users/connect_discord', params: {
         "data": {
           "type": 'users',

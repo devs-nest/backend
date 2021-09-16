@@ -90,7 +90,7 @@ ActiveRecord::Schema.define(version: 2021_09_14_160610) do
   create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "event_type"
     t.text "message"
-    t.string "bot_type"
+    t.integer "bot_type"
     t.string "bot_details"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
