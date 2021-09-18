@@ -12,7 +12,7 @@ module Api
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
       attributes :frontend_activity
       attributes :markdown, :bio
-      attributes :user_type
+      attributes :type
 
       def markdown
         @model.markdown.dup.encode('ISO-8859-1').force_encoding('utf-8') unless @model.markdown.blank?
@@ -62,6 +62,12 @@ module Api
 
       def frontend_activity
         FrontendSubmission.where(user_id: @model.id).group('DATE(updated_at)').count
+      end
+
+      def type
+        return nil unless @model.user_type != 1
+
+        @model.user_type
       end
     end
   end
