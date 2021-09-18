@@ -104,7 +104,7 @@ module Api
 
         @current_user.merge_discord_user(temp_user.discord_id, temp_user)
         Event.generate(Event::VERIFIED, @current_user) if $sqs.present?
-        Event.generate(Event::WELCOME, @current_user) if $sqs.present?
+        # Event.generate(Event::WELCOME, @current_user) if $sqs.present?
         render_success(@current_user.as_json.merge({ "type": 'users' }))
       end
 
