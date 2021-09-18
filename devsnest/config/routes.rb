@@ -49,7 +49,7 @@ Rails.application.routes.draw do
       jsonapi_resources :internal_feedback, only: %i[create update]
       jsonapi_resources :link, only: %i[show]
       jsonapi_resources :hackathon, only: %i[create index update show]
-      jsonapi_resources :notification_bot, only: %i[create index]
+      jsonapi_resources :notification_bot, only: %i[index]
       jsonapi_resources :notification, only: %i[create index]
       jsonapi_resources :event, only: %i[create index]
     end
