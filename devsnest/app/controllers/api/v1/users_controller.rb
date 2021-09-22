@@ -95,6 +95,10 @@ module Api
           return render_error({ message: 'Incorrect code from discord' }) if discord_id.nil?
 
           temp_user = User.find_by(discord_id: discord_id)
+          if temp_user.nil?
+            @current_user.update(discord_id: discord_id, discord_active: true)
+            return render_success(@current_user.as_json.merge({ "type": 'users' }))
+          end
         elsif params['data']['attributes']['bot_token'].present?
           temp_user = User.find_by(bot_token: params['data']['attributes']['bot_token'])
           return render_error({ message: 'Could Not find User of Provided token' }) if temp_user.nil?
