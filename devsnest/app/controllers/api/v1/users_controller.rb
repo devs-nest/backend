@@ -4,9 +4,10 @@ module Api
   module V1
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
+      include AwsUtils
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -171,6 +172,24 @@ module Api
 
         user.update(discord_username: params['data']['attributes']['discord_username'])
         render_success(user.as_json.merge({ "type": 'users' }))
+      end
+
+      def upload_files
+        if params['file_upload'].present?
+          type = params['file_upload_type']
+          file = params['file_upload']
+          key = "#{@current_user.id}/#{SecureRandom.hex(8)}_#{type}"
+          AwsUtils::upload_file_s3(file, key, type)
+          params.delete "file_upload"
+          params.delete "file_upload_type"
+          update_link = type == 'profile-image' ? "image_url" : "resume_url"
+
+          bucket = "https://devsn-#{type}.s3.amazonaws.com/"
+          public_link = bucket + key
+          @current_user.update("#{update_link}": public_link)
+
+          api_render(200, {id: key, type: type, user_id: @current_user.id, bucket: "devsn-#{type}", public_link: public_link})
+        end
       end
     end
   end

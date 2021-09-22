@@ -15,7 +15,7 @@ Rails.application.routes.draw do
         end
         collection do
           get :report, :leaderboard, :me, :get_token
-          put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username
+          put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username, :upload_files
           post :login, :connect_discord
           delete :logout
         end
