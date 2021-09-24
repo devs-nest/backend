@@ -7,6 +7,7 @@ module Api
       class UserResource < JSONAPI::Resource
         attributes :id, :discord_username, :discord_id, :name, :grad_year, :school, :work_exp, :known_from, :dsa_skill, :webd_skill,
                    :group_assigned
+        paginator :paged
 
         filters :is_discord_form_filled, :group_assigned
 
