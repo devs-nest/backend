@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    # Controller
+    # Batch Leader Sheet Controller
     class BatchLeaderSheetController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
