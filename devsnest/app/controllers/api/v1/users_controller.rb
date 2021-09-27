@@ -172,6 +172,11 @@ module Api
         user.update(discord_username: params['data']['attributes']['discord_username'])
         render_success(user.as_json.merge({ "type": 'users' }))
       end
+
+      def certifications
+        user = User.find_by(id: params['id'])
+        render_success({ id: user.id, type: 'certifications', certifcates: user.certifications})
+      end
     end
   end
 end
