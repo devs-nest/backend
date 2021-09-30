@@ -175,21 +175,24 @@ module Api
       end
 
       def upload_files
-        if params['file_upload'].present?
-          type = params['file_upload_type']
-          file = params['file_upload']
-          key = "#{@current_user.id}/#{SecureRandom.hex(8)}_#{type}"
-          AwsUtils::upload_file_s3(file, key, type)
-          params.delete "file_upload"
-          params.delete "file_upload_type"
-          update_link = type == 'profile-image' ? "image_url" : "resume_url"
+        return unless (params['file_upload'].present? && (params['file_upload_type'] == 'profile-image' || params['file_upload_type'] == 'resume'))
 
-          bucket = "https://devsn-#{type}.s3.amazonaws.com/"
-          public_link = bucket + key
-          @current_user.update("#{update_link}": public_link)
+        type = params['file_upload_type']
+        file = params['file_upload']
+        mime = User.mime_types_s3(type)
+        threshold_size = type == 'profile-image' ? 4_194_304 : 5_242_880
+        return render_error('Unsupported format') unless mime.include? file.content_type
+        return render_error('File size too large') if request.headers['content-length'].to_i > threshold_size
 
-          api_render(200, {id: key, type: type, user_id: @current_user.id, bucket: "devsn-#{type}", public_link: public_link})
-        end
+        key = "#{@current_user.id}/#{SecureRandom.hex(8)}_#{type}"
+        AwsUtils.upload_file_s3(file, key, type)
+        update_link = type == 'profile-image' ? 'image_url' : 'resume_url'
+
+        bucket = "https://devsnest-#{type}.s3.amazonaws.com/"
+        public_link = bucket + key
+        @current_user.update("#{update_link}": public_link)
+
+        api_render(200, { id: key, type: type, user_id: @current_user.id, bucket: "devsnest-#{type}", public_link: public_link })
       end
     end
   end

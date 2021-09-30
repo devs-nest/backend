@@ -152,4 +152,12 @@ class User < ApplicationRecord
   def markdown_encode
     self.markdown = markdown.dup.force_encoding('ISO-8859-1').encode('UTF-8') unless markdown.blank?
   end
+
+  def self.mime_types_s3(type)
+    mimes = {
+      'profile-image' => %w[image/png image/jpeg],
+      'resume' => %w[application/pdf text/plain application/msword application/vnd.oasis.opendocument.text application/vnd.openxmlformats-officedocument.wordprocessingm]
+    }
+    mimes[type]
+  end
 end
