@@ -92,19 +92,18 @@ module Api
 
         if params['code'].present?
           discord_id = User.fetch_discord_id(params['code'])
-          return render_error({ message: 'Incorrect code from discord' }) if discord_id.nil?
-
+          return render_error({ message: 'Incorrect code from discord' })if discord_id.nil?
+          
           temp_user = User.find_by(discord_id: discord_id)
           if temp_user.nil?
             @current_user.update(discord_id: discord_id, discord_active: true)
             return render_success(@current_user.as_json.merge({ "type": 'users' }))
           end
-        elsif params['data']['attributes']['bot_token'].present?
+        else
           temp_user = User.find_by(bot_token: params['data']['attributes']['bot_token'])
           return render_error({ message: 'Could Not find User of Provided token' }) if temp_user.nil?
         end
-        message = 'Discord user is already connected to another user'
-        return render_error({ message: message }) if temp_user.web_active?
+        return render_error({ message: 'Discord user is already connected to another user' }) if temp_user.web_active?
 
         @current_user.merge_discord_user(temp_user.discord_id, temp_user)
         Event.generate(Event::VERIFIED, @current_user) if $sqs.present?
