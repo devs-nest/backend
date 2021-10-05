@@ -69,3 +69,5 @@ gem 'audited', '~> 4.9'
 gem 'leaderboard', '~> 3.12', '>= 3.12.1'
 
 gem 'aws-sdk-sqs', '~> 1.0.0.rc11'
+
+gem 'aws-sdk-s3', '~> 1.103'
