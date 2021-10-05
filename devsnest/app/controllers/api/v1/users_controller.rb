@@ -4,9 +4,10 @@ module Api
   module V1
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
+      include AwsUtils
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -171,6 +172,27 @@ module Api
 
         user.update(discord_username: params['data']['attributes']['discord_username'])
         render_success(user.as_json.merge({ "type": 'users' }))
+      end
+
+      def upload_files
+        return unless (params['file_upload'].present? && (params['file_upload_type'] == 'profile-image' || params['file_upload_type'] == 'resume'))
+
+        type = params['file_upload_type']
+        file = params['file_upload']
+        mime = User.mime_types_s3(type)
+        threshold_size = type == 'profile-image' ? 4_194_304 : 5_242_880
+        return render_error('Unsupported format') unless mime.include? file.content_type
+        return render_error('File size too large') if request.headers['content-length'].to_i > threshold_size
+
+        key = "#{@current_user.id}/#{SecureRandom.hex(8)}_#{type}"
+        AwsUtils.upload_file_s3(file, key, type)
+        update_link = type == 'profile-image' ? 'image_url' : 'resume_url'
+
+        bucket = "https://devsnest-#{type}.s3.amazonaws.com/"
+        public_link = bucket + key
+        @current_user.update("#{update_link}": public_link)
+
+        api_render(200, { id: key, type: type, user_id: @current_user.id, bucket: "devsnest-#{type}", public_link: public_link })
       end
     end
   end
