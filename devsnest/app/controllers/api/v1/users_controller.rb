@@ -187,7 +187,7 @@ module Api
         User.upload_file_s3(file, key, type)
         update_link = type == 'profile-image' ? 'image_url' : 'resume_url'
 
-        bucket = "https://devsnest-#{type}.s3.amazonaws.com/"
+        bucket = "https://#{ENV["S3_PREFIX"]}#{type}.s3.amazonaws.com/"
         public_link = bucket + key
         @current_user.update("#{update_link}": public_link)
 

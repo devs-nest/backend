@@ -58,7 +58,7 @@ class User < ApplicationRecord
     avatar = nil
     avatar = user_details['picture'] if user_details['picture'].present?
     if user.present?
-      user.update(web_active: true, image_url: avatar, google_id: googleId)
+      user.update(web_active: true, google_id: googleId)
       return user
     end
 
@@ -154,7 +154,7 @@ class User < ApplicationRecord
   end
 
   def self.upload_file_s3(file, key, type)
-    $s3.put_object(bucket: "devsnest-#{type}", key: key, body: file)
+    $s3.put_object(bucket: ENV["S3_PREFIX"] + type, key: key, body: file)
   end
 
   def self.mime_types_s3(type)
