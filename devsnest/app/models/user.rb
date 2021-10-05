@@ -153,6 +153,10 @@ class User < ApplicationRecord
     self.markdown = markdown.dup.force_encoding('ISO-8859-1').encode('UTF-8') unless markdown.blank?
   end
 
+  def self.upload_file_s3(file, key, type)
+    $s3.put_object(bucket: "devsnest-#{type}", key: key, body: file)
+  end
+
   def self.mime_types_s3(type)
     mimes = {
       'profile-image' => %w[image/png image/jpeg],
