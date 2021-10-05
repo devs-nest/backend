@@ -4,7 +4,6 @@ module Api
   module V1
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      include AwsUtils
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
       before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files]
@@ -185,7 +184,7 @@ module Api
         return render_error('File size too large') if request.headers['content-length'].to_i > threshold_size
 
         key = "#{@current_user.id}/#{SecureRandom.hex(8)}_#{type}"
-        AwsUtils.upload_file_s3(file, key, type)
+        User.upload_file_s3(file, key, type)
         update_link = type == 'profile-image' ? 'image_url' : 'resume_url'
 
         bucket = "https://devsnest-#{type}.s3.amazonaws.com/"
