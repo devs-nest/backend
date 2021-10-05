@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# worker that appends tokens to a message
-class MassNotifierWorker
+# worker that send message to an admin
+class AdminNotifierWorker
   include Sidekiq::Worker
 
   def perform(event_message)
@@ -9,7 +9,7 @@ class MassNotifierWorker
     bucket_size = 20
     while start * NotificationBot.count * bucket_size <= User.count
       NotificationBot.all.each do |bot|
-        discord_ids = User.where(bot_id: bot.id, discord_active: true).slice(start * bucket_size, bucket_size)
+        discord_ids = User.where(bot_id: bot.id, discord_active: true, user_type: 1).slice(start * bucket_size, bucket_size)
         next unless discord_ids.present?
 
         data = {
