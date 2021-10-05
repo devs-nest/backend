@@ -92,8 +92,8 @@ module Api
 
         if params['code'].present?
           discord_id = User.fetch_discord_id(params['code'])
-          return render_error({ message: 'Incorrect code from discord' })if discord_id.nil?
-          
+          return render_error({ message: 'Incorrect code from discord' }) if discord_id.nil?
+
           temp_user = User.find_by(discord_id: discord_id)
           if temp_user.nil?
             @current_user.update(discord_id: discord_id, discord_active: true)

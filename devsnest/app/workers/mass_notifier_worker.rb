@@ -13,8 +13,7 @@ class MassNotifierWorker
         next unless discord_ids.present?
 
         data = {
-          bot: bot.bot_token,
-          message: event_message,
+          bot: bot.bot_token, message: event_message,
           discord_id: discord_ids.pluck(:discord_id)
         }
 
