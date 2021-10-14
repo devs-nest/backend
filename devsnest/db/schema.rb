@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_14_160610) do
+ActiveRecord::Schema.define(version: 2021_09_29_104351) do
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
@@ -150,13 +150,22 @@ ActiveRecord::Schema.define(version: 2021_09_14_160610) do
   create_table "internal_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.bigint "user_id"
     t.boolean "is_resolved", default: false
-    t.string "issue_type", default: ""
-    t.text "issue_described"
-    t.text "feedback"
+    t.string "problems_faced", default: ""
+    t.text "issue_details"
+    t.text "solution"
     t.integer "issue_scale", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "user_name"
+    t.string "feedback_type"
+    t.integer "group_activity_rating"
+    t.integer "TL_rating"
+    t.string "VTL_rating"
+    t.text "group_morale"
+    t.text "obstacles_faced"
+    t.string "BL_availability"
+    t.integer "BL_rating"
+    t.text "comments_on_BL"
     t.index ["user_id"], name: "index_internal_feedbacks_on_user_id"
   end
 

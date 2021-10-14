@@ -10,7 +10,8 @@ module Api
 
         def context
           {
-            user: @current_user
+            user: @current_user,
+            feedback_type: params[:feedback_type].present? ? params[:feedback_type] : 'issue'
           }
         end
       end
