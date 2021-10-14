@@ -2,11 +2,11 @@
 
 module Api
   module V1
-    # Class to create internal feedback with cooldown of 7 days
+    # Class to create internal feedback
     class InternalFeedbackController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
-      before_action :check_feedback, only: %i[create]
+      before_action :check_feedback_count, :user_assigner, only: %i[create]
       before_action :admin_auth, only: %i[update]
 
       def context
@@ -16,15 +16,24 @@ module Api
         }
       end
 
-      def check_feedback
-        previous_feedback = InternalFeedback.where(user_id: @current_user.id).order(updated_at: :asc).last
-        threshold_date = (Time.now + 5.hours + 30.minutes).to_date - 7.days
-        error_message = 'Active cooldown for submitting new feedback : '
-        if previous_feedback.present? && previous_feedback.updated_at >= threshold_date
-          render_error({ message: "#{error_message}#{(previous_feedback.updated_at.to_date - threshold_date).to_i} days" })
-        end
+      def check_feedback_count
+        count = internal_feedback_counter
+
+        render_error({ message: 'You can Only Create 5 feedbacks in 1 day of this type' }) if count == 5
+      end
+
+      def user_assigner
         params[:data][:attributes][:user_id] = @current_user.id
         params[:data][:attributes][:user_name] = @current_user.username
+      end
+
+      def internal_feedback_counter
+        feedback_type = params[:data][:attributes][:feedback_type]
+        InternalFeedback.where(user_id: @current_user.id).where(feedback_type: feedback_type).where(created_at: date_parser).count
+      end
+
+      def date_parser
+        Date.today.beginning_of_day..Date.today.end_of_day
       end
     end
   end
