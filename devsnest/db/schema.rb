@@ -66,11 +66,12 @@ ActiveRecord::Schema.define(version: 2021_09_27_101745) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "user_name"
+    t.string "name"
     t.string "hackathon_name"
     t.string "rank"
     t.string "team_name"
     t.string "title"
-    t.string "uuid", default: "dngHWV4+Sj8"
+    t.string "uuid", default: "mI47MeYaNQc"
     t.text "description"
     t.date "issuing_date"
   end

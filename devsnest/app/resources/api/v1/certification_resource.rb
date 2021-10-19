@@ -3,7 +3,7 @@
 module Api
   module V1
     class CertificationResource < JSONAPI::Resource
-      attributes :id, :user_id, :user_name, :hackathon_name, :rank, :team_name, :title, :uuid, :description, :issuing_date
+      attributes :id, :user_id, :user_name, :hackathon_name, :rank, :team_name, :title, :uuid, :description, :issuing_date, :name
     end
   end
 end

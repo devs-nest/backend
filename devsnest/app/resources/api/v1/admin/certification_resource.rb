@@ -5,7 +5,7 @@ module Api
     module Admin
       # Resource
       class CertificationResource < JSONAPI::Resource
-        attributes :id, :user_id, :user_name, :hackathon_name, :rank, :team_name, :title, :uuid, :description, :issuing_date
+        attributes :id, :user_id, :user_name, :hackathon_name, :rank, :team_name, :title, :uuid, :description, :issuing_date, :name
         paginator :paged
       end
     end

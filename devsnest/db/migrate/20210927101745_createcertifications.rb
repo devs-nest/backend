@@ -3,6 +3,7 @@ class Createcertifications < ActiveRecord::Migration[6.0]
     create_table :certifications do |t|
       t.integer :user_id
       t.string :user_name
+      t.string :name
       t.string :hackathon_name
       t.string :rank
       t.string :team_name
