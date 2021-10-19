@@ -175,7 +175,11 @@ module Api
 
       def certifications
         user = User.find_by(id: params['id'])
-        render_success({ id: user.id, type: 'certifications', certifcates: user.certifications })
+        if user.present?
+          render_success({ id: user.id, type: 'certifications', certifcates: user.certifications })
+        else
+          render_not_found
+        end
       end
     end
   end
