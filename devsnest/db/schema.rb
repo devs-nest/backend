@@ -69,6 +69,9 @@ ActiveRecord::Schema.define(version: 2021_09_27_101745) do
     t.string "hackathon_name"
     t.string "rank"
     t.string "team_name"
+    t.string "title"
+    t.string "uuid", default: "dngHWV4+Sj8"
+    t.text "description"
     t.date "issuing_date"
   end
 
@@ -270,8 +273,8 @@ ActiveRecord::Schema.define(version: 2021_09_27_101745) do
     t.integer "webd_skill", default: 0
     t.boolean "is_discord_form_filled", default: false
     t.text "markdown"
-    t.integer "bot_id"
     t.boolean "group_assigned", default: false
+    t.integer "bot_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
