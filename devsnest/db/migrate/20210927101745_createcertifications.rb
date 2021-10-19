@@ -7,7 +7,7 @@ class Createcertifications < ActiveRecord::Migration[6.0]
       t.string :hackathon_name
       t.string :rank
       t.string :team_name
-      t.string :type
+      t.string :certificate_type
       t.string :title
       t.string :uuid, default: SecureRandom.base64(8).gsub("/","_").gsub(/=+$/,"")
       t.text :description
