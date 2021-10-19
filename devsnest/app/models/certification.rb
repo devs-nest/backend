@@ -7,4 +7,6 @@ class Certification < ApplicationRecord
   before_create do
     self.uuid = SecureRandom.base64(8).gsub('/', '_').gsub(/=+$/, '')
   end
+
+  enum type: %i[course_dsa course_frontend course_backend course_dsa_frontend_backend community_batch_leader community_student_mentor community_moderator]
 end

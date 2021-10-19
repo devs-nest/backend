@@ -70,8 +70,9 @@ ActiveRecord::Schema.define(version: 2021_09_27_101745) do
     t.string "hackathon_name"
     t.string "rank"
     t.string "team_name"
+    t.string "type"
     t.string "title"
-    t.string "uuid", default: "mI47MeYaNQc"
+    t.string "uuid", default: "23q7CngOCbY"
     t.text "description"
     t.date "issuing_date"
   end
