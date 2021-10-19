@@ -5,7 +5,6 @@ module Api
     # Controller for Certifications
     class CertificationController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :simple_auth
       before_action :change_uuid_to_id, only: %i[show]
 
       def context
