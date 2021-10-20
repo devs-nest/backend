@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       devise_for :users, skip: [:registrations]
       namespace :admin do
-        jsonapi_resources :internal_feedback, only: %i[index]
+        jsonapi_resources :internal_feedback, only: %i[index update]
         jsonapi_resources :users, only: %i[index]
         jsonapi_resources :certification, only: %i[create]
       end
@@ -16,7 +16,7 @@ Rails.application.routes.draw do
         end
         collection do
           get :report, :leaderboard, :me, :get_token
-          put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username
+          put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username, :upload_files
           post :login, :connect_discord
           delete :logout
         end
@@ -46,7 +46,7 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :batch_leader_sheet, only: %i[create index update]
       jsonapi_resources :markdown, only: %i[index]
-      jsonapi_resources :internal_feedback, only: %i[create update]
+      jsonapi_resources :internal_feedback, only: %i[create index]
       jsonapi_resources :link, only: %i[show]
       jsonapi_resources :hackathon, only: %i[create index update show]
       jsonapi_resources :notification_bot, only: %i[index]

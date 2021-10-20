@@ -2,9 +2,8 @@
 
 FactoryBot.define do
   factory :internal_feedback do
-    sequence(:issue_type) { |n| "Internal #{n}" }
-    sequence(:issue_described) { 'This is the description' }
-    sequence(:feedback) { 'feedback for the team' }
+    sequence(:issue_details) { 'This is the description' }
+    sequence(:solution) { 'feedback for the team' }
     sequence(:issue_scale) { rand(1..10) }
   end
 

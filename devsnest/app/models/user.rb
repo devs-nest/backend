@@ -59,7 +59,7 @@ class User < ApplicationRecord
     avatar = nil
     avatar = user_details['picture'] if user_details['picture'].present?
     if user.present?
-      user.update(web_active: true, image_url: avatar, google_id: googleId)
+      user.update(web_active: true, google_id: googleId)
       return user
     end
 
@@ -152,5 +152,17 @@ class User < ApplicationRecord
 
   def markdown_encode
     self.markdown = markdown.dup.force_encoding('ISO-8859-1').encode('UTF-8') unless markdown.blank?
+  end
+
+  def self.upload_file_s3(file, key, type)
+    $s3.put_object(bucket: ENV["S3_PREFIX"] + type, key: key, body: file)
+  end
+
+  def self.mime_types_s3(type)
+    mimes = {
+      'profile-image' => %w[image/png image/jpeg],
+      'resume' => %w[application/pdf text/plain application/msword application/vnd.oasis.opendocument.text application/vnd.openxmlformats-officedocument.wordprocessingm]
+    }
+    mimes[type]
   end
 end

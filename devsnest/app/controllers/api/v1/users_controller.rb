@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode certifications]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files certifications]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -95,12 +95,15 @@ module Api
           return render_error({ message: 'Incorrect code from discord' }) if discord_id.nil?
 
           temp_user = User.find_by(discord_id: discord_id)
-        elsif params['data']['attributes']['bot_token'].present?
+          if temp_user.nil?
+            @current_user.update(discord_id: discord_id, discord_active: true)
+            return render_success(@current_user.as_json.merge({ "type": 'users' }))
+          end
+        else
           temp_user = User.find_by(bot_token: params['data']['attributes']['bot_token'])
           return render_error({ message: 'Could Not find User of Provided token' }) if temp_user.nil?
         end
-        message = 'Discord user is already connected to another user'
-        return render_error({ message: message }) if temp_user.web_active?
+        return render_error({ message: 'Discord user is already connected to another user' }) if temp_user.web_active?
 
         @current_user.merge_discord_user(temp_user.discord_id, temp_user)
         Event.generate(Event::VERIFIED, @current_user) if $sqs.present?
@@ -173,6 +176,7 @@ module Api
         render_success(user.as_json.merge({ "type": 'users' }))
       end
 
+
       def certifications
         user = User.find_by(id: params['id'])
         if user.present?
@@ -180,6 +184,27 @@ module Api
         else
           render_not_found
         end
+      end
+
+      def upload_files
+        return unless (params['file_upload'].present? && (params['file_upload_type'] == 'profile-image' || params['file_upload_type'] == 'resume'))
+
+        type = params['file_upload_type']
+        file = params['file_upload']
+        mime = User.mime_types_s3(type)
+        threshold_size = type == 'profile-image' ? 4_194_304 : 5_242_880
+        return render_error('Unsupported format') unless mime.include? file.content_type
+        return render_error('File size too large') if request.headers['content-length'].to_i > threshold_size
+
+        key = "#{@current_user.id}/#{SecureRandom.hex(8)}_#{type}"
+        User.upload_file_s3(file, key, type)
+        update_link = type == 'profile-image' ? 'image_url' : 'resume_url'
+
+        bucket = "https://#{ENV["S3_PREFIX"]}#{type}.s3.amazonaws.com/"
+        public_link = bucket + key
+        @current_user.update("#{update_link}": public_link)
+
+        api_render(200, { id: key, type: type, user_id: @current_user.id, bucket: "devsnest-#{type}", public_link: public_link })
       end
     end
   end
