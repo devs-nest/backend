@@ -72,7 +72,7 @@ ActiveRecord::Schema.define(version: 2021_09_27_101745) do
     t.string "team_name"
     t.string "certificate_type"
     t.string "title"
-    t.string "uuid", default: "rRxJ0xIC3hY"
+    t.string "uuid", default: "cv7mVmMr+cI"
     t.text "description"
     t.date "issuing_date"
   end
