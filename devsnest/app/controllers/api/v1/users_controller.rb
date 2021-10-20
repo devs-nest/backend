@@ -176,7 +176,6 @@ module Api
         render_success(user.as_json.merge({ "type": 'users' }))
       end
 
-
       def certifications
         user = User.find_by(id: params['id'])
         if user.present?
@@ -187,7 +186,7 @@ module Api
       end
 
       def upload_files
-        return unless (params['file_upload'].present? && (params['file_upload_type'] == 'profile-image' || params['file_upload_type'] == 'resume'))
+        return unless params['file_upload'].present? && (params['file_upload_type'] == 'profile-image' || params['file_upload_type'] == 'resume')
 
         type = params['file_upload_type']
         file = params['file_upload']
@@ -200,7 +199,7 @@ module Api
         User.upload_file_s3(file, key, type)
         update_link = type == 'profile-image' ? 'image_url' : 'resume_url'
 
-        bucket = "https://#{ENV["S3_PREFIX"]}#{type}.s3.amazonaws.com/"
+        bucket = "https://#{ENV['S3_PREFIX']}#{type}.s3.amazonaws.com/"
         public_link = bucket + key
         @current_user.update("#{update_link}": public_link)
 
