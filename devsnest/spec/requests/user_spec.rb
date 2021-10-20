@@ -501,7 +501,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
       sign_in(user)
       get "/api/v1/users/#{user.id}/certifications"
       expect(response.status).to match(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:certifcates][0][:user_id]).to match(user.id)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:certificates][0][:user_id]).to match(user.id)
     end
   end
 end
