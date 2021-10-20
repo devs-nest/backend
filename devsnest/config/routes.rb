@@ -8,10 +8,11 @@ Rails.application.routes.draw do
       namespace :admin do
         jsonapi_resources :internal_feedback, only: %i[index update]
         jsonapi_resources :users, only: %i[index]
+        jsonapi_resources :certification, only: %i[create]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
-          get :get_by_username
+          get :get_by_username, :certifications
         end
         collection do
           get :report, :leaderboard, :me, :get_token
@@ -51,6 +52,7 @@ Rails.application.routes.draw do
       jsonapi_resources :notification_bot, only: %i[index]
       jsonapi_resources :notification, only: %i[create index]
       jsonapi_resources :event, only: %i[create index]
+      jsonapi_resources :certification, only: %i[show]
     end
   end
 end

@@ -10,6 +10,7 @@ class User < ApplicationRecord
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
+  has_many :certifications, dependent: :delete_all
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
 

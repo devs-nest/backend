@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files certifications]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -176,8 +176,17 @@ module Api
         render_success(user.as_json.merge({ "type": 'users' }))
       end
 
+      def certifications
+        user = User.find_by(id: params['id'])
+        if user.present?
+          render_success({ id: user.id, type: 'certifications', certificates: user.certifications })
+        else
+          render_not_found
+        end
+      end
+
       def upload_files
-        return unless (params['file_upload'].present? && (params['file_upload_type'] == 'profile-image' || params['file_upload_type'] == 'resume'))
+        return unless params['file_upload'].present? && (params['file_upload_type'] == 'profile-image' || params['file_upload_type'] == 'resume')
 
         type = params['file_upload_type']
         file = params['file_upload']
@@ -190,7 +199,7 @@ module Api
         User.upload_file_s3(file, key, type)
         update_link = type == 'profile-image' ? 'image_url' : 'resume_url'
 
-        bucket = "https://#{ENV["S3_PREFIX"]}#{type}.s3.amazonaws.com/"
+        bucket = "https://#{ENV['S3_PREFIX']}#{type}.s3.amazonaws.com/"
         public_link = bucket + key
         @current_user.update("#{update_link}": public_link)
 

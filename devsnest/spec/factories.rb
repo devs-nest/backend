@@ -86,4 +86,8 @@ FactoryBot.define do
   factory :notification_bot do
     sequence(:bot_username) { |n| n }
   end
+
+  factory :certification do
+    sequence(:user_id) { |n| n }
+  end
 end

@@ -492,4 +492,16 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(response.status).to eq(200)
     end
   end
+
+  context 'Certifications of a User' do
+    let!(:user) { create(:user) }
+    let!(:certificate) { create(:certification, user_id: user.id) }
+
+    it 'Validates the certificates' do
+      sign_in(user)
+      get "/api/v1/users/#{user.id}/certifications"
+      expect(response.status).to match(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:certificates][0][:user_id]).to match(user.id)
+    end
+  end
 end
