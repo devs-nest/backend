@@ -3,9 +3,9 @@
 module Api
   module V1
     class CertificationResource < JSONAPI::Resource
-      attributes :id, :user_id, :cuid, :created_at, :certificate_type
+      attributes :id, :user_id, :cuid, :created_at, :certificate_type, :title
 
-      attributes :user_details, :description, :title
+      attributes :user_details, :description
 
       def user_details
         user = User.find_by(id: user_id)
@@ -38,28 +38,6 @@ module Api
           "This certificate of appreciation is awarded to #{name} for being an outstanding Student Mentor in the Devsnest Community."
         when 'community_moderator'
           "This certificate of appreciation is awarded to #{name} for being an outstanding Community Moderator in the Devsnest Community."
-        end
-      end
-
-      def title
-        type = certificate_type
-        case type
-        when 'course_dsa'
-          'DSA Course'
-        when 'course_frontend'
-          'Frontend Course'
-        when 'course_backend'
-          'Backend Course'
-        when 'course_dsa_frontend_backend'
-          'Full Stack Course'
-        when 'community_batch_leader'
-          'Batch Lead'
-        when 'community_student_mentor'
-          'Student Mentor'
-        when 'community_moderator'
-          'Community Moderator'
-        else
-          ''
         end
       end
     end
