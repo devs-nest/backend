@@ -26,9 +26,9 @@ RSpec.describe 'Internal_Feedback', type: :request do
     it 'span filter should be applied' do
       user.update(user_type: 1)
       create(:internal_feedback, user: user, feedback_type: 'issue')
-      get "/api/v1/admin/internal-feedback?filter[span]=#{Date.today}"
+      get "/api/v1/admin/internal-feedback?filter[span]=#{Date.current}"
       expect(response.status).to eq(200)
-      expect(Date.parse(JSON.parse(response.body)['data'][0]['attributes']['created_at'])).to eq(Date.today)
+      expect(Date.parse(JSON.parse(response.body)['data'][0]['attributes']['created_at'])).to eq(Date.current)
     end
   end
 

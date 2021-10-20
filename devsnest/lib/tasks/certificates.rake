@@ -9,7 +9,7 @@ def type_to_title(type)
   when 'course_backend'
     'Backend Course'
   when 'course_dsa_frontend_backend'
-    'DSA + Full Stack Course'
+    'Devsnest Course'
   when 'community_batch_leader'
     'Batch Lead'
   when 'community_student_mentor'
