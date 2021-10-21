@@ -43,5 +43,10 @@ RSpec.describe 'Api::V1::InternalFeedbackController', type: :request do
       expect(response.status).to eq(400)
       expect(JSON.parse(response.body)['data']['attributes']['error']['message']).to eq('You can Only Create 5 feedbacks in 1 day of this type')
     end
+
+    it 'Check Creation of Internal Feedback' do
+      post '/api/v1/internal-feedback', params: parameters.to_json, headers: HEADERS
+      expect(response.status).to eq(201)
+    end
   end
 end
