@@ -13,11 +13,7 @@ module Api
 
       def change_cuid_to_id
         certificate = Certification.where(cuid: params[:id])
-        if certificate.present?
-          params[:id] = certificate.first.id
-        else
-          render_not_found
-        end
+        certificate.present? ? params[:id] = certificate.first.id : render_not_found
       end
     end
   end

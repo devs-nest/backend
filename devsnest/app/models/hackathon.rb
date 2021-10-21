@@ -2,6 +2,7 @@
 
 # Hackathon Model
 class Hackathon < ApplicationRecord
+  # To DO
   # after_create :create_certifications
 
   # def create_certifications
