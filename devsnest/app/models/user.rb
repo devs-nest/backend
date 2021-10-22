@@ -7,6 +7,7 @@ class User < ApplicationRecord
   after_create :create_bot_token
   enum user_type: %i[user admin]
   after_create :create_username
+  validates_uniqueness_of :username
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks

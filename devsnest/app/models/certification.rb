@@ -2,6 +2,7 @@
 
 # Certification Model
 class Certification < ApplicationRecord
+  validates_uniqueness_of :cuid
   belongs_to :user
 
   before_create do
