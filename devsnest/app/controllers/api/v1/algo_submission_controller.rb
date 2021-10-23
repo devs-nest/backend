@@ -9,15 +9,14 @@ module Api
       def create
         lang_id = params[:data][:attributes][:language_id].to_s
         challenge_id = params[:data][:attributes][:challenge_id].to_s
-        challenge_name = Challenge.find_by(id: challenge_id).name
         source_code = params[:data][:attributes][:source_code]
 
         if params[:run_code] == 'true'
           is_submitted = false
-          batch, total_test_cases = AlgoSubmission.run_code(params, lang_id, challenge_id, challenge_name, source_code)
+          batch, total_test_cases = AlgoSubmission.run_code(params, lang_id, challenge_id, source_code)
         else
           is_submitted = true
-          batch, total_test_cases = AlgoSubmission.submit_code(params, lang_id, challenge_id, challenge_name, source_code)
+          batch, total_test_cases = AlgoSubmission.submit_code(params, lang_id, challenge_id, source_code)
         end
 
         submission = AlgoSubmission.create(source_code: source_code, language_id: lang_id, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted)

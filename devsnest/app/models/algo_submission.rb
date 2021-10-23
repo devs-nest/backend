@@ -5,10 +5,10 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
 
-  def self.add_submission(source_code, lang_id, test_case, challenge_name, mode)
+  def self.add_submission(source_code, lang_id, test_case, challenge_id, mode)
     if mode != 'run'
-      inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_name}/input/#{test_case[:input_path]}")
-      outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_name}/output/#{test_case[:output_path]}")
+      inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{test_case[:input_path]}")
+      outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{test_case[:output_path]}")
     end
     # jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': '4p2j-8mgt-ek0g-sh7m-k9kp' }
     {
@@ -36,18 +36,18 @@ class AlgoSubmission < ApplicationRecord
     # response.code == 201 ? JSON(response.read_body) : nil
   end
 
-  def self.submit_code(_params, lang_id, challenge_id, challenge_name, source_code)
+  def self.submit_code(_params, lang_id, challenge_id, source_code)
     test_cases = Testcase.where(challenge_id: challenge_id)
     total_test_cases = 0
     batch = []
     test_cases.each do |test_case|
       total_test_cases += 1
-      batch << AlgoSubmission.add_submission(source_code, lang_id, test_case, challenge_name, 'submit')
+      batch << AlgoSubmission.add_submission(source_code, lang_id, test_case, challenge_id, 'submit')
     end
     [batch, total_test_cases]
   end
 
-  def self.run_code(params, lang_id, challenge_id, challenge_name, source_code)
+  def self.run_code(params, lang_id, challenge_id, source_code)
     test_case = params[:data][:attributes][:test_case]
     mode = 'run'
     if test_case.nil?
@@ -55,7 +55,7 @@ class AlgoSubmission < ApplicationRecord
       mode = 'run_sample'
     end
     total_test_cases = 1
-    [[AlgoSubmission.add_submission(source_code, lang_id, test_case, challenge_name, mode)], total_test_cases]
+    [[AlgoSubmission.add_submission(source_code, lang_id, test_case, challenge_id, mode)], total_test_cases]
   end
 
   def self.post_to_judgez(batch)
