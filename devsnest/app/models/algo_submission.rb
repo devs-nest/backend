@@ -93,22 +93,4 @@ class AlgoSubmission < ApplicationRecord
       Judgeztoken.create(submission_id: id, token: token['token'])
     end
   end
-
-  def self.prepare_test_case_result(data)
-    test_case_result = {
-        'stdout'=>  stdout,
-        'stderr'=> stderr,
-        'time'=> data[:time],
-        'memory'=> data[:memory],
-        'status_id'=> data[:status][:id],
-        'status_description'=> data[:status][:description]
-      }
-    test_case_result
-  end
-
-  def ingest_tokens(tokens)
-    tokens.each do |token|
-      Judgeztoken.create(submission_id: id, token: token['token'])
-    end
-  end
 end
