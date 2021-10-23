@@ -4,7 +4,7 @@ module Api
   module V1
     # api for challenge test controller
     class ChallengeResource < JSONAPI::Resource
-      attributes :topic, :difficulty, :name, :question_body, :sample_test_cases
+      attributes :topic, :difficulty, :name, :question_body, :sample_test_cases, :score, :priority
 
       def sample_test_cases
         challenge_id = context[:challenge_id] || @model.id

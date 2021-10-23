@@ -19,14 +19,13 @@ module Api
           batch, total_test_cases = AlgoSubmission.submit_code(params, lang_id, challenge_id, source_code)
         end
 
-        submission = AlgoSubmission.create(source_code: source_code, language_id: lang_id, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted)
+        submission = AlgoSubmission.create(source_code: source_code, user_id: 1, language_id: lang_id, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted)
         tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
         puts tokens
         submission.ingest_tokens(tokens)
 
         submission.update(total_test_cases: total_test_cases)
-
-        api_render(201, { submission_id: submission[:id] })
+        api_render(201, { id: submission[:id], type: 'algo_submissions' })
       end
 
       def callback
