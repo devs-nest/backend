@@ -2,6 +2,7 @@
 
 module Api
   module V1
+    # api for challenge test controller
     class ChallengeResource < JSONAPI::Resource
       attributes :topic, :difficulty, :name, :question_body, :sample_test_cases
 
@@ -11,7 +12,7 @@ module Api
         sample_inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{tc.input_path}")
         sample_outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{tc.output_path}")
 
-        tc_hash = Hash.new
+        tc_hash = {}
         counter = 1
         tc.each do |testcase|
           tc_hash[counter] = {
@@ -23,8 +24,6 @@ module Api
 
         tc_hash
       end
-
-      
     end
   end
 end

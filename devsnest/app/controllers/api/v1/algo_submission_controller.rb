@@ -34,8 +34,6 @@ module Api
         puts "running CALLBACK ......... #{submission_id}"
         submission = AlgoSubmission.find_by(id: submission_id)
         submission.with_lock do
-          test_cases = submission[:test_cases]
-          passed_test_cases = submission[:passed_test_cases]
           submission.test_cases[params[:token]] = AlgoSubmission.prepare_test_case_result(params)
           submission.passed_test_cases += 1 if params[:status][:id] == 3
           submission.save!
