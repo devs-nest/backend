@@ -66,21 +66,9 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def self.prepare_test_case_result(data)
-    begin
-      stdout = Base64.decode64(data[:stdout])
-    rescue NoMethodError
-      stdout = ''
-    end
-
-    begin
-      stderr = Base64.decode64(data[:stderr])
-    rescue NoMethodError
-      stderr = ''
-    end
-
     {
-      'stdout' => stdout,
-      'stderr' => stderr,
+      'stdout' => data[:stdout],
+      'stderr' => data[:stderr],
       'time' => data[:time],
       'memory' => data[:memory],
       'status_id' => data[:status][:id],
