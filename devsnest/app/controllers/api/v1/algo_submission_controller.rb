@@ -6,6 +6,10 @@ module Api
     class AlgoSubmissionController < ApplicationController
       include JSONAPI::ActsAsResourceController
 
+      def context
+        { user: @current_user }
+      end
+
       def create
         lang_id = params[:data][:attributes][:language_id].to_s
         challenge_id = params[:data][:attributes][:challenge_id].to_s

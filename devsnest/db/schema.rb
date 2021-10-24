@@ -23,8 +23,7 @@ ActiveRecord::Schema.define(version: 2021_10_23_172359) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "is_submitted"
-    t.index ["challenge_id"], name: "index_algo_submissions_on_challenge_id"
-    t.index ["user_id"], name: "index_algo_submissions_on_user_id"
+    t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
   end
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
