@@ -5,6 +5,7 @@ module Api
     # algo submission controller
     class AlgoSubmissionController < ApplicationController
       include JSONAPI::ActsAsResourceController
+      before_action :simple_auth, only: %i[create]
 
       def context
         { user: @current_user }
@@ -15,7 +16,7 @@ module Api
         challenge_id = params[:data][:attributes][:challenge_id].to_s
         source_code = params[:data][:attributes][:source_code]
 
-        if params[:run_code] == 'true'
+        if params[:run_code].present?
           is_submitted = false
           batch, total_test_cases = AlgoSubmission.run_code(params, lang_id, challenge_id, source_code)
         else
@@ -23,7 +24,7 @@ module Api
           batch, total_test_cases = AlgoSubmission.submit_code(params, lang_id, challenge_id, source_code)
         end
 
-        submission = AlgoSubmission.create(source_code: source_code, user_id: 1, language_id: lang_id, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted)
+        submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language_id: lang_id, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted)
         tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
         puts tokens
         submission.ingest_tokens(tokens)

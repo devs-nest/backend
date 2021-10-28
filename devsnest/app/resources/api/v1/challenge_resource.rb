@@ -10,24 +10,28 @@ module Api
         challenge_id = context[:challenge_id] || @model.id
         tc = Testcase.where(challenge_id: challenge_id, is_sample: true)
         
-        tc_hash = {}
+        tc_arr = []
         counter = 1
         tc.each do |testcase|
           begin
             sample_inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{testcase.input_path}")
             sample_outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{testcase.output_path}")
           rescue
-            tc_hash[counter] = {}
+            tc_arr <<  {}
           else
-            tc_hash[counter] = {
-              input: Base64.encode64(sample_inpf.body.read),
-              output: Base64.encode64(sample_outf.body.read)
-            } 
+            tc_temp = 
+              { 
+                  counter: {
+                  input: Base64.encode64(sample_inpf.body.read),
+                  output: Base64.encode64(sample_outf.body.read)
+                } 
+              }    
+            tc_arr << tc_temp
           end
           counter += 1
         end
 
-        tc_hash
+        tc_arr
       end
     end
   end
