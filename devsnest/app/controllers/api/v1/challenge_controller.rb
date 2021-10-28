@@ -5,7 +5,7 @@ module Api
     # allows challenges api calls to challenge resources
     class ChallengeController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :simple_auth
+      before_action :simple_auth, only: %i[submission]
 
       def context
         { challenge_id: params[:id] }

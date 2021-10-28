@@ -13,13 +13,17 @@ module Api
         tc_hash = {}
         counter = 1
         tc.each do |testcase|
-          sample_inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{testcase.input_path}")
-          sample_outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{testcase.output_path}")
-          
-          tc_hash[counter] = {
-            input: Base64.encode64(sample_inpf.body.read),
-            output: Base64.encode64(sample_outf.body.read)
-          }
+          begin
+            sample_inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{testcase.input_path}")
+            sample_outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{testcase.output_path}")
+          rescue
+            tc_hash[counter] = {}
+          else
+            tc_hash[counter] = {
+              input: Base64.encode64(sample_inpf.body.read),
+              output: Base64.encode64(sample_outf.body.read)
+            } 
+          end
           counter += 1
         end
 
