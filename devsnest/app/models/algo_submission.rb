@@ -7,8 +7,12 @@ class AlgoSubmission < ApplicationRecord
 
   def self.add_submission(source_code, lang_id, test_case, challenge_id, mode)
     if mode != 'run'
-      inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{test_case[:input_path]}")
-      outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{test_case[:output_path]}")
+      begin
+        inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{test_case[:input_path]}")
+        outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{test_case[:output_path]}")
+      rescue
+        return { "error" => "Something went wrong!"}
+      end
     end
     # jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': '4p2j-8mgt-ek0g-sh7m-k9kp' }
     {
@@ -41,8 +45,11 @@ class AlgoSubmission < ApplicationRecord
     total_test_cases = 0
     batch = []
     test_cases.each do |test_case|
+      loader = AlgoSubmission.add_submission(source_code, lang_id, test_case, challenge_id, 'submit')
+      next if loader.has_key?("error")
+      
+      batch << loader
       total_test_cases += 1
-      batch << AlgoSubmission.add_submission(source_code, lang_id, test_case, challenge_id, 'submit')
     end
     [batch, total_test_cases]
   end
