@@ -42,6 +42,8 @@ module Api
           if AlgoSubmission.order_status(submission.status) <= AlgoSubmission.order_status(res_hash["status_description"])
             submission.status = res_hash["status_description"]
           end
+          submission.total_runtime = submission.total_runtime.to_f + res_hash["time"].to_f
+          submission.total_memory = submission.total_memory.to_i + res_hash["memory"].to_i
           submission.test_cases[params[:token]] = res_hash
           submission.passed_test_cases += 1 if params[:status][:id] == 3
           submission.save!
