@@ -81,4 +81,23 @@ class AlgoSubmission < ApplicationRecord
       Judgeztoken.create(submission_id: id, token: token['token'])
     end
   end
+
+  def self.order_status(status)
+    orders = {
+      "Pending" => -1,
+      "Accepted" => 0,
+      "Wrong Answer" => 2,
+      "Time Limit Exceeded" => 3,
+      "Compilation Error" => 4,
+      "Runtime Error (SIGSEGV)" => 5,
+      "Runtime Error (SIGABRT)" => 6,
+      "Runtime Error (NZEC)" => 7
+    }
+
+    if orders.has_key?(status)
+      return orders[status]
+    else
+      return -2
+    end
+  end
 end
