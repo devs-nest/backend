@@ -67,25 +67,26 @@ class AlgoSubmission < ApplicationRecord
 
   def self.post_to_judgez(batch)
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': '4p2j-8mgt-ek0g-sh7m-k9kp' }
-    response = HTTParty.post(ENV['JUDGEZERO_URL'], body: batch.to_json, headers: jz_headers)
+    response = HTTParty.post(ENV['JUDGEZERO_URL'] + "/submissions/batch?base64_encoded=true", body: batch.to_json, headers: jz_headers)
     response.read_body
     # response.code == 201 ? JSON(response.read_body) : nil
   end
 
   def self.prepare_test_case_result(data)
     {
-      'stdout' => data[:stdout],
-      'stderr' => data[:stderr],
-      'time' => data[:time],
-      'memory' => data[:memory],
-      'status_id' => data[:status][:id],
-      'status_description' => data[:status][:description]
+      'stdout' => data["stdout"],
+      'stderr' => data["stderr"],
+      'time' => data["time"],
+      'memory' => data["memory"],
+      'status_id' => data["status"]["id"],
+      'status_description' => data["status"]["description"]
     }
   end
 
   def ingest_tokens(tokens)
     tokens.each do |token|
       Judgeztoken.create(submission_id: id, token: token['token'])
+      JudgeZWorker.perform_in(3.minutes, token['token'], id)
     end
   end
 
