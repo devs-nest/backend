@@ -13,7 +13,7 @@ module Api
 
       def submissions
         challenge_id = params[:id]
-        api_render(200, {id: challenge_id, type: "challenge", submissions: @current_user.algo_submission.where(challenge_id: challenge_id, is_submitted: true)})
+        api_render(200, { id: challenge_id, type: 'challenge', submissions: @current_user.algo_submission.where(challenge_id: challenge_id, is_submitted: true) })
       end
     end
   end

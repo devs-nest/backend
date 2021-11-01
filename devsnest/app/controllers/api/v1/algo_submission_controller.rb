@@ -24,7 +24,8 @@ module Api
           batch, total_test_cases = AlgoSubmission.submit_code(params, lang_id, challenge_id, source_code)
         end
 
-        submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language_id: lang_id, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted, status: "Pending")
+        submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language_id: lang_id, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted,
+                                           status: 'Pending')
         tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
         puts tokens
         submission.ingest_tokens(tokens)
@@ -39,11 +40,9 @@ module Api
         submission = AlgoSubmission.find_by(id: submission_id)
         submission.with_lock do
           res_hash = AlgoSubmission.prepare_test_case_result(params)
-          if AlgoSubmission.order_status(submission.status) <= AlgoSubmission.order_status(res_hash["status_description"])
-            submission.status = res_hash["status_description"]
-          end
-          submission.total_runtime = submission.total_runtime.to_f + res_hash["time"].to_f
-          submission.total_memory = submission.total_memory.to_i + res_hash["memory"].to_i
+          submission.status = res_hash['status_description'] if AlgoSubmission.order_status(submission.status) <= AlgoSubmission.order_status(res_hash['status_description'])
+          submission.total_runtime = submission.total_runtime.to_f + res_hash['time'].to_f
+          submission.total_memory = submission.total_memory.to_i + res_hash['memory'].to_i
           submission.test_cases[params[:token]] = res_hash
           submission.passed_test_cases += 1 if params[:status][:id] == 3
           submission.save!
