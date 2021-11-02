@@ -75,43 +75,37 @@ module Devsnest
       50 => { 
         memory_limit: '512000000',
         time_limit: '2'
-       }
-     }
+       },
 
      # C++
       54 => { 
         memory_limit: '512000000',
         time_limit: '2'
-       }
-     }
+       },
 
      # Java
       62 => { 
         memory_limit: '512000000',
         time_limit: '4'
-       }
-     }
+       },
 
      # Javascript
       63 => { 
         memory_limit: '512000000',
         time_limit: '10'
-       }
-     }
+       },
      
      # Python 2
       70 => { 
         memory_limit: '512000000',
         time_limit: '10'
-       }
-     }
+       },
      
      # Python 3
       71 => { 
         memory_limit: '512000000',
         time_limit: '10'
-       }
-     }
+       },
 
      # Typescript
       71 => { 
@@ -119,5 +113,6 @@ module Devsnest
         time_limit: '10'
        }
       }.freeze
+      
     end
 end
