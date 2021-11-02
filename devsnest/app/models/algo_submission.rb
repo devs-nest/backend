@@ -21,7 +21,7 @@ class AlgoSubmission < ApplicationRecord
       "number_of_runs": '1',
       "stdin": mode != 'run' ? Base64.encode64(inpf.body.read || '') : test_case,
       "expected_output": mode != 'run' ? Base64.encode64(outf.body.read || '') : '',
-      "cpu_time_limit": Devsnest::Application::JUDGEZERO_OPTIONS[lang_id.to_i][:time_limit] || '4',
+      "cpu_time_limit": Devsnest::Application::JUDGEZERO_OPTIONS[lang_id.to_i][:time_limit] || '2',
       "cpu_extra_time": '0.5',
       "wall_time_limit": '5',
       "memory_limit": Devsnest::Application::JUDGEZERO_OPTIONS[lang_id.to_i][:memory_limit] || '512000',
