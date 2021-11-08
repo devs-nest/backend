@@ -52,6 +52,16 @@ Rails.application.routes.draw do
       jsonapi_resources :notification_bot, only: %i[index]
       jsonapi_resources :notification, only: %i[create index]
       jsonapi_resources :event, only: %i[create index]
+      jsonapi_resources :challenge, only: %i[create index show update] do
+        collection do
+          get "/:id/submissions", to: "challenge#submissions" 
+        end
+      end
+      jsonapi_resources :algo_submission, only: %i[create show update] do
+        collection do
+          put :callback
+        end
+      end
       jsonapi_resources :certification, only: %i[show]
     end
   end

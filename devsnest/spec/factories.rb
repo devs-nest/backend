@@ -1,6 +1,22 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :judgeztoken do
+    
+  end
+
+  factory :testcase do
+    
+  end
+
+  factory :algo_submission do
+    
+  end
+
+  factory :challenge do
+    
+  end
+
   factory :internal_feedback do
     sequence(:issue_details) { 'This is the description' }
     sequence(:solution) { 'feedback for the team' }

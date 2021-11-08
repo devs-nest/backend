@@ -73,4 +73,12 @@ class ApplicationController < ActionController::API
   def initialize_redis_lb
     @leaderboard ||= LeaderboardDevsnest::Initializer::LB
   end
+
+  def utf8_to_base64(input = "")
+    Base64.encode64(input.to_s)
+  end
+
+  def base64_to_utf8(input = "")
+    Base64.decode64(input.to_s)
+  end
 end
