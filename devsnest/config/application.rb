@@ -108,7 +108,7 @@ module Devsnest
        },
 
      # Typescript
-      71 => { 
+      74 => { 
         memory_limit: '512000',
         time_limit: '10'
        }

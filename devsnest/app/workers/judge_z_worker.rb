@@ -5,7 +5,7 @@ class JudgeZWorker
     submission = AlgoSubmission.find(submission_id)
     return if submission.nil? || submission.test_cases.has_key?(token.to_s) || submission.test_cases[token.to_s].present?
 
-    jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': '4p2j-8mgt-ek0g-sh7m-k9kp' }
+    jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'] }
     poll = HTTParty.get(ENV['JUDGEZERO_URL']+"/submissions/#{token.to_s}?base64_encoded=true", headers: jz_headers)
     submission.with_lock do
       res_hash = AlgoSubmission.prepare_test_case_result(JSON(poll.body))
