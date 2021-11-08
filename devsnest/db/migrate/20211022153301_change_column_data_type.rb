@@ -1,5 +1,11 @@
 class ChangeColumnDataType < ActiveRecord::Migration[6.0]
   def change
-    change_column :challenges, :topic, :integer
+    def up
+      change_column :challenges, :topic, :integer
+    end
+
+    def down
+      change_column :challenges, :topic, :string
+    end
   end
 end
