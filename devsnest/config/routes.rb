@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       namespace :admin do
         jsonapi_resources :internal_feedback, only: %i[index update]
         jsonapi_resources :users, only: %i[index]
-        jsonapi_resources :certification, only: %i[create]
+        jsonapi_resources :certification, only: %i[index create update]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
