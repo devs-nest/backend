@@ -1,7 +1,7 @@
 class CreateAlgoChallenges < ActiveRecord::Migration[6.0]
   def change
     create_table :challenges do |t|
-      t.string :topic
+      t.integer :topic
       t.integer :difficulty
       t.string :name
       t.text :question_body

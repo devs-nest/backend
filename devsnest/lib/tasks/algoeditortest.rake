@@ -8,7 +8,7 @@ namespace :algoeditor do
                     "user_id": 1,
                     "challenge_id": 1,
                     "source_code": "a = int(input())\nb = int(input())\n\nprint(a*b)",
-                    "language_id": 71
+                    "language": "python3"
                 },
                 "type": "algo_submissions"
             }   

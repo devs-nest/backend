@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :internal_feedbacks
   has_many :algo_submission
   has_many :certifications, dependent: :delete_all
+  has_many :certifications, dependent: :delete_all
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
 

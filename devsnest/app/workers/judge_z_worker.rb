@@ -14,7 +14,7 @@ class JudgeZWorker
       end
       submission.total_runtime = submission.total_runtime.to_f + res_hash["time"].to_f
       submission.total_memory = submission.total_memory.to_i + res_hash["memory"].to_i
-      submission.test_cases[token.to_s] = res_hash
+      submission.test_cases[token.to_s] = submission.test_cases[token.to_s].merge(res_hash)
       submission.passed_test_cases += 1 if res_hash["status_id"] == 3
       submission.save!
     end

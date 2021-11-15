@@ -72,43 +72,50 @@ module Devsnest
 
     JUDGEZERO_OPTIONS = {
       # C 
-      50 => { 
+      "c" => {
+        id: 50,
         memory_limit: '512000',
         time_limit: '2'
        },
 
      # C++
-      54 => { 
+      "cpp" => {
+        id: 54, 
         memory_limit: '512000',
         time_limit: '2'
        },
 
      # Java
-      62 => { 
+      "java" => {
+        id: 62,
         memory_limit: '512000',
         time_limit: '4'
        },
 
      # Javascript
-      63 => { 
+     "javascript" => { 
+        id: 63,
         memory_limit: '512000',
         time_limit: '10'
        },
      
      # Python 2
-      70 => { 
-        memory_limit: '512000',
-        time_limit: '10'
+      "python" => { 
+       id: 70,
+       memory_limit: '512000',
+       time_limit: '10'
        },
      
      # Python 3
-      71 => { 
+      "python3" => { 
+        id: 71,
         memory_limit: '512000',
         time_limit: '10'
        },
 
      # Typescript
-      74 => { 
+      "typescript" => { 
+        id: 74,
         memory_limit: '512000',
         time_limit: '10'
        }
