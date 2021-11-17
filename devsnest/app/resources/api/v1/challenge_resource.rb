@@ -12,7 +12,7 @@ module Api
       def self.verify_key(key, context = nil)
         key && String(key)
       end
-      
+
       def sample_test_cases
         challenge_id = context[:challenge_id] || @model.id
         tc = Testcase.where(challenge_id: challenge_id, is_sample: true)
@@ -39,6 +39,14 @@ module Api
         end
 
         tc_arr
+      end
+
+      def self.records(options = {})
+        if options[:context][:challenge_id].nil?
+          super(options).where(is_active: true)
+        else
+          super(options)
+        end
       end
     end
   end

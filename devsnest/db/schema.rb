@@ -100,6 +100,7 @@ ActiveRecord::Schema.define(version: 2021_11_17_053947) do
     t.integer "score", default: 0
     t.integer "priority"
     t.string "slug"
+    t.boolean "is_active", default: false
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
