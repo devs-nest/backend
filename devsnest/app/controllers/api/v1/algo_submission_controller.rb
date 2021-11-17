@@ -13,7 +13,7 @@ module Api
 
       def create
         lang = params[:data][:attributes][:language].to_s
-        challenge_id = params[:data][:attributes][:challenge_id].to_s
+        challenge_id = Challenge.find_by(slug: params[:data][:attributes][:challenge_id].to_s).id.to_s
         source_code = params[:data][:attributes][:source_code]
 
         if params[:run_code].present?
