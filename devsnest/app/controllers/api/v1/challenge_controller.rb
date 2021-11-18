@@ -12,10 +12,10 @@ module Api
       end
 
       def fetch_by_slug
-        slug = params[:data][:attributes][:slug]
+        slug = params[:slug]
         challenge = Challenge.find_by(slug: slug)
 
-        return render_not_found("challenge") if challenge.nil?
+        return render_not_found('challenge') if challenge.nil?
 
         api_render(200, challenge.as_json.merge("type": 'challenges'))
       end
