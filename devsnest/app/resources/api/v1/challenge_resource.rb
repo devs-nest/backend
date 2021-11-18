@@ -4,7 +4,7 @@ module Api
   module V1
     # api for challenge test controller
     class ChallengeResource < JSONAPI::Resource
-      attributes :topic, :difficulty, :name, :question_body, :sample_test_cases, :score, :priority
+      attributes :topic, :difficulty, :name, :question_body, :sample_test_cases, :score, :priority, :slug
       filter :difficulty
       filter :topic
 
@@ -34,6 +34,14 @@ module Api
         end
 
         tc_arr
+      end
+
+      def self.records(options = {})
+        if options[:context][:challenge_id].nil?
+          super(options).where(is_active: true)
+        else
+          super(options)
+        end
       end
     end
   end
