@@ -54,7 +54,8 @@ Rails.application.routes.draw do
       jsonapi_resources :event, only: %i[create index]
       jsonapi_resources :challenge, only: %i[create index show update] do
         collection do
-          get "/:id/submissions", to: "challenge#submissions" 
+          get "/:id/submissions", to: "challenge#submissions"
+          get :fetch_by_slug
         end
       end
       jsonapi_resources :algo_submission, only: %i[create show update] do
