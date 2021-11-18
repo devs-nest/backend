@@ -11,10 +11,18 @@ module Api
         { challenge_id: params[:id] }
       end
 
+      def fetch_by_slug
+        slug = params[:data][:attributes][:slug]
+        challenge = Challenge.find_by(slug: slug)
+
+        return render_not_found("challenge") if challenge.nil?
+
+        api_render(200, challenge.as_json.merge("type": 'challenges'))
+      end
+
       def submissions
         challenge_id = params[:id]
-        challenge = Challenge.find_by(slug: challenge_id)
-        api_render(200, { id: challenge_id, type: 'challenge', submissions: @current_user.algo_submission.where(challenge_id: challenge.id, is_submitted: true) })
+        api_render(200, { id: challenge_id, type: 'challenge', submissions: @current_user.algo_submission.where(challenge_id: challenge_id, is_submitted: true) })
       end
     end
   end

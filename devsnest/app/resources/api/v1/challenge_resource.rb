@@ -4,14 +4,9 @@ module Api
   module V1
     # api for challenge test controller
     class ChallengeResource < JSONAPI::Resource
-      primary_key :slug
       attributes :topic, :difficulty, :name, :question_body, :sample_test_cases, :score, :priority, :slug
       filter :difficulty
       filter :topic
-
-      def self.verify_key(key, context = nil)
-        key && String(key)
-      end
 
       def sample_test_cases
         challenge_id = context[:challenge_id] || @model.id
