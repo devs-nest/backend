@@ -70,6 +70,12 @@ class ApplicationController < ActionController::API
     render_unauthorized
   end
 
+  def problem_setter_auth
+    return true if @current_user.present? && (@current_user.user_type == 'admin' || @current_user.user_type == 'problem_setter')
+
+    render_unauthorized
+  end
+
   def initialize_redis_lb
     @leaderboard ||= LeaderboardDevsnest::Initializer::LB
   end
