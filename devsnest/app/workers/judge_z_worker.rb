@@ -5,7 +5,7 @@ class JudgeZWorker
     return if token.nil? || submission_id.nil?
 
     submission = AlgoSubmission.find(submission_id)
-    return if submission.nil? || submission.test_cases.dig(token.to_s, status_id).present?
+    return if submission.nil? || submission.test_cases.dig(token.to_s, "status_id").present?
 
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'] }
     poll = HTTParty.get(ENV['JUDGEZERO_URL']+"/submissions/#{token.to_s}?base64_encoded=true", headers: jz_headers)
