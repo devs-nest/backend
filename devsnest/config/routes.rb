@@ -14,7 +14,6 @@ Rails.application.routes.draw do
             post :add_testcase
             put :update_testcase
             get :testcases
-            get :testcase
           end
         end
       end
