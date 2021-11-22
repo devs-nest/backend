@@ -9,7 +9,7 @@ class Challenge < ApplicationRecord
   after_create :create_slug
   validates_uniqueness_of :name, :slug
 
-  def put_testcase_in_s3(input_file, output_file, is_sample)
+  def put_testcase_in_s3(input_file, output_file)
     input_filename = "#{name.parameterize.underscore}_#{testcases.count + 1}_hidden_in"
     output_filename = "#{name.parameterize.underscore}_#{testcases.count + 1}_hidden_out"
     input_path = "#{id}/input/#{input_filename}.txt"
