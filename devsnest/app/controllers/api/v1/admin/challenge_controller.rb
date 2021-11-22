@@ -20,8 +20,11 @@ module Api
           is_sample = params['is_sample'] == 'true' || params['is_sample'] == true
 
           challenge = Challenge.find(params[:id])
+          return render_not_found if challenge.nil?
+
           input_path, output_path = challenge.put_testcase_in_s3(input_file, output_file)
           Testcase.create(challenge_id: challenge.id, is_sample: is_sample, input_path: input_path, output_path: output_path)
+          render_success({})
         end
 
         def update_testcase
@@ -31,8 +34,11 @@ module Api
           testcase_id = params['testcase_id']
 
           challenge = Challenge.find(params[:id])
+          return render_not_found if challenge.nil?
+
           input_path, output_path = challenge.put_testcase_in_s3(input_file, output_file)
           Testcase.find(testcase_id).update(challenge_id: challenge.id, is_sample: is_sample, input_path: input_path, output_path: output_path)
+          render_success({})
         end
 
         def testcases
