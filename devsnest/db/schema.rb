@@ -102,6 +102,8 @@ ActiveRecord::Schema.define(version: 2021_11_17_145543) do
     t.text "tester_code"
     t.integer "created_by"
     t.string "slug"
+    t.boolean "is_active", default: false
+    t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
