@@ -17,7 +17,7 @@ RSpec.describe 'Algo Editor Challenges', type: :request do
 
     it 'If User is Problem setter' do
       user.update(user_type: 2)
-      get '/api/v1/admin/challenge'
+      get '/api/v1/admin/challenge/self_created_challenges'
       expect(response.status).to eq(200)
     end
 
