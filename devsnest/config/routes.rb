@@ -10,6 +10,9 @@ Rails.application.routes.draw do
         jsonapi_resources :users, only: %i[index]
         jsonapi_resources :certification, only: %i[index create update]
         jsonapi_resources :challenge, only: %i[show index create update] do
+          collection do
+            get :self_created_challenges
+          end
           member do
             post :add_testcase
             put :update_testcase
