@@ -9,6 +9,17 @@ Rails.application.routes.draw do
         jsonapi_resources :internal_feedback, only: %i[index update]
         jsonapi_resources :users, only: %i[index]
         jsonapi_resources :certification, only: %i[index create update]
+        jsonapi_resources :challenge, only: %i[show index create update] do
+          collection do
+            get :self_created_challenges
+          end
+          member do
+            post :add_testcase
+            put :update_testcase
+            get :testcases
+            delete :delete_testcase
+          end
+        end
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
