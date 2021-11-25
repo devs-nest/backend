@@ -5,7 +5,7 @@ class User < ApplicationRecord
          :jwt_authenticatable,
          jwt_revocation_strategy: JwtBlacklist
   after_create :create_bot_token
-  enum user_type: %i[user admin]
+  enum user_type: %i[user admin problem_setter]
   after_create :create_username
   validates_uniqueness_of :username
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
