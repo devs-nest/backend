@@ -23,7 +23,7 @@ class Challenge < ApplicationRecord
     $s3.put_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: input_path, body: input_file)
     $s3.put_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: output_path, body: output_file)
 
-    [input_filename, output_filename]
+    ["#{input_filename}.txt", "#{output_filename}.txt"]
   end
 
   def create_slug
