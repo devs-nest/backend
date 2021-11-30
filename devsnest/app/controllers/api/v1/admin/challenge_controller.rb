@@ -16,7 +16,7 @@ module Api
         end
 
         def self_created_challenges
-          render_success({ id: @current_user.id, type: 'challenges', challenges: Challenge.where(created_by: @current_user.id) })
+          render_success({ id: @current_user.id, type: 'challenges', challenges: @current_user.challenges })
         end
 
         def add_testcase
