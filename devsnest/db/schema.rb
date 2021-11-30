@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_17_145543) do
+ActiveRecord::Schema.define(version: 2021_11_30_124327) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(version: 2021_11_17_145543) do
     t.string "slug"
     t.boolean "is_active", default: false
     t.text "tester_code"
-    t.integer "created_by"
+    t.integer "user_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
