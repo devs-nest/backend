@@ -6,6 +6,7 @@ class Challenge < ApplicationRecord
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queues heaps dynamicprogramming backtracking greedy maths]
   has_many :algo_submission
   has_many :testcases
+  belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug
 
@@ -22,7 +23,7 @@ class Challenge < ApplicationRecord
     $s3.put_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: input_path, body: input_file)
     $s3.put_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: output_path, body: output_file)
 
-    [input_path, output_path]
+    ["#{input_filename}.txt", "#{output_filename}.txt"]
   end
 
   def create_slug

@@ -12,6 +12,7 @@ class User < ApplicationRecord
   belongs_to :college, optional: true
   has_many :internal_feedbacks
   has_many :algo_submission
+  has_many :challenges
   has_many :certifications, dependent: :delete_all
   has_many :certifications, dependent: :delete_all
   before_save :markdown_encode, if: :will_save_change_to_markdown?
