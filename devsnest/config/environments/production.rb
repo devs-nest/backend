@@ -107,6 +107,6 @@ Rails.application.configure do
   config.hosts << 'api.devsnest.in'
   config.hosts << 'api.harry.devsnest.in'
   config.hosts << 'api.ron.devsnest.in'
-  config.hosts << 'api.hermione.devsnest.in'
+  config.hosts << ENV['HOSTNAME'] if ENV['HOSTNAME'].present?
   config.hosts << 'old.devsnest.in'
 end
