@@ -103,5 +103,10 @@ Rails.application.configure do
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
-  config.hosts.clear
+  config.hosts << 'devsnest.in'
+  config.hosts << 'api.devsnest.in'
+  config.hosts << 'api.harry.devsnest.in'
+  config.hosts << 'api.ron.devsnest.in'
+  config.hosts << ENV['HOSTNAME'].split('-')[0] if ENV['HOSTNAME'].present?
+  config.hosts << 'old.devsnest.in'
 end
