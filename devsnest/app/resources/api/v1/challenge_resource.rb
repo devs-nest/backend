@@ -7,6 +7,9 @@ module Api
       attributes :topic, :difficulty, :name, :question_body, :sample_test_cases, :score, :priority, :slug
       filter :difficulty
       filter :topic
+      filter :parent_id
+      filter :unique_id
+      filter :data_type
 
       def sample_test_cases
         challenge_id = context[:challenge_id] || @model.id

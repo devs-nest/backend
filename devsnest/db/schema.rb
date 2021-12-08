@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_17_145543) do
+ActiveRecord::Schema.define(version: 2021_12_01_073455) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2021_11_17_145543) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "8nWfZa5R6es"
+    t.string "cuid", default: "9zZBuV3qP2s"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -103,6 +103,10 @@ ActiveRecord::Schema.define(version: 2021_11_17_145543) do
     t.boolean "is_active", default: false
     t.text "tester_code"
     t.integer "created_by"
+    t.text "company_tags"
+    t.integer "content_type"
+    t.string "unique_id"
+    t.string "parent_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 

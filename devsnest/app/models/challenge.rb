@@ -3,11 +3,13 @@
 # algo challenge class
 class Challenge < ApplicationRecord
   enum difficulty: %i[easy medium hard]
+  enum content_type: %i[topic sub_topic]
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queues heaps dynamicprogramming backtracking greedy maths]
   has_many :algo_submission
   has_many :testcases
   after_create :create_slug
   validates_uniqueness_of :name, :slug
+  serialize :company_tags, Array
 
   def put_testcase_in_s3(input_file, output_file, testcase)
     if testcase.present?

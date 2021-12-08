@@ -21,7 +21,7 @@ module Api
           batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.run_code(params, lang, challenge_id, source_code)
         else
           is_submitted = true
-          batch, total_test_cases, expected_output_batch, stdins= AlgoSubmission.submit_code(params, lang, challenge_id, source_code)
+          batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.submit_code(params, lang, challenge_id, source_code)
         end
 
         submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted,
@@ -43,7 +43,7 @@ module Api
         return render_unauthorized if submission_id.nil?
 
         submission = AlgoSubmission.find_by(id: submission_id)
-        
+
         # return render_unauthorized if submission.created_at > Time.now - 1.day
 
         submission.with_lock do
@@ -53,7 +53,7 @@ module Api
           submission.total_memory = submission.total_memory.to_i + res_hash['memory'].to_i
           submission.test_cases[params[:token]] = submission.test_cases[params[:token]].merge(res_hash)
           submission.passed_test_cases += 1 if params[:status][:id] == 3
-          submission.status = "Pending" if submission.status == "Accepted" && submission.total_test_cases != submission.passed_test_cases
+          submission.status = 'Pending' if submission.status == 'Accepted' && submission.total_test_cases != submission.passed_test_cases
           submission.save!
         end
       end
