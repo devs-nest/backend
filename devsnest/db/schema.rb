@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_30_124327) do
+ActiveRecord::Schema.define(version: 2021_12_13_184521) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_124327) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "8nWfZa5R6es"
+    t.string "cuid", default: "MzwOLuPHwNM"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -137,6 +137,11 @@ ActiveRecord::Schema.define(version: 2021_11_30_124327) do
     t.string "bot_details"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "frontend_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "minibootcamp_id"
+    t.text "question_markdown"
   end
 
   create_table "frontend_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -233,6 +238,35 @@ ActiveRecord::Schema.define(version: 2021_11_30_124327) do
 
   create_table "markdowns", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.text "template"
+  end
+
+  create_table "minibootcamp_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "frontend_question_id"
+    t.string "submission_link"
+    t.string "submission_status"
+    t.integer "template"
+    t.string "active_path"
+    t.text "open_paths"
+    t.json "files"
+    t.text "protected_paths"
+    t.boolean "is_solved"
+    t.boolean "show_explorer"
+    t.boolean "show_ide"
+    t.index ["frontend_question_id"], name: "index_minibootcamp_submissions_on_frontend_question_id"
+  end
+
+  create_table "minibootcamps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "unique_id", null: false
+    t.string "parent_id"
+    t.string "name"
+    t.integer "content_type"
+    t.text "markdown"
+    t.string "video_link"
+    t.string "image_url"
+    t.integer "current_lesson_number"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "notification_bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
