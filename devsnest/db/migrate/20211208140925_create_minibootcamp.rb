@@ -1,11 +1,9 @@
 class CreateMinibootcamp < ActiveRecord::Migration[6.0]
-  def create
-    create_table :minibootcamps do |t|
+  def change
+    create_table :minibootcamp do |t|
       t.string :unique_id, null: false
       t.string :parent_id
       t.integer :content_type, null: false
-      t.text :markdown
-      
       t.timestamps
     end
   end
