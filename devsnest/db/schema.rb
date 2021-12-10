@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2021_12_08_140925) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "DoHNsiwMo7w"
+    t.string "cuid", default: "i+mKXftRkko"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -235,7 +235,7 @@ ActiveRecord::Schema.define(version: 2021_12_08_140925) do
     t.text "template"
   end
 
-  create_table "minibootcamp", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+  create_table "minibootcamps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "unique_id", null: false
     t.string "parent_id"
     t.integer "content_type", null: false

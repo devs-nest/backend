@@ -57,7 +57,7 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :batch_leader_sheet, only: %i[create index update]
       jsonapi_resources :markdown, only: %i[index]
-      jsonapi_resources :minibootcamp, only: %i[show]
+      jsonapi_resources :minibootcamp, only: %i[index]
       jsonapi_resources :internal_feedback, only: %i[create index]
       jsonapi_resources :link, only: %i[show]
       jsonapi_resources :hackathon, only: %i[create index update show]
