@@ -109,8 +109,8 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Leaderboard' do
-    let(:spec_leaderboard) { Leaderboard.new(ENV['REDIS_DB'], Leaderboard::DEFAULT_OPTIONS, { redis_connection: Redis.new }) }
-    let(:user) { create(:user, discord_active: true, username: 'username') }
+    let(:spec_leaderboard) { Leaderboard.new( "dn_leaderboard", Leaderboard::DEFAULT_OPTIONS, { redis_connection: Redis.new(url: 'redis://127.0.0.1:6379/0') }) }
+    let!(:user) { create(:user, discord_active: true, username: 'username') }
     before :each do
       User.initialize_leaderboard(spec_leaderboard)
     end
