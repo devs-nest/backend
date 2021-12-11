@@ -2,7 +2,7 @@ class JudgeZWorker
   include Sidekiq::Worker
 
   def perform(token, submission_id)
-    return if token.nil? || submission_id.nil?
+    return if token.empty? || token.nil? || submission_id.nil?
 
     submission = AlgoSubmission.find(submission_id)
     return if submission.nil? || submission.test_cases.dig(token.to_s, "status_id").present?
