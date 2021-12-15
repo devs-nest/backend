@@ -5,9 +5,16 @@ module Api
     module Admin
       # api for challenge test controller
       class ChallengeResource < JSONAPI::Resource
-        attributes :topic, :difficulty, :name, :question_body, :score, :priority, :tester_code, :slug, :created_by
+        attributes :topic, :difficulty, :name, :question_body, :score, :priority, :tester_code, :slug, :is_active, :user_id
+        attributes :created_by
         filter :difficulty
         filter :topic
+
+        def created_by
+          @model.user.username
+        rescue StandardError
+          ''
+        end
       end
     end
   end

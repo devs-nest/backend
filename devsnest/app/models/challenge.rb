@@ -9,6 +9,7 @@ class Challenge < ApplicationRecord
   has_many :testcases
   has_many :company_challenge_mappings
   has_many :companies, through: :company_challenge_mappings
+  belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug
   serialize :company_tags, Array
@@ -26,7 +27,7 @@ class Challenge < ApplicationRecord
     $s3.put_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: input_path, body: input_file)
     $s3.put_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: output_path, body: output_file)
 
-    [input_path, output_path]
+    ["#{input_filename}.txt", "#{output_filename}.txt"]
   end
 
   def create_slug
