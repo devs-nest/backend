@@ -4,7 +4,7 @@
 class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
-  after_commit :assign_score_to_user, if: :score_should_be_updated
+  after_commit :assign_score_to_user, if: :score_should_be_updated, on: %i[create update]
 
   def self.add_submission(source_code, lang, test_case, challenge_id, mode)
     if mode != 'run'
