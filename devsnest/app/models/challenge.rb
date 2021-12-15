@@ -11,7 +11,6 @@ class Challenge < ApplicationRecord
   has_many :companies, through: :company_challenge_mappings
   after_create :create_slug
   validates_uniqueness_of :name, :slug
-  serialize :company_tags, Array
 
   def put_testcase_in_s3(input_file, output_file, testcase)
     if testcase.present?
