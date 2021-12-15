@@ -7,6 +7,8 @@ class Challenge < ApplicationRecord
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queues heaps dynamicprogramming backtracking greedy maths]
   has_many :algo_submission
   has_many :testcases
+  has_many :company_challenge_mappings
+  has_many :companies, through: :company_challenge_mappings
   after_create :create_slug
   validates_uniqueness_of :name, :slug
   serialize :company_tags, Array

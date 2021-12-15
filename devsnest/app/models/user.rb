@@ -168,4 +168,7 @@ class User < ApplicationRecord
     }
     mimes[type]
   end
+
+  def recalculate_all_scores
+  end
 end

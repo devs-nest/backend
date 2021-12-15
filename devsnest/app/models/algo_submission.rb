@@ -4,6 +4,7 @@
 class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
+  after_commit :assign_score_to_user, if: :score_should_be_updated
 
   def self.add_submission(source_code, lang, test_case, challenge_id, mode)
     if mode != 'run'
@@ -116,10 +117,26 @@ class AlgoSubmission < ApplicationRecord
       'Runtime Error (NZEC)' => 7
     }
 
-    if orders.has_key?(status)
+    if orders.key?(status)
       orders[status]
     else
       -2
     end
+  end
+
+  def assign_score_to_user
+    user = User.find(user_id)
+    challenge = Challenge.find(challenge_id).testcases.count
+    previous_passed_test_cases = AlgoSubmission.where(user_id: 1, challenge_id: 1, is_submitted: true, status: 'Accepted').offset(1).pluck(:passed_test_cases).max
+    previous_max_score = (previous_passed_test_cases / challenge.tescases.count) * challenge.score
+    new_score = (passed_test_cases / challenge.tescases.count) * challenge.score
+    if previous_max_score < new_score
+      recalculated_score_of_user = user.score - previous_max_score + new_score
+      user.update!(score: recalculated_score_of_user)
+    end
+  end
+
+  def score_should_be_updated
+    !['Pending', 'Compilation Error'].include?(self.status)
   end
 end

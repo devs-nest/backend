@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2021_12_01_073455) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "9zZBuV3qP2s"
+    t.string "cuid", default: "8nWfZa5R6es"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -102,8 +102,7 @@ ActiveRecord::Schema.define(version: 2021_12_01_073455) do
     t.string "slug"
     t.boolean "is_active", default: false
     t.text "tester_code"
-    t.integer "created_by"
-    t.text "company_tags"
+    t.integer "user_id"
     t.integer "content_type"
     t.string "unique_id"
     t.string "parent_id"
@@ -112,6 +111,19 @@ ActiveRecord::Schema.define(version: 2021_12_01_073455) do
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name"
+  end
+
+  create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "company_challenge_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "challenge_id"
+    t.integer "company_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
