@@ -345,7 +345,7 @@ DEPENDENCIES
   mimemagic!
   mysql2 (~> 0.5.2)
   newrelic_rpm (~> 7.1)
-  puma (~> 4.1)
+  puma (~> 4.3.10)
   rack-cors (~> 1.1.1)
   rails (~> 6.0.3, >= 6.0.3.4)
   redis (= 4.2.5)
@@ -356,7 +356,7 @@ DEPENDENCIES
   sentry-rails (= 4.2.1)
   sentry-ruby (= 4.2.1)
   sentry-sidekiq (= 4.2.0)
-  sidekiq (~> 6.1, >= 6.1.2)
+  sidekiq (~> 6.3.1, >= 6.3.1)
   sidekiq-cron (= 1.2.0)
   simplecov (~> 0.21.2)
   spring (= 2.1.1)
