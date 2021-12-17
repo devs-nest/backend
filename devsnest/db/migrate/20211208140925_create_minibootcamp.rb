@@ -1,10 +1,14 @@
 class CreateMinibootcamp < ActiveRecord::Migration[6.0]
   def change
     create_table :minibootcamps do |t|
-      t.string :unique_id, null: false
+      t.string :unique_id, null: false, unique: true
       t.string :parent_id
-      t.integer :content_type, null: false
+      t.string :name
+      t.integer :content_type
       t.text :markdown
+      t.string :video_link
+      t.string :image_url
+      t.boolean :show_ide
       t.timestamps
     end
   end

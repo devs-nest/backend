@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_08_140925) do
+ActiveRecord::Schema.define(version: 2021_12_13_184521) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2021_12_08_140925) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "Kv5vk3+U+Yg"
+    t.string "cuid", default: "JxvcTxRJOEg"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -137,6 +137,11 @@ ActiveRecord::Schema.define(version: 2021_12_08_140925) do
     t.string "bot_details"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "frontend_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "minibootcamp_id"
+    t.text "question_markdown"
   end
 
   create_table "frontend_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -235,11 +240,21 @@ ActiveRecord::Schema.define(version: 2021_12_08_140925) do
     t.text "template"
   end
 
+  create_table "minibootcamp_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "minibootcamp_id"
+    t.string "submission_link"
+  end
+
   create_table "minibootcamps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "unique_id", null: false
     t.string "parent_id"
-    t.integer "content_type", null: false
+    t.string "name"
+    t.integer "content_type"
     t.text "markdown"
+    t.string "video_link"
+    t.string "image_url"
+    t.boolean "show_ide"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

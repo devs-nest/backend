@@ -2,8 +2,8 @@
 
 module Api
   module V1
-    # Minibootcamp Cotroller
-    class MinibootcampController < ApplicationController
+    # frontend submission controller
+    class FrontendQuestionsController < ApplicationController
       include JSONAPI::ActsAsResourceController
     end
   end
