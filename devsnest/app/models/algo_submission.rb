@@ -137,6 +137,6 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def score_should_be_updated
-    ['Pending', 'Compilation Error'].exclude?(self.status)
+    ['Pending', 'Compilation Error'].exclude?(self.status) && self.is_submitted
   end
 end
