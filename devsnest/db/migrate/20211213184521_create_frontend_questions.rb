@@ -7,8 +7,10 @@ class CreateFrontendQuestions < ActiveRecord::Migration[6.0]
 
     create_table :minibootcamp_submissions do |t|
       t.integer :user_id
-      t.string :minibootcamp_id
+      t.integer :frontend_question_id
       t.string :submission_link
+      t.string :submission_status
+      t.index %i[frontend_question_id] 
     end
   end
 end
