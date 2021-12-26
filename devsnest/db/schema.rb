@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "OxJ+j8lKAY8"
+    t.string "cuid", default: "ZdIwjGu8NpI"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -244,6 +244,12 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
     t.integer "user_id"
     t.integer "frontend_question_id"
     t.string "submission_link"
+    t.string "submission_status"
+    t.integer "template"
+    t.string "active_path"
+    t.text "open_paths"
+    t.json "files"
+    t.text "protected_paths"
     t.index ["frontend_question_id"], name: "index_minibootcamp_submissions_on_frontend_question_id"
   end
 
@@ -255,7 +261,10 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
     t.text "markdown"
     t.string "video_link"
     t.string "image_url"
+    t.boolean "show_explorer"
     t.boolean "show_ide"
+    t.integer "current_lesson_number"
+    t.boolean "is_solved"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

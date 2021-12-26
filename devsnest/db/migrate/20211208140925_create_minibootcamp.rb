@@ -6,15 +6,12 @@ class CreateMinibootcamp < ActiveRecord::Migration[6.0]
       t.string :name
       t.integer :content_type
       t.text :markdown
-      t.integer :template
-      t.string :active_path
-      t.text :open_paths
-      t.json :files
-      t.text :protected_paths
       t.string :video_link
       t.string :image_url
       t.boolean :show_explorer
       t.boolean :show_ide
+      t.integer :current_lesson_number
+      t.boolean :is_solved
       t.timestamps
     end
   end

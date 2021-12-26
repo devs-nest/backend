@@ -10,6 +10,11 @@ class CreateFrontendQuestions < ActiveRecord::Migration[6.0]
       t.integer :frontend_question_id
       t.string :submission_link
       t.string :submission_status
+      t.integer :template
+      t.string :active_path
+      t.text :open_paths
+      t.json :files
+      t.text :protected_paths
       t.index %i[frontend_question_id] 
     end
   end

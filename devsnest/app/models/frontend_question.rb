@@ -2,5 +2,5 @@
 
 # frontend submission model
 class FrontendQuestion < ApplicationRecord
-  belongs_to :minibootcamps
+  belongs_to :minibootcamp
 end
