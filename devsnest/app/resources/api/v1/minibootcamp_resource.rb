@@ -5,7 +5,7 @@ module Api
     # Minibootcamp Resource
     class MinibootcampResource < JSONAPI::Resource
       attributes :unique_id, :parent_id, :name, :content_type, :markdown, :video_link, :current_lesson_number, :image_url
-      attributes :module_tasks, :current_url, :next_url, :previous_url
+      attributes :module_tasks, :current_url, :next_url, :previous_url, :total_lessons
       filter :parent_id
       filter :unique_id
       filter :content_type
@@ -26,6 +26,10 @@ module Api
       def previous_url
         prev_lesson = Minibootcamp.find_by(parent_id: parent_id, current_lesson_number: @model.current_lesson_number-1)
         "/api/v1/minibootcamp?filter[parent_id]=#{@context[:parent_id]}&filter[unique_id]=#{prev_lesson&.unique_id}" if prev_lesson.present?
+      end
+
+      def total_lessons
+        minimum = Minibootcamp.where(parent_id: parent_id).count
       end
     end
   end
