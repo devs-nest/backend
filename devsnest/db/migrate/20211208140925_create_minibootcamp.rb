@@ -8,10 +8,7 @@ class CreateMinibootcamp < ActiveRecord::Migration[6.0]
       t.text :markdown
       t.string :video_link
       t.string :image_url
-      t.boolean :show_explorer
-      t.boolean :show_ide
       t.integer :current_lesson_number
-      t.boolean :is_solved
       t.timestamps
     end
   end

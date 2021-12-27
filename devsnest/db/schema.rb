@@ -29,6 +29,17 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
     t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
   end
 
+  create_table "algo_templates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "challenge_id"
+    t.integer "language_id"
+    t.text "head"
+    t.text "body"
+    t.text "tail"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["challenge_id", "language_id"], name: "index_algo_templates_on_challenge_id_and_language_id", unique: true
+  end
+
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
@@ -83,7 +94,7 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "ZdIwjGu8NpI"
+    t.string "cuid", default: "6kNrrx+63_k"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -103,6 +114,8 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
     t.boolean "is_active", default: false
     t.text "tester_code"
     t.integer "user_id"
+    t.json "input_format"
+    t.json "output_format"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
@@ -230,6 +243,19 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
+  create_table "languages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "judge_zero_id"
+    t.string "name"
+    t.string "memory_limit"
+    t.string "time_limit"
+    t.string "type_array", default: ""
+    t.string "type_matrix", default: ""
+    t.string "type_string", default: ""
+    t.string "type_primitive", default: ""
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "slug"
     t.text "address"
@@ -250,6 +276,9 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
     t.text "open_paths"
     t.json "files"
     t.text "protected_paths"
+    t.boolean "is_solved"
+    t.boolean "show_explorer"
+    t.boolean "show_ide"
     t.index ["frontend_question_id"], name: "index_minibootcamp_submissions_on_frontend_question_id"
   end
 
@@ -261,10 +290,7 @@ ActiveRecord::Schema.define(version: 2021_12_13_184521) do
     t.text "markdown"
     t.string "video_link"
     t.string "image_url"
-    t.boolean "show_explorer"
-    t.boolean "show_ide"
     t.integer "current_lesson_number"
-    t.boolean "is_solved"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
