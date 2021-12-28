@@ -3,6 +3,7 @@ class ChallegesDbChangesAndCreateCompanyTables < ActiveRecord::Migration[6.0]
     add_column :challenges, :content_type, :integer
     add_column :challenges, :unique_id, :string
     add_column :challenges, :parent_id, :string
+    change_column :users, :score, :integer, :default => 0
 
     create_table :companies do |t|
       t.string :name

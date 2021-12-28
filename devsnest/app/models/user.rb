@@ -11,7 +11,7 @@ class User < ApplicationRecord
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
-  has_many :algo_submission
+  has_many :algo_submissions
   has_many :challenges
   has_many :certifications, dependent: :delete_all
   has_many :certifications, dependent: :delete_all
@@ -182,5 +182,9 @@ class User < ApplicationRecord
         user.update!(score: user.score + (max_passed_test_cases / challenge.tescases.count) * challenge.score)
       end
     end
+  end
+
+  def activity
+    algo_submissions.where(is_submitted: true).group('Date(created_at)').count
   end
 end

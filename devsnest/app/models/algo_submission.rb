@@ -125,11 +125,11 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def assign_score_to_user
-    user = User.find(user_id)
-    challenge = Challenge.find(challenge_id).testcases.count
-    previous_passed_test_cases = AlgoSubmission.where(user_id: user_id, challenge_id: challenge_id, is_submitted: true).offset(1).pluck(:passed_test_cases).max
-    previous_max_score = (previous_passed_test_cases / challenge.tescases.count) * challenge.score
-    new_score = (passed_test_cases / challenge.tescases.count) * challenge.score
+    user = User.find(self.user_id)
+    challenge = Challenge.find(self.challenge_id)
+    previous_passed_test_cases = AlgoSubmission.where(user_id: self.user_id, challenge_id: self.challenge_id, is_submitted: true).offset(1).pluck(:passed_test_cases).max
+    previous_max_score = previous_passed_test_cases.nil? ? 0 : (previous_passed_test_cases / challenge.testcases.count) * challenge.score
+    new_score = (passed_test_cases / challenge.testcases.count) * challenge.score
     if previous_max_score < new_score
       recalculated_score_of_user = user.score - previous_max_score + new_score
       user.update!(score: recalculated_score_of_user)
