@@ -75,6 +75,11 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :certification, only: %i[show]
+      jsonapi_resources :company, only: %i[index] do
+        member do
+          get :challenges
+        end
+      end
     end
   end
 end
