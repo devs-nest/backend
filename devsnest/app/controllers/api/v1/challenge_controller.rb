@@ -24,6 +24,13 @@ module Api
         challenge_id = params[:id]
         api_render(200, { id: challenge_id, type: 'challenge', submissions: @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true) })
       end
+
+      def companies
+        challenge = Challenge.find(params[:id])
+        return render_not_found if challenge.nil?
+
+        render_success({ id: challenge.id, type: 'companies', companies: challenge.companies })
+      end
     end
   end
 end
