@@ -5,7 +5,6 @@ module Api
     # Minibootcamp Cotroller
     class MinibootcampController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :create_submission, only: %i[create update]
 
       def context
         {
@@ -13,15 +12,21 @@ module Api
         }
       end
 
-      def create_submission
-        module_id = params.dig(:data, :attributes, :module_id)
-        file_name = params.dig(:data, :attributes, :file_name)
-        raw_code = params.dig(:data, :attributes, :raw_code)
-        bucket = "#{ENV['S3_PREFIX']}-minibootcamp"
-        key = "#{1}/#{module_id}/#{file_name}.txt"
+      def menu
+        return render_error('Parent Id missing') if params[:parent_id].nil?
 
-        # move to model
-        $s3.put_object(bucket: bucket, key: key, body: raw_code)
+        menu_tab = []
+        records = Minibootcamp.where(parent_id: params[:parent_id])
+
+        records.each do |record|
+          menu_tab << {
+            unique_id: record.unique_id,
+            name: record.name,
+            is_solved: record&.frontend_question&.minibootcamp_submissions&.find_by(user_id: @current_user&.id)&.is_solved
+          }
+        end
+
+        api_render(200, { type: 'menu', attributes: menu_tab })
       end
     end
   end
