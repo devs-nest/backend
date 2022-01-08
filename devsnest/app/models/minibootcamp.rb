@@ -3,5 +3,5 @@
 # Minibootcamp resourses
 class Minibootcamp < ApplicationRecord
   enum content_type: %i[topic subtopic]
-  belongs_to :frontend_question
+  belongs_to :frontend_question, optional: true
 end
