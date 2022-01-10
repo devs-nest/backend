@@ -4,7 +4,7 @@ module Api
   module V1
     # resource for frontend questions (minibootcamp)
     class FrontendQuestionResource < JSONAPI::Resource
-      attributes :minibootcamp_id, :question_markdown, :template, :active_path, :open_paths, :protected_paths, :hidden_files, :show_explorer
+      attributes :question_markdown, :template, :active_path, :open_paths, :protected_paths, :hidden_files, :show_explorer
       attributes :template_files, :last_submitted_files, :is_solved, :submission_id
 
       def template_files
