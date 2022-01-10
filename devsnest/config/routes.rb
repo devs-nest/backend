@@ -20,14 +20,8 @@ Rails.application.routes.draw do
             delete :delete_testcase
           end
         end
-        jsonapi_resources :minibootcamp, only: %i[index create update show] do
-          member do
-            get :frontend_question
-            post :create_frontend_question
-            put :update_frontend_question
-            delete :delete_frontend_question
-          end
-        end
+        jsonapi_resources :minibootcamp
+        jsonapi_resources :frontend_question
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
