@@ -39,13 +39,15 @@ module Api
           minibootcamp_frontend_question = minibootcamp.frontend_question
           return render_error({ message: 'Frontend Question for this do not Exists' }) if minibootcamp_frontend_question.nil?
 
-          frontend_question_params = params[:data][:attributes].permit([:minibootcamp_id, :question_markdown, :template,
+          frontend_question_params = params[:data][:attributes].permit([:question_markdown, :template,
                                                                         :active_path, :show_explorer, { open_paths: [], protected_paths: [], hidden_files: [] }]).to_h
-          frontend_question = minibootcamp_frontend_question.update(frontend_question_params)
+          minibootcamp_frontend_question.update(frontend_question_params)
           template_files = params.dig(:data, :attributes, :template_files)
           if template_files.present?
             template_files.each do |filename, filecontent|
-              FrontendQuestion.post_to_s3(frontend_question.id, filename, filecontent[:code])
+              next if filecontent.empty?
+
+              FrontendQuestion.post_to_s3(minibootcamp_frontend_question.id, filename, filecontent[:code])
             end
           end
           render_success({ message: 'Frontend Question Updated Successfully' })
