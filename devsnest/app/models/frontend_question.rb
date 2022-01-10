@@ -11,7 +11,7 @@ class FrontendQuestion < ApplicationRecord
 
   def self.post_to_s3(frontend_question_id, file_name, raw_code)
     bucket = "#{ENV['S3_PREFIX']}minibootcamp"
-    key = "template_files/#{frontend_question_id}/#{file_name}.txt"
+    key = "template_files/#{frontend_question_id}#{file_name}.txt"
 
     $s3.put_object(bucket: bucket, key: key, body: raw_code)
   end
