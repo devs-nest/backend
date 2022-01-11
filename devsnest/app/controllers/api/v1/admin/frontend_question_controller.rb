@@ -6,7 +6,7 @@ module Api
       # Frontend Question Controller
       class FrontendQuestionController < ApplicationController
         include JSONAPI::ActsAsResourceController
-        before_action :admin_auth
+        # before_action :admin_auth
 
         def create
           frontend_question_params = params[:data][:attributes].permit([:question_markdown, :template,

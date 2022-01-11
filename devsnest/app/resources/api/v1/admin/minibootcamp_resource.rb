@@ -5,7 +5,7 @@ module Api
     module Admin
       # Minibootcamp Resource
       class MinibootcampResource < JSONAPI::Resource
-        attributes :unique_id, :parent_id, :name, :content_type, :markdown, :video_link, :current_lesson_number, :image_url
+        attributes :unique_id, :parent_id, :name, :content_type, :markdown, :video_link, :current_lesson_number, :image_url, :frontend_question_id
         filter :parent_id
         filter :unique_id
         filter :content_type
