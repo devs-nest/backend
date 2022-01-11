@@ -9,7 +9,7 @@ module Api
         # before_action :admin_auth
 
         def create
-          frontend_question_params = params[:data][:attributes].permit([:question_markdown, :template,
+          frontend_question_params = params[:data][:attributes].permit([:name, :question_markdown, :template,
                                                                         :active_path, :show_explorer, { open_paths: [], protected_paths: [], hidden_files: [] }]).to_h
           frontend_question = FrontendQuestion.create!(frontend_question_params)
           template_files = params.dig(:data, :attributes, :template_files)
@@ -25,7 +25,7 @@ module Api
           frontend_question = FrontendQuestion.find(params[:id])
           return render_error({ message: 'Frontend Question with this ID does not Exists' }) if frontend_question.nil?
 
-          frontend_question_params = params[:data][:attributes].permit([:question_markdown, :template,
+          frontend_question_params = params[:data][:attributes].permit([:name, :question_markdown, :template,
                                                                         :active_path, :show_explorer, { open_paths: [], protected_paths: [], hidden_files: [] }]).to_h
           frontend_question.update!(frontend_question_params)
           template_files = params.dig(:data, :attributes, :template_files)
