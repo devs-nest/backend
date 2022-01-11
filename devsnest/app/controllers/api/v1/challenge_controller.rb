@@ -14,10 +14,15 @@ module Api
       def fetch_by_slug
         slug = params[:slug]
         challenge = Challenge.find_by(slug: slug)
-
         return render_not_found('challenge') if challenge.nil?
 
-        api_render(200, challenge.as_json.merge("type": 'challenges'))
+        sample_test_cases = challenge.fetch_sample_test_cases
+        challenge_hash = challenge.as_json.except("input_format", "output_format")
+
+        data = [challenge_hash, sample_test_cases, {"type" => "challenge"}]
+        data_hash = data.inject(&:merge)
+
+        api_render(200, data_hash)
       end
 
       def submissions
