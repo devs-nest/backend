@@ -15,7 +15,7 @@ module Api
           template_files = params.dig(:data, :attributes, :template_files)
           if template_files.present?
             template_files.each do |filename, filecontent|
-              FrontendQuestion.post_to_s3(frontend_question.id, filename, filecontent[:code])
+              FrontendQuestion.post_to_s3(frontend_question.id, filename, filecontent)
             end
           end
           render_success({ id: frontend_question.id, type: 'frontend_question', frontend_question: frontend_question })
@@ -31,7 +31,7 @@ module Api
           template_files = params.dig(:data, :attributes, :template_files)
           if template_files.present?
             template_files.each do |filename, filecontent|
-              FrontendQuestion.post_to_s3(frontend_question.id, filename, filecontent[:code])
+              FrontendQuestion.post_to_s3(frontend_question.id, filename, filecontent)
             end
           end
           render_success({ id: frontend_question.id, type: 'frontend_question', frontend_question: frontend_question })
