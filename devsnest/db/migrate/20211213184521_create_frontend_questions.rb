@@ -1,6 +1,7 @@
 class CreateFrontendQuestions < ActiveRecord::Migration[6.0]
   def change
     create_table :frontend_questions do |t|
+      t.string :name
       t.text :question_markdown
       t.integer :template
       t.string :active_path
