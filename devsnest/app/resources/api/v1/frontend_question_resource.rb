@@ -4,7 +4,7 @@ module Api
   module V1
     # resource for frontend questions (minibootcamp)
     class FrontendQuestionResource < JSONAPI::Resource
-      attributes :minibootcamp_id, :question_markdown, :template, :active_path, :open_paths, :protected_paths, :hidden_files, :show_explorer
+      attributes :question_markdown, :template, :active_path, :open_paths, :protected_paths, :hidden_files, :show_explorer
       attributes :template_files, :last_submitted_files, :is_solved, :submission_id
 
       def template_files
@@ -17,6 +17,8 @@ module Api
         prefix = "submissions/#{@model.id}/#{context[:user].id}"
         s3_files = $s3_resource.bucket(bucket).objects(prefix: prefix).collect(&:key)
         s3_files.each do |file|
+          next if file == '/'
+          
           content = $s3.get_object(bucket: bucket, key: file).body.read
           file.slice! prefix
           files.merge!(Hash[file, content])
