@@ -19,7 +19,7 @@ module Api
 
         files = params.dig(:data, :attributes, :files)
         files.each do |filename, filecontent|
-          MinibootcampSubmission.post_to_s3(frontend_question_id, filename, filecontent[:code], @current_user.id)
+          MinibootcampSubmission.post_to_s3(frontend_question_id, filename, filecontent, @current_user.id)
         end
 
         params[:data][:attributes].delete 'files'

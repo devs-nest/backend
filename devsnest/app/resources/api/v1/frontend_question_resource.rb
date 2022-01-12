@@ -17,6 +17,8 @@ module Api
         prefix = "submissions/#{@model.id}/#{context[:user].id}"
         s3_files = $s3_resource.bucket(bucket).objects(prefix: prefix).collect(&:key)
         s3_files.each do |file|
+          next if file == '/'
+          
           content = $s3.get_object(bucket: bucket, key: file).body.read
           file.slice! prefix
           files.merge!(Hash[file, content])
