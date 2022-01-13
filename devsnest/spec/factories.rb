@@ -2,19 +2,21 @@
 
 FactoryBot.define do
   factory :judgeztoken do
-    
   end
 
   factory :testcase do
-    
   end
 
   factory :algo_submission do
-    
+    sequence(:user_id) { |n| n }
+    sequence(:challenge_id) { |n| n }
+  end
+
+  factory :frontend_question do
   end
 
   factory :challenge do
-    
+    sequence(:user_id) { |n| n }
   end
 
   factory :internal_feedback do
@@ -105,5 +107,14 @@ FactoryBot.define do
 
   factory :certification do
     sequence(:user_id) { |n| n }
+  end
+
+  factory :minibootcamp do
+    sequence(:frontend_question_id) { |n| n }
+  end
+
+  factory :minibootcamp_submission do
+    sequence(:user_id) { |n| n }
+    sequence(:frontend_question_id) { |n| n }
   end
 end

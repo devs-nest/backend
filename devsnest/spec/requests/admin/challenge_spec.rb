@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Algo Editor Challenges', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, username: 'user1') }
+  let!(:challenge1) { create(:challenge, user_id: user.id, name: 'two sum') }
   before :each do
     sign_in(user)
   end
@@ -23,7 +24,6 @@ RSpec.describe 'Algo Editor Challenges', type: :request do
 
     it 'If User is not Admin' do
       get '/api/v1/admin/challenge'
-
       expect(response.status).to eq(401)
     end
   end
