@@ -27,6 +27,8 @@ class FrontendQuestion < ApplicationRecord
       
       content = $s3.get_object(bucket: bucket, key: file).body.read
       file.slice! prefix
+      file.slice! ".txt"
+      
       files.merge!(Hash[file, content])
     end
 
