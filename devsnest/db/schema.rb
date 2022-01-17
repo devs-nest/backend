@@ -155,6 +155,17 @@ ActiveRecord::Schema.define(version: 2021_12_29_184132) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "frontend_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.text "question_markdown"
+    t.integer "template"
+    t.string "active_path"
+    t.text "open_paths"
+    t.text "protected_paths"
+    t.boolean "show_explorer"
+    t.text "hidden_files"
+  end
+
   create_table "frontend_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "content_id"
@@ -249,6 +260,31 @@ ActiveRecord::Schema.define(version: 2021_12_29_184132) do
 
   create_table "markdowns", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.text "template"
+  end
+
+  create_table "minibootcamp_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "frontend_question_id"
+    t.boolean "is_solved"
+    t.string "submission_link"
+    t.string "submission_status"
+    t.index ["user_id", "frontend_question_id"], name: "index_on_user_and_frontend_question", unique: true
+  end
+
+  create_table "minibootcamps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "frontend_question_id"
+    t.string "unique_id", null: false
+    t.string "parent_id"
+    t.string "name"
+    t.integer "content_type"
+    t.text "markdown"
+    t.string "video_link"
+    t.string "image_url"
+    t.integer "current_lesson_number"
+    t.boolean "show_ide"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["frontend_question_id"], name: "index_minibootcamps_on_frontend_question_id"
   end
 
   create_table "notification_bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

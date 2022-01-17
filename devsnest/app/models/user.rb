@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :internal_feedbacks
   has_many :algo_submissions
   has_many :challenges
+  has_many :minibootcamp_submissions
   has_many :certifications, dependent: :delete_all
   has_many :certifications, dependent: :delete_all
   before_save :markdown_encode, if: :will_save_change_to_markdown?

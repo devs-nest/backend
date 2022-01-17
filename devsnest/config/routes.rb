@@ -20,6 +20,8 @@ Rails.application.routes.draw do
             delete :delete_testcase
           end
         end
+        jsonapi_resources :minibootcamp
+        jsonapi_resources :frontend_question
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -36,6 +38,7 @@ Rails.application.routes.draw do
       jsonapi_resources :contents, only: %i[index show]
       jsonapi_resources :submissions, only: %i[create]
       jsonapi_resources :frontend_submissions, only: %i[create]
+      jsonapi_resources :frontend_questions, only: %i[show]
       jsonapi_resources :groups, only: %i[show index] do
         jsonapi_relationships
         collection do
@@ -57,6 +60,13 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :batch_leader_sheet, only: %i[create index update]
       jsonapi_resources :markdown, only: %i[index]
+      jsonapi_resources :minibootcamp, only: %i[show index] do
+        collection do
+          get :menu
+        end
+      end
+      jsonapi_resources :minibootcamp_submissions, only: %i[show index create update]
+      jsonapi_resources :frontend_questions, only: %i[show]
       jsonapi_resources :internal_feedback, only: %i[create index]
       jsonapi_resources :link, only: %i[show]
       jsonapi_resources :hackathon, only: %i[create index update show]
@@ -65,6 +75,7 @@ Rails.application.routes.draw do
       jsonapi_resources :event, only: %i[create index]
       jsonapi_resources :challenge, only: %i[create index show update] do
         collection do
+          get '/:id/submissions', to: 'challenge#submissions'
           get :fetch_by_slug
         end
         member do
