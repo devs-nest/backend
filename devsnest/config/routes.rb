@@ -80,7 +80,6 @@ Rails.application.routes.draw do
         end
         member do
           get :submissions
-          get :companies
         end
       end
       jsonapi_resources :algo_submission, only: %i[create show update] do
