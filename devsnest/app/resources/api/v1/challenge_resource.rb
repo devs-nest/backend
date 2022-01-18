@@ -10,8 +10,8 @@ module Api
       filter :parent_id
       filter :unique_id
       filter :data_type
-      filter :company_id, apply: lambda { |_records, value, _options|
-        Challenge.where(id: CompanyChallengeMapping.where(company_id: value[0].to_i).pluck(:challenge_id))
+      filter :company_id, apply: lambda { |records, value, _options|
+        records.where(id: CompanyChallengeMapping.where(company_id: value[0].to_i).pluck(:challenge_id))
       }
 
       def sample_test_cases

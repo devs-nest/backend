@@ -3,9 +3,9 @@
 # Challenges
 
 User.create!(username: 'manish', name: 'Manish Gupta', discord_id: 'abea', password: '123450', email: 'manish1250@gmai.com')
-c1 = Challenge.create!(user: User.first, name: 'test1', topic: 'arrays')
-c2 = Challenge.create!(user: User.first, name: 'test2', topic: 'tree')
-c3 = Challenge.create!(user: User.first, name: 'test3', topic: 'hashmap')
+c1 = Challenge.create!(user: User.first, name: 'test1', topic: 'arrays', is_active: true)
+c2 = Challenge.create!(user: User.first, name: 'test2', topic: 'tree', is_active: true)
+c3 = Challenge.create!(user: User.first, name: 'test3', topic: 'hashmap', is_active: true)
 Company.create!(name: 'Google')
 Company.create!(name: 'Amazon')
 Company.create!(name: 'Microsoft')

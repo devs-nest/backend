@@ -79,6 +79,7 @@ Rails.application.routes.draw do
           get :fetch_by_slug
         end
         member do
+          get :companies
           get :submissions
         end
       end
