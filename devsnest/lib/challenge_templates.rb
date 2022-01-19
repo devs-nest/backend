@@ -207,7 +207,7 @@ module Templates
       tail_code << "int main(){"
       tail_code += get_input_signature.map { |signature| signature + ";"}
       tail_code += input_code
-      tail_code << "#{get_output_signature.join(', ')} = solve(#{build_parameter_list.join(', ')});"
+      tail_code << "#{get_output_signature.join(', ')} = solve(#{build_argument_list.join(', ')});"
       tail_code += output_code
       tail_code += ["return 0;", "}"]
       tail_code.join("\n")
@@ -342,7 +342,7 @@ module Templates
         "raw_inputs.push(input);",
         "if (raw_inputs.length === #{@input_format.length}){",
         "rl.close();",
-        "parsed_inputs = parse(raw_inputs, \"#{@input_format.to_json}\");",
+        "parsed_inputs = parse(raw_inputs, #{@input_format.to_json.dump});",
         "#{get_output_signature.join(', ')} = main(...parsed_inputs);",
         "}"
       ]
