@@ -13,7 +13,9 @@ class Challenge < ApplicationRecord
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug
-  require 'challenge_templates'
+  Language.all.each do |language|
+    require "algo_templates/#{language.name}"
+  end
 
   def put_testcase_in_s3(input_file, output_file, testcase)
     if testcase.present?

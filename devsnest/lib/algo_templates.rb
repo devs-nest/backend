@@ -1,0 +1,2 @@
+module AlgoTemplates
+end
