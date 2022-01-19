@@ -3,9 +3,12 @@
 # algo challenge class
 class Challenge < ApplicationRecord
   enum difficulty: %i[easy medium hard]
+  enum content_type: %i[topic sub_topic]
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queues heaps dynamicprogramming backtracking greedy maths]
   has_many :algo_submission
   has_many :testcases
+  has_many :company_challenge_mappings
+  has_many :companies, through: :company_challenge_mappings
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug

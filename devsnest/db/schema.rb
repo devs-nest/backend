@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_29_184132) do
+ActiveRecord::Schema.define(version: 2022_01_19_130331) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2021_12_29_184132) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "DdMpO9BEvNw"
+    t.string "cuid", default: "UV6_1k3Jfpk"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -103,11 +103,27 @@ ActiveRecord::Schema.define(version: 2021_12_29_184132) do
     t.boolean "is_active", default: false
     t.text "tester_code"
     t.integer "user_id"
+    t.integer "content_type"
+    t.string "unique_id"
+    t.string "parent_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name"
+  end
+
+  create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "company_challenge_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "challenge_id"
+    t.integer "company_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -336,7 +352,7 @@ ActiveRecord::Schema.define(version: 2021_12_29_184132) do
     t.integer "buddy", default: 0
     t.string "discord_id", default: "", null: false
     t.integer "role"
-    t.integer "score"
+    t.integer "score", default: 0
     t.string "provider"
     t.boolean "discord_active", default: false
     t.boolean "web_active", default: false
