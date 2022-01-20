@@ -32,4 +32,22 @@ class Challenge < ApplicationRecord
   def create_slug
     update(slug: name.parameterize)
   end
+
+  def add_companies(company_names)
+    company_names.each do |company_name|
+      company = Company.find_by(name: company_name)
+      next if company.nil?
+
+      CompanyChallengeMapping.create(challenge_id: id, company_id: company.id)
+    end
+  end
+
+  def delete_companies(company_names)
+    company_names.each do |company_name|
+      company = Company.find_by(name: company_name)
+      next if company.nil?
+
+      CompanyChallengeMapping.find_by(challenge_id: id, company_id: company.id).destroy
+    end
+  end
 end
