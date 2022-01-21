@@ -31,25 +31,6 @@ module Api
 
         render_success({ id: challenge.id, type: 'companies', companies: challenge.companies })
       end
-
-      def template
-        challenge_id = params[:id]
-
-        challenge = Challenge.find_by(id: challenge_id)
-        return render_not_found if challenge.nil?
-
-        templates = {}
-        
-        Language.all.pluck(:id, :name, :judge_zero_id).each do |language|
-          template = challenge.algo_templates.find_by(language_id: language[0])
-          template = challenge.create_template(language) if template.nil?
-          next if template.nil?
-          
-          templates[language[1]] = template.as_json.merge!(judge_zero_id: language[2])
-        end
-
-        api_render(200, { id: challenge_id, type: 'challenge', templates: templates})
-      end
     end
   end
 end

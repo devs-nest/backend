@@ -1,14 +1,6 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :language do
-    
-  end
-
-  factory :algo_template do
-    
-  end
-
   factory :judgeztoken do
     
   end
