@@ -84,7 +84,6 @@ Rails.application.routes.draw do
           get :submissions
         end
       end
-      jsonapi_resources :language, only: %i[index]
       jsonapi_resources :algo_submission, only: %i[create show update] do
         collection do
           put :callback
