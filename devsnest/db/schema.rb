@@ -29,6 +29,17 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
     t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
   end
 
+  create_table "algo_templates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "challenge_id"
+    t.integer "language_id"
+    t.text "head"
+    t.text "body"
+    t.text "tail"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["challenge_id", "language_id"], name: "index_algo_templates_on_challenge_id_and_language_id", unique: true
+  end
+
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
@@ -156,7 +167,6 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
   end
 
   create_table "frontend_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "name"
     t.text "question_markdown"
     t.integer "template"
     t.string "active_path"
@@ -250,6 +260,19 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
     t.string "jti", null: false
     t.datetime "exp"
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
+  end
+
+  create_table "languages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "judge_zero_id"
+    t.string "name"
+    t.string "memory_limit"
+    t.string "time_limit"
+    t.string "type_array", default: ""
+    t.string "type_matrix", default: ""
+    t.string "type_string", default: ""
+    t.string "type_primitive", default: ""
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
