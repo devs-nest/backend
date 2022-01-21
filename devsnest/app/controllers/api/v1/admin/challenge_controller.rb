@@ -62,6 +62,21 @@ module Api
 
           render_success({ id: params[:id], type: 'testcases', testcases: challenge.testcases })
         end
+
+        def update_company_tags
+          challenge = Challenge.find(params[:id])
+          return render_not_found if challenge.nil?
+
+          already_existing_companies_names = challenge.companies.pluck(:name)
+          companies_to_be_added = params[:data][:attributes][:companies]
+          companies_to_be_deleted = already_existing_companies_names - companies_to_be_added
+          companies_to_be_added -= already_existing_companies_names
+
+          challenge.add_companies(companies_to_be_added)
+          challenge.delete_companies(companies_to_be_deleted)
+
+          render_success({ id: challenge.id, type: 'challenges', message: 'Company Tags Updated Successfully' })
+        end
       end
     end
   end

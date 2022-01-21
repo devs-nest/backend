@@ -18,6 +18,7 @@ Rails.application.routes.draw do
             put :update_testcase
             get :testcases
             delete :delete_testcase
+            put :update_company_tags
           end
         end
         jsonapi_resources :minibootcamp
