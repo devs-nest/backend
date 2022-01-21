@@ -13,7 +13,6 @@ class Challenge < ApplicationRecord
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug
-  require 'challenge_templates'
 
   def put_testcase_in_s3(input_file, output_file, testcase)
     if testcase.present?
