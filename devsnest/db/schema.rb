@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "76xXLolCYSo"
+    t.string "cuid", default: "UV6_1k3Jfpk"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -114,11 +114,11 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
     t.boolean "is_active", default: false
     t.text "tester_code"
     t.integer "user_id"
-    t.json "input_format"
-    t.json "output_format"
     t.integer "content_type"
     t.string "unique_id"
     t.string "parent_id"
+    t.json "input_format"
+    t.json "output_format"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
@@ -169,6 +169,7 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
   end
 
   create_table "frontend_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
     t.text "question_markdown"
     t.integer "template"
     t.string "active_path"

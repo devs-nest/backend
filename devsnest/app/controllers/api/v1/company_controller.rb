@@ -5,6 +5,7 @@ module Api
     class CompanyController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth, only: %i[index]
+      before_action :admin_auth, only: %i[create]
 
       def challenges
         company = Company.find(params['id'])

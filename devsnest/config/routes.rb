@@ -92,7 +92,7 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :certification, only: %i[show]
-      jsonapi_resources :company, only: %i[index] do
+      jsonapi_resources :company, only: %i[index create] do
         member do
           get :challenges
         end
