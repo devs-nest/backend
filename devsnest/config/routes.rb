@@ -82,6 +82,7 @@ Rails.application.routes.draw do
         member do
           get :companies
           get :submissions
+          get :template
         end
       end
       jsonapi_resources :language, only: %i[index]

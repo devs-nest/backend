@@ -13,6 +13,9 @@ class Challenge < ApplicationRecord
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug
+  Language.all.each do |language|
+    require "algo_templates/#{language.name}"
+  end
 
   def put_testcase_in_s3(input_file, output_file, testcase)
     if testcase.present?
@@ -50,5 +53,23 @@ class Challenge < ApplicationRecord
 
       CompanyChallengeMapping.find_by(challenge_id: id, company_id: company.id).destroy
     end
+  end
+
+  def create_template(language)
+    template_gen =
+      case language[1]
+      when 'python3'
+        Templates::Python3.new(input_format, output_format)
+      when 'cpp'
+        Templates::CPP.new(input_format, output_format)
+      when 'java'
+        Templates::Java.new(input_format, output_format)
+      when 'javascript'
+        Templates::JavaScript.new(input_format, output_format)
+      end
+    template = template_gen.build if template_gen.present?
+
+    AlgoTemplate.create(challenge_id: id, language_id: language[0], head: template[:head], body: template[:body], tail: template[:tail]) if template.present? # FIX
+    template
   end
 end
