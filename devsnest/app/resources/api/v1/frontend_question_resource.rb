@@ -14,10 +14,10 @@ module Api
       def last_submitted_files
         files = {}
         bucket = "#{ENV['S3_PREFIX']}minibootcamp"
-        prefix = "submissions/#{@model.id}/#{context[:user].id}"
+        prefix = "submissions/#{@model.id}/#{context[:user].id}/"
         s3_files = $s3_resource.bucket(bucket).objects(prefix: prefix).collect(&:key)
         s3_files.each do |file|
-          next if file == '/'
+          next if file == '/' || file == prefix
           
           content = $s3.get_object(bucket: bucket, key: file).body.read
           file.slice! prefix

@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "76xXLolCYSo"
+    t.string "cuid", default: "aqODC2g5TJ8"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -169,6 +169,7 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
   end
 
   create_table "frontend_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
     t.text "question_markdown"
     t.integer "template"
     t.string "active_path"
