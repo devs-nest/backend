@@ -31,7 +31,7 @@ class Templates::Python3 < Templates::BaseHelper
 
   def input_code
     inputs = []
-    @input_format.each do |_key, value|
+    @input_format.each do |value|
       inputs += case value[:variable][:datastructure]
                 when 'string'
                   ["#{value[:name]} = input()"]
@@ -48,7 +48,7 @@ class Templates::Python3 < Templates::BaseHelper
 
   def output_code
     outputs = []
-    @output_format.each do |_key, value|
+    @output_format.each do |value|
       outputs += case value[:variable][:datastructure]
                  when 'string', 'primitive'
                    ["print(#{value[:name]})"]
