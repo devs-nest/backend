@@ -36,6 +36,7 @@ class Templates::Java < Templates::BaseHelper
     tail_code << "BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));"
     tail_code += get_input_signature.map { |signature| signature + ";"}
     tail_code += get_output_signature.map { |signature| signature + ";"}
+    tail_code += input_code
 
     tail_code += ["}", "}"]
 
@@ -44,7 +45,7 @@ class Templates::Java < Templates::BaseHelper
 
   def input_code
     inputs = []
-    @input_format.each do | value|
+    @input_format.each do |value|
       inputs += case value[:variable][:datastructure]
       when 'string'
         ["#{value[:name]} = bufferedReader.readLine().trim();"]
@@ -54,18 +55,18 @@ class Templates::Java < Templates::BaseHelper
         ["#{value[:name]} = #{
           case value[:variable][:dtype]
           when 'int'
-            ["Integer.parseInt(bufferedReader.readLine().trim());"]
+            "Integer.parseInt(bufferedReader.readLine().trim());"
           when 'long'
-            ["Long.parseLong(bufferedReader.readLine().trim());"]
+            "Long.parseLong(bufferedReader.readLine().trim());"
           when 'char'
-            ["(char)bufferedreader.read().trim();"]
+            "(char)bufferedreader.read().trim();"
           end
         }"]
       when 'matrix'
         ["#{value[:name]} = new #{value[:variable][:dtype]}[#{value[:variable][:dependent]&.first}][#{value[:variable][:dependent]&.second}]"]
       end
-      
     end
+    inputs
   end
 
   def output_code
