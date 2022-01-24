@@ -4,6 +4,7 @@
 class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
+  after_commit :assign_score_to_user, if: :score_should_be_updated, on: %i[create update]
 
   def self.add_submission(source_code, lang, test_case, challenge_id, mode)
     if mode != 'run'
@@ -76,7 +77,7 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def self.post_to_judgez(batch)
-    jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'], 'x-rapidapi-host': ENV['JZ_RAPID_HOST'], 'x-rapidapi-key': ENV['JZ_RAPID_KEY']}
+    jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'], 'x-rapidapi-host': ENV['JZ_RAPID_HOST'], 'x-rapidapi-key': ENV['JZ_RAPID_KEY'] }
     response = HTTParty.post(ENV['JUDGEZERO_URL'] + '/submissions/batch?base64_encoded=true', body: batch.to_json, headers: jz_headers)
     response.read_body
     # response.code == 201 ? JSON(response.read_body) : nil
@@ -116,10 +117,27 @@ class AlgoSubmission < ApplicationRecord
       'Runtime Error (NZEC)' => 7
     }
 
-    if orders.has_key?(status)
+    if orders.key?(status)
       orders[status]
     else
       -2
     end
+  end
+
+  def assign_score_to_user
+    user = User.find(user_id)
+    challenge = Challenge.find(challenge_id)
+    challenge_testcases = challenge.testcases
+    previous_passed_test_cases = AlgoSubmission.where(user_id: user_id, challenge_id: challenge_id, is_submitted: true).offset(1).pluck(:passed_test_cases).max
+    previous_max_score = previous_passed_test_cases.nil? ? 0 : (previous_passed_test_cases / challenge_testcases.count) * challenge.score
+    new_score = (passed_test_cases / challenge_testcases.count) * challenge.score
+    if previous_max_score < new_score
+      recalculated_score_of_user = user.score - previous_max_score + new_score
+      user.update!(score: recalculated_score_of_user)
+    end
+  end
+
+  def score_should_be_updated
+    ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
   end
 end
