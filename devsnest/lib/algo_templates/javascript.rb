@@ -21,7 +21,7 @@ class Templates::JavaScript < Templates::BaseHelper
 
   def output_code
     outputs = []
-    @output_format.each do |_key, value|
+    @output_format.each do |value|
       outputs += case value[:variable][:datastructure]
       when 'string', 'primitive'
         ["console.log(#{value[:name]})"]

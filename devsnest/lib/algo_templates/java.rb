@@ -44,7 +44,7 @@ class Templates::Java < Templates::BaseHelper
 
   def input_code
     inputs = []
-    @input_format.each do |_key, value|
+    @input_format.each do | value|
       inputs += case value[:variable][:datastructure]
       when 'string'
         ["#{value[:name]} = bufferedReader.readLine().trim();"]
