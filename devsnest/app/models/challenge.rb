@@ -56,6 +56,8 @@ class Challenge < ApplicationRecord
   end
 
   def create_template(language)
+    return if input_format.nil? || output_format.nil?
+
     template_gen =
       case language[1]
       when 'python3'
