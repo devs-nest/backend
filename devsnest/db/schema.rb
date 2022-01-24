@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_19_130331) do
+ActiveRecord::Schema.define(version: 2022_01_24_073100) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 2022_01_19_130331) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_companies_on_name", unique: true
   end
 
   create_table "company_challenge_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
