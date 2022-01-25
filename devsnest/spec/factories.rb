@@ -5,6 +5,7 @@ FactoryBot.define do
   end
 
   factory :testcase do
+    sequence(:challenge_id) { |n| n }
   end
 
   factory :algo_submission do
