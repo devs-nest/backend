@@ -7,9 +7,10 @@ module Api
       attributes :score_achieved
 
       def score_achieved
-        return 0 if @model.challenge.score.zero?
+        testcases_count = @model.challenge.testcases.count
+        return 0 if testcases_count.zero?
 
-        (@model.passed_test_cases * @model.challenge.testcases.count) / @model.challenge.score
+        (@model.passed_test_cases / testcases_count) * @model.challenge.score
       end
     end
   end
