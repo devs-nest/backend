@@ -19,6 +19,48 @@ class Templates::Java < Templates::BaseHelper
     end
   end
 
+  def input_builder(name, datastructure, dtype, dependent)
+    meta = { 
+      "primitive" => {
+        "int" => ["#{name} = #{create_class('int', '.')}(bufferedReader.readLine().trim());"],
+        "float" => ["#{name} = #{create_class('float', '.')}(bufferedReader.readLine().trim());"],
+        "string" => ["#{name} = bufferedReader.readLine().trim();"]
+      },
+      "array" => {
+        "int" => ["#{name} = new int[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();"],
+        "float" => ["#{name} = new float[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToFloat(#{create_class('float', '::')}).toArray();"],
+        "string" => ["#{name} = new String[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();"]
+      },
+      "matrix" => {
+        "int" =>  ["#{name} = new int[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "}"],
+        "float" => ["#{name} = new float[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToFloat(#{create_class('float', '::')}).toArray();", "}"],
+        "string" => ["#{name} = new String[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();", "}"]
+      }
+    }
+    meta[datastructure][dtype]
+  end
+
+  def output_builder(name, datastructure, dtype)
+    meta = { 
+      "primitive" => {
+        "int" => ["System.out.println(#{name})"],
+        "float" => ["System.out.println(#{name})"],
+        "string" => ["System.out.println(#{name})"]
+      },
+      "array" => {
+        "int" => ["System.out.println(Arrays.toString(#{name}).replaceAll('\\\\[|\\\\]|,', ''));"],
+        "float" => ["System.out.println(Arrays.toString(#{name}).replaceAll('\\\\[|\\\\]|,', ''));"],
+        "string" => ["System.out.println(Arrays.toString(#{name}).replaceAll('\\\\[|\\\\]|,', ''));"]
+      },
+      "matrix" => {
+        "int" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll('\\\\[|\\\\]|,', ''));", "}"],
+        "float" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll('\\\\[|\\\\]|,', ''));", "}"],
+        "string" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll('\\\\[|\\\\]|,', ''));", "}"]
+      }
+    }
+    meta[datastructure][dtype]
+  end
+
   def build_head
     [
       "import java.io.*;",
@@ -37,7 +79,7 @@ class Templates::Java < Templates::BaseHelper
   end
 
   def build_body
-    "#{get_return_type.join(", ")} solve(#{build_parameter_list.join(', ')}){\n//CODE HERE \n}"
+    "static #{get_return_type.join(", ")} solve(#{build_parameter_list.join(', ')}){\n//CODE HERE \n}"
   end
 
   def build_tail
@@ -58,16 +100,7 @@ class Templates::Java < Templates::BaseHelper
   def input_code
     inputs = []
     @input_format.each do |value|
-      inputs += case value[:variable][:datastructure]
-      when 'string'
-        ["#{value[:name]} = bufferedReader.readLine().trim();"]
-      when 'array', 'list', 'tuple'
-        ["#{value[:name]} = new #{value[:variable][:dtype]}[#{value[:variable][:dependent]&.first}]", "#{value[:name]} = Arrays.stream(bufferedReader.readLine().trim().split(" ")).mapToInt(#{create_class(value[:variable][:dtype], '::')}).toArray();"]
-      when 'primitive'
-        ["#{value[:name]} = #{create_class(value[:variable][:dtype], '.')}(bufferedReader.readLine().trim());"]
-      when 'matrix'
-        ["#{value[:name]} = new #{value[:variable][:dtype]}[#{value[:variable][:dependent]&.first}][#{value[:variable][:dependent]&.second}]", "for(int i=0;i<#{value[:variable][:dependent]&.first};i++){", "#{value[:name]}[i] = Arrays.stream(bufferedReader.readLine().trim().split(" ")).mapToInt(#{create_class(value[:variable][:dtype], '::')}).toArray();", "}"]
-      end
+      inputs += input_builder(value[:name], value[:variable][:datastructure], value[:variable][:dtype], value[:variable][:dependent])
     end
     inputs
   end
@@ -75,14 +108,7 @@ class Templates::Java < Templates::BaseHelper
   def output_code
     outputs = []
     @output_format.each do |value|
-      outputs += case value[:variable][:datastructure]
-      when 'primitive', 'string'
-        ["System.out.println(#{value[:name]})"]
-      when 'array'
-        ["System.out.println(Arrays.toString(#{value[:name]}).replaceAll('\\\\[|\\\\]|,', ''));"]
-      when 'matrix'
-        ["for (int i = 0; i < #{value[:name]}.length; i++){", "System.out.println(Arrays.toString(#{value[:name]}[i]).replaceAll('\\\\[|\\\\]|,', ''));", "}"]
-      end
+      outputs += output_builder(value[:name], value[:variable][:datastructure], value[:variable][:dtype])
     end
     outputs
   end

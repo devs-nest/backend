@@ -37,8 +37,8 @@ class Templates::Python3 < Templates::BaseHelper
         "string" => ["input()"]
       },
       "array" => {
-        "int" => ["list(int, input().split())"],
-        "float" => ["list(float, input().split())"],
+        "int" => ["list(map(int, input().split()))"],
+        "float" => ["list(map(float, input().split()))"],
         "string" => ["input().split()"]
       },
       "matrix" => {
