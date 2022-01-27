@@ -174,7 +174,7 @@ class User < ApplicationRecord
   def recalculate_all_scores
     User.update_all(score: 0)
     User.all.each do |user|
-      algo_submissions = user.algo_submission.where(is_submitted: true)
+      algo_submissions = user.algo_submissions.where(is_submitted: true)
       next if algo_submissions.count.zero?
 
       algo_submissions.group_by(&:challenge_id).each do |key, value|
