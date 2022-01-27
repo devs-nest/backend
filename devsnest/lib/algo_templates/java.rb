@@ -27,14 +27,14 @@ class Templates::Java < Templates::BaseHelper
         "string" => ["#{name} = bufferedReader.readLine().trim();"]
       },
       "array" => {
-        "int" => ["#{name} = new int[#{dependent&.first}]", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(" ")).mapToInt(#{create_class('int', '::')}).toArray();"],
-        "float" => ["#{name} = new float[#{dependent&.first}]", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(" ")).mapToFloat(#{create_class('float', '::')}).toArray();"],
-        "string" => ["#{name} = new String[#{dependent&.first}]", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(" ")).toArray();"]
+        "int" => ["#{name} = new int[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();"],
+        "float" => ["#{name} = new float[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToFloat(#{create_class('float', '::')}).toArray();"],
+        "string" => ["#{name} = new String[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();"]
       },
       "matrix" => {
-        "int" =>  ["#{name} = new int[#{dependent&.first}][#{dependent&.second}]", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(" ")).mapToInt(#{create_class('int', '::')}).toArray();", "}"],
-        "float" => ["#{name} = new float[#{dependent&.first}][#{dependent&.second}]", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(" ")).mapToFloat(#{create_class('float', '::')}).toArray();", "}"],
-        "string" => ["#{name} = new String[#{dependent&.first}][#{dependent&.second}]", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(" ")).toArray();", "}"]
+        "int" =>  ["#{name} = new int[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "}"],
+        "float" => ["#{name} = new float[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToFloat(#{create_class('float', '::')}).toArray();", "}"],
+        "string" => ["#{name} = new String[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){", "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();", "}"]
       }
     }
     meta[datastructure][dtype]
@@ -79,7 +79,7 @@ class Templates::Java < Templates::BaseHelper
   end
 
   def build_body
-    "#{get_return_type.join(", ")} solve(#{build_parameter_list.join(', ')}){\n//CODE HERE \n}"
+    "static #{get_return_type.join(", ")} solve(#{build_parameter_list.join(', ')}){\n//CODE HERE \n}"
   end
 
   def build_tail
