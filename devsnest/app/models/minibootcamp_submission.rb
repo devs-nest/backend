@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# a submission to an s3 bucket
 class MinibootcampSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :frontend_question

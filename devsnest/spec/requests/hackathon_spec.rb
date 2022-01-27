@@ -34,9 +34,9 @@ RSpec.describe Hackathon, type: :request do
             "attributes": {
               "title": '2048 Game',
               "description": "The criteria for this hackathon would be how fun, elegant and intuitive. It should to play the game.\r\n\r\nthings which matter are:\r\n\r\n-well thought-off design."
-              }
             }
           }
+        }
       end
 
       let(:headers) { { 'Content-Type' => 'application/vnd.api+json' } }
@@ -69,9 +69,9 @@ RSpec.describe Hackathon, type: :request do
             "type": 'hackathons',
             "attributes": {
               "title": 'New Hackathon'
-              }
             }
           }
+        }
       end
 
       let(:headers) { { 'Content-Type' => 'application/vnd.api+json' } }

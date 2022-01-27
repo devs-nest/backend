@@ -5,7 +5,7 @@ module Api
     # minibootcamp submission controller
     class MinibootcampSubmissionsController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :simple_auth, only: %i[create update]
+      before_action :simple_auth, only: %i[show index create update]
       before_action :create_submission, only: %i[create update]
 
       def context
