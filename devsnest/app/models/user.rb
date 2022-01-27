@@ -178,7 +178,9 @@ class User < ApplicationRecord
       next if algo_submissions.count.zero?
 
       algo_submissions.group_by(&:challenge_id).each do |key, value|
-        challenge = Challenge.find(key)
+        challenge = Challenge.find_by(id: key)
+        next if challenge.nil?
+
         max_passed_test_cases = value.pluck(:passed_test_cases).max
         user.update!(score: user.score + (max_passed_test_cases / challenge.testcases.count.to_f) * challenge.score)
       end
