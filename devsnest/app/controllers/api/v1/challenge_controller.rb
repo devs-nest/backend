@@ -22,7 +22,10 @@ module Api
 
       def submissions
         challenge_id = params[:id]
-        api_render(200, { id: challenge_id, type: 'challenge', submissions: @current_user.algo_submission.where(challenge_id: challenge_id, is_submitted: true) })
+        challenge = Challenge.find(challenge_id)
+        all_submissions = @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).as_json
+        all_submissions.map { |submission| submission['score_achieved'] = submission['passed_test_cases'] / submission['total_test_cases'].to_f * challenge.score }
+        api_render(200, { id: challenge_id, type: 'challenge', submissions: all_submissions })
       end
 
       def companies
@@ -39,16 +42,16 @@ module Api
         return render_not_found if challenge.nil?
 
         templates = {}
-        
+
         Language.all.pluck(:id, :name, :judge_zero_id).each do |language|
-          template = challenge.algo_templates.find_by(challenge_id: challenge_id, language_id: language[0]) #FIX
+          template = challenge.algo_templates.find_by(challenge_id: challenge_id, language_id: language[0]) # FIX
           template = challenge.create_template(language) if template.nil?
           next if template.nil?
-          
+
           templates[language[1]] = template.as_json.merge!(judge_zero_id: language[2])
         end
 
-        api_render(200, { id: challenge_id, type: 'challenge', templates: templates})
+        api_render(200, { id: challenge_id, type: 'challenge', templates: templates })
       end
     end
   end

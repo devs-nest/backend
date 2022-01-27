@@ -5,7 +5,7 @@ class Challenge < ApplicationRecord
   enum difficulty: %i[easy medium hard]
   enum content_type: %i[topic sub_topic]
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queues heaps dynamicprogramming backtracking greedy maths]
-  has_many :algo_submission
+  has_many :algo_submissions
   has_many :algo_templates
   has_many :testcases
   has_many :company_challenge_mappings
@@ -73,5 +73,14 @@ class Challenge < ApplicationRecord
 
     AlgoTemplate.create(challenge_id: id, language_id: language[0], head: template[:head], body: template[:body], tail: template[:tail]) if template.present? # FIX
     template
+  end
+
+  def self.split_by_difficulty
+    where(is_active: true).group(:difficulty).count
+  end
+
+  def self.count_solved(user_id)
+    challenge_ids = AlgoSubmission.where(user_id: user_id, is_submitted: true, status: 'Accepted').pluck(:challenge_id)
+    Challenge.where(id: challenge_ids).group(:difficulty).count
   end
 end

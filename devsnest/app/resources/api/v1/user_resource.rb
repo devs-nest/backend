@@ -49,15 +49,15 @@ module Api
       end
 
       def solved
-        Submission.count_solved(@model.id)
+        Challenge.count_solved(@model.id)
       end
 
       def total_by_difficulty
-        Content.split_by_difficulty
+        Challenge.split_by_difficulty
       end
 
       def activity
-        Submission.user_activity(@model)
+        @model.activity
       end
 
       def frontend_activity

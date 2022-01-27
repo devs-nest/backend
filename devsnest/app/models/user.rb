@@ -11,7 +11,7 @@ class User < ApplicationRecord
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
-  has_many :algo_submission
+  has_many :algo_submissions
   has_many :challenges
   has_many :minibootcamp_submissions
   has_many :certifications, dependent: :delete_all
@@ -160,7 +160,7 @@ class User < ApplicationRecord
   end
 
   def self.upload_file_s3(file, key, type)
-    $s3.put_object(bucket: ENV["S3_PREFIX"] + type, key: key, body: file)
+    $s3.put_object(bucket: ENV['S3_PREFIX'] + type, key: key, body: file)
   end
 
   def self.mime_types_s3(type)
@@ -169,5 +169,25 @@ class User < ApplicationRecord
       'resume' => %w[application/pdf text/plain application/msword application/vnd.oasis.opendocument.text application/vnd.openxmlformats-officedocument.wordprocessingm]
     }
     mimes[type]
+  end
+
+  def recalculate_all_scores
+    User.update_all(score: 0)
+    User.all.each do |user|
+      algo_submissions = user.algo_submissions.where(is_submitted: true)
+      next if algo_submissions.count.zero?
+
+      algo_submissions.group_by(&:challenge_id).each do |key, value|
+        challenge = Challenge.find_by(id: key)
+        next if challenge.nil?
+
+        max_passed_test_cases = value.pluck(:passed_test_cases).max
+        user.update!(score: user.score + (max_passed_test_cases / challenge.testcases.count.to_f) * challenge.score)
+      end
+    end
+  end
+
+  def activity
+    algo_submissions.where(is_submitted: true).group('Date(created_at)').count
   end
 end
