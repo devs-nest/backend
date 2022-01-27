@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_24_114837) do
+ActiveRecord::Schema.define(version: 2022_01_27_183538) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2022_01_24_114837) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "aqODC2g5TJ8"
+    t.string "cuid", default: "UV6_1k3Jfpk"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -114,11 +114,11 @@ ActiveRecord::Schema.define(version: 2022_01_24_114837) do
     t.boolean "is_active", default: false
     t.text "tester_code"
     t.integer "user_id"
-    t.json "input_format"
-    t.json "output_format"
     t.integer "content_type"
     t.string "unique_id"
     t.string "parent_id"
+    t.json "input_format"
+    t.json "output_format"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
@@ -379,7 +379,7 @@ ActiveRecord::Schema.define(version: 2022_01_24_114837) do
     t.integer "buddy", default: 0
     t.string "discord_id", default: "", null: false
     t.integer "role"
-    t.integer "score", default: 0
+    t.float "score", default: 0.0
     t.string "provider"
     t.boolean "discord_active", default: false
     t.boolean "web_active", default: false
