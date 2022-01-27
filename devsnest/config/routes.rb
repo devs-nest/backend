@@ -18,6 +18,7 @@ Rails.application.routes.draw do
             put :update_testcase
             get :testcases
             delete :delete_testcase
+            put :update_company_tags
           end
         end
         jsonapi_resources :minibootcamp
@@ -78,13 +79,24 @@ Rails.application.routes.draw do
           get '/:id/submissions', to: 'challenge#submissions'
           get :fetch_by_slug
         end
+        member do
+          get :companies
+          get :submissions
+          get :template
+        end
       end
+      jsonapi_resources :language, only: %i[index]
       jsonapi_resources :algo_submission, only: %i[create show update] do
         collection do
           put :callback
         end
       end
       jsonapi_resources :certification, only: %i[show]
+      jsonapi_resources :company, only: %i[index create] do
+        member do
+          get :challenges
+        end
+      end
     end
   end
 end

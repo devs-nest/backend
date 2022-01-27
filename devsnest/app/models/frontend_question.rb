@@ -19,15 +19,17 @@ class FrontendQuestion < ApplicationRecord
   def template_files
     files = {}
     bucket = "#{ENV['S3_PREFIX']}minibootcamp"
-    prefix = "template_files/#{id}"
+    prefix = "template_files/#{self.id}/"
 
     s3_files = $s3_resource.bucket(bucket).objects(prefix: prefix).collect(&:key)
     s3_files.each do |file|
-      next if file == '/'
-
+      next unless file.end_with?(".txt")
+      
       content = $s3.get_object(bucket: bucket, key: file).body.read
       file.slice! prefix
-      files.merge!(Hash[file, content])
+      file.slice! ".txt"
+      
+      files.merge!(Hash["/"+file, content])
     end
 
     files

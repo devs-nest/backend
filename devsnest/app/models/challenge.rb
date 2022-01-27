@@ -3,12 +3,19 @@
 # algo challenge class
 class Challenge < ApplicationRecord
   enum difficulty: %i[easy medium hard]
+  enum content_type: %i[topic sub_topic]
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queues heaps dynamicprogramming backtracking greedy maths]
   has_many :algo_submission
+  has_many :algo_templates
   has_many :testcases
+  has_many :company_challenge_mappings
+  has_many :companies, through: :company_challenge_mappings
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug
+  Language.all.each do |language|
+    require "algo_templates/#{language.name}"
+  end
 
   def put_testcase_in_s3(input_file, output_file, testcase)
     if testcase.present?
@@ -28,5 +35,43 @@ class Challenge < ApplicationRecord
 
   def create_slug
     update(slug: name.parameterize)
+  end
+
+  def add_companies(company_names)
+    company_names.each do |company_name|
+      company = Company.find_by(name: company_name)
+      next if company.nil?
+
+      CompanyChallengeMapping.create(challenge_id: id, company_id: company.id)
+    end
+  end
+
+  def delete_companies(company_names)
+    company_names.each do |company_name|
+      company = Company.find_by(name: company_name)
+      next if company.nil?
+
+      CompanyChallengeMapping.find_by(challenge_id: id, company_id: company.id).destroy
+    end
+  end
+
+  def create_template(language)
+    return if input_format.nil? || output_format.nil?
+
+    template_gen =
+      case language[1]
+      when 'python3'
+        Templates::Python3.new(input_format, output_format)
+      when 'cpp'
+        Templates::CPP.new(input_format, output_format)
+      when 'java'
+        Templates::Java.new(input_format, output_format)
+      when 'javascript'
+        Templates::JavaScript.new(input_format, output_format)
+      end
+    template = template_gen.build if template_gen.present?
+
+    AlgoTemplate.create(challenge_id: id, language_id: language[0], head: template[:head], body: template[:body], tail: template[:tail]) if template.present? # FIX
+    template
   end
 end
