@@ -29,19 +29,52 @@ class Templates::Python3 < Templates::BaseHelper
     tail_code.join("\n\t")
   end
 
+  def input_builder(name, datastructure, dtype, dependent)
+    meta = { 
+      "primitive" => {
+        "int" => ["int(input())"],
+        "float" => ["float(input())"],
+        "string" => ["input()"]
+      },
+      "array" => {
+        "int" => ["list(int, input().split())"],
+        "float" => ["list(float, input().split())"],
+        "string" => ["input().split()"]
+      },
+      "matrix" => {
+        "int" => ["[ [int(j) for j in input().split()] for i in range(#{dependent&.first})]"],
+        "float" => ["[ [float(j) for j in input().split()] for i in range(#{dependent&.first})]"],
+        "string" => ["[ [j for j in input().split()] for i in range(#{dependent&.first})]"]
+      }
+    }
+    ["#{name} = #{meta[datastructure][dtype].join('\n')}"]
+  end
+
+  def output_builder(name, datastructure, dtype)
+    meta = { 
+      "primitive" => {
+        "int" => ["print(#{name})"],
+        "float" => ["print(#{name})"],
+        "string" => ["print(#{name})"]
+      },
+      "array" => {
+        "int" => ["print(*#{name})"],
+        "float" => ["print(*#{name})"],
+        "string" => ["print(*#{name})"]
+      },
+      "matrix" => {
+        "int" => ["for i in #{name}:", "\tprint(*i)"],
+        "float" => ["for i in #{name}:", "\tprint(*i)"],
+        "string" => ["for i in #{name}:", "\tprint(*i)"]
+      }
+    }
+    meta[datastructure][dtype]
+  end
+
   def input_code
     inputs = []
     @input_format.each do |value|
-      inputs += case value[:variable][:datastructure]
-                when 'string'
-                  ["#{value[:name]} = input()"]
-                when 'array', 'list', 'tuple'
-                  ["#{value[:name]} = list(map(#{value[:variable][:dtype]}, input().split()))"]
-                when 'primitive'
-                  ["#{value[:name]} = #{value[:variable][:dtype]}(input())"]
-                when 'matrix'
-                  ['n,m = list(map(int, input().split()))', "#{value[:name]}=[ [#{value[:variable][:dtype]}(j) for j in input().split()] for i in range(n)]"]
-                end
+      inputs += input_builder(value[:name], value[:variable][:datastructure], value[:variable][:dtype], value[:variable][:dependent])
     end
     inputs
   end
@@ -49,14 +82,7 @@ class Templates::Python3 < Templates::BaseHelper
   def output_code
     outputs = []
     @output_format.each do |value|
-      outputs += case value[:variable][:datastructure]
-                 when 'string', 'primitive'
-                   ["print(#{value[:name]})"]
-                 when 'list', 'tuple', 'array'
-                   ["for i in #{value[:name]}:", "\tprint(i, end = ' ')"]
-                 when 'matrix',
-                   ["for i in #{value[:name]}:", "\tfor j in i:", "\t\tprint(j, end = ' ')", "\tprint()"]
-                 end
+      outputs += output_builder(value[:name], value[:variable][:datastructure], value[:variable][:dtype])
     end
     outputs
   end

@@ -28,19 +28,52 @@ class Templates::CPP < Templates::BaseHelper
     tail_code.join("\n")
   end
 
+  def input_builder(name, datastructure, dtype, dependent)
+    meta = { 
+      "primitive" => {
+        "int" => ["cin >> #{name};"],
+        "float" => ["cin >> #{name};"],
+        "string" => ["getline(cin,#{name});"]
+      },
+      "array" => {
+        "int" => ["for (int i = 0; i < #{dependent&.first}; i++){", "int temp;", "cin >> temp;", "#{name}.push_back(temp);", "}"],
+        "float" => ["for (int i = 0; i < #{dependent&.first}; i++){", "float temp;", "cin >> temp;", "#{name}.push_back(temp);", "}"],
+        "string" => ["for (int i = 0; i < #{dependent&.first}; i++){", "string temp;", "cin >> temp;", "#{name}.push_back(temp);", "}"]
+      },
+      "matrix" => {
+        "int" => ["#{name}.resize(#{dependent&.first});","for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", "int temp;", "cin >> temp;", "#{name}[r].push_back(temp);","}","}"],
+        "float" => ["#{name}.resize(#{dependent&.first});","for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", "float temp;", "cin >> temp;", "#{name}[r].push_back(temp);","}","}"],
+        "string" => ["#{name}.resize(#{dependent&.first});","for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", "string temp;", "getline(cin, temp);", "#{name}[r].push_back(temp);","}","}"]
+      }
+    }
+    meta[datastructure][dtype]
+  end
+
+  def output_builder(name, datastructure, dtype)
+    meta = { 
+      "primitive" => {
+        "int" => ["cout << #{name};"],
+        "float" => ["cout << #{name};"],
+        "string" => ["cout << #{name};"]
+      },
+      "array" => {
+        "int" => ["for (#{dtype} i: #{name}){", "cout << i << ' ';", "}"],
+        "float" => ["for (#{dtype} i: #{name}){", "cout << i << ' ';", "}"],
+        "string" => ["for (#{dtype} i: #{name}){", "cout << i << ' ';", "}"]
+      },
+      "matrix" => {
+        "int" => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", "}", "}"],
+        "float" => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", "}", "}"],
+        "string" => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", "}", "}"]
+      }
+    }
+    meta[datastructure][dtype]
+  end
+
   def input_code
     inputs = []
     @input_format.each do |value|
-      inputs += case value[:variable][:datastructure]
-      when 'primitive' 
-        ["cin >> #{value[:name]};"]
-      when 'string'
-        ["getline(cin,#{value[:name]});"]
-      when 'array'
-        ["for (int i = 0; i < #{value[:variable][:dependent]&.first}; i++){", "#{value[:variable][:dtype]} temp;", "cin >> temp;", "#{value[:name]}.push_back(temp);", "}"]
-      when 'matrix'
-        ["#{value[:name]}.resize(#{value[:variable][:dependent]&.first});","for (int r = 0; r < #{value[:variable][:dependent]&.first}; r++){", "for (int c = 0; c < #{value[:variable][:dependent]&.second}; c++){", "#{value[:variable][:dtype]} temp;", "cin >> temp;", "#{value[:name]}[r].push_back(temp);","}","}"]
-      end
+      inputs += input_builder(value[:name], value[:variable][:datastructure], value[:variable][:dtype], value[:variable][:dependent])
     end
   inputs
   end
@@ -48,14 +81,7 @@ class Templates::CPP < Templates::BaseHelper
   def output_code
     outputs = []
     @output_format.each do |value|
-      outputs += case value[:variable][:datastructure]
-                  when 'string', 'primitive'
-                    ["cout << #{value[:name]};"]
-                  when 'array'
-                    ["for (#{value[:variable][:dtype]} i: #{value[:name]}){", "cout << i << ' ';", "}"]
-                  when 'matrix'
-                    ["for (int r = 0; r < #{value[:name]}.size(); r++){", "for (int c = 0; c < #{value[:name]}[r].size(); c++){", "cout << #{value[:name]}[r][c];", "}", "}"]
-                  end
+      outputs += output_builder(value[:name], value[:variable][:datastructure], value[:variable][:dtype])
     end
     outputs
   end

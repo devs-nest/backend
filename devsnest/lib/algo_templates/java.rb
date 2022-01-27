@@ -8,6 +8,17 @@ class Templates::Java < Templates::BaseHelper
     @tail = build_tail
   end
 
+  def create_class(type, conn)
+    case type
+    when "int"
+      "Integer#{conn}parseInt"
+    when "float"
+      "Float#{conn}parseFloat"
+    when "long"
+      "Long#{conn}parseLong"
+    end
+  end
+
   def build_head
     [
       "import java.io.*;",
@@ -35,7 +46,9 @@ class Templates::Java < Templates::BaseHelper
     tail_code << "public static void main(String[] args) throws Exception{"
     tail_code << "BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));"
     tail_code += get_input_signature.map { |signature| signature + ";"}
-    tail_code += get_output_signature.map { |signature| signature + ";"}
+    tail_code += input_code
+    tail_code << "#{get_output_signature.join(', ')} = solve(#{build_argument_list.join(', ')});"
+    tail_code += output_code
 
     tail_code += ["}", "}"]
 
@@ -44,30 +57,33 @@ class Templates::Java < Templates::BaseHelper
 
   def input_code
     inputs = []
-    @input_format.each do | value|
+    @input_format.each do |value|
       inputs += case value[:variable][:datastructure]
       when 'string'
         ["#{value[:name]} = bufferedReader.readLine().trim();"]
       when 'array', 'list', 'tuple'
-        ["#{value[:name]} = new #{value[:variable][:dtype]}[#{value[:variable][:dependent]&.first}]"]
+        ["#{value[:name]} = new #{value[:variable][:dtype]}[#{value[:variable][:dependent]&.first}]", "#{value[:name]} = Arrays.stream(bufferedReader.readLine().trim().split(" ")).mapToInt(#{create_class(value[:variable][:dtype], '::')}).toArray();"]
       when 'primitive'
-        ["#{value[:name]} = #{
-          case value[:variable][:dtype]
-          when 'int'
-            ["Integer.parseInt(bufferedReader.readLine().trim());"]
-          when 'long'
-            ["Long.parseLong(bufferedReader.readLine().trim());"]
-          when 'char'
-            ["(char)bufferedreader.read().trim();"]
-          end
-        }"]
+        ["#{value[:name]} = #{create_class(value[:variable][:dtype], '.')}(bufferedReader.readLine().trim());"]
       when 'matrix'
-        ["#{value[:name]} = new #{value[:variable][:dtype]}[#{value[:variable][:dependent]&.first}][#{value[:variable][:dependent]&.second}]"]
+        ["#{value[:name]} = new #{value[:variable][:dtype]}[#{value[:variable][:dependent]&.first}][#{value[:variable][:dependent]&.second}]", "for(int i=0;i<#{value[:variable][:dependent]&.first};i++){", "#{value[:name]}[i] = Arrays.stream(bufferedReader.readLine().trim().split(" ")).mapToInt(#{create_class(value[:variable][:dtype], '::')}).toArray();", "}"]
       end
-      
     end
+    inputs
   end
 
   def output_code
+    outputs = []
+    @output_format.each do |value|
+      outputs += case value[:variable][:datastructure]
+      when 'primitive', 'string'
+        ["System.out.println(#{value[:name]})"]
+      when 'array'
+        ["System.out.println(Arrays.toString(#{value[:name]}).replaceAll('\\\\[|\\\\]|,', ''));"]
+      when 'matrix'
+        ["for (int i = 0; i < #{value[:name]}.length; i++){", "System.out.println(Arrays.toString(#{value[:name]}[i]).replaceAll('\\\\[|\\\\]|,', ''));", "}"]
+      end
+    end
+    outputs
   end
 end
