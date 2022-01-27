@@ -10,7 +10,7 @@ module Api
         testcases_count = @model.challenge.testcases.count
         return 0 if testcases_count.zero?
 
-        (@model.passed_test_cases / testcases_count) * @model.challenge.score
+        (@model.passed_test_cases / testcases_count.to_f) * @model.challenge.score
       end
     end
   end

@@ -180,7 +180,7 @@ class User < ApplicationRecord
       algo_submissions.group_by(&:challenge_id).each do |key, value|
         challenge = Challenge.find(key)
         max_passed_test_cases = value.pluck(:passed_test_cases).max
-        user.update!(score: user.score + (max_passed_test_cases / challenge.testcases.count) * challenge.score)
+        user.update!(score: user.score + (max_passed_test_cases / challenge.testcases.count.to_f) * challenge.score)
       end
     end
   end
