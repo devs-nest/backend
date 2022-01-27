@@ -24,7 +24,7 @@ module Api
         challenge_id = params[:id]
         challenge = Challenge.find(challenge_id)
         all_submissions = @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).as_json
-        all_submissions.map { |submission| submission['score_achieved']=(submission[:passed_test_cases] / submission[:total_test_cases]) * challenge.score }
+        all_submissions.map { |submission| submission['score_achieved']=(submission['passed_test_cases'] / submission['total_test_cases']) * challenge.score }
         api_render(200, { id: challenge_id, type: 'challenge', submissions: all_submissions })
       end
 
