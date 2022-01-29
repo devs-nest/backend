@@ -17,6 +17,30 @@ class Challenge < ApplicationRecord
     require "algo_templates/#{language.name}"
   end
 
+  def fetch_sample_test_cases
+    challenge_id = id
+    tc = Testcase.where(challenge_id: challenge_id, is_sample: true)
+
+    tc_hash = { sample_test_cases: {} }
+    counter = 1
+    tc.each do |testcase|
+      begin
+        sample_inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{testcase.input_path}")
+        sample_outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{testcase.output_path}")
+      rescue StandardError
+        tc_hash["error"] = "An error occurred."
+      else
+        tc_hash[:sample_test_cases][counter] = {
+          input: Base64.encode64(sample_inpf.body.read),
+          output: Base64.encode64(sample_outf.body.read)
+        }
+      end
+      counter += 1
+    end
+
+    tc_hash
+  end
+
   def put_testcase_in_s3(input_file, output_file, testcase)
     if testcase.present?
       input_filename = testcase.input_path.split('/')[-1].split('.')[0]
