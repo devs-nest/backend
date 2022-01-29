@@ -48,14 +48,14 @@ class Templates::Java < Templates::BaseHelper
         "string" => ["System.out.println(#{name})"]
       },
       "array" => {
-        "int" => ["System.out.println(Arrays.toString(#{name}).replaceAll('\\\\[|\\\\]|,', ''));"],
-        "float" => ["System.out.println(Arrays.toString(#{name}).replaceAll('\\\\[|\\\\]|,', ''));"],
-        "string" => ["System.out.println(Arrays.toString(#{name}).replaceAll('\\\\[|\\\\]|,', ''));"]
+        "int" => ["System.out.println(Arrays.toString(#{name}).replaceAll(\"\\\\[|\\\\]|,\", \"\"));"],
+        "float" => ["System.out.println(Arrays.toString(#{name}).replaceAll(\"\\\\[|\\\\]|,\", \"\"));"],
+        "string" => ["System.out.println(Arrays.toString(#{name}).replaceAll(\"\\\\[|\\\\]|,\", \"\"));"]
       },
       "matrix" => {
-        "int" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll('\\\\[|\\\\]|,', ''));", "}"],
-        "float" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll('\\\\[|\\\\]|,', ''));", "}"],
-        "string" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll('\\\\[|\\\\]|,', ''));", "}"]
+        "int" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll(\"\\\\[|\\\\]|,\", \"\"));", "}"],
+        "float" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll(\"\\\\[|\\\\]|,\", \"\"));", "}"],
+        "string" => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll(\"\\\\[|\\\\]|,\", \"\"));", "}"]
       }
     }
     meta[datastructure][dtype]
