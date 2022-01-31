@@ -2,9 +2,13 @@
 
 Rails.application.routes.draw do
   get '/health_check', to: 'health_check#index'
+
   namespace :api do
     namespace :v1 do
-      devise_for :users, skip: [:registrations]
+      # devise_for :users, :path_names => { :sign_out => 'logout', :password => 'secret', :confirmation => 'verification' } do
+      #   post '/register'  => 'api/v1/registrations#create'
+      # end
+      devise_for :users, skip: %i[registrations]
       namespace :admin do
         jsonapi_resources :internal_feedback, only: %i[index update]
         jsonapi_resources :users, only: %i[index]
@@ -29,6 +33,9 @@ Rails.application.routes.draw do
           get :get_by_username, :certifications
         end
         collection do
+          post :register
+          post :reset_password, :reset_password_initiator
+          post :email_verification, :email_verification_initiator
           get :report, :leaderboard, :me, :get_token
           put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username, :upload_files
           post :login, :connect_discord

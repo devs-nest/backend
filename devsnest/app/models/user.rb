@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :challenges
   has_many :minibootcamp_submissions
   has_many :certifications, dependent: :delete_all
+  has_many :manual_login_changelog
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
 
@@ -75,7 +76,8 @@ class User < ApplicationRecord
       password: Devise.friendly_token[0, 20],
       web_active: true,
       image_url: avatar,
-      google_id: googleId
+      google_id: googleId,
+      is_verified: true
     )
   end
 

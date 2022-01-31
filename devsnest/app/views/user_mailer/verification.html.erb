@@ -1,0 +1,11 @@
+<h1>Verify your E-Mail Registered with Devsnest</h1>
+  <p>
+    Hello, <%= @user.name %>.<br>
+
+    Thanks for joining Devsnest, Just a last step, verify your email by visiting the link given below.
+    
+    The link is valid for 24 hours.
+  </p>
+
+  <%= link_to "Verify your identity here", "https://devsnest.in/email-verification?uid=#{@uid}" %>
+<p>Thanks, Team Devsnest!</p>

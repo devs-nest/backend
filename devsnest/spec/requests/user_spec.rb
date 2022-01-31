@@ -510,4 +510,46 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(response.status).to match(404)
     end
   end
+
+  context 'Manual registration' do
+    it 'registers and logins user' do
+      post '/api/v1/users/register', params: {
+        "email": "kshitij7@yahwaoo.com",
+        "password": "1234",
+        "password_confirmation": "1234"
+      }.to_json, headers: HEADERS
+      expect(response.status).to match(200)
+      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+    end
+  end
+  
+  context 'Manual login' do
+    let!(:user) { create(:user, email: "kshitij7@yahwaoo.com", password: "1234") }
+    it 'registers and logins user' do
+      post '/api/v1/users/login', params: {
+        "email": "kshitij7@yahwaoo.com",
+        "password": "1234",
+        "login_method": "manual"
+    }.to_json, headers: HEADERS
+      expect(response.status).to match(200)
+      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+    end
+  end
+
+  context 'email verification initiator' do
+    let!(:user) { create(:user, email: "kshitij7@yahwaoo.com", password: "1234") }
+
+    it 'mail verification unauthorized' do
+      post '/api/v1/users/email_verification_initiator', headers: HEADERS
+      expect(response.status).to match(401)
+      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+    end
+
+    it 'mail verification' do
+      sign_in(user)
+      post '/api/v1/users/email_verification_initiator', headers: HEADERS
+      expect(response.status).to match(200)
+      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+    end
+  end
 end

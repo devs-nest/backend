@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2022_02_11_081916) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "JBcKZuqkItE"
+    t.string "cuid", default: "aqODC2g5TJ8"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -298,6 +298,16 @@ ActiveRecord::Schema.define(version: 2022_02_11_081916) do
     t.index ["slug"], name: "index_links_on_slug", unique: true
   end
 
+  create_table "manual_login_changelogs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "query_type"
+    t.text "uid"
+    t.boolean "is_fulfilled", default: false
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_manual_login_changelogs_on_user_id"
+  end
+
   create_table "markdowns", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.text "template"
   end
@@ -423,6 +433,7 @@ ActiveRecord::Schema.define(version: 2022_02_11_081916) do
     t.text "markdown"
     t.boolean "group_assigned", default: false
     t.integer "bot_id"
+    t.boolean "is_verified", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

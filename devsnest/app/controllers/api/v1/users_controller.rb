@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -114,9 +114,15 @@ module Api
       def login
         code = params['code']
         googleId = params['googleId']
-        return render_error({ message: 'googleId parameter not specified' }) unless googleId
+        return render_error({ message: 'googleId parameter not specified or invalid login method' }) if !googleId && params['login_method'] != 'manual'
 
-        user = User.fetch_google_user(code, googleId)
+        if params['login_method'] == 'manual'
+          user = User.find_by_email(params['email'])
+          return render_error({ message: 'invalid password or username' }) unless user&.valid_password?(params[:password])
+        else
+          user = User.fetch_google_user(code, googleId)
+        end
+
         if user.present?
           sign_in(user)
           set_current_user
@@ -199,12 +205,101 @@ module Api
         User.upload_file_s3(file, key, type)
         update_link = type == 'profile-image' ? 'image_url' : 'resume_url'
 
-        bucket = "https://#{ENV["S3_PREFIX"]}#{type}.s3.amazonaws.com/"
+        bucket = "https://#{ENV['S3_PREFIX']}#{type}.s3.amazonaws.com/"
 
         public_link = bucket + key
         @current_user.update("#{update_link}": public_link)
 
         api_render(200, { id: key, type: type, user_id: @current_user.id, bucket: "devsnest-#{type}", public_link: public_link })
+      end
+
+      def register
+        return render json: { errors: 'Password not matched' } if params[:password] != params[:password_confirmation]
+
+        user = User.find_by_email(params[:email])
+        return render json: { errors: 'User already exists!' } if user.present?
+
+        user = User.new(sign_up_params)
+        if user.save
+          sign_in(user)
+          set_current_user
+          render json: user if @current_user.present?
+        else
+          render json: { errors: user.errors }
+        end
+      end
+
+      def reset_password_initiator
+        user = User.find_by_email(params[:email])
+
+        return render_error({ message: 'No user exists with this e-mail' }) if user.nil?
+
+        data_to_encode = {
+          user_id: user.id,
+          initiated_at: Time.now
+        }
+        last_query = user.manual_login_changelog.order('created_at').last
+
+        return render_error({ message: 'You must wait 24hr before submitting another request' }) if last_query.present? && last_query.within_a_day?
+
+        encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
+        ManualLoginChangelog.create(user_id: user.id, uid: encrypted_code, query_type: 'password_reset')
+
+        UserMailer.password_reset(user, encrypted_code).deliver_later
+        render_success({ 'message' => 'Mail sent' })
+      end
+
+      def reset_password
+        return render_error('UID not found') if params[:uid].nil?
+
+        query = ManualLoginChangelog.where(uid: params[:uid], query_type: 'password_reset').first
+        return render_error('Invalid UID') if query.nil? || query&.is_fulfilled == true
+
+        decoded_data = $cryptor.decrypt_and_verify(params[:uid])
+
+        user = User.find(decoded_data[:user_id])
+        user.update(password: params[:password])
+        query.update(is_fulfilled: true)
+
+        render_success({ 'message' => 'Password updated!' })
+      end
+
+      def email_verification_initiator
+        return render_error('User already verified') if @current_user.is_verified
+
+        data_to_encode = {
+          user_id: @current_user.id,
+          initiated_at: Time.now
+        }
+        last_query = @current_user.manual_login_changelog.order('created_at').last
+        return render_error({ message: 'You must wait 24hr before submitting another request' }) if last_query.present? && last_query.within_a_day?
+
+        encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
+        ManualLoginChangelog.create(user_id: @current_user.id, uid: encrypted_code, query_type: 'verification')
+
+        UserMailer.verification(@current_user, encrypted_code).deliver_later
+        render_success({ 'message' => 'Mail sent' })
+      end
+
+      def email_verification
+        return render_error('UID not found') if params[:uid].nil?
+
+        query = ManualLoginChangelog.where(uid: params[:uid], query_type: 'verification').first
+        return render_error('Invalid UID') if query.nil? || query&.is_fulfilled == true
+
+        decoded_data = $cryptor.decrypt_and_verify(params[:uid])
+
+        user = User.find(decoded_data[:user_id])
+
+        user.update(is_verified: true)
+        query.update(is_fulfilled: true)
+        render_success({ 'message' => 'User verified successfully' })
+      end
+
+      private
+
+      def sign_up_params
+        params.permit(:email, :password, :password_confirmation)
       end
     end
   end
