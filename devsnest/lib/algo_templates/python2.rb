@@ -49,13 +49,13 @@ class Templates::Python2 < Templates::BaseHelper
     outputs = []
     @output_format.each do |value|
       outputs += case value[:variable][:datastructure]
-                  when 'string', 'primitive'
-                    ["print(#{value[:name]})"]
-                  when 'list', 'tuple', 'array'
-                    ["for i in #{value[:name]}:", "\tprint(i, end = ' ')"]
-                  when 'matrix',
+                 when 'string', 'primitive'
+                   ["print(#{value[:name]})"]
+                 when 'list', 'tuple', 'array'
+                   ["for i in #{value[:name]}:", "\tprint(i, end = ' ')"]
+                 when 'matrix',
                     ["for i in #{value[:name]}:", "\tfor j in i:", "\t\tprint(j, end = ' ')", "\tprint()"]
-                  end
+                 end
     end
     outputs
   end
