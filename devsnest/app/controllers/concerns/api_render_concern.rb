@@ -2,7 +2,7 @@
 
 module ApiRenderConcern
   extend ActiveSupport::Concern
-  def api_render(status_code, data = {})  
+  def api_render(status_code, data = {})
     render json: {
       data: {
         id: (data[:id] || data['id']),

@@ -3,7 +3,7 @@
 module Templates
   # Helper methods for algo template
   class BaseHelper
-    def initialize(input_json, output_json , language_name)
+    def initialize(input_json, output_json, language_name)
       @head = ''
       @body = ''
       @tail = []
@@ -25,7 +25,6 @@ module Templates
         value[:signature]
       end
     end
-
 
     def get_output_signature
       @output_format.map do |value|

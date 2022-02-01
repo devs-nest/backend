@@ -17,9 +17,9 @@ module Api
         return render_not_found('challenge') if challenge.nil?
 
         sample_test_cases = challenge.fetch_sample_test_cases
-        challenge_hash = challenge.as_json.except("input_format", "output_format")
+        challenge_hash = challenge.as_json.except('input_format', 'output_format')
 
-        data = [challenge_hash, sample_test_cases, {"type" => "challenge"}]
+        data = [challenge_hash, sample_test_cases, { 'type' => 'challenge' }]
         data_hash = data.inject(&:merge)
 
         api_render(200, data_hash)
