@@ -28,7 +28,7 @@ class Challenge < ApplicationRecord
         sample_inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{testcase.input_path}")
         sample_outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{testcase.output_path}")
       rescue StandardError
-        tc_hash["error"] = "An error occurred."
+        tc_hash['error'] = 'An error occurred.'
       else
         tc_hash[:sample_test_cases][counter] = {
           input: Base64.encode64(sample_inpf.body.read),
