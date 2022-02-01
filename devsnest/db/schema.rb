@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2022_01_29_061700) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "aBQ0_se_7OI"
+    t.string "cuid", default: "JBcKZuqkItE"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -173,7 +173,7 @@ ActiveRecord::Schema.define(version: 2022_01_29_061700) do
     t.bigint "user_id"
     t.string "name"
     t.integer "template"
-    t.boolean "public"
+    t.boolean "public", default: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "name"], name: "index_projects_on_user_id_and_name", unique: true
