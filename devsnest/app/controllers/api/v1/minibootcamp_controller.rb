@@ -28,6 +28,21 @@ module Api
 
         api_render(200, { type: 'menu', attributes: menu_tab })
       end
+
+      def predefined_templates
+        available_templates = %i[angular react react-ts vanilla vanilla-ts vue vue3 svelte]
+        return render_error("Invalid template request") unless available_templates.include?(params[:type]&.to_sym)
+
+        files = {}
+        bucket = "#{ENV['S3_PREFIX']}frontend-templates"
+        s3_files = $s3_resource.bucket(bucket).objects(prefix: params[:type]).collect(&:key)
+
+        s3_files.each do |file|
+          content = $s3.get_object(bucket: bucket, key: file).body.read
+          files.merge!(Hash[file, content])
+        end
+        api_render(200, { id: 1, type: 'custom_images', files: files })
+      end
     end
   end
 end

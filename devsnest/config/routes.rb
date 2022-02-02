@@ -69,6 +69,7 @@ Rails.application.routes.draw do
       jsonapi_resources :minibootcamp, only: %i[show index] do
         collection do
           get :menu
+          get :predefined_templates
         end
       end
       jsonapi_resources :minibootcamp_submissions, only: %i[show index create update]
