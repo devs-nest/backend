@@ -21,7 +21,12 @@ Rails.application.routes.draw do
             put :update_company_tags
           end
         end
-        jsonapi_resources :minibootcamp
+        jsonapi_resources :minibootcamp do
+          collection do
+            get :custom_image, to: 'minibootcamp#fetch_custom_image'
+            post :custom_image, to: 'minibootcamp#upload_custom_image'
+          end
+        end
         jsonapi_resources :frontend_question
       end
       jsonapi_resources :users, only: %i[index show update create] do
