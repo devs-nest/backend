@@ -6,10 +6,6 @@ module Api
       before_action :user_auth
       before_action :edit_access, only: %i[show update destroy]
 
-      def context
-        { user: @current_user }
-      end
-
       def show
         render_success({ id: @frontend_project.id, type: 'frontend_project', frontend_project: @frontend_project })
       end
