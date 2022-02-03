@@ -2,6 +2,7 @@
 
 module Api
   module V1
+    # Controller for Frontend Projects
     class FrontendProjectController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth

@@ -10,6 +10,6 @@ class FrontendProject < ApplicationRecord
     bucket = "#{ENV['S3_PREFIX'] || 'Test'}frontend-projects"
     key = "template_files/#{user_id}/#{frontend_project_name}#{file_name}.txt"
 
-    $s3.put_object(bucket: bucket, key: key, body: raw_code)
+    $s3&.put_object(bucket: bucket, key: key, body: raw_code)
   end
 end
