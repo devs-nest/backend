@@ -171,7 +171,7 @@ class User < ApplicationRecord
     mimes[type]
   end
 
-  def recalculate_all_scores
+  def self.recalculate_all_scores
     User.update_all(score: 0)
     User.all.each do |user|
       algo_submissions = user.algo_submissions.where(is_submitted: true)
