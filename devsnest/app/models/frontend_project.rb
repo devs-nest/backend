@@ -7,7 +7,7 @@ class FrontendProject < ApplicationRecord
   enum template: %i[angular react react-ts vanilla vanilla-ts vue vue3 svelte]
 
   def self.post_to_s3(user_id, frontend_project_name, file_name, raw_code)
-    bucket = "#{ENV['S3_PREFIX']}frontend-projects"
+    bucket = "#{ENV['S3_PREFIX'] || 'Test'}frontend-projects"
     key = "template_files/#{user_id}/#{frontend_project_name}#{file_name}.txt"
 
     $s3.put_object(bucket: bucket, key: key, body: raw_code)
