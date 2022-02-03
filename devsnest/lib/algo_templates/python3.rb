@@ -30,42 +30,42 @@ class Templates::Python3 < Templates::BaseHelper
   end
 
   def input_builder(name, datastructure, dtype, dependent)
-    meta = { 
-      "primitive" => {
-        "int" => ["int(input())"],
-        "float" => ["float(input())"],
-        "string" => ["input()"]
+    meta = {
+      'primitive' => {
+        'int' => ['int(input())'],
+        'float' => ['float(input())'],
+        'string' => ['input()']
       },
-      "array" => {
-        "int" => ["list(map(int, input().split()))"],
-        "float" => ["list(map(float, input().split()))"],
-        "string" => ["input().split()"]
+      'array' => {
+        'int' => ['list(map(int, input().split()))'],
+        'float' => ['list(map(float, input().split()))'],
+        'string' => ['input().split()']
       },
-      "matrix" => {
-        "int" => ["[ [int(j) for j in input().split()] for i in range(#{dependent&.first})]"],
-        "float" => ["[ [float(j) for j in input().split()] for i in range(#{dependent&.first})]"],
-        "string" => ["[ [j for j in input().split()] for i in range(#{dependent&.first})]"]
+      'matrix' => {
+        'int' => ["[ [int(j) for j in input().split()] for i in range(#{dependent&.first})]"],
+        'float' => ["[ [float(j) for j in input().split()] for i in range(#{dependent&.first})]"],
+        'string' => ["[ [j for j in input().split()] for i in range(#{dependent&.first})]"]
       }
     }
     ["#{name} = #{meta[datastructure][dtype].join('\n')}"]
   end
 
   def output_builder(name, datastructure, dtype)
-    meta = { 
-      "primitive" => {
-        "int" => ["print(#{name})"],
-        "float" => ["print(#{name})"],
-        "string" => ["print(#{name})"]
+    meta = {
+      'primitive' => {
+        'int' => ["print(#{name})"],
+        'float' => ["print(#{name})"],
+        'string' => ["print(#{name})"]
       },
-      "array" => {
-        "int" => ["print(*#{name})"],
-        "float" => ["print(*#{name})"],
-        "string" => ["print(*#{name})"]
+      'array' => {
+        'int' => ["print(*#{name})"],
+        'float' => ["print(*#{name})"],
+        'string' => ["print(*#{name})"]
       },
-      "matrix" => {
-        "int" => ["for i in #{name}:", "\tprint(*i)"],
-        "float" => ["for i in #{name}:", "\tprint(*i)"],
-        "string" => ["for i in #{name}:", "\tprint(*i)"]
+      'matrix' => {
+        'int' => ["for i in #{name}:", "\tprint(*i)"],
+        'float' => ["for i in #{name}:", "\tprint(*i)"],
+        'string' => ["for i in #{name}:", "\tprint(*i)"]
       }
     }
     meta[datastructure][dtype]
