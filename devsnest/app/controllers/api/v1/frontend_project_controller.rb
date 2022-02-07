@@ -9,7 +9,8 @@ module Api
       before_action :edit_access, only: %i[show update destroy]
 
       def show
-        render_success({ id: @frontend_project.id, type: 'frontend_project', frontend_project: @frontend_project })
+        template_files = @frontend_project.template_files
+        render_success({ id: @frontend_project.id, type: 'frontend_project', frontend_project: @frontend_project.as_json.merge!({ template_files: template_files }) })
       end
 
       def index

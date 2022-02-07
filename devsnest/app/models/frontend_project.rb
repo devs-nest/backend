@@ -12,4 +12,23 @@ class FrontendProject < ApplicationRecord
 
     $s3&.put_object(bucket: bucket, key: key, body: raw_code)
   end
+
+  def template_files
+    files = {}
+    bucket = "#{ENV['S3_PREFIX']}frontend-projects"
+    prefix = "template_files/#{user_id}/#{name}"
+
+    s3_files = $s3_resource.bucket(bucket).objects(prefix: prefix).collect(&:key)
+    s3_files.each do |file|
+      next unless file.end_with?('.txt')
+
+      content = $s3.get_object(bucket: bucket, key: file).body.read
+      file.slice! prefix
+      file.slice! '.txt'
+
+      files.merge!(Hash["/#{file}", content])
+    end
+
+    files
+  end
 end
