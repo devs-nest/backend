@@ -26,7 +26,7 @@ class FrontendProject < ApplicationRecord
       file.slice! prefix
       file.slice! '.txt'
 
-      files.merge!(Hash["/#{file}", content])
+      files.merge!(Hash[file, content])
     end
 
     files
