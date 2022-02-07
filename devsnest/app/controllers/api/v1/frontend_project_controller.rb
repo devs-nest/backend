@@ -22,6 +22,7 @@ module Api
 
       def create
         frontend_project_params = params[:data][:attributes].permit(%i[name template public]).to_h
+        render_error({ message: 'Name is already Taken.' }) if @current_user.frontend_projects.find_by(name: frontend_project_params[:name]).present?
         frontend_project = FrontendProject.create!(frontend_project_params.merge({ 'user_id': @current_user.id }))
         template_files = params.dig(:data, :attributes, 'template-files')
         if template_files.present?
