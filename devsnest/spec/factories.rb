@@ -126,4 +126,10 @@ FactoryBot.define do
     sequence(:user_id) { |n| n }
     sequence(:frontend_question_id) { |n| n }
   end
+
+  factory :frontend_project do
+    sequence(:user_id) { |n| n }
+    sequence(:name) { |n| "test#{n}" }
+    sequence(:template) { 'react' }
+  end
 end
