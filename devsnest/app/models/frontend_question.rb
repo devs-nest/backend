@@ -21,7 +21,7 @@ class FrontendQuestion < ApplicationRecord
     bucket = "#{ENV['S3_PREFIX']}minibootcamp"
     prefix = "template_files/#{id}/"
 
-    s3_files = $s3_resource&.bucket(bucket)&.objects(prefix: prefix)&.collect(&:key)
+    s3_files = $s3_resource&.bucket(bucket)&.objects(prefix: prefix)&.collect(&:key) || []
     s3_files.each do |file|
       next unless file.end_with?('.txt')
 
