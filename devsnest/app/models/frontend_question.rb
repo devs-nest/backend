@@ -13,7 +13,7 @@ class FrontendQuestion < ApplicationRecord
     bucket = "#{ENV['S3_PREFIX']}minibootcamp"
     key = "template_files/#{frontend_question_id}#{file_name}.txt"
 
-    $s3.put_object(bucket: bucket, key: key, body: raw_code)
+    $s3&.put_object(bucket: bucket, key: key, body: raw_code)
   end
 
   def template_files
@@ -21,11 +21,11 @@ class FrontendQuestion < ApplicationRecord
     bucket = "#{ENV['S3_PREFIX']}minibootcamp"
     prefix = "template_files/#{id}/"
 
-    s3_files = $s3_resource.bucket(bucket).objects(prefix: prefix).collect(&:key)
+    s3_files = $s3_resource&.bucket(bucket)&.objects(prefix: prefix)&.collect(&:key) || []
     s3_files.each do |file|
       next unless file.end_with?('.txt')
 
-      content = $s3.get_object(bucket: bucket, key: file).body.read
+      content = $s3&.get_object(bucket: bucket, key: file)&.body&.read
       file.slice! prefix
       file.slice! '.txt'
 

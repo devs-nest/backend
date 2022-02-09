@@ -132,4 +132,8 @@ FactoryBot.define do
     sequence(:name) { |n| "test#{n}" }
     sequence(:template) { 'react' }
   end
+
+  factory :company do
+    sequence(:name) { |n| "test#{n}" }
+  end
 end
