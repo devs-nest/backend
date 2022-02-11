@@ -52,7 +52,7 @@ module Api
       end
 
       def edit_access
-        @frontend_project = FrontendProject.where(name: params[:id], user_id: @current_user.id).first
+        @frontend_project = FrontendProject.where(slug: params[:id], user_id: @current_user.id).first
         return render_not_found unless @frontend_project.present?
 
         return render_unauthorized if params[:user_id].to_i != @frontend_project.user_id
