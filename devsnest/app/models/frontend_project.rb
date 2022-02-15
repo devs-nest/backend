@@ -2,6 +2,7 @@
 
 # Project Model
 class FrontendProject < ApplicationRecord
+  include MinibootcampHelper
   validates :name, uniqueness: { scope: :user_id, case_sensitive: true }
   belongs_to :user
   after_create :create_slug
@@ -19,21 +20,9 @@ class FrontendProject < ApplicationRecord
   end
 
   def template_files
-    files = {}
     bucket = "#{ENV['S3_PREFIX']}frontend-projects"
     prefix = "template_files/#{user_id}/#{name}"
 
-    s3_files = $s3_resource&.bucket(bucket)&.objects(prefix: prefix)&.collect(&:key) || []
-    s3_files.each do |file|
-      next unless file.end_with?('.txt')
-
-      content = $s3&.get_object(bucket: bucket, key: file)&.body&.read
-      file.slice! prefix
-      file.slice! '.txt'
-
-      files.merge!(Hash[file, content])
-    end
-
-    files
+    s3_files_to_json(bucket, prefix)
   end
 end

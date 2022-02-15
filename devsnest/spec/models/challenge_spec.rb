@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'algo_templates/python3'
+require 'algo_templates/python2'
 require 'algo_templates/javascript'
 require 'algo_templates/java'
 require 'algo_templates/cpp'
@@ -18,6 +19,17 @@ RSpec.describe Challenge, type: :model do
 
       it 'should create a template for python3' do
         algo_template = Templates::Python3.new(question.input_format, question.output_format)
+        template = algo_template.build
+        expect(template[:head]).to eq('')
+      end
+    end
+
+    context 'python2 template' do
+      let(:user) { create(:user) }
+      let!(:python2) { create(:language, judge_zero_id: 72, name: 'python2') }
+
+      it 'should create a template for python2' do
+        algo_template = Templates::Python2.new(question.input_format, question.output_format)
         template = algo_template.build
         expect(template[:head]).to eq('')
       end

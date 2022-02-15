@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :language do
-    
-  end
-
   factory :algo_template do
-    
   end
 
   factory :judgeztoken do
@@ -135,5 +130,10 @@ FactoryBot.define do
 
   factory :company do
     sequence(:name) { |n| "test#{n}" }
+  end
+
+  factory :language do
+    sequence(:name) { |n| "test#{n}" }
+    sequence(:judge_zero_id) { |n| n }
   end
 end
