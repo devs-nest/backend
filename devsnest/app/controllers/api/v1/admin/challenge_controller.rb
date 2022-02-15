@@ -20,8 +20,8 @@ module Api
         end
 
         def add_testcase
-          input_file = params['input_file'].tempfile
-          output_file = params['output_file'].tempfile
+          input_file = params['input_file']&.tempfile || 'Hello World'
+          output_file = params['output_file']&.tempfile || 'Hello World'
           is_sample = params['is_sample'] == 'true' || params['is_sample'] == true
 
           challenge = Challenge.find(params[:id])
@@ -33,8 +33,8 @@ module Api
         end
 
         def update_testcase
-          input_file = params['input_file'].tempfile
-          output_file = params['output_file'].tempfile
+          input_file = params['input_file']&.tempfile || 'Hello World'
+          output_file = params['output_file']&.tempfile || 'Hello World'
           is_sample = params['is_sample'] == 'true' || params['is_sample'] == true
 
           challenge = Challenge.find(params[:id])
