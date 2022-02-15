@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Helper for Minibootcamp
 module MinibootcampHelper
   def s3_files_to_json(bucket, prefix)
     files = {}

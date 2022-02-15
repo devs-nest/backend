@@ -21,7 +21,7 @@ module Templates
     end
 
     def build_parameter_list
-      @input_format.map do |value|  
+      @input_format.map do |value|
         value[:signature]
       end
     end
