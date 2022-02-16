@@ -8,11 +8,7 @@ module Api
 
       def self.records(options = {})
         context_user = options[:context][:current_user]
-        if context_user.present?
-          super(options).where(user_id: options[:context][:current_user].id)
-        else
-          super(options)
-        end
+        context_user.present? ? super(options).where(user_id: options[:context][:current_user]&.id) : super(options)
       end
     end
   end
