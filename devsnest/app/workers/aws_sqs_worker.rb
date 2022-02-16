@@ -5,7 +5,7 @@ class AwsSqsWorker
   include Sidekiq::Worker
 
   def perform(message_type, message_body)
-    $sqs.send_message(
+    $sqs&.send_message(
       queue_url: ENV['SQS_URL'],
       message_body: {
         "type": message_type,
@@ -13,5 +13,7 @@ class AwsSqsWorker
       }.to_json,
       message_group_id: 'devsnest'
     )
+  rescue Aws::SQS::Errors::NonExistentQueue
+    puts 'Queue Does not exist'
   end
 end
