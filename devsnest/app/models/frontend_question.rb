@@ -2,6 +2,7 @@
 
 # frontend submission model
 class FrontendQuestion < ApplicationRecord
+  include MinibootcampHelper
   has_one :minibootcamp
   has_many :minibootcamp_submissions
   serialize :open_paths, Array
@@ -17,21 +18,8 @@ class FrontendQuestion < ApplicationRecord
   end
 
   def template_files
-    files = {}
     bucket = "#{ENV['S3_PREFIX']}minibootcamp"
     prefix = "template_files/#{id}/"
-
-    s3_files = $s3_resource&.bucket(bucket)&.objects(prefix: prefix)&.collect(&:key) || []
-    s3_files.each do |file|
-      next unless file.end_with?('.txt')
-
-      content = $s3&.get_object(bucket: bucket, key: file)&.body&.read
-      file.slice! prefix
-      file.slice! '.txt'
-
-      files.merge!(Hash['/' + file, content])
-    end
-
-    files
+    s3_files_to_json(bucket, prefix)
   end
 end

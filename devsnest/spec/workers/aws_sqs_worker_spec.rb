@@ -2,5 +2,7 @@
 
 require 'rails_helper'
 RSpec.describe AwsSqsWorker, type: :worker do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'enqueues a aws sqs worker' do
+    AwsSqsWorker.new.perform('test', 'test')
+  end
 end

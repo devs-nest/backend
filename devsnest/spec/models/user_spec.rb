@@ -56,4 +56,14 @@ RSpec.describe User, type: :model do
 
     # end
   end
+
+  context 'recalculated_score_of_user' do
+    let!(:user) { create(:user) }
+    let!(:challenge) { create(:challenge, user_id: user.id, name: 'aufiafb') }
+    let!(:testcase) { create(:testcase, challenge_id: challenge.id) }
+    let!(:algo_submission) { create(:algo_submission, challenge_id: challenge.id, user_id: user.id, is_submitted: true, passed_test_cases: 5) }
+    it 'Should Call recalculated_score_of_user' do
+      User.recalculate_all_scores
+    end
+  end
 end

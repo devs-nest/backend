@@ -24,6 +24,12 @@ RSpec.describe Challenge, type: :request do
         get "/api/v1/challenge/#{question.id}/submissions"
         expect(response).to have_http_status(200)
       end
+
+      it 'should get all companies for the challenge challenge' do
+        sign_in(user)
+        get "/api/v1/challenge/#{question.id}/companies"
+        expect(response).to have_http_status(200)
+      end
     end
   end
 end

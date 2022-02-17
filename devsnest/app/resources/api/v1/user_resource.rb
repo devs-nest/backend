@@ -19,11 +19,7 @@ module Api
       end
 
       def fetchable_fields
-        if context[:user].nil? || context[:user].id == @model.id
-          super - %i[password]
-        else
-          super - %i[password email]
-        end
+        context[:user].nil? || context[:user].id == @model.id ? super - %i[password] : super - %i[password email]
       end
 
       def self.updatable_fields(context)
@@ -43,9 +39,7 @@ module Api
       end
 
       def college_name
-        return nil if @model.college.nil?
-
-        @model.college.name
+        @model.college.nil? ? nil : @model.college.name
       end
 
       def solved
