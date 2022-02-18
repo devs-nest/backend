@@ -514,50 +514,52 @@ RSpec.describe Api::V1::UsersController, type: :request do
   context 'Manual registration' do
     it 'registers and logins user' do
       post '/api/v1/users/register', params: {
-        "email": "kshitij7@yahwaoo.com",
-        "password": "1234",
-        "password_confirmation": "1234"
+        "email": 'kshitij7@yahwaoo.com',
+        "password": '1234',
+        "password_confirmation": '1234'
       }.to_json, headers: HEADERS
       expect(response.status).to match(200)
-      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+      expect(User.find_by_email('kshitij7@yahwaoo.com')).to be_present
     end
   end
-  
+
   context 'Manual login' do
-    let!(:user) { create(:user, email: "kshitij7@yahwaoo.com", password: "1234") }
+    let!(:user) { create(:user, email: 'kshitij7@yahwaoo.com', password: '1234') }
     it 'registers and logins user' do
       post '/api/v1/users/login', params: {
-        "email": "kshitij7@yahwaoo.com",
-        "password": "1234",
-        "login_method": "manual"
-    }.to_json, headers: HEADERS
+        "email": 'kshitij7@yahwaoo.com',
+        "password": '1234',
+        "login_method": 'manual'
+      }.to_json, headers: HEADERS
       expect(response.status).to match(200)
-      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+      expect(User.find_by_email('kshitij7@yahwaoo.com')).to be_present
     end
   end
 
   context 'email verification initiator' do
-    let!(:user) { create(:user, email: "kshitij7@yahwaoo.com", password: "1234") }
+    let!(:user) { create(:user, email: 'kshitij7@yahwaoo.com', password: '1234') }
 
     it 'mail verification unauthorized' do
       post '/api/v1/users/email_verification_initiator', headers: HEADERS
       expect(response.status).to match(401)
-      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+      expect(User.find_by_email('kshitij7@yahwaoo.com')).to be_present
     end
 
     it 'mail verification' do
       sign_in(user)
       post '/api/v1/users/email_verification_initiator', headers: HEADERS
       expect(response.status).to match(200)
-      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+      expect(User.find_by_email('kshitij7@yahwaoo.com')).to be_present
     end
   end
   context 'email verification' do
-    let!(:user) { create(:user, email: "kshitij7@yahwaoo.com", password: "1234") }
-    let!(:data_to_encode) { {
-      user_id: user.id,
-      initiated_at: Time.now
-    } }
+    let!(:user) { create(:user, email: 'kshitij7@yahwaoo.com', password: '1234') }
+    let!(:data_to_encode) do
+      {
+        user_id: user.id,
+        initiated_at: Time.now
+      }
+    end
     let!(:encrypted_code) { $cryptor.encrypt_and_sign(data_to_encode) }
 
     before(:each) do
@@ -567,37 +569,39 @@ RSpec.describe Api::V1::UsersController, type: :request do
     it 'mail verification done' do
       post '/api/v1/users/email_verification', params: {
         "uid": encrypted_code
-    }.to_json, headers: HEADERS
+      }.to_json, headers: HEADERS
       expect(response.status).to match(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to match("User verified successfully")
-      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to match('User verified successfully')
+      expect(User.find_by_email('kshitij7@yahwaoo.com')).to be_present
     end
   end
 
   context 'password reset initiator' do
-    let!(:user) { create(:user, email: "kshitij7@yahwaoo.com", password: "1234") }
+    let!(:user) { create(:user, email: 'kshitij7@yahwaoo.com', password: '1234') }
 
     it 'call with proper params' do
       post '/api/v1/users/reset_password_initiator', params: {
-        "email": "kshitij7@yahwaoo.com"
-    }.to_json, headers: HEADERS
+        "email": 'kshitij7@yahwaoo.com'
+      }.to_json, headers: HEADERS
       expect(response.status).to match(200)
-      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+      expect(User.find_by_email('kshitij7@yahwaoo.com')).to be_present
     end
 
     it 'when no email is given' do
       post '/api/v1/users/reset_password_initiator', headers: HEADERS
       expect(response.status).to match(400)
-      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+      expect(User.find_by_email('kshitij7@yahwaoo.com')).to be_present
     end
   end
 
   context 'reset password' do
-    let!(:user) { create(:user, email: "kshitij7@yahwaoo.com", password: "1234") }
-    let!(:data_to_encode) { {
-      user_id: user.id,
-      initiated_at: Time.now
-    } }
+    let!(:user) { create(:user, email: 'kshitij7@yahwaoo.com', password: '1234') }
+    let!(:data_to_encode) do
+      {
+        user_id: user.id,
+        initiated_at: Time.now
+      }
+    end
     let!(:encrypted_code) { $cryptor.encrypt_and_sign(data_to_encode) }
 
     before(:each) do
@@ -607,25 +611,25 @@ RSpec.describe Api::V1::UsersController, type: :request do
     it 'password reset done' do
       post '/api/v1/users/reset_password', params: {
         "uid": encrypted_code,
-        "password": "7890"
-    }.to_json, headers: HEADERS
+        "password": '7890'
+      }.to_json, headers: HEADERS
       expect(response.status).to match(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to match("Password updated!")
-      expect(User.find_by_email("kshitij7@yahwaoo.com")).to be_present
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to match('Password updated!')
+      expect(User.find_by_email('kshitij7@yahwaoo.com')).to be_present
 
       post '/api/v1/users/login', params: {
-        "email": "kshitij7@yahwaoo.com",
-        "password": "1234",
-        "login_method": "manual"
-    }.to_json, headers: HEADERS
+        "email": 'kshitij7@yahwaoo.com',
+        "password": '1234',
+        "login_method": 'manual'
+      }.to_json, headers: HEADERS
       expect(response.status).to match(400)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to match("invalid password or username")
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to match('invalid password or username')
 
       post '/api/v1/users/login', params: {
-        "email": "kshitij7@yahwaoo.com",
-        "password": "7890",
-        "login_method": "manual"
-    }.to_json, headers: HEADERS
+        "email": 'kshitij7@yahwaoo.com',
+        "password": '7890',
+        "login_method": 'manual'
+      }.to_json, headers: HEADERS
       expect(response.status).to match(200)
     end
   end
