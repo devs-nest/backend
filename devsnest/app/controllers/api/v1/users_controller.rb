@@ -214,10 +214,10 @@ module Api
       end
 
       def register
-        return render json: { errors: 'Password not matched' } if params[:password] != params[:password_confirmation]
+        return render_error('Password not matched') if params[:password] != params[:password_confirmation]
 
         user = User.find_by_email(params[:email])
-        return render json: { errors: 'User already exists!' } if user.present?
+        return render_error('User already exists!')  if user.present?
 
         user = User.new(sign_up_params)
         if user.save
@@ -225,7 +225,7 @@ module Api
           set_current_user
           render json: user if @current_user.present?
         else
-          render json: { errors: user.errors }
+          render_error(user.errors.to_s)
         end
       end
 
