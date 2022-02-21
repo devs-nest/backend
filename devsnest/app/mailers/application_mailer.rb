@@ -1,5 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'no-reply@devsnest.in'
+  default from: 'Devsnest <no-reply@devsnest.in>'
   layout 'mailer'
 end
 

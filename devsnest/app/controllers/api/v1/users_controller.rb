@@ -238,7 +238,7 @@ module Api
           user_id: user.id,
           initiated_at: Time.now
         }
-        last_query = user.manual_login_changelog.order('created_at').last
+        last_query = user.manual_login_changelog.order('created_at').where(query_type: 'password_reset').last
 
         return render_error({ message: 'You must wait 24hr before submitting another request' }) if last_query.present? && last_query.within_a_day?
 
@@ -246,7 +246,7 @@ module Api
         ManualLoginChangelog.create(user_id: user.id, uid: encrypted_code, query_type: 'password_reset')
 
         UserMailer.password_reset(user, encrypted_code).deliver_later
-        render_success({ 'message' => 'Mail sent' })
+        render_success({ 'message' => 'An email has been sent to you with detailed instruction, Check your Inbox!' })
       end
 
       def reset_password
@@ -271,14 +271,14 @@ module Api
           user_id: @current_user.id,
           initiated_at: Time.now
         }
-        last_query = @current_user.manual_login_changelog.order('created_at').last
+        last_query = @current_user.manual_login_changelog.order('created_at').where(query_type: 'verification').last
         return render_error({ message: 'You must wait 24hr before submitting another request' }) if last_query.present? && last_query.within_a_day?
 
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
         ManualLoginChangelog.create(user_id: @current_user.id, uid: encrypted_code, query_type: 'verification')
 
         UserMailer.verification(@current_user, encrypted_code).deliver_later
-        render_success({ 'message' => 'Mail sent' })
+        render_success({ 'message' => 'An email has been sent to you, Check your Inbox!' })
       end
 
       def email_verification
