@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <title>Devsnest</title>
+</head>
+
+<body>
+
+  <div style=" 
+        width: fit-content;
+        margin:auto;
+        text-align:center;
+        background-color: #5050b1;
+        padding: 0px 10px 20px;
+        border-radius: 3px;
+    ">
+
+    <div style="
+ display:inline-block;
+text-align:center;
+margin: 0px;
+background-color: #4747a5;
+padding: 47px 24px 5px;
+border-radius: 0 0 6px 6px;
+">
+<%= image_tag(attachments['logo.png'].url) %>
+    </div>
+
+    <div>
+      <p style="
+color: white;
+text-align: left;
+font-size: 2.25rem;
+padding: 0 30px;
+font-weight: 600;
+max-width: 500px;
+text-align: center;
+">
+        Verify your E-Mail Registered with Devsnest
+      </p>
+
+      <p style="
+text-align: left;
+font-size: 1.25rem;
+font-weight: 500;
+color: #e5e7eb;
+padding-left: 14px;
+">
+Hello <%= @user.name.empty? ? @user.email.split('@')[0] : @user.name%>,<br>
+      </p>
+
+      <p style="
+text-align: left;
+font-size: 1.25rem;
+font-weight: 400;
+color: #d1d5db;
+max-width: 470px;
+word-spacing: 0.1rem;
+padding-left: 14px;
+line-height: 1.75rem;
+">
+        Thanks for joining Devsnest, Just a last step, verify your email by visiting the link given below.
+      </p>
+      <p style="
+text-align: left;
+font-size: 1.25rem;
+font-weight: 400;
+color: #d1d5db;
+max-width: 470px;
+word-spacing: 0.1rem;
+padding-left: 14px;
+line-height: 1.75rem;
+">
+        The Link is valid for 24 hours.
+      </p>
+    </div>
+
+    <button style="
+margin-top: 12px;
+padding: 18px 42px;
+border-radius: 6px;
+border: none;
+outline: none;
+background-color: rgb(42, 196, 42);
+">
+      <%= link_to "Verify your identity here", "https://devsnest.in/email-verification?uid=#{@uid}", {:style => "color: white;text-decoration: none;font-weight: 500;font-size: 1.15rem;"} %>
+    </button>
+
+  </div>
+  </div>
+  </div>
+</body>
+
+</html>

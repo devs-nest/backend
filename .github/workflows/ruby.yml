@@ -15,6 +15,7 @@ jobs:
       CC_TEST_REPORTER_URL: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
       REDIS_DB: devsnest_lb_test
       REDIS_URL: redis://127.0.0.1:6379
+      SECRET_KEY_BASE: qC3vQNz76DAjsmOPEuLf6nGPi7WMf+zV
 
 
     services:
