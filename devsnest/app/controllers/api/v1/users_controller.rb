@@ -118,7 +118,7 @@ module Api
 
         if params['login_method'] == 'manual'
           user = User.find_by_email(params['email'])
-          return render_error({ message: 'invalid password or username' }) unless user&.valid_password?(params[:password])
+          return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
         else
           user = User.fetch_google_user(code, googleId)
         end
@@ -214,10 +214,10 @@ module Api
       end
 
       def register
-        return render_error('Password not matched') if params[:password] != params[:password_confirmation]
+        return render_error({ message: 'Password not matched' }) if params[:password] != params[:password_confirmation]
 
         user = User.find_by_email(params[:email])
-        return render_error('User already exists!')  if user.present?
+        return render_error({ message: 'User already exists!' }) if user.present?
 
         user = User.new(sign_up_params)
         if user.save
