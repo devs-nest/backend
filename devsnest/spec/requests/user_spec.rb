@@ -623,7 +623,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
         "login_method": 'manual'
       }.to_json, headers: HEADERS
       expect(response.status).to match(400)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to match('invalid password or username')
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to match('Invalid password or username')
 
       post '/api/v1/users/login', params: {
         "email": 'kshitij7@yahwaoo.com',
