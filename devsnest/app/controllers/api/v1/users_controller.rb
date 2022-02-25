@@ -246,14 +246,14 @@ module Api
         ManualLoginChangelog.create(user_id: user.id, uid: encrypted_code, query_type: 'password_reset')
 
         UserMailer.password_reset(user, encrypted_code).deliver_later
-        render_success({ message:  'An email has been sent to you with detailed instruction, Check your Inbox!' })
+        render_success({ message: 'An email has been sent to you with detailed instruction, Check your Inbox!' })
       end
 
       def reset_password
-        return render_error({ message:  'Invalid Link!' }) if params[:uid].nil?
+        return render_error({ message: 'Invalid Link!' }) if params[:uid].nil?
 
         query = ManualLoginChangelog.where(uid: params[:uid], query_type: 'password_reset').first
-        return render_error({ message:  'The link has been expired!' }) if query.nil? || query&.is_fulfilled == true
+        return render_error({ message: 'The link has been expired!' }) if query.nil? || query&.is_fulfilled == true
 
         decoded_data = $cryptor.decrypt_and_verify(params[:uid])
 
@@ -265,7 +265,7 @@ module Api
       end
 
       def email_verification_initiator
-        return render_error({ message:  'User already verified' }) if @current_user.is_verified
+        return render_error({ message: 'User already verified' }) if @current_user.is_verified
 
         data_to_encode = {
           user_id: @current_user.id,
@@ -278,14 +278,14 @@ module Api
         ManualLoginChangelog.create(user_id: @current_user.id, uid: encrypted_code, query_type: 'verification')
 
         UserMailer.verification(@current_user, encrypted_code).deliver_later
-        render_success({ message:  'An email has been sent to you, Check your Inbox!' })
+        render_success({ message: 'An email has been sent to you, Check your Inbox!' })
       end
 
       def email_verification
-        return render_error({ message:  'Invalid Link!' }) if params[:uid].nil?
+        return render_error({ message: 'Invalid Link!' }) if params[:uid].nil?
 
         query = ManualLoginChangelog.where(uid: params[:uid], query_type: 'verification').first
-        return render_error({ message:  'The link has been expired!' }) if query.nil? || query&.is_fulfilled == true
+        return render_error({ message: 'The link has been expired!' }) if query.nil? || query&.is_fulfilled == true
 
         decoded_data = $cryptor.decrypt_and_verify(params[:uid])
 
