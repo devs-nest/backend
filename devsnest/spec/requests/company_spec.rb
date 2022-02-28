@@ -21,10 +21,17 @@ RSpec.describe Company, type: :request do
 
       it 'should return Challenges of a specific Company' do
         sign_in(user)
-        get "/api/v1/company/#{company.id}/challenges"
+        company_ids = [1,2,3]
+        get '/api/v1/company/challenges', params: {
+          "data": {
+            "type": 'companies',
+            "attributes": {
+              "company_ids": company_ids
+            }
+          }
+        }
         expect(response).to have_http_status(200)
-        expect(JSON.parse(response.body)['data']['id']).to eq(company.id)
-        expect(JSON.parse(response.body)['data']['attributes']['challenges'].size).to eq(company.challenges.size)
+        expect(JSON.parse(response.body)['data']['attributes']['challenges'].size).to eq(Challenge.where(id: CompanyChallengeMapping.where(company_id: company_ids).pluck(:challenge_id)).size)
       end
     end
 
