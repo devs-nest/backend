@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2022_02_11_081916) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "aqODC2g5TJ8"
+    t.string "cuid", default: "JBcKZuqkItE"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

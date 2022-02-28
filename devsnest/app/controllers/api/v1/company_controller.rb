@@ -8,10 +8,10 @@ module Api
       before_action :admin_auth, only: %i[create]
 
       def challenges
-        company = Company.find(params['id'])
-        return render_not_found if company.nil?
+        company_ids = params['data']['attributes']['company_ids']
+        challenges = Challenge.where(id: CompanyChallengeMapping.where(company_id: company_ids).pluck(:challenge_id))
 
-        render_success({ id: company.id, type: 'challenges', challenges: company.challenges })
+        render_success({ id: nil, type: 'challenges', challenges: challenges.as_json })
       end
     end
   end
