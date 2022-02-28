@@ -111,4 +111,9 @@ class Challenge < ApplicationRecord
     challenge_ids = AlgoSubmission.where(user_id: user_id, is_submitted: true, status: 'Accepted').pluck(:challenge_id)
     Challenge.where(id: challenge_ids).group(:difficulty).count
   end
+
+  def self.generate_leaderboard(id)
+    ch_lb = LeaderboardDevsnest::AlgoLeaderboard.new("#{Challenge.find(id).slug}-lb")
+    ch_lb::ALGO_LB
+  end
 end

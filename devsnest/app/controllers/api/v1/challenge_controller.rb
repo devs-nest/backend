@@ -11,6 +11,17 @@ module Api
         { challenge_id: params[:id], user: @current_user }
       end
 
+      def leaderboard
+        algo_lb = Challenge.generate_leaderboard(params[:id])
+        algo_lb.page_size = params[:size] || 10
+        page = params[:page].to_i
+
+        scoreboard = algo_lb.leaders(page)
+        pages_count = algo_lb.total_pages
+
+        render_success({ id: page, type: 'challenge_leaderboard', scoreboard: scoreboard, count: pages_count })
+      end
+
       def fetch_by_slug
         slug = params[:slug]
         challenge = Challenge.find_by(slug: slug)
