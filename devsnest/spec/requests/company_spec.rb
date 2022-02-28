@@ -21,7 +21,7 @@ RSpec.describe Company, type: :request do
 
       it 'should return Challenges of a specific Company' do
         sign_in(user)
-        company_ids = [1,2,3]
+        company_ids = [1, 2, 3]
         get '/api/v1/company/challenges', params: {
           "data": {
             "type": 'companies',
