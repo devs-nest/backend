@@ -99,6 +99,10 @@ class Challenge < ApplicationRecord
     template
   end
 
+  def is_solved?(user)
+    algo_submissions.where(user_id: user.id, status: "Accepted").present?
+  end
+
   def self.split_by_difficulty
     where(is_active: true).group(:difficulty).count
   end
