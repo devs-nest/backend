@@ -10,8 +10,9 @@ module Api
 
         def create
           file = params['image-file']
-          company_name = params[:name]
-          ideal_image_size = validate_image_size(request.headers['content-length'].to_i)
+          company_name = params[:data][:attributes][:name]
+          content_length = request.headers['content-length'].to_i
+          ideal_image_size = content_length.present? ? validate_image_size(content_length) : true
           return render_error('File size too large') unless ideal_image_size
 
           key = "#{company_name.parameterize}.png"
@@ -26,8 +27,9 @@ module Api
         def update
           file = params['image-file']
           company_id = params[:id]
-          company_name = params[:name]
-          ideal_image_size = validate_image_size(request.headers['content-length'].to_i)
+          company_name = params[:data][:attributes][:name]
+          content_length = request.headers['content-length'].to_i
+          ideal_image_size = content_length.present? ? validate_image_size(content_length) : true
           return render_error('File size too large') unless ideal_image_size
 
           key = "#{company_name.parameterize}.png"
@@ -41,7 +43,7 @@ module Api
         end
 
         def validate_image_size(size)
-          size.between?(100, 1_048_576)
+          size.between?(60, 1_048_576)
         end
       end
     end
