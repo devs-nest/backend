@@ -5,17 +5,6 @@ require 'rails_helper'
 RSpec.describe 'Company', type: :request do
   let(:user) { create(:user) }
   let(:company) { create(:company, name: 'Google', image_url: 'lol.xyz') }
-  #   let(:params) do
-  #     {
-  #       "data": {
-  #         "attributes": {
-  #           "certificate_type": 'course_dsa',
-  #           "discord_ids": [user.discord_id, 'invalid_discord_id']
-  #         },
-  #         "type": 'certifications'
-  #       }
-  #     }.to_json
-  #   end
   before :each do
     sign_in(user)
   end
