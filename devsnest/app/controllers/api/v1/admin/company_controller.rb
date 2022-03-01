@@ -8,33 +8,40 @@ module Api
         include JSONAPI::ActsAsResourceController
         before_action :admin_auth
 
-        def add_company
+        def create
           file = params['image-file']
           company_name = params[:name]
-          ideal_image_size = max_image_size(request.headers['content-length'].to_i)
+          ideal_image_size = validate_image_size(request.headers['content-length'].to_i)
           return render_error('File size too large') unless ideal_image_size
 
           key = "#{company_name.parameterize}.png"
           $s3&.put_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key, body: file)
           image_link = "https://#{ENV['S3_PREFIX']}company-image.s3.amazonaws.com/#{key}"
-          Company.create(name: company_name, image_url: image_link)
+          return render_error('Company with this name already exists') if Company.find_by(name: company_name).present?
+
+          company = Company.create!(name: company_name, image_url: image_link)
+          render_success(id: company.id, message: 'Company added successfully')
         end
 
-        def update_company
+        def update
           file = params['image-file']
           company_id = params[:id]
           company_name = params[:name]
-          ideal_image_size = max_image_size(request.headers['content-length'].to_i)
+          ideal_image_size = validate_image_size(request.headers['content-length'].to_i)
           return render_error('File size too large') unless ideal_image_size
 
           key = "#{company_name.parameterize}.png"
           $s3&.put_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key, body: file)
           image_link = "https://#{ENV['S3_PREFIX']}company-image.s3.amazonaws.com/#{key}"
-          Company.find(company_id).update(name: company_name, image_url: image_link)
+          company = Company.find(company_id)
+          return render_error('Company with this name already exists') if company.name != company_name && Company.find_by(name: company_name).present?
+
+          company.update!(name: company_name, image_url: image_link)
+          render_success(id: company_id, message: 'Company updated successfully')
         end
 
-        def max_image_size(size)
-          100 < size && size < 1_048_576
+        def validate_image_size(size)
+          size.between?(100, 1_048_576)
         end
       end
     end
