@@ -5,7 +5,7 @@ module Api
     # algo submission controller
     class AlgoSubmissionController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :user_auth, only: %i[create]
+      before_action :user_auth, only: %i[create show]
 
       def context
         { user: @current_user }
@@ -54,6 +54,7 @@ module Api
           submission.test_cases[params[:token]] = submission.test_cases[params[:token]].merge(res_hash)
           submission.passed_test_cases += 1 if params[:status][:id] == 3
           submission.status = 'Pending' if submission.status == 'Accepted' && submission.total_test_cases != submission.passed_test_cases
+          submission.update_best_submission
           submission.save!
         end
       end
