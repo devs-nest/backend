@@ -43,7 +43,7 @@ module Api
         end
 
         def validate_image_size(size)
-          size.between?(60, 1_048_576)
+          size.between?(10, 1_048_576)
         end
       end
     end
