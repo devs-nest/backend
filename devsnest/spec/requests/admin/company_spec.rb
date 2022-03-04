@@ -27,12 +27,7 @@ RSpec.describe 'Company', type: :request do
     it 'should create a company' do
       user.update(user_type: 1)
       post '/api/v1/admin/company', params: {
-        "data": {
-          "attributes": {
-            "name": 'Devsnest'
-          },
-          "type": 'company'
-        }
+        "name": 'Devsnest'
       }.to_json, headers: HEADERS
       expect(response.status).to eq(200)
     end
@@ -40,13 +35,8 @@ RSpec.describe 'Company', type: :request do
     it 'should update a company' do
       user.update(user_type: 1)
       put "/api/v1/admin/company/#{company.id}", params: {
-        "data": {
-          "id": company.id,
-          "attributes": {
-            "name": 'Devsnest-test'
-          },
-          "type": 'company'
-        }
+        "id": company.id,
+        "name": 'Devsnest-test'
       }.to_json, headers: HEADERS
       expect(response.status).to eq(200)
     end
