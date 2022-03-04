@@ -5,6 +5,7 @@ module Api
     # api for challenge test controller
     class ChallengeResource < JSONAPI::Resource
       attributes :topic, :difficulty, :name, :question_body, :score, :priority, :slug
+      attributes :submission_status
       filter :difficulty
       filter :topic
       filter :parent_id
@@ -20,6 +21,13 @@ module Api
         else
           super(options)
         end
+      end
+
+      def submission_status
+        user = options[:context][:current_user]
+        return 'unsolved' if @model.algo_submissions.where(user_id: user.id).empty?
+
+        user.algo_submissions.where(challenge_id: @model.id)
       end
     end
   end

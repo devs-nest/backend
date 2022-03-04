@@ -10,7 +10,7 @@ module Api
 
         def create
           file = params['image-file']
-          company_name = params[:data][:attributes][:name]
+          company_name = params['name']
           content_length = request.headers['content-length'].to_i
           ideal_image_size = content_length.present? ? validate_image_size(content_length) : true
           return render_error('File size too large') unless ideal_image_size
@@ -27,7 +27,7 @@ module Api
         def update
           file = params['image-file']
           company_id = params[:id]
-          company_name = params[:data][:attributes][:name]
+          company_name = params['name']
           content_length = request.headers['content-length'].to_i
           ideal_image_size = content_length.present? ? validate_image_size(content_length) : true
           return render_error('File size too large') unless ideal_image_size
