@@ -5,7 +5,6 @@ module Api
     # api for challenge test controller
     class ChallengeResource < JSONAPI::Resource
       attributes :topic, :difficulty, :name, :question_body, :score, :priority, :slug
-      attributes :submission_status
       filter :difficulty
       filter :topic
       filter :parent_id
