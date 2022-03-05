@@ -30,6 +30,18 @@ RSpec.describe Challenge, type: :request do
         get "/api/v1/challenge/#{question.id}/companies"
         expect(response).to have_http_status(200)
       end
+
+      it 'should get all challenges with a single company id' do
+        sign_in(user)
+        get '/api/v1/challenge?filter[company_id]=1'
+        expect(response).to have_http_status(200)
+      end
+
+      it 'should get all challenges with multiple company ids' do
+        sign_in(user)
+        get '/api/v1/challenge?filter[company_id]=1,2'
+        expect(response).to have_http_status(200)
+      end
     end
   end
 end
