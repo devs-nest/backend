@@ -8,7 +8,7 @@ module Api
       before_action :simple_auth, only: %i[submission]
 
       def context
-        { challenge_id: params[:id] }
+        { challenge_id: params[:id], user: @current_user }
       end
 
       def fetch_by_slug
