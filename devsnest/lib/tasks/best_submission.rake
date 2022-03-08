@@ -8,7 +8,7 @@ namespace :mark_submissions do
     groups.each do |_k, v|
       submitted_sols = v.select(&:is_submitted)
       next if submitted_sols.empty?
-      
+
       tbu = submitted_sols.max { |a, b| a[:passed_test_cases] <=> b[:passed_test_cases] }
       tbu.update_attribute(:is_best_submission, true)
     end
