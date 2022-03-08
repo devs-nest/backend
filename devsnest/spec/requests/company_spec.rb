@@ -18,14 +18,6 @@ RSpec.describe Company, type: :request do
         get '/api/v1/company'
         expect(response).to have_http_status(200)
       end
-
-      it 'should return Challenges of a specific Company' do
-        sign_in(user)
-        get "/api/v1/company/#{company.id}/challenges"
-        expect(response).to have_http_status(200)
-        expect(JSON.parse(response.body)['data']['id']).to eq(company.id)
-        expect(JSON.parse(response.body)['data']['attributes']['challenges'].size).to eq(company.challenges.size)
-      end
     end
 
     context 'Create Company' do

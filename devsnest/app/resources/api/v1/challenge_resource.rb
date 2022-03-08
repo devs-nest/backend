@@ -11,7 +11,7 @@ module Api
       filter :unique_id
       filter :data_type
       filter :company_id, apply: lambda { |records, value, _options|
-        records.where(id: CompanyChallengeMapping.where(company_id: value[0].to_i).pluck(:challenge_id))
+        records.where(id: CompanyChallengeMapping.where(company_id: value.map(&:to_i)).pluck(:challenge_id))
       }
 
       def self.records(options = {})
