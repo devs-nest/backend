@@ -25,8 +25,8 @@ class Challenge < ApplicationRecord
     counter = 1
     tc.each do |testcase|
       begin
-        sample_inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{testcase.input_path}")
-        sample_outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{testcase.output_path}")
+        sample_inpf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/input/#{testcase.input_path}")
+        sample_outf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/output/#{testcase.output_path}")
       rescue StandardError
         tc_hash['error'] = 'An error occurred.'
       else
@@ -100,7 +100,7 @@ class Challenge < ApplicationRecord
   end
 
   def is_solved?(user)
-    algo_submissions.where(user_id: user.id, status: "Accepted").present?
+    algo_submissions.where(user_id: user.id, status: 'Accepted').present?
   end
 
   def self.split_by_difficulty
