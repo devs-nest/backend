@@ -9,8 +9,8 @@ class AlgoSubmission < ApplicationRecord
   def self.add_submission(source_code, lang, test_case, challenge_id, mode)
     if mode != 'run'
       begin
-        inpf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/input/#{test_case[:input_path]}").body.read
-        outf = $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: "#{challenge_id}/output/#{test_case[:output_path]}").body.read
+        inpf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/input/#{test_case[:input_path]}").body.read
+        outf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/output/#{test_case[:output_path]}").body.read
       rescue StandardError
         return { 'error' => 'Something went wrong!' }
       end
@@ -78,7 +78,7 @@ class AlgoSubmission < ApplicationRecord
 
   def self.post_to_judgez(batch)
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'], 'x-rapidapi-host': ENV['JZ_RAPID_HOST'], 'x-rapidapi-key': ENV['JZ_RAPID_KEY'] }
-    response = HTTParty.post(ENV['JUDGEZERO_URL'] + '/submissions/batch?base64_encoded=true', body: batch.to_json, headers: jz_headers)
+    response = HTTParty.post("#{ENV['JUDGEZERO_URL']}/submissions/batch?base64_encoded=true", body: batch.to_json, headers: jz_headers)
     response.read_body
     # response.code == 201 ? JSON(response.read_body) : nil
   end
@@ -147,8 +147,9 @@ class AlgoSubmission < ApplicationRecord
     best_submission = submissions.find_by(is_best_submission: true)
 
     return update(is_best_submission: true) if best_submission.nil?
+
     submissions.update_all(is_best_submission: false)
-    
+
     if passed_test_cases > best_submission.passed_test_cases
       update(is_best_submission: true)
     else
