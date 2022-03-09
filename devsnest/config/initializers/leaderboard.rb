@@ -9,10 +9,13 @@ module LeaderboardDevsnest
   end
   
   class AlgoLeaderboard
-    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB']) }
     def initialize(name)
       @name = name
     end
-    ALGO_LB = CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, RedisConnection)
+    
+    def call
+      redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB']) }
+      CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
+    end
   end
 end
