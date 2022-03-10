@@ -113,7 +113,6 @@ class Challenge < ApplicationRecord
   end
 
   def self.generate_leaderboard(id)
-    ch_lb = LeaderboardDevsnest::AlgoLeaderboard.new("#{Challenge.find(id).slug}-lb")
-    ch_lb::ALGO_LB
+    LeaderboardDevsnest::AlgoLeaderboard.new("#{Challenge.find(id).slug}-lb").call
   end
 end

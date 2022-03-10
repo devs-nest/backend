@@ -92,6 +92,7 @@ Rails.application.routes.draw do
         collection do
           get '/:id/submissions', to: 'challenge#submissions'
           get :fetch_by_slug
+          get :leaderboard
         end
         member do
           get :companies
