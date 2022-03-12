@@ -27,7 +27,7 @@ module Api
         user = context[:user]
         return 'signin to check submissions' if user.nil?
 
-        algo_submissions = user.algo_submissions.where(challenge_id: @model.id)
+        algo_submissions = user.algo_submissions.where(challenge_id: @model.id, is_submitted: true)
         return 'unsolved' if algo_submissions.empty?
 
         algo_submissions.where(status: 'Accepted', is_submitted: true).present? ? 'solved' : 'attempted'
