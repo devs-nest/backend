@@ -30,7 +30,7 @@ module Api
         algo_submissions = user.algo_submissions.where(challenge_id: @model.id)
         return 'unsolved' if algo_submissions.empty?
 
-        algo_submissions.where(status: 'Accepted').present? ? 'solved' : 'attempted'
+        algo_submissions.where(status: 'Accepted', is_submitted: true).present? ? 'solved' : 'attempted'
       end
     end
   end
