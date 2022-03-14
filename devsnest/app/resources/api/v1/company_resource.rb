@@ -8,7 +8,7 @@ module Api
       attributes :challenge_count
 
       def challenge_count
-        @model&.challenges&.count || 0
+        @model&.challenges&.where(is_active: true)&.count || 0
       end
     end
   end
