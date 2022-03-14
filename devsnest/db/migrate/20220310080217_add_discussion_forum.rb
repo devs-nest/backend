@@ -16,6 +16,8 @@ class AddDiscussionForum < ActiveRecord::Migration[6.0]
     create_table :upvotes do |t|
       t.integer :content_id
       t.string :content_type
+      t.integer :user_id
+      t.index %i[user_id content_id content_type], unique: true
 
       t.timestamps
     end

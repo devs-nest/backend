@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 2022_03_10_080217) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "43bWpzIvMmU"
+    t.string "cuid", default: "0P8kBBIOHYA"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -404,8 +404,10 @@ ActiveRecord::Schema.define(version: 2022_03_10_080217) do
   create_table "upvotes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "content_id"
     t.string "content_type"
+    t.integer "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "content_id", "content_type"], name: "index_upvotes_on_user_id_and_content_id_and_content_type", unique: true
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
