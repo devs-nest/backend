@@ -9,9 +9,8 @@ module Api
       before_action :destroy_auth, only: %i[destroy]
 
       def destroy_auth
-        Upvote.find_by(id: params[:id])&.user == @current_user
+        Upvote.find_by(id: params[:id])&.user == @current_user ? true : render_unauthorized
       end
     end
   end
 end
-  

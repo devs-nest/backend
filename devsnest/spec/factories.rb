@@ -7,6 +7,16 @@ FactoryBot.define do
   factory :judgeztoken do
   end
 
+  factory :discussion do
+    sequence(:user_id) { |n| n }
+    sequence(:challenge_id) { |n| n }
+  end
+
+  factory :upvote do
+    sequence(:user_id) { |n| n }
+    sequence(:content_id) { |n| n }
+  end
+
   factory :testcase do
     sequence(:challenge_id) { |n| n }
   end

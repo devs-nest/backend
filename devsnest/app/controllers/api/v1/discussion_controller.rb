@@ -12,7 +12,7 @@ module Api
       end
 
       def destroy_auth
-        Discussion.find_by(id: params[:id])&.user == @current_user || @current_user.admin?
+        Discussion.find_by(id: params[:id])&.user == @current_user || @current_user.admin? ? true : render_unauthorized
       end
     end
   end
