@@ -17,7 +17,7 @@ jobs:
       REDIS_DB_LB: devsnest_lb_test_lb
       REDIS_URL: redis://127.0.0.1:6379
       REDIS_HOST_LB: redis://127.0.0.1:6379
-      SECRET_KEY_BASE: qC3vQNz76DAjsmOPEuLf6nGPi7WMf+zV # this shit is random, don't raise issue for this
+      SECRET_KEY_BASE: qC3vQNz76DAjsmOPEuLf6nGPi7WMf+zV # this string is random, don't raise issue for this
 
 
     services:
