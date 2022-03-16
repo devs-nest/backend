@@ -14,8 +14,10 @@ jobs:
       CC_TEST_REPORTER_ID: 8f0038687a9ad7675365b6a1ecde37608d55e4fa148d2da81a0653dc1dc6937d
       CC_TEST_REPORTER_URL: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
       REDIS_DB: devsnest_lb_test
+      REDIS_DB_LB: devsnest_lb_test_lb
       REDIS_URL: redis://127.0.0.1:6379
-      SECRET_KEY_BASE: qC3vQNz76DAjsmOPEuLf6nGPi7WMf+zV
+      REDIS_HOST_LB: redis://127.0.0.1:6379
+      SECRET_KEY_BASE: qC3vQNz76DAjsmOPEuLf6nGPi7WMf+zV # this shit is random, don't raise issue for this
 
 
     services:

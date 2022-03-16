@@ -13,6 +13,8 @@ class Challenge < ApplicationRecord
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug
+  before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
+  before_save :re_evaluate_user_scores, if: :will_save_change_to_score?
   Language.all.each do |language|
     require "algo_templates/#{language.name}"
   end
@@ -112,7 +114,32 @@ class Challenge < ApplicationRecord
     Challenge.where(id: challenge_ids).group(:difficulty).count
   end
 
-  def self.generate_leaderboard(id)
-    LeaderboardDevsnest::AlgoLeaderboard.new("#{Challenge.find(id).slug}-lb").call
+  def generate_leaderboard
+    LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call
+  end
+
+  def regenerate_challenge_leaderboard
+    LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call.delete_leaderboard
+    leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call
+
+    algo_submissions.where(is_best_submission: true).each do |submission|
+      leaderboard.rank_member(submission.user.username, score * (submission.passed_test_cases / submission.total_test_cases.to_f))
+    end
+  end
+
+  def self.rerank_member(user, new_username)
+    previous_username = user.username
+
+    best_submissions = user.algo_submissions.where(is_best_submission: true)
+
+    best_submissions.each do |submission|
+      leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{submission.challenge.slug}-lb").call
+      leaderboard.remove_member(previous_username)
+      leaderboard.rank_member(new_username, submission.challenge.score * (submission.passed_test_cases / submission.total_test_cases))
+    end
+  end
+
+  def re_evaluate_user_scores
+    UserScoreUpdate.perform_async([score_was, score, id])
   end
 end

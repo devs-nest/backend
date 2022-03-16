@@ -12,7 +12,8 @@ module Api
       end
 
       def leaderboard
-        algo_lb = Challenge.generate_leaderboard(params[:id])
+        challenge = Challenge.find_by(id: params[:id])
+        algo_lb = challenge.generate_leaderboard
         algo_lb.page_size = params[:size] || 10
         page = params[:page].to_i
 
@@ -22,7 +23,7 @@ module Api
         if @current_user
           rank = algo_lb.rank_for(@current_user.username)
           user = algo_lb.member_at(rank)
-          return render_success({ id: page, type: 'leaderboard', user: user, scoreboard: scoreboard, rank: rank, count: pages_count })
+          return render_success({ id: page, type: 'challenge_leaderboard', user: user, scoreboard: scoreboard, rank: rank, count: pages_count })
         end
 
         render_success({ id: page, type: 'challenge_leaderboard', scoreboard: scoreboard, count: pages_count })
