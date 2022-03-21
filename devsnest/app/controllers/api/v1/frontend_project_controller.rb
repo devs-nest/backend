@@ -6,7 +6,7 @@ module Api
     class FrontendProjectController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
-      before_action :convert_user_id_to_username
+      before_action :convert_username_to_user_id
       before_action :edit_access, only: %i[show update destroy]
 
       def convert_username_to_user_id
