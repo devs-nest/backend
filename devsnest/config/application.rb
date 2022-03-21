@@ -27,7 +27,7 @@ module Devsnest
     config.load_defaults 6.0
     Dotenv.load
 
-    config.time_zone = 'Asia/Kolkata'
+    config.time_zone = 'Mumbai'
     config.active_record.default_timezone = :local
     config.active_job.queue_adapter = :sidekiq
     # Settings in config/environments/* take precedence over those specified here.

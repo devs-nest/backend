@@ -21,7 +21,7 @@ class FrontendProject < ApplicationRecord
 
   def template_files
     bucket = "#{ENV['S3_PREFIX']}frontend-projects"
-    prefix = "template_files/#{user_id}/#{name}"
+    prefix = "template_files/#{user_id}/#{slug}"
 
     s3_files_to_json(bucket, prefix)
   end
