@@ -6,7 +6,7 @@ module Api
     class FrontendProjectController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
-      before_action :convert_username_to_user_id
+      before_action :convert_username_to_user_id, except: :create
       before_action :edit_access, only: %i[show update destroy]
 
       def convert_username_to_user_id
@@ -44,9 +44,9 @@ module Api
 
       def update
         frontend_project_params = params[:data][:attributes].permit(%i[name template public]).to_h
+        template_files = params.dig(:data, :attributes, 'template-files')
         frontend_project_params[:updated_at] = Time.now if template_files.present?
         @frontend_project.update!(frontend_project_params)
-        template_files = params.dig(:data, :attributes, 'template-files')
         if template_files.present?
           template_files.each do |filename, filecontent|
             FrontendProject.post_to_s3(@current_user.id, @frontend_project.slug, filename, filecontent)

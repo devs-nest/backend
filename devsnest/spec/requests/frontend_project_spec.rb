@@ -5,12 +5,13 @@ require 'rails_helper'
 RSpec.describe FrontendProject, type: :request do
   context 'get frontend projects' do
     let(:user) { create(:user) }
+    let(:user2) { create(:user) }
     let(:frontend_project) { create(:frontend_project, user_id: user.id) }
 
     # before :each do
     #   sign_in(user)
     # end
-    let(:params) { { 'user_id': user.id } }
+    let(:params) { { 'user_id': user.username } }
 
     it 'should return unauthorized if the user is not logged in' do
       get '/api/v1/frontend-project', params: params
@@ -28,13 +29,13 @@ RSpec.describe FrontendProject, type: :request do
 
     it 'should not return the frontend projects if the user_id in params and current_user does not match' do
       sign_in(user)
-      get "/api/v1/frontend-project/#{frontend_project.name}", params: { 'user_id': user.id - 1 }
+      get "/api/v1/frontend-project/#{frontend_project.slug}", params: { 'user_id': user2.username }
       expect(response).to have_http_status(401)
     end
 
     it 'should return the frontend project' do
       sign_in(user)
-      get "/api/v1/frontend-project/#{frontend_project.name}", params: { 'user_id': user.id }
+      get "/api/v1/frontend-project/#{frontend_project.slug}", params: { 'user_id': user.username }
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:frontend_project][:user_id]).to eq(user.id)
     end
@@ -71,6 +72,7 @@ RSpec.describe FrontendProject, type: :request do
 
   context 'update frontend projects' do
     let(:user) { create(:user) }
+    let(:user2) { create(:user) }
     let(:frontend_project) { create(:frontend_project, user_id: user.id) }
     before :each do
       sign_in(user)
@@ -78,6 +80,7 @@ RSpec.describe FrontendProject, type: :request do
 
     let(:params) do
       {
+        "user_id": user2.username,
 
         "data": {
           "type": 'frontend_projects',
@@ -93,19 +96,19 @@ RSpec.describe FrontendProject, type: :request do
     end
 
     it 'should return not found if project name is invalid' do
-      put "/api/v1/frontend-project/#{frontend_project.name}invalid", params: params.to_json, headers: HEADERS
+      put "/api/v1/frontend-project/#{frontend_project.slug}invalid", params: params.to_json, headers: HEADERS
       expect(response).to have_http_status(404)
     end
 
     it 'should retrurn unauthorized if the user_id in params and current_user does not match' do
-      put "/api/v1/frontend-project/#{frontend_project.name}", params: params.to_json, headers: HEADERS
+      put "/api/v1/frontend-project/#{frontend_project.slug}", params: params.to_json, headers: HEADERS
       expect(response).to have_http_status(401)
     end
 
     it 'should update the frontend project' do
-      params['user_id'] = user.id
+      params['user_id'] = user.username
 
-      put "/api/v1/frontend-project/#{frontend_project.name}", params: params.to_json, headers: HEADERS
+      put "/api/v1/frontend-project/#{frontend_project.slug}", params: params.to_json, headers: HEADERS
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:frontend_project][:name]).to eq(params[:data][:attributes][:name])
     end
@@ -113,28 +116,29 @@ RSpec.describe FrontendProject, type: :request do
 
   context 'Delete Frontend Projects in not admin or batch_leader' do
     let(:user) { create(:user) }
+    let(:user2) { create(:user) }
     let(:frontend_project) { create(:frontend_project, user_id: user.id) }
     before :each do
       sign_in(user)
     end
 
-    let(:params) { { 'user_id': user.id } }
+    let(:params) { { 'user_id': user.username } }
 
     it 'should return not found if project name is invalid' do
-      delete "/api/v1/frontend-project/#{frontend_project.name}invalid", params: params.to_json, headers: HEADERS
+      delete "/api/v1/frontend-project/#{frontend_project.slug}invalid", params: params.to_json, headers: HEADERS
       expect(response).to have_http_status(404)
     end
 
     it 'should retrurn unauthorized if the user_id in params and current_user does not match' do
-      params['user_id'] = user.id - 1
-      delete "/api/v1/frontend-project/#{frontend_project.name}", params: params.to_json, headers: HEADERS
+      params['user_id'] = user2.username
+      delete "/api/v1/frontend-project/#{frontend_project.slug}", params: params.to_json, headers: HEADERS
       expect(response).to have_http_status(401)
     end
 
     it 'should delete the frontend project' do
-      delete "/api/v1/frontend-project/#{frontend_project.name}", params: params.to_json, headers: HEADERS
+      delete "/api/v1/frontend-project/#{frontend_project.slug}", params: params.to_json, headers: HEADERS
       expect(response).to have_http_status(200)
-      expect(FrontendProject.find_by(name: frontend_project.name, user_id: user.id)).to eq(nil)
+      expect(FrontendProject.find_by(name: frontend_project.slug, user_id: user.id)).to eq(nil)
     end
   end
 end
