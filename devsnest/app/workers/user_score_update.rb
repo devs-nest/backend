@@ -5,7 +5,6 @@ class UserScoreUpdate
     previous_score, new_score, challenge_id = values
     challenge = Challenge.find_by(id: challenge_id)
     submissions = challenge.algo_submissions.where(is_submitted: true, is_best_submission: true)
-    user_ids = submissions.pluck(:user_id)
 
     submissions.each do |submission|
       user = User.find_by(id: submission.user_id)
