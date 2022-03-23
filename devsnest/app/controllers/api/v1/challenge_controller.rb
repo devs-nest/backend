@@ -24,7 +24,7 @@ module Api
           rank = algo_lb.rank_for(@current_user.username)
           user = {
             name: @current_user.username,
-            rake: rank,
+            rank: rank,
             score: algo_lb.score_for(@current_user.username)
           } if rank.present?
           return render_success({ id: page, type: 'challenge_leaderboard', user: user, scoreboard: scoreboard, rank: rank, count: pages_count })
