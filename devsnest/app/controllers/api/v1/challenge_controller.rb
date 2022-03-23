@@ -22,7 +22,7 @@ module Api
 
         if @current_user
           rank = algo_lb.rank_for(@current_user.username)
-          user = algo_lb.member_at(rank)
+          user = @current_user.username
           return render_success({ id: page, type: 'challenge_leaderboard', user: user, scoreboard: scoreboard, rank: rank, count: pages_count })
         end
 
