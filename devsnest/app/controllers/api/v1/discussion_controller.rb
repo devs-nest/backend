@@ -2,6 +2,7 @@
 
 module Api
   module V1
+    # discussion controller
     class DiscussionController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth

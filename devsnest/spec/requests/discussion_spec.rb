@@ -60,13 +60,6 @@ RSpec.describe Discussion, type: :request do
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:upvote_count]).to eq(1)
       end
 
-      it 'should check the number of Comments for a discussion' do
-        sign_in(user)
-        get "/api/v1/discussion/#{discussion1.id}"
-        expect(response).to have_http_status(200)
-        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:comments_count]).to eq(1)
-      end
-
       it 'should return true as user upvoted' do
         sign_in(user)
         get "/api/v1/discussion/#{discussion1.id}"
