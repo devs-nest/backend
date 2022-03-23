@@ -6,7 +6,7 @@ module Api
     class DiscussionResource < JSONAPI::Resource
       attributes :parent_id, :user_id, :challenge_id, :title, :body, :created_at, :updated_at
       attributes :upvote_count, :comments_count
-      attributes :username, :user_image_url, :upvoted
+      attributes :username, :user_image_url, :upvoted, :upvote_id
 
       filter :challenge_id
       filter :parent_id
@@ -30,9 +30,13 @@ module Api
       end
 
       def upvoted
-        return true if @model&.upvotes&.where(user_id: context[:user]&.id).exists?
+        return true if @model&.upvotes&.where(user_id: context[:user]&.id).present?
 
         false
+      end
+
+      def upvote_id
+        return @model&.upvotes&.where(user_id: context[:user]&.id).first&.id if @model&.upvotes&.where(user_id: context[:user]&.id).present?
       end
     end
   end
