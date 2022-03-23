@@ -14,6 +14,8 @@ FactoryBot.define do
   factory :algo_submission do
     sequence(:user_id) { |n| n }
     sequence(:challenge_id) { |n| n }
+    sequence(:is_best_submission) { |n| false }
+    sequence(:is_submitted) { |n| true }
   end
 
   factory :frontend_question do
