@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require 'competition_ranking_leaderboard'
 module LeaderboardDevsnest
   # Initialize leaderboard with redis

@@ -55,14 +55,14 @@ RSpec.describe Challenge, type: :model do
     context 'cpp template' do
       let(:user) { create(:user) }
       let!(:cpp) { create(:language, judge_zero_id: 5, name: 'cpp', type_array: 'vector<_>', type_matrix: 'vector>', type_string: '_', type_primitive: '_') }
-
+      
       it 'should create a template for CPP' do
         algo_template = Templates::CPP.new(question.input_format, question.output_format)
         template = algo_template.build
         expect(template[:head]).not_to be_empty
       end
     end
-    
+
     context 'check competetive leaderboard' do
       let!(:user) { create(:user) }
       let!(:user2) { create(:user) }
