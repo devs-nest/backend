@@ -83,7 +83,7 @@ Rails.application.routes.draw do
       jsonapi_resources :minibootcamp_submissions, only: %i[show index create update]
       jsonapi_resources :frontend_questions, only: %i[show]
       jsonapi_resources :internal_feedback, only: %i[create index]
-      jsonapi_resources :link, only: %i[show]
+      jsonapi_resources :link, only: %i[show index]
       jsonapi_resources :hackathon, only: %i[create index update show]
       jsonapi_resources :notification_bot, only: %i[index]
       jsonapi_resources :notification, only: %i[create index]
