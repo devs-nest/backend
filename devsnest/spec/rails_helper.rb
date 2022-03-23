@@ -4,6 +4,8 @@
 require 'spec_helper'
 require 'support/factory_bot'
 require 'support/factories_support'
+# require 'sidekiq/testing/inline'
+# require 'sidekiq-status/testing/inline'
 
 ENV['RAILS_ENV'] ||= 'test'
 

@@ -8,7 +8,29 @@ module Api
       before_action :simple_auth, only: %i[submission]
 
       def context
-        { challenge_id: params[:id] }
+        { challenge_id: params[:id], user: @current_user }
+      end
+
+      def leaderboard
+        challenge = Challenge.find_by(id: params[:id])
+        algo_lb = challenge.generate_leaderboard
+        algo_lb.page_size = params[:size] || 10
+        page = params[:page].to_i
+
+        scoreboard = algo_lb.leaders(page)
+        pages_count = algo_lb.total_pages
+
+        if @current_user
+          rank = algo_lb.rank_for(@current_user.username)
+          user = {
+            name: @current_user.username,
+            rank: rank,
+            score: algo_lb.score_for(@current_user.username)
+          } if rank.present?
+          return render_success({ id: page, type: 'challenge_leaderboard', user: user, scoreboard: scoreboard, rank: rank, count: pages_count })
+        end
+
+        render_success({ id: page, type: 'challenge_leaderboard', scoreboard: scoreboard, count: pages_count })
       end
 
       def fetch_by_slug

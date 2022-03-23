@@ -13,6 +13,7 @@ module Api
         topic = @model.challenge.topic
         topic_challenge_ids = Challenge.where(topic: topic).pluck(:id)
 
+        # refactor heres
         user_success_submissions_for_topic = AlgoSubmission.where(challenge_id: topic_challenge_ids, is_best_submission: true, user_id: context[:user].id, status: 'Accepted')
         relevent_unsolved_submissions = topic_challenge_ids - user_success_submissions_for_topic.pluck(:challenge_id)
 
