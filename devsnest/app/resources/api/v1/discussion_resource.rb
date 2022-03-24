@@ -30,13 +30,14 @@ module Api
       end
 
       def upvoted
-        return true if @model&.upvotes&.where(user_id: context[:user]&.id).present?
+        @upvote_id = @model.upvotes.find_by(user_id: context[:user]&.id)&.id
+        return true if @upvote_id.present?
 
         false
       end
 
       def upvote_id
-        return @model&.upvotes&.where(user_id: context[:user]&.id).first&.id if @model&.upvotes&.where(user_id: context[:user]&.id).present?
+        return @upvote_id if @upvote_id.present?
       end
     end
   end
