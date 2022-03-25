@@ -33,6 +33,7 @@ Rails.application.routes.draw do
         end
         jsonapi_resources :frontend_question
         jsonapi_resources :company, only: %i[index create update]
+        jsonapi_resources :link, only: %i[index create destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -83,7 +84,7 @@ Rails.application.routes.draw do
       jsonapi_resources :minibootcamp_submissions, only: %i[show index create update]
       jsonapi_resources :frontend_questions, only: %i[show]
       jsonapi_resources :internal_feedback, only: %i[create index]
-      jsonapi_resources :link, only: %i[show index]
+      jsonapi_resources :link, only: %i[show]
       jsonapi_resources :hackathon, only: %i[create index update show]
       jsonapi_resources :notification_bot, only: %i[index]
       jsonapi_resources :notification, only: %i[create index]
