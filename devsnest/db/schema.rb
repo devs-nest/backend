@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 2022_03_28_101543) do
     t.string "faculty_position"
     t.string "email"
     t.string "phone_number"
+    t.boolean "is_filled", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
