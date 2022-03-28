@@ -33,6 +33,7 @@ Rails.application.routes.draw do
         end
         jsonapi_resources :frontend_question
         jsonapi_resources :company, only: %i[index create update]
+        jsonapi_resources :college_form, only: %i[index]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -111,6 +112,7 @@ Rails.application.routes.draw do
       jsonapi_resources :company, only: %i[index create]
       jsonapi_resources :discussion, only: %i[show index create destroy]
       jsonapi_resources :upvote, only: %i[create destroy]
+      jsonapi_resources :college_form, only: %i[create]
     end
   end
 end
