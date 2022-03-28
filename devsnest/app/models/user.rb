@@ -19,6 +19,7 @@ class User < ApplicationRecord
   has_many :manual_login_changelog
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
+  after_create :add_user_to_customerio
 
   def create_username
     username = ''
@@ -175,5 +176,14 @@ class User < ApplicationRecord
 
   def activity
     algo_submissions.where(is_submitted: true).group('Date(created_at)').count
+  end
+
+  def add_user_to_customerio
+    $customerio.identify(
+      id: User.last.id,
+      created_at: User.last.created_at.to_i,
+      email: User.last.email,
+      name: User.last.name
+    )
   end
 end
