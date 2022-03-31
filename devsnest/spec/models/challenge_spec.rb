@@ -55,7 +55,7 @@ RSpec.describe Challenge, type: :model do
     context 'cpp template' do
       let(:user) { create(:user) }
       let!(:cpp) { create(:language, judge_zero_id: 5, name: 'cpp', type_array: 'vector<_>', type_matrix: 'vector>', type_string: '_', type_primitive: '_') }
-
+      
       it 'should create a template for CPP' do
         algo_template = Templates::CPP.new(question.input_format, question.output_format)
         template = algo_template.build
@@ -74,7 +74,6 @@ RSpec.describe Challenge, type: :model do
       let!(:u_s2) { create(:algo_submission, user_id: user.id, challenge_id: question.id, passed_test_cases: 10, total_test_cases: 10, is_best_submission: false, is_submitted: false) }
       let!(:u2_s1) { create(:algo_submission, user_id: user2.id, challenge_id: question.id, passed_test_cases: 1, total_test_cases: 10, is_best_submission: false, is_submitted: true) }
       let!(:u2_s2) { create(:algo_submission, user_id: user2.id, challenge_id: question.id, passed_test_cases: 5, total_test_cases: 10, is_best_submission: true, is_submitted: true) }
-
       before do
         question.regenerate_challenge_leaderboard
       end
@@ -100,7 +99,6 @@ RSpec.describe Challenge, type: :model do
       let!(:u_s2) { create(:algo_submission, user_id: user.id, challenge_id: question.id, passed_test_cases: 10, total_test_cases: 10, is_best_submission: false, is_submitted: false) }
       let!(:u2_s1) { create(:algo_submission, user_id: user2.id, challenge_id: question.id, passed_test_cases: 1, total_test_cases: 10, is_best_submission: false, is_submitted: true) }
       let!(:u2_s2) { create(:algo_submission, user_id: user2.id, challenge_id: question.id, passed_test_cases: 5, total_test_cases: 10, is_best_submission: true, is_submitted: true) }
-
       before do
         question.regenerate_challenge_leaderboard
         question.update!(score: 10)
