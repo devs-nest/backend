@@ -33,6 +33,7 @@ Rails.application.routes.draw do
         end
         jsonapi_resources :frontend_question
         jsonapi_resources :company, only: %i[index create update]
+        jsonapi_resources :link, only: %i[index create destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
