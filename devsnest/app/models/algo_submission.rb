@@ -30,10 +30,10 @@ class AlgoSubmission < ApplicationRecord
       "wall_time_limit": '5',
       "memory_limit": Devsnest::Application::JUDGEZERO_OPTIONS[lang][:memory_limit] || '512000',
       "stack_limit": '64000',
-      "max_processes_and_or_threads": '10',
+      "max_processes_and_or_threads": '120',
       "enable_per_process_and_thread_time_limit": false,
       "enable_per_process_and_thread_memory_limit": false,
-      "max_file_size": '1024',
+      "max_file_size": '4096',
       "callback_url": ENV['JUDGEZERO_CALLBACK']
     }
 
