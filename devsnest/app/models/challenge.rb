@@ -15,6 +15,7 @@ class Challenge < ApplicationRecord
   validates_uniqueness_of :name, :slug
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
   before_save :re_evaluate_user_scores, if: :will_save_change_to_score?
+  after_save :remove_saved_templates
   Language.all.each do |language|
     require "algo_templates/#{language.name}"
   end
@@ -141,5 +142,9 @@ class Challenge < ApplicationRecord
 
   def re_evaluate_user_scores
     UserScoreUpdate.perform_async([score_was, score, id])
+  end
+
+  def remove_saved_templates
+    AlgoTemplate.where(challenge_id: id).destroy_all
   end
 end
