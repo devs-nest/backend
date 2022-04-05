@@ -27,8 +27,8 @@ class Templates::JavaScript < Templates::BaseHelper
                    ["console.log(#{value[:name]})"]
                  when 'list', 'tuple', 'array'
                    ["console.log(...#{value[:name]})"]
-                 when 'matrix',
-        ["#{value[:name]}.forEach(", '(element) => console.log(...element)', ');']
+                 when 'matrix'
+                   ["#{value[:name]}.forEach(", '(element) => console.log(...element)', ');']
                  end
     end
     outputs
