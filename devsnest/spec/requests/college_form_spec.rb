@@ -18,8 +18,7 @@ RSpec.describe 'College Form Spec', type: :request do
             "college_name": 'JECRC College',
             "faculty_position": 'Head faculty',
             "email": 'hello@lol.com',
-            "phone_number": '9852147852',
-            "is_filled": true
+            "phone_number": '9852147852'
           },
           "type": 'college_forms'
         }
