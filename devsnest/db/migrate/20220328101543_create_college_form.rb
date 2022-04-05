@@ -7,8 +7,9 @@ class CreateCollegeForm < ActiveRecord::Migration[6.0]
       t.string :faculty_position
       t.string :email
       t.string :phone_number
-      t.boolean :is_filled, default: false
       t.timestamps
     end
+
+    add_column :users, :is_college_form_filled, :boolean, default: false
   end
 end
