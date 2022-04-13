@@ -73,3 +73,5 @@ gem 'aws-sdk-sqs', '~> 1.0.0.rc11'
 
 gem 'aws-sdk-s3', '~> 1.103'
 
+
+gem "sendgrid-ruby", "~> 6.6"
