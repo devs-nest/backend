@@ -184,6 +184,6 @@ class User < ApplicationRecord
       user_name: username,
       initiated_at: Time.now
     }
-    $cryptor.encrypt_and_sign(payload)
+    JWT.encode(payload, Rails.application.secrets.secret_key_base)
   end
 end

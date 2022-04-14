@@ -127,8 +127,8 @@ module Api
           sign_in(user)
           set_current_user
           SendgridMailer.send('lakshitk6666@gmail.com', {
-            unsubscribe_link: user.unsubscribe_token
-          }, 'd-dcbbcc30a3f84e7fa850766648d16f6b')
+                                unsubscribe_link: user.unsubscribe_token
+                              }, 'd-dcbbcc30a3f84e7fa850766648d16f6b')
           return render_success(user.as_json.merge({ "type": 'users' })) if @current_user.present?
         end
         render_error({ message: 'Error occured while authenticating' })
@@ -303,13 +303,11 @@ module Api
       def unsubscribe
         return render_error({ message: 'Invalid Link!' }) if params[:token].nil?
 
-        decoded_data = $cryptor.decrypt_and_verify(params[:token])
+        decoded_data = JWT.decode(params[:token], Rails.application.secrets.secret_key_base)[0]
 
-        unless Unsubscribe.find_by(user_id: decoded_data[:user_id], category: params[:category]).present?
-          Unsubscribe.create!(user_id: decoded_data[:user_id], category: params[:category])
-        end
+        Unsubscribe.create!(user_id: decoded_data['user_id'], category: params[:category]) unless Unsubscribe.find_by(user_id: decoded_data['user_id'], category: params[:category]).present?
 
-        render_success({ message: "Unsubscribed Successfully" })
+        render_success({ message: 'Unsubscribed Successfully' })
       end
 
       private

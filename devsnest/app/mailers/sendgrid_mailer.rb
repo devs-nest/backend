@@ -18,8 +18,8 @@ class SendgridMailer
     }
     sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
     begin
-      response = sg.client.mail._("send").post(request_body: data)
-      return response.status_code
+      response = sg.client.mail._('send').post(request_body: data)
+      response.status_code
     rescue Exception => e
       puts e.message
     end
