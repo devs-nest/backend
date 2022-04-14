@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_14_084842) do
+
+ActiveRecord::Schema.define(version: 2022_03_28_101543) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -121,6 +122,17 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
     t.string "unique_id"
     t.string "parent_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
+  end
+
+  create_table "college_forms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "tpo_or_faculty_name", null: false
+    t.string "college_name"
+    t.string "faculty_position"
+    t.string "email"
+    t.string "phone_number"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -474,6 +486,7 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
     t.string "college_name"
     t.integer "college_year"
     t.boolean "accepted_in_course", default: false
+    t.boolean "is_college_form_filled", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
