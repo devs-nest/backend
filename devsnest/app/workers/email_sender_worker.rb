@@ -4,7 +4,7 @@
 class EmailSenderWorker
   include Sidekiq::Worker
 
-  def perform(receiver_email, subsitutions, template_id)
-    SendgridMailer.send(receiver_email, subsitutions, template_id)
+  def perform(receiver_email, meta_data, template_id)
+    SendgridMailer.send(receiver_email, meta_data, template_id)
   end
 end

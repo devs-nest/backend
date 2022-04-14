@@ -126,6 +126,7 @@ module Api
         if user.present?
           sign_in(user)
           set_current_user
+          EmailSenderWorker.perform_async('lakshitk6666@gmail.com', {'unsubscribe_token': user.unsubscribe_token}, 'd-dcbbcc30a3f84e7fa850766648d16f6b')
           return render_success(user.as_json.merge({ "type": 'users' })) if @current_user.present?
         end
         render_error({ message: 'Error occured while authenticating' })

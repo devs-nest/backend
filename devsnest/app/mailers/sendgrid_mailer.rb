@@ -2,7 +2,7 @@
 
 # sendgrid mailer config
 class SendgridMailer
-  def self.send(to, subsitutions, template_id)
+  def self.send(to, meta_data, template_id)
     data = {
       "personalizations": [
         {
@@ -11,11 +11,12 @@ class SendgridMailer
               "email": to
             }
           ],
-          "dynamic_template_data": subsitutions
+          "dynamic_template_data": meta_data
         }
       ],
       "from": {
-        "email": 'team@devsnest.in'
+        "email": 'team@devsnest.in',
+        "name": 'Kshitiz from Devsnest'
       },
       "template_id": template_id
     }
