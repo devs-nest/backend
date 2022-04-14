@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# sendgrid mailer config
 class SendgridMailer
   def self.send(to, subsitutions, template_id)
     data = {
