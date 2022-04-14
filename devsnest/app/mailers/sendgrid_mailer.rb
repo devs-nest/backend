@@ -12,7 +12,7 @@ class SendgridMailer
         }
       ],
       "from": {
-        "email": 'vedansh@devsnest.in'
+        "email": 'team@devsnest.in'
       },
       "template_id": template_id
     }
