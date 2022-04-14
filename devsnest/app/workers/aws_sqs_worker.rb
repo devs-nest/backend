@@ -5,6 +5,7 @@ class AwsSqsWorker
   include Sidekiq::Worker
 
   def perform(message_type, message_body)
+    
     $sqs&.send_message(
       queue_url: ENV['SQS_URL'],
       message_body: {
