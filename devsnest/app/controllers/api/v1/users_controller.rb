@@ -300,7 +300,7 @@ module Api
       def unsubscribe
         return render_error({ message: 'Invalid Link!' }) if params[:token].nil?
 
-        decoded_data = JWT.decode(params[:token], Rails.application.secrets.secret_key_base)[0]
+        decoded_data = JWT.decode(params[:token], Rails.application.secrets.secret_key_base || "")[0]
 
         Unsubscribe.create!(user_id: decoded_data['user_id'], category: params[:category]) unless Unsubscribe.find_by(user_id: decoded_data['user_id'], category: params[:category]).present?
 
