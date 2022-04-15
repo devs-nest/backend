@@ -380,6 +380,7 @@ ActiveRecord::Schema.define(version: 2022_04_27_075644) do
     t.string "bot_token"
     t.string "bot_username"
     t.boolean "is_generic_bot", default: false
+    t.boolean "is_used", default: false
   end
 
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
