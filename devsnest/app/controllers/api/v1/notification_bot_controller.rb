@@ -15,7 +15,16 @@ module Api
         render json: bot_data.bot_token
       end
 
+      def change_token
+        bot_data= NotificationBot.find_by(id: params[:id])
+        return render_error('Bot Not Found ') if bot_data.nil?
 
+        new_bot=NotificationBot.where(is_used:false)&.first
+        return render_error('No New Bot Found ') if new_bot.nil?
+
+        bot_data.update(bot_token:new_bot.bot_token)
+        new_bot.update(is_used:true)
+      end
     end
   end
 end
