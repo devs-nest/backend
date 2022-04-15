@@ -5,7 +5,7 @@ namespace :registration_mail do
     User.all.where(is_fullstack_course_22_form_filled: true, discord_active: true, accepted_in_course: false).each do |u|
       EmailSenderWorker.perform_async(u.email, {
                                         'unsubscribe_token': u.unsubscribe_token
-                                      }, 'd-dcbbcc30a3f84e7fa850766648d16f6b')
+                                      }, 'd-d9ebbec967cf4470857f1a91fd601b6c')
       u.update!(accepted_in_course: true)
       puts u.username
     rescue StandardError => e
