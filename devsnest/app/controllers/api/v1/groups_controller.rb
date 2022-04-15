@@ -85,8 +85,8 @@ module Api
       rescue ActiveRecord::RecordNotUnique
         user.update(group_assigned: true)
         return render_error(message: 'User already in a group')
-      rescue
-        return render_error(message: 'Something went wrong!')
+      rescue => e
+        return render_error(message: "Something went wrong! : #{e}")
       end
 
       def leave
@@ -106,8 +106,8 @@ module Api
         render_success(message: 'Group left')
         rescue ActiveRecord::RecordNotFound
           return render_error(message: 'User not in this group')
-        rescue
-          return render_error(message: 'Something went wrong!')
+        rescue => e
+          return render_error(message: "Something went wrong! : #{e}")
       end
 
       def create_validations
