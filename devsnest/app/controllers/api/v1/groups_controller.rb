@@ -5,7 +5,7 @@ module Api
     class GroupsController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
-      before_action :user_auth, only: %i[create show] # add leave and join
+      before_action :user_auth, only: %i[create show join leave] # add leave and join
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
@@ -61,7 +61,7 @@ module Api
       end
 
       def join
-        user = User.find(params[:data][:attributes][:user_id])
+        user = @current_user
         return render_error(message: 'User not found') if user.nil?
 
         # can user join a v2 group?
@@ -90,7 +90,7 @@ module Api
       end
 
       def leave
-        user = User.find(params[:data][:attributes][:user_id])
+        user = @current_user
         return render_error(message: 'User not found') if user.nil?
 
         group = Group.find(params[:id])
