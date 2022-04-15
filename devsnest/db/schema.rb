@@ -253,9 +253,9 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
     t.integer "batch_leader_id"
     t.string "slug"
     t.integer "version", default: 2
-    t.integer "group_type"
-    t.integer "language", default: 1
-    t.integer "classification"
+    t.integer "group_type", default: 0
+    t.integer "language", default: 0
+    t.integer "classification", default: 0
   end
 
   create_table "hackathons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
