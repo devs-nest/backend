@@ -24,7 +24,7 @@ class SendgridMailer
     begin
       response = sg.client.mail._('send').post(request_body: data)
       response.status_code
-    rescue Exception => e
+    rescue StandardError => e
       puts e.message
     end
   end
