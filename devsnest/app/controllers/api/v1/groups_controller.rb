@@ -66,7 +66,7 @@ module Api
 
         # can user join a v2 group?
         if params[:data][:attributes][:group_id].present?
-          group = Group.find(params[:group_id])
+          group = Group.find(params[:data][:attributes][:group_id])
         else
           group = Group.all.v2.visible.under_12_members.sample
         end
