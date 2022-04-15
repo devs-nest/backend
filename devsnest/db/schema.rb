@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 2022_03_28_101543) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -95,7 +96,7 @@ ActiveRecord::Schema.define(version: 2022_03_28_101543) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "Gi0I8myZv9E"
+    t.string "cuid", default: "fP06oQJQ+1w"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -412,6 +413,14 @@ ActiveRecord::Schema.define(version: 2022_03_28_101543) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "unsubscribes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "category", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category", unique: true
+  end
+
   create_table "upvotes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "content_id"
     t.string "content_type"
@@ -476,6 +485,7 @@ ActiveRecord::Schema.define(version: 2022_03_28_101543) do
     t.string "company_name"
     t.string "college_name"
     t.integer "college_year"
+    t.boolean "accepted_in_course", default: false
     t.boolean "is_college_form_filled", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

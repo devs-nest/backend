@@ -297,6 +297,16 @@ module Api
         render_success({ message:  'User verified successfully' })
       end
 
+      def unsubscribe
+        return render_error({ message: 'Invalid Link!' }) if params[:token].nil?
+
+        decoded_data = JWT.decode(params[:token], Rails.application.secrets.secret_key_base)[0]
+
+        Unsubscribe.create!(user_id: decoded_data['user_id'], category: params[:category]) unless Unsubscribe.find_by(user_id: decoded_data['user_id'], category: params[:category]).present?
+
+        render_success({ message: 'Unsubscribed Successfully' })
+      end
+
       private
 
       def sign_up_params

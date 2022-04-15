@@ -12,6 +12,7 @@ class User < ApplicationRecord
   belongs_to :college, optional: true
   has_many :internal_feedbacks
   has_many :frontend_projects, dependent: :delete_all
+  has_many :unsubscribes, dependent: :delete_all
   has_many :algo_submissions
   has_many :challenges
   has_many :minibootcamp_submissions
@@ -175,5 +176,14 @@ class User < ApplicationRecord
 
   def activity
     algo_submissions.where(is_submitted: true).group('Date(created_at)').count
+  end
+
+  def unsubscribe_token
+    payload = {
+      user_id: id,
+      user_name: username,
+      initiated_at: Time.now
+    }
+    JWT.encode(payload, Rails.application.secrets.secret_key_base)
   end
 end
