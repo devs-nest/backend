@@ -5,7 +5,8 @@ module Api
     class GroupsController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
-      before_action :user_auth, only: %i[create show join leave] # add leave and join
+      before_action :user_auth, only: %i[create show join leave]
+      before_action :check_v2_eligible, only: %i[create show join]
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
@@ -19,7 +20,7 @@ module Api
       def check_v2_eligible
         return false if @current_user.nil?
     
-        @current_user.discord_active
+        @current_user.discord_active && @current_user.accepted_in_course
       end
 
       def check_authorization
