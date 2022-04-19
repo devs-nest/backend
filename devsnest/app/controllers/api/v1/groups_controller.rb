@@ -16,6 +16,12 @@ module Api
         { user: @current_user, is_create: request.post?, slug: params[:id] }
       end
 
+      def check_v2_eligible
+        return false if @current_user.nil?
+    
+        @current_user.discord_active
+      end
+
       def check_authorization
         group = Group.find_by(id: params[:id])
         return render_not_found unless group.present?
