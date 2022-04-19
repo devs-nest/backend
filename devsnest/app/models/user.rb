@@ -186,4 +186,8 @@ class User < ApplicationRecord
     }
     JWT.encode(payload, Rails.application.secrets.secret_key_base)
   end
+  
+  def is_admin?
+    user_type == "admin"
+  end
 end

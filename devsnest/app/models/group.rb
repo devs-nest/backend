@@ -13,7 +13,7 @@ class Group < ApplicationRecord
   enum classification: %i[students professionals]
 
   scope :v2, -> { where(version: 2) }
-  scope :visible, -> { where(group_type: "public")}
+  scope :visible, -> { where(group_type: 'public')}
   scope :under_12_members, -> { where('members_count < 12')}
 
   def parameterize
