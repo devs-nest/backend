@@ -8,6 +8,10 @@ module Api
       has_many :group_members
       filter :classification
       filter :language
+      filter :name
+      filter :members, apply: ->(records, value, _options) {
+        records.where('members_count >= ? AND members_count <= ?', value[0], value[1])
+      }
 
 
       def owner_name
