@@ -42,18 +42,7 @@ module Api
       def self.records(options = {})
         if options[:context][:is_create]
           super(options)
-        elsif options[:context][:slug].present? || options[:context][:group_id].present?
-        unless options[:context][:is_create]
-          if options[:context][:slug].present?
-            super(options)
-          else
-            if options[:context][:user].is_admin?
-              super(options)
-            else
-              super(options).v2.visible.under_12_members
-            end
-          end
-        else
+        elsif options[:context][:slug].present?
           super(options)
         elsif options[:context][:fetch_v1]
           user = options[:context][:user]
