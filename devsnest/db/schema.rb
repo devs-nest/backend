@@ -256,6 +256,7 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
     t.integer "group_type", default: 0
     t.integer "language", default: 0
     t.integer "classification", default: 0
+    t.text "description"
   end
 
   create_table "hackathons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

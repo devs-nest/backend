@@ -12,6 +12,7 @@ class Group < ApplicationRecord
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
 
+  scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
   scope :visible, -> { where(group_type: 'public')}
   scope :under_12_members, -> { where('members_count < 12')}
