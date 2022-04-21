@@ -85,8 +85,7 @@ module Api
           user.update(group_assigned: true)
           group.update!(members_count: group.members_count + 1)
         end
-        
-        render_success(message: 'Group joined')
+        api_render(200, { id: group.id, type: 'groups', message: "Group joined" })
       rescue ActiveRecord::RecordInvalid => e
         return render_error(message: e)
       rescue ActiveRecord::RecordNotUnique
