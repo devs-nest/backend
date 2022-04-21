@@ -38,6 +38,11 @@ module Api
         group.group_admin_auth(@current_user)
       end
 
+      def check_group_admin_auth
+        group = Group.find_by(id: params[:id])
+        group.group_admin_auth(@current_user)
+      end
+
       def deslug
         slug_name = params[:id]
         group = Group.find_by(slug: slug_name)
