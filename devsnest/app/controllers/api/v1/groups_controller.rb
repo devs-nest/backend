@@ -6,7 +6,8 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
       before_action :user_auth, only: %i[create show join leave]
-      before_action :check_v2_eligible, only: %i[create show join]
+      before_action :check_v2_eligible, only: %i[create show join update]
+      before_action :check_group_admin_auth, only: %i[update]
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
@@ -30,6 +31,11 @@ module Api
         return render_forbidden if @current_user.nil?
 
         return render_forbidden unless group.check_auth(@current_user)
+      end
+
+      def check_group_admin_auth
+        group = Group.find_by(id: params[:id])
+        group.group_admin_auth(@current_user)
       end
 
       def deslug
@@ -85,7 +91,7 @@ module Api
           user.update(group_assigned: true)
           group.update!(members_count: group.members_count + 1)
         end
-        api_render(200, { id: group.id, type: 'groups', message: "Group joined" })
+        api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: "Group joined" })
       rescue ActiveRecord::RecordInvalid => e
         return render_error(message: e)
       rescue ActiveRecord::RecordNotUnique
