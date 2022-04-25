@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
       before_action :user_auth, only: %i[create show join leave]
-      before_action :check_v2_eligible, only: %i[create show join update]
+      before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
       before_action :deslug, only: %i[show]
@@ -20,18 +20,18 @@ module Api
 
       def check_v2_eligible
         return false if @current_user.nil?
-    
-        @current_user.discord_active && @current_user.accepted_in_course
+
+        render_unauthorized unless @current_user.discord_active && @current_user.accepted_in_course
       end
 
-      def check_authorization
-        group = Group.find_by(id: params[:id])
-        return render_not_found unless group.present?
+      # def check_authorization
+      #   group = Group.find_by(id: params[:id])
+      #   return render_not_found unless group.present?
 
-        return render_forbidden if @current_user.nil?
+      #   return render_forbidden if @current_user.nil?
 
-        return render_forbidden unless group.check_auth(@current_user)
-      end
+      #   return render_forbidden unless group.check_auth(@current_user)
+      # end
 
       def check_group_admin_auth
         group = Group.find_by(id: params[:id])
@@ -78,27 +78,27 @@ module Api
         return render_error(message: 'User not found') if user.nil?
 
         # can user join a v2 group?
-        if params[:data][:attributes][:group_id].present?
-          group = Group.find(params[:data][:attributes][:group_id])
-        else
-          group = Group.all.v2.visible.under_12_members.sample
-        end
+        group = if params[:data][:attributes][:group_id].present?
+                  Group.find(params[:data][:attributes][:group_id])
+                else
+                  Group.all.v2.visible.under_12_members.sample
+                end
 
         return render_error(message: 'Group not found') if group.nil?
-    
+
         ActiveRecord::Base.transaction do
           group.group_members.create!(user_id: user.id)
           user.update(group_assigned: true)
           group.update!(members_count: group.members_count + 1)
         end
-        api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: "Group joined" })
+        api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
       rescue ActiveRecord::RecordInvalid => e
-        return render_error(message: e)
+        render_error(message: e)
       rescue ActiveRecord::RecordNotUnique
         user.update(group_assigned: true)
-        return render_error(message: 'User already in a group')
-      rescue => e
-        return render_error(message: "Something went wrong! : #{e}")
+        render_error(message: 'User already in a group')
+      rescue StandardError => e
+        render_error(message: "Something went wrong! : #{e}")
       end
 
       def leave
@@ -116,18 +116,19 @@ module Api
         end
 
         render_success(message: 'Group left')
-        rescue ActiveRecord::RecordNotFound
-          return render_error(message: 'User not in this group')
-        rescue => e
-          return render_error(message: "Something went wrong! : #{e}")
+      rescue ActiveRecord::RecordNotFound
+        render_error(message: 'User not in this group')
+      rescue StandardError => e
+        render_error(message: "Something went wrong! : #{e}")
       end
 
       def create_validations
         return render_error(message: 'User not connected to discord') unless @current_user.discord_active
-        
+
         return render_error(message: "User in a group can't create another group") if @current_user.group_assigned || GroupMember.find_by_user_id(@current_user.id).present?
-        
-        return render_error(message: "Group with this name already exists") if Group.find_by_slug(params[:data][:attributes][:name]).present?
+
+        return render_error(message: 'Group with this name already exists') if Group.find_by_slug(params[:data][:attributes][:name]).present?
+
         params[:data][:attributes][:owner_id] = @current_user.id
       end
 
@@ -139,13 +140,13 @@ module Api
         membership_entity = GroupMember.find_by(user_id: user_to_be_promoted, group_id: group_id)
 
         return render_error(message: 'User does not belong to this group') if membership_entity.nil?
-        
+
         return render_error(message: 'This user can not be promoted') if membership_entity.owner
 
         membership_entity.update(owner: true)
         group.update(co_owner_id: user_to_be_promoted)
 
-        render_success(message: "User has been promoted")
+        render_success(message: 'User has been promoted')
       end
 
       def assign_leader

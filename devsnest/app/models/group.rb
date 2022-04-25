@@ -7,16 +7,16 @@ class Group < ApplicationRecord
   has_many :group_members
   after_create :parameterize
   after_commit :parameterize, if: :saved_change_to_name?
-  validates :members_count, numericality: { less_than_or_equal_to: 16, :message => 'The group is full' }
-  validates :members_count, numericality: { greater_than_or_equal_to: 0, :message => 'The group members count can\'t be negetive' }
+  validates :members_count, numericality: { less_than_or_equal_to: 16, message: 'The group is full' }
+  validates :members_count, numericality: { greater_than_or_equal_to: 0, message: 'The group members count can\'t be negetive' }
   enum group_type: %i[public private], _prefix: :group
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
 
   scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
-  scope :visible, -> { where(group_type: 'public')}
-  scope :under_12_members, -> { where('members_count < 12')}
+  scope :visible, -> { where(group_type: 'public') }
+  scope :under_12_members, -> { where('members_count < 12') }
 
   def parameterize
     update_attribute(:slug, name.parameterize)
@@ -24,7 +24,7 @@ class Group < ApplicationRecord
 
   def reassign_leader(user_id)
     if owner_id == user_id
-      if co_owner_id.nil? && group_members.count > 0
+      if co_owner_id.nil? && group_members.count.positive?
         promote_member_id = group_members.pluck(:id).sample
         update(owner_id: promote_member_id)
       elsif co_owner_id.present?
