@@ -217,14 +217,14 @@ RSpec.describe Api::V1::GroupsController, type: :request do
                                                 params: { "data": { "attributes": { "old_group_name": group4.name, "new_group_name": new_group_name } } }
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:name]).to eq(new_group_name)
       end
-      
+
       it 'should return error if group is nil while updating batch leader' do
         params[:data][:attributes][:group_name] = 'random name'
         put '/api/v1/groups/update_batch_leader', headers: headers, params: params
         expect(response.status).to eq(400)
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error]).to eq('Group not found')
       end
-      
+
       it 'should change the batch_leader while updating batch leader' do
         put '/api/v1/groups/update_batch_leader', headers: headers, params: params
         expect(response.status).to eq(204)
