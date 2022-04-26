@@ -47,10 +47,12 @@ module Api
           user = options[:context][:user]
           group_ids = user.fetch_group_ids
           super(options).where(id: group_ids)
-        elsif options[:context][:user].is_admin?
+        elsif options[:context][:user]&.is_admin?
           super(options)
         else
-          super(options).v2.visible.under_12_members
+          user_private_group = GroupMember.where(user_id: options[:context][:user]&.id).first
+          private_group = Group.find_by(id: user_private_group.group_id) if user_private_group.present?
+          super(options).v2.visible.under_12_members.or(super(options).where(id: private_group&.id))
         end
       end
     end
