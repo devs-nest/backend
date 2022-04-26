@@ -5,7 +5,7 @@ module Api
     class GroupsController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
-      before_action :user_auth, only: %i[create show join leave]
+      before_action :user_auth, only: %i[create show join leave update]
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
