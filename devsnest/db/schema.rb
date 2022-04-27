@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_14_084842) do
+ActiveRecord::Schema.define(version: 2022_04_27_075644) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "RCly+ETlzGA"
+    t.string "cuid", default: "fP06oQJQ+1w"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -184,6 +184,12 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["challenge_id", "parent_id"], name: "index_discussions_on_challenge_id_and_parent_id"
     t.index ["user_id"], name: "index_discussions_on_user_id"
+  end
+
+  create_table "email_templates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "template_id"
+    t.string "name"
+    t.index ["template_id", "name"], name: "index_email_templates_on_template_id_and_name"
   end
 
   create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -484,8 +490,8 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
     t.string "company_name"
     t.string "college_name"
     t.integer "college_year"
-    t.boolean "is_college_form_filled", default: false
     t.boolean "accepted_in_course", default: false
+    t.boolean "is_college_form_filled", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
