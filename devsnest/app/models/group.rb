@@ -6,7 +6,6 @@ class Group < ApplicationRecord
   audited
   has_many :group_members
   after_create :parameterize
-  after_commit :parameterize, if: :saved_change_to_name?
   validates :members_count, numericality: { less_than_or_equal_to: 16, message: 'The group is full' }
   validates :members_count, numericality: { greater_than_or_equal_to: 0, message: 'The group members count can\'t be negetive' }
   enum group_type: %i[public private], _prefix: :group
