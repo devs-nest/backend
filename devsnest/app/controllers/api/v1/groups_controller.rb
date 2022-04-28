@@ -94,6 +94,7 @@ module Api
         ActiveRecord::Base.transaction do
           group.group_members.create!(user_id: user.id)
           user.update(group_assigned: true)
+          raise StandardError.new "Group is already full!" if group.group_members.count > 16
           group.update!(members_count: group.members_count + 1)
         end
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
@@ -103,7 +104,7 @@ module Api
         user.update(group_assigned: true)
         render_error(message: 'User already in a group')
       rescue StandardError => e
-        render_error(message: "Something went wrong! : #{e}")
+        render_error(message: e)
       end
 
       def leave
