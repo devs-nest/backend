@@ -38,11 +38,6 @@ module Api
         group.group_admin_auth(@current_user)
       end
 
-      def check_group_admin_auth
-        group = Group.find_by(id: params[:id])
-        group.group_admin_auth(@current_user)
-      end
-
       def deslug
         slug_name = params[:id]
         group = Group.find_by(slug: slug_name)
@@ -146,10 +141,7 @@ module Api
         membership_entity = GroupMember.find_by(user_id: user_to_be_promoted, group_id: group_id)
 
         return render_error(message: 'User does not belong to this group') if membership_entity.nil?
-<<<<<<< HEAD
-=======
 
->>>>>>> lint and rspecs
         return render_error(message: 'This user can not be promoted') if membership_entity.owner
 
         membership_entity.update(owner: true)
