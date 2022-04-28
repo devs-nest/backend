@@ -205,9 +205,10 @@ class User < ApplicationRecord
       EmailSenderWorker.perform_at(15.minutes.from_now, email, {
                                      'unsubscribe_token': unsubscribe_token
                                    }, template_id)
-  end
+    end
 
-  def is_admin?
-    user_type == 'admin'
+    def is_admin?
+      user_type == 'admin'
+    end
   end
 end
