@@ -52,7 +52,7 @@ module Api
         else
           user_private_group = GroupMember.where(user_id: options[:context][:user]&.id).first
           private_group = Group.find_by(id: user_private_group.group_id) if user_private_group.present?
-          super(options).v2.visible.under_12_members.or(super(options).where(id: private_group&.id))
+          super(options).v2.visible.under_12_members.or(super(options).where(id: private_group&.id, group_type: 'private'))
         end
       end
     end
