@@ -32,7 +32,7 @@ module Api
         return nil if context[:user].nil?
 
         member = GroupMember.where(user_id: context[:user].id).first
-        member.present? ? memb\id : nil
+        member.present? ? member.group_id : nil
       end
 
       def group_name
