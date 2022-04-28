@@ -4,10 +4,107 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::GroupsController, type: :request do
   context 'Groups Request Spec' do
-    context 'Get Groups' do
-      let(:user) { create(:user, user_type: 1) } # admin
-      let!(:user2) { create(:user, user_type: 0) }
+    context 'Create Groups' do
+      let!(:user) { create(:user, user_type: 1) } # admin
+      let!(:user2) { create(:user, user_type: 0, discord_active: true) }
+      let!(:new_user) { create(:user, user_type: 0, discord_active: true, accepted_in_course: true) }
       let(:controller) { Api::V1::AdminController }
+      let!(:params) do
+        {
+          "data": {
+            "attributes": {
+              "name": 'grp rspec',
+              "group_type": 'private',
+              "language": 'hindi',
+              "classification": 'students'
+            },
+            "type": 'groups'
+          }
+
+        }
+      end
+
+      it 'creates a group' do
+        sign_in(new_user)
+        post '/api/v1/groups', headers: HEADERS, params: params.to_json
+        expect(response.status).to eq(201)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:name]).to eq('grp rspec')
+      end
+
+      it 'older user tries to creates a group' do
+        sign_in(user2)
+        post '/api/v1/groups', headers: HEADERS, params: params.to_json
+        expect(response.status).to eq(401)
+      end
+
+      # it 'checks forbidden' do
+      #   sign_in(user2)
+      #   create(:group, name: 'gamma')
+      #   get '/api/v1/groups/gamma'
+      #   expect(response.status).to eq(403)
+      # end
+    end
+
+    context 'Create Groups and leave xD' do
+      let!(:user) { create(:user, user_type: 1) } # admin
+      let!(:user2) { create(:user, user_type: 0, discord_active: true, accepted_in_course: true) }
+      let!(:new_user) { create(:user, user_type: 0, discord_active: true, accepted_in_course: true) }
+      let(:controller) { Api::V1::AdminController }
+      let!(:params) do
+        {
+          "data": {
+            "attributes": {
+              "name": 'grp rspec',
+              "group_type": 'private',
+              "language": 'hindi',
+              "classification": 'students'
+            },
+            "type": 'groups'
+          }
+
+        }
+      end
+
+      it 'creates a group and leave' do
+        sign_in(new_user)
+        post '/api/v1/groups', headers: HEADERS, params: params.to_json
+        expect(response.status).to eq(201)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:name]).to eq('grp rspec')
+
+        sign_in(new_user)
+        group = Group.find_by(slug: 'grp-rspec')
+        post "/api/v1/groups/#{group.id}/leave", params: { "data": { "attributes": {}, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Group left')
+        expect(Group.find_by(slug: 'grp-rspec')).to be_nil
+      end
+
+      it 'creates a group and leave reassign leader' do
+        sign_in(new_user)
+        post '/api/v1/groups', headers: HEADERS, params: params.to_json
+        expect(response.status).to eq(201)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:name]).to eq('grp rspec')
+
+        group = Group.find_by(slug: 'grp-rspec')
+        sign_in(user2)
+        post '/api/v1/groups/join', params: { "data": { "attributes": { "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Group joined')
+
+        sign_in(new_user)
+        post "/api/v1/groups/#{group.id}/leave", params: { "data": { "attributes": {}, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Group left')
+        expect(Group.find_by(slug: 'grp-rspec')).to be_present
+      end
+    end
+
+    context 'Get Groups' do
+      let!(:user) { create(:user, user_type: 1) } # admin
+      let!(:user2) { create(:user, user_type: 0) }
+      let!(:new_user) { create(:user, user_type: 0, discord_active: true, accepted_in_course: true) }
+      let(:controller) { Api::V1::AdminController }
+      let(:group) { create(:group, owner_id: user.id) }
 
       it 'check deslug' do
         sign_in(user)
@@ -18,11 +115,54 @@ RSpec.describe Api::V1::GroupsController, type: :request do
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:id]).to eq(group1.id.to_s)
       end
 
-      it 'checks forbidden' do
-        sign_in(user2)
-        create(:group, name: 'gamma')
-        get '/api/v1/groups/gamma'
-        expect(response.status).to eq(403)
+      it 'list v1 groups' do
+        sign_in(new_user)
+        group1 = create(:group, name: 'delta')
+        create(:group_member, user_id: user.id, group_id: group1.id)
+        get '/api/v1/groups?v1=true'
+        expect(response.status).to eq(200)
+      end
+
+      # it 'checks forbidden' do
+      #   sign_in(user2)
+      #   create(:group, name: 'gamma')
+      #   get '/api/v1/groups/gamma'
+      #   expect(response.status).to eq(403)
+      # end
+
+      it 'joins the group' do
+        sign_in(new_user)
+        post '/api/v1/groups/join', params: { "data": { "attributes": { "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Group joined')
+
+        sign_in(new_user)
+        post '/api/v1/groups/join', params: { "data": { "attributes": { "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(400)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User already in a group')
+
+        group = Group.find(GroupMember.find_by(user_id: new_user.id).group_id)
+        sign_in(new_user)
+        post "/api/v1/groups/#{group.id}/leave", params: { "data": { "attributes": { "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Group left')
+
+        sign_in(new_user)
+        post "/api/v1/groups/#{group.id}/leave", params: { "data": { "attributes": { "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(400)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User not in this group')
+      end
+
+      it 'promotes to vtl' do
+        sign_in(new_user)
+        post '/api/v1/groups/join', params: { "data": { "attributes": { "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Group joined')
+
+        sign_in(user)
+        post '/api/v1/groups/promote_to_vice_leader', params: { "data": { "attributes": { "user_id": new_user.id, "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('User has been promoted')
       end
 
       it 'deletes group' do

@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "RCly+ETlzGA"
+    t.string "cuid", default: "Um3Ly+rryOg"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -237,19 +237,26 @@ ActiveRecord::Schema.define(version: 2022_04_14_084842) do
     t.integer "student_mentor_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "group_id"], name: "index_group_members_on_user_id_and_group_id", unique: true
+    t.index ["user_id"], name: "index_group_members_on_user_id", unique: true
   end
 
   create_table "groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "owner_id"
     t.integer "batch_id"
     t.string "name", default: "", null: false
-    t.integer "members_count"
+    t.integer "members_count", default: 0
     t.integer "student_mentor_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "co_owner_id"
     t.integer "batch_leader_id"
     t.string "slug"
+    t.integer "version", default: 2
+    t.integer "group_type", default: 0
+    t.integer "language", default: 0
+    t.integer "classification", default: 0
+    t.text "description"
   end
 
   create_table "hackathons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
