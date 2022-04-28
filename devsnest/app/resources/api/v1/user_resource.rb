@@ -31,12 +31,12 @@ module Api
         return nil if context[:user].nil?
 
         member = GroupMember.where(user_id: context[:user].id).first
-        member.present? ? member.group_id : nil
+        member.present? ? memb\id : nil
       end
 
       def group_name
         member = GroupMember.where(user_id: @model.id).first
-        member.present? ? member.group.name : nil
+        member.present? ? member.group&.name : nil
       end
 
       def college_name
