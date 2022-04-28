@@ -16,10 +16,10 @@ RSpec.describe GroupMember, type: :request do
 
       let(:params) { { 'group_id': group.id } }
 
-      it 'should return forbidden if user if not part of group' do
+      it 'should return ok even if user if not part of group' do
         sign_in(user)
         get '/api/v1/group-members', params: params
-        expect(response).to have_http_status(403)
+        expect(response).to have_http_status(200)
       end
 
       it 'should not return forbidden if user is part of group' do

@@ -36,7 +36,7 @@ module Api
 
       def group_name
         member = GroupMember.where(user_id: @model.id).first
-        member.present? ? member.group.name : nil
+        member.present? ? member.group&.name : nil
       end
 
       def college_name

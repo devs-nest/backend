@@ -56,11 +56,15 @@ Rails.application.routes.draw do
       jsonapi_resources :submissions, only: %i[create]
       jsonapi_resources :frontend_submissions, only: %i[create]
       jsonapi_resources :frontend_questions, only: %i[show]
-      jsonapi_resources :groups, only: %i[show index] do
+      jsonapi_resources :groups, only: %i[show index create update] do
         jsonapi_relationships
         collection do
           delete :delete_group
           put :update_group_name, :update_batch_leader
+          post :promote_to_vice_leader, :join
+        end
+        member do
+          post :leave
         end
       end
       jsonapi_resources :group_members, only: %i[index show] do

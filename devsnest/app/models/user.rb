@@ -53,7 +53,7 @@ class User < ApplicationRecord
   end
 
   def self.fetch_google_user_details(code)
-    url = URI('https://oauth2.googleapis.com/tokeninfo?id_token=' + code)
+    url = URI("https://oauth2.googleapis.com/tokeninfo?id_token=#{code}")
     https = Net::HTTP.new(url.host, url.port)
     https.use_ssl = true
     request = Net::HTTP::Post.new(url)
@@ -106,7 +106,7 @@ class User < ApplicationRecord
 
   def self.fetch_discord_access_token(code)
     url = URI('https://discordapp.com/api/oauth2/token')
-    token = 'Basic ' + Base64.strict_encode64("#{ENV['DISCORD_CLIENT_ID']}:#{ENV['DISCORD_CLIENT_SECRET']}")
+    token = "Basic #{Base64.strict_encode64("#{ENV['DISCORD_CLIENT_ID']}:#{ENV['DISCORD_CLIENT_SECRET']}")}"
 
     https = Net::HTTP.new(url.host, url.port)
     https.use_ssl = true
@@ -131,9 +131,10 @@ class User < ApplicationRecord
   end
 
   def fetch_group_ids
-    if user_type == 'user'
+    case user_type
+    when 'user'
       Group.where(batch_leader_id: id).pluck(:id) + GroupMember.where(user_id: id).pluck(:group_id)
-    elsif user_type == 'admin'
+    when 'admin'
       Group.all.ids
     end
   end
@@ -204,6 +205,9 @@ class User < ApplicationRecord
       EmailSenderWorker.perform_at(15.minutes.from_now, email, {
                                      'unsubscribe_token': unsubscribe_token
                                    }, template_id)
-    end
+  end
+
+  def is_admin?
+    user_type == 'admin'
   end
 end
