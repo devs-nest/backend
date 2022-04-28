@@ -24,7 +24,7 @@ class Group < ApplicationRecord
   def reassign_leader(user_id)
     if owner_id == user_id
       if co_owner_id.nil? && group_members.count.positive?
-        promote_member_id = group_members.pluck(:id).sample
+        promote_member_id = group_members.pluck(:user_id).sample
         update(owner_id: promote_member_id)
       elsif co_owner_id.present?
         update(owner_id: co_owner_id, co_owner_id: nil)
