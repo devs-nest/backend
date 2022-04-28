@@ -21,6 +21,8 @@ module Api
       def check_v2_eligible
         return false if @current_user.nil?
 
+        return true if @current_user.is_admin?
+
         render_unauthorized unless @current_user.discord_active && @current_user.accepted_in_course
       end
 
