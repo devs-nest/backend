@@ -89,7 +89,7 @@ module Api
         ActiveRecord::Base.transaction do
           group.group_members.create!(user_id: user.id)
           user.update(group_assigned: true)
-          fail 'Group is already full!' if group.group_members.count > 16
+          raise StandardError.new 'Group is already full!' if group.group_members.count > 16
 
           group.update!(members_count: group.members_count + 1)
         end
