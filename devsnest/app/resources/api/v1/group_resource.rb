@@ -31,7 +31,7 @@ module Api
       def user_group
         if context[:user].present?
           member_entity = GroupMember.find_by(user_id: context[:user].id)&.group_id
-          group = Group.find(member_entity) if member_entity.present?
+          group = Group.where(id: member_entity).first if member_entity.present?
           group == @model
         else
           false
