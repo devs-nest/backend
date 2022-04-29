@@ -20,6 +20,8 @@ class User < ApplicationRecord
   has_many :manual_login_changelog
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
+  after_create :send_registration_email
+  after_update :send_selection_email
 
   def create_username
     username = ''
@@ -186,6 +188,24 @@ class User < ApplicationRecord
       initiated_at: Time.now
     }
     JWT.encode(payload, Rails.application.secrets.secret_key_base)
+  end
+
+  # when new user signs up on the website, send them a welcome email
+  def send_registration_email
+    template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
+    EmailSenderWorker.perform_async(email, {
+                                      'unsubscribe_token': unsubscribe_token
+                                    }, template_id)
+  end
+
+  # sending (selection) email to the user when they register for the course
+  def send_selection_email
+    if saved_change_to_attribute?(:is_fullstack_course_22_form_filled) && is_fullstack_course_22_form_filled
+      template_id = EmailTemplate.find_by(name: 'selection_mail')&.template_id
+      EmailSenderWorker.perform_at(15.minutes.from_now, email, {
+                                     'unsubscribe_token': unsubscribe_token
+                                   }, template_id)
+    end
   end
 
   def is_admin?
