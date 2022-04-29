@@ -203,7 +203,7 @@ class User < ApplicationRecord
     if saved_change_to_attribute?(:is_fullstack_course_22_form_filled) && is_fullstack_course_22_form_filled
       template_id = EmailTemplate.find_by(name: 'selection_mail')&.template_id
       EmailSenderWorker.perform_at(15.minutes.from_now, email, {
-                                     'unsubscribe_token': unsubscribe_token
+                                     'unsubscribe_token': unsubscribe_token, 'user_accepted': true
                                    }, template_id)
     end
   end
