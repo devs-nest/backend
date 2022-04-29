@@ -192,7 +192,7 @@ class User < ApplicationRecord
 
   # when new user signs up on the website, send them a welcome email
   def send_registration_email
-    template_id = EmailTemplate.find_by(name: 'registration_mail').template_id
+    template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
     EmailSenderWorker.perform_async(email, {
                                       'unsubscribe_token': unsubscribe_token
                                     }, template_id)
@@ -200,15 +200,15 @@ class User < ApplicationRecord
 
   # sending (selection) email to the user when they register for the course
   def send_selection_email
-    template_id = EmailTemplate.find_by(name: 'selection_mail').template_id
     if saved_change_to_attribute?(:is_fullstack_course_22_form_filled) && is_fullstack_course_22_form_filled
+      template_id = EmailTemplate.find_by(name: 'selection_mail')&.template_id
       EmailSenderWorker.perform_at(15.minutes.from_now, email, {
                                      'unsubscribe_token': unsubscribe_token
                                    }, template_id)
     end
+  end
 
-    def is_admin?
-      user_type == 'admin'
-    end
+  def is_admin?
+    user_type == 'admin'
   end
 end
