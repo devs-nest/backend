@@ -13,7 +13,7 @@ class MassNotifierWorker
         next unless discord_ids.present?
 
         data = {
-          bot_id:bot.id, message: event_message,
+          bot_id: bot.id, message: event_message,
           discord_id: discord_ids.pluck(:discord_id)
         }
         AwsSqsWorker.perform_async('notification', data)

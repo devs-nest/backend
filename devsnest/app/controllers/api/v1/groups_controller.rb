@@ -52,7 +52,8 @@ module Api
         group_name = params['data']['attributes']['group_name']
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
-         GroupModifierWorker.perform_async('destroy', group_name)
+
+        GroupModifierWorker.perform_async('destroy', group_name)
         group.destroy
       end
 
@@ -61,8 +62,9 @@ module Api
         new_group_name = params['data']['attributes']['new_group_name']
         group = Group.find_by(name: old_group_name)
         return render_error('Group not found') if group.nil?
-         GroupModifierWorker.perform_async('update', old_group_name, new_group_name)
-        
+
+        GroupModifierWorker.perform_async('update', old_group_name, new_group_name)
+
         group.update(name: new_group_name)
 
         render_success(group.as_json.merge({ 'type': 'group' }))
@@ -92,7 +94,7 @@ module Api
         ActiveRecord::Base.transaction do
           group.group_members.create!(user_id: user.id)
           user.update(group_assigned: true)
-          raise StandardError.new 'Group is already full!' if group.group_members.count > 16
+          raise StandardError, 'Group is already full!' if group.group_members.count > 16
 
           group.update!(members_count: group.members_count + 1)
         end
@@ -161,7 +163,7 @@ module Api
           group = Group.find(parsed_response['data']['id'].to_i)
           group.update!(members_count: group.members_count + 1)
           group.group_members.create!(user_id: @current_user.id, owner: true)
-           GroupModifierWorker.perform_async('create',  group.group_name)
+          GroupModifierWorker.perform_async('create', group.group_name)
         end
       end
     end
