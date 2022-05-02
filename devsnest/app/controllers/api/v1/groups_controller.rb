@@ -52,8 +52,7 @@ module Api
         group_name = params['data']['attributes']['group_name']
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
-
-        GroupModifierWorker.perform_async('destroy', group_name)
+        
         group.destroy
       end
 
@@ -62,8 +61,6 @@ module Api
         new_group_name = params['data']['attributes']['new_group_name']
         group = Group.find_by(name: old_group_name)
         return render_error('Group not found') if group.nil?
-
-        GroupModifierWorker.perform_async('update', old_group_name, new_group_name)
 
         group.update(name: new_group_name)
 

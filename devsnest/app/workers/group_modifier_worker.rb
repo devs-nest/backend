@@ -11,13 +11,4 @@ class GroupModifierWorker
     }
     AwsSqsWorker.perform_async('group_modifier', data)
   end
-
-  def perform(_action, old_group_name, new_group_name)
-    data = {
-      action: 'update',
-      new_group_name: new_group_name,
-      old_group_name: old_group_name
-    }
-    AwsSqsWorker.perform_async('group_modifier', data)
-  end
 end
