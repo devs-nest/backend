@@ -41,7 +41,7 @@ module Api
       def self.records(options = {})
         if options[:context][:is_create]
           super(options)
-        elsif options[:context][:slug].present?
+        elsif options[:context][:slug].present? || options[:context][:group_id].present?
           super(options)
         elsif options[:context][:fetch_v1]
           user = options[:context][:user]

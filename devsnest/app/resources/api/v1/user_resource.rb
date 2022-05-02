@@ -39,6 +39,11 @@ module Api
         member.present? ? member.group&.name : nil
       end
 
+      def group_version
+        member = GroupMember.where(user_id: @model.id).first
+        member.present? ? member.group&.version : nil
+      end
+
       def college_name
         @model.college.nil? ? nil : @model.college.name
       end
