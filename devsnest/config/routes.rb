@@ -45,6 +45,7 @@ Rails.application.routes.draw do
           post :reset_password, :reset_password_initiator
           post :email_verification, :email_verification_initiator
           get :report, :leaderboard, :me, :get_token
+          post :upload_i_have_enrolled_for_course_image
           put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username, :upload_files
           post :login, :connect_discord
           delete :logout
