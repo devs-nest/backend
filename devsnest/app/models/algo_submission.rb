@@ -128,9 +128,8 @@ class AlgoSubmission < ApplicationRecord
     user = User.find(user_id)
     challenge = Challenge.find(challenge_id)
     best_submission = user.algo_submissions.find_by(challenge_id: challenge.id, is_best_submission: true)
-    return if best_submission.nil?
 
-    previous_max_score = (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score
+    previous_max_score = (best_submission&.passed_test_cases || 0 / best_submission&.total_test_cases&.to_f || 0 ) * challenge.score
     new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
     if previous_max_score < new_score
       ch_lb = challenge.generate_leaderboard
