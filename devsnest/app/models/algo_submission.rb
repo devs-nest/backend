@@ -138,7 +138,7 @@ class AlgoSubmission < ApplicationRecord
       ch_lb = challenge.generate_leaderboard
       recalculated_score_of_user = user.score - previous_max_score + new_score
       us = user.update!(score: recalculated_score_of_user)
-      raise "This is an exception #{previous_max_score} #{new_score} and id #{id} #{passed_test_cases}/#{total_test_cases} score: #{challenge.score} got #{us}" if status == 'Accepted'
+      # raise "This is an exception #{previous_max_score} #{new_score} and id #{id} #{passed_test_cases}/#{total_test_cases} score: #{challenge.score} got #{us}" if status == 'Accepted'
       ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
     end
   end
