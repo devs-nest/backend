@@ -52,7 +52,7 @@ module Api
         group_name = params['data']['attributes']['group_name']
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
-        
+
         group.destroy
       end
 
