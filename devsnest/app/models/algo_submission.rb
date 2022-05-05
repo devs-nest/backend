@@ -128,15 +128,17 @@ class AlgoSubmission < ApplicationRecord
     user = User.find(user_id)
     challenge = Challenge.find(challenge_id)
     best_submission = user.algo_submissions.find_by(challenge_id: challenge.id, is_best_submission: true)
-    return if best_submission.nil?
-
-    previous_max_score = (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score
+    previous_max_score = if best_submission.nil?
+                           0
+                         else
+                           (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score
+                         end
     new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
     if previous_max_score < new_score
       ch_lb = challenge.generate_leaderboard
       recalculated_score_of_user = user.score - previous_max_score + new_score
       user.update!(score: recalculated_score_of_user)
-      ch_lb.rank_member("#{user.username}", challenge.score * (passed_test_cases.to_f / total_test_cases))
+      ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
     end
   end
 
