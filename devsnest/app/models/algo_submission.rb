@@ -134,7 +134,7 @@ class AlgoSubmission < ApplicationRecord
                            (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score
                          end
     new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
-    raise "This is an exception #{previous_max_score} #{new_score}"
+    raise "This is an exception #{previous_max_score} #{new_score} and id #{id} #{passed_test_cases}#{total_test_cases}" if status == 'Accepted'
     if previous_max_score < new_score
       ch_lb = challenge.generate_leaderboard
       recalculated_score_of_user = user.score - previous_max_score + new_score
