@@ -307,6 +307,17 @@ module Api
         render_success({ message: 'Unsubscribed Successfully' })
       end
 
+      def upload_i_have_enrolled_for_course_image
+        user = @current_user
+        file = params['image-file']
+        file_name = SecureRandom.hex(5)
+        key = "#{file_name}_#{user.id}"
+        $s3&.put_object(bucket: "#{ENV['S3_PREFIX']}custom-images", key: key, body: file)
+        image_link = "https://#{ENV['S3_PREFIX']}custom-images.s3.amazonaws.com/#{key}"
+        user.update(enrolled_for_course_image_url: image_link)
+        render_success({ message: 'Image uploaded successfully' })
+      end
+
       private
 
       def sign_up_params
