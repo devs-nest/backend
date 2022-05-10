@@ -95,7 +95,7 @@ module Api
 
           group.update!(members_count: group.members_count + 1)
         end
-        RoleModifierWorker.perform_async('add_role', user.discord_id, group.group_name)
+        RoleModifierWorker.perform_async('add_role', user.discord_id, group.name)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
       rescue ActiveRecord::RecordInvalid => e
         render_error(message: e)
@@ -119,7 +119,7 @@ module Api
           group.reassign_leader(user.id)
           user.update(group_assigned: false)
         end
-        RoleModifierWorker.perform_async('delete_role', user.discord_id, group.group_name)
+        RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
         render_error(message: 'User not in this group')
@@ -160,7 +160,7 @@ module Api
           group = Group.find(parsed_response['data']['id'].to_i)
           group.update!(members_count: group.members_count + 1)
           group.group_members.create!(user_id: @current_user.id, owner: true)
-          GroupModifierWorker.perform_async('create', group.group_name)
+          GroupModifierWorker.perform_async('create', group.name)
         end
       end
     end
