@@ -311,7 +311,7 @@ module Api
         user = @current_user
         file = params['image-file']
         file_name = SecureRandom.hex(5)
-        key = "#{file_name}_#{user.id}"
+        key = "#{file_name}_#{user.id}.txt"
         $s3&.put_object(bucket: "#{ENV['S3_PREFIX']}custom-images", key: key, body: file)
         image_link = "https://#{ENV['S3_PREFIX']}custom-images.s3.amazonaws.com/#{key}"
         user.update(enrolled_for_course_image_url: image_link)
