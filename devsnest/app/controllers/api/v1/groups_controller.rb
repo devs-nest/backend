@@ -53,6 +53,7 @@ module Api
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
 
+        GroupModifierWorker.perform_async('destroy', group_name)
         group.destroy
       end
 
@@ -63,7 +64,7 @@ module Api
         return render_error('Group not found') if group.nil?
 
         group.update(name: new_group_name)
-
+        GroupModifierWorker.perform_async('update', old_group_name +" "+ new_group_name )
         render_success(group.as_json.merge({ 'type': 'group' }))
       end
 
