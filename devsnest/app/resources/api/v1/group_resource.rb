@@ -10,6 +10,7 @@ module Api
       filter :classification
       filter :language
       filter :name
+      filter :version
       filter :members, apply: lambda { |records, value, _options|
         records.where('members_count >= ? AND members_count <= ?', value[0], value[1])
       }
