@@ -45,6 +45,9 @@ class Templates::Python3 < Templates::BaseHelper
         'int' => ["[ [int(j) for j in input().split()] for i in range(#{dependent&.first})]"],
         'float' => ["[ [float(j) for j in input().split()] for i in range(#{dependent&.first})]"],
         'string' => ["[ [j for j in input().split()] for i in range(#{dependent&.first})]"]
+      },
+      'linked_list' => {
+
       }
     }
     ["#{name} = #{meta[datastructure][dtype].join('\n')}"]
