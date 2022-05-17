@@ -44,12 +44,14 @@ module Api
           super(options)
         elsif options[:context][:slug].present? || options[:context][:group_id].present?
           super(options)
+        elsif options[:context][:fetch_all].present?
+          super(options)
         elsif options[:context][:fetch_v1]
           user = options[:context][:user]
           group_ids = user.fetch_group_ids
           super(options).where(id: group_ids)
         elsif options[:context][:user]&.is_admin?
-          super(options)
+          super(options).v2
         else
           user_private_group = GroupMember.where(user_id: options[:context][:user]&.id).first
           private_group = Group.find_by(id: user_private_group.group_id) if user_private_group.present?

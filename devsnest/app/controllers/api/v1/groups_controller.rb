@@ -15,7 +15,7 @@ module Api
       after_action :assign_leader, only: %i[create]
 
       def context
-        { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present? }
+        { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present?, , fetch_all: params[:all_groups].present? }
       end
 
       def check_v2_eligible
