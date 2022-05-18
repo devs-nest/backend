@@ -3,7 +3,7 @@
 # worker that appends tokens to a message
 class RoleModifierWorker
   include Sidekiq::Worker
-
+  sidekiq_options retry: 5
   def perform(action, discord_id, role_name)
     data = {
       action: action,

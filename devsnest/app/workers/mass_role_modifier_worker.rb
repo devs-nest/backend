@@ -3,7 +3,7 @@
 # worker that appends tokens to a message
 class MassRoleModifierWorker
   include Sidekiq::Worker
-
+  sidekiq_options retry: 2
   def perform(action, discord_ids, role_name)
     start = 0
     bucket_size = 50
