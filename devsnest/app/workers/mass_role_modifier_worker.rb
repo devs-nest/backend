@@ -5,7 +5,7 @@ class MassRoleModifierWorker
   include Sidekiq::Worker
   sidekiq_options retry: 2
   def perform(action, discord_ids, role_name)
-    discord_ids.each_slice(50) do |ids|
+    discord_ids.each_slice(100) do |ids|
       data = {
         action: action,
         discord_ids: ids,
