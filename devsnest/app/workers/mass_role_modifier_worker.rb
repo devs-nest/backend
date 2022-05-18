@@ -5,18 +5,13 @@ class MassRoleModifierWorker
   include Sidekiq::Worker
   sidekiq_options retry: 2
   def perform(action, discord_ids, role_name)
-    start = 0
-    bucket_size = 50
-    while start * bucket_size <= discord_ids.length
-      discord_id = discord_ids.slice(start * bucket_size, bucket_size)
-
+    discord_ids.each_slice(20) do |ids|
       data = {
         action: action,
-        discord_ids: discord_id,
+        discord_ids: ids,
         role_name: role_name
       }
       AwsSqsWorker.perform_async('role_modifier', data)
-      start += 1
     end
   end
 end
