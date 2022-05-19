@@ -1,7 +1,8 @@
 require 'algo_templates/base_helper'
 class Templates::Java < Templates::BaseHelper
-  def initialize(input_json, output_json)
+  def initialize(input_json, output_json, topic)
     super(input_json, output_json, 'java')
+    @topic = topic
 
     @head = build_head
     @body = build_body

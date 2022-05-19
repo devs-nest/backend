@@ -1,8 +1,9 @@
 # python3 algo template
 require 'algo_templates/base_helper'
 class Templates::Python3 < Templates::BaseHelper
-  def initialize(input_json, output_json)
+  def initialize(input_json, output_json, topic)
     super(input_json, output_json, 'python3')
+    @topic = topic
 
     @head = build_head
     @body = build_body
@@ -10,7 +11,12 @@ class Templates::Python3 < Templates::BaseHelper
   end
 
   def build_head
-    ''
+    head_code = []
+    if @topic == 'linkedlist'
+      head_code += linked_list_node_class
+      head_code += linked_list_convert_function
+    end
+    head_code.join("\n")
   end
 
   def build_body
@@ -27,6 +33,14 @@ class Templates::Python3 < Templates::BaseHelper
     # build prints
     tail_code += output_code
     tail_code.join("\n\t")
+  end
+
+  def linked_list_node_class
+    ['class Node:', "\tdef __init__(self, data):", "\t\tself.data = data", "\t\tself.next = None"]
+  end
+
+  def linked_list_convert_function
+    ['def convertToLL(arr, n):', "\thead = None", "\ttail = None", "\tfor i in arr:", "\t\tnode = Node(i)", "\t\tif not head:", "\t\t\thead = node", "\t\tif tail:", "\t\t\ttail.next = node", "\t\ttail = node", "\treturn head"]
   end
 
   def input_builder(name, datastructure, dtype, dependent)
@@ -47,10 +61,15 @@ class Templates::Python3 < Templates::BaseHelper
         'string' => ["[ [j for j in input().split()] for i in range(#{dependent&.first})]"]
       },
       'linked_list' => {
-
+        'int' => ["raw_array = list(map(int, input().split()))", "#{name} = convertToLL(raw_array, len(raw_array))"]
       }
     }
-    ["#{name} = #{meta[datastructure][dtype].join('\n')}"]
+    
+    if datastructure == 'linked_list'
+      ["#{meta[datastructure][dtype].join('\n')}"]
+    else
+      ["#{name} = #{meta[datastructure][dtype].join('\n')}"]
+    end
   end
 
   def output_builder(name, datastructure, dtype)
