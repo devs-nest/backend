@@ -92,7 +92,7 @@ class Templates::Python3 < Templates::BaseHelper
         'int' => ["for i in #{name}:", "\tprint(*i)"],
         'float' => ["for i in #{name}:", "\tprint(*i)"],
         'string' => ["for i in #{name}:", "\tprint(*i)"]
-      }
+      },
       'linked_list' => {
         'int' => ["printLL(#{name})"]
       }
