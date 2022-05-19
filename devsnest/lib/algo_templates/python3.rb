@@ -43,6 +43,10 @@ class Templates::Python3 < Templates::BaseHelper
     ['def convertToLL(arr, n):', "\thead = None", "\ttail = None", "\tfor i in arr:", "\t\tnode = Node(i)", "\t\tif not head:", "\t\t\thead = node", "\t\tif tail:", "\t\t\ttail.next = node", "\t\ttail = node", "\treturn head"]
   end
 
+  def linked_list_print_function
+    ['def printLL(head):', "\twhile head:", "\t\tprint(head.data, end = ' ')", "\t\thead = head.next", "\tprint()"]
+  end
+
   def input_builder(name, datastructure, dtype, dependent)
     meta = {
       'primitive' => {
@@ -88,6 +92,9 @@ class Templates::Python3 < Templates::BaseHelper
         'int' => ["for i in #{name}:", "\tprint(*i)"],
         'float' => ["for i in #{name}:", "\tprint(*i)"],
         'string' => ["for i in #{name}:", "\tprint(*i)"]
+      }
+      'linked_list' => {
+        'int' => ["printLL(#{name})"]
       }
     }
     meta[datastructure][dtype]
