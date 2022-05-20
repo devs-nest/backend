@@ -13,6 +13,18 @@ class Templates::Python2 < Templates::BaseHelper
     ''
   end
 
+  def linked_list_node_class
+    ['class Node:', "\tdef __init__(self, data):", "\t\tself.data = data", "\t\tself.next = None"]
+  end
+
+  def linked_list_convert_function
+    ['def convertToLL(arr, n):', "\thead = None", "\ttail = None", "\tfor i in arr:", "\t\tnode = Node(i)", "\t\tif not head:", "\t\t\thead = node", "\t\tif tail:", "\t\t\ttail.next = node", "\t\ttail = node", "\treturn head"]
+  end
+
+  def linked_list_print_function
+    ['def printLL(head):', "\twhile head:", "\t\tprint(head.data, end = ' ')", "\t\thead = head.next", "\tprint()"]
+  end
+
   def build_body
     ["def solve(#{build_argument_list.join(', ')}):", "\t# CODE HERE"].join("\n")
   end
