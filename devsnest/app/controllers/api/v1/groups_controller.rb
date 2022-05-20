@@ -121,6 +121,8 @@ module Api
           user.update(group_assigned: false)
         end
         RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
+        GroupModifierWorker.perform_async('destroy', group_name) if Group.find(params[:id]).nil?
+
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
         render_error(message: 'User not in this group')
