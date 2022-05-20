@@ -114,6 +114,8 @@ module Api
         group = Group.find(params[:id])
         return render_error(message: 'Group not found') if group.nil?
 
+        group_name = group.name
+
         ActiveRecord::Base.transaction do
           group.group_members.find_by!(user_id: user.id).destroy
           group.update!(members_count: group.members_count - 1)
@@ -121,7 +123,7 @@ module Api
           user.update(group_assigned: false)
         end
         RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
-        GroupModifierWorker.perform_async('destroy', group_name) if Group.find(params[:id]).nil?
+        GroupModifierWorker.perform_async('destroy', group_name) if Group.find_by(id: params[:id]).blank?
 
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
