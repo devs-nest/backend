@@ -11,6 +11,7 @@ class Challenge < ApplicationRecord
   has_many :company_challenge_mappings
   has_many :companies, through: :company_challenge_mappings
   belongs_to :user
+  has_many :assingment_questions
   after_create :create_slug
   validates_uniqueness_of :name, :slug
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?

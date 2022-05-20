@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_02_121059) do
+ActiveRecord::Schema.define(version: 2022_05_09_121901) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -39,6 +39,12 @@ ActiveRecord::Schema.define(version: 2022_05_02_121059) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["challenge_id", "language_id"], name: "index_algo_templates_on_challenge_id_and_language_id", unique: true
+  end
+
+  create_table "assignment_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "course_curriculum_id"
+    t.integer "question_id"
+    t.string "question_type"
   end
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -95,7 +101,7 @@ ActiveRecord::Schema.define(version: 2022_05_02_121059) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "fP06oQJQ+1w"
+    t.string "cuid", default: "414FIm8bgUo"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -120,6 +126,7 @@ ActiveRecord::Schema.define(version: 2022_05_02_121059) do
     t.integer "content_type"
     t.string "unique_id"
     t.string "parent_id"
+    t.integer "course_curriculum_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
@@ -172,6 +179,28 @@ ActiveRecord::Schema.define(version: 2022_05_02_121059) do
     t.json "reference_data"
     t.index ["parent_id"], name: "index_contents_on_parent_id"
     t.index ["unique_id"], name: "index_contents_on_unique_id"
+  end
+
+  create_table "course_curriculums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "course_id"
+    t.integer "course_type"
+    t.string "topic"
+    t.integer "day"
+    t.text "video_link"
+    t.text "resources"
+    t.boolean "locked", default: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["course_id", "course_type"], name: "index_course_curriculums_on_course_id_and_course_type"
+    t.index ["course_id", "day"], name: "index_course_curriculums_on_course_id_and_day"
+  end
+
+  create_table "courses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.boolean "archived", default: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_courses_on_name"
   end
 
   create_table "discussions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -497,8 +526,8 @@ ActiveRecord::Schema.define(version: 2022_05_02_121059) do
     t.string "company_name"
     t.string "college_name"
     t.integer "college_year"
-    t.boolean "accepted_in_course", default: false
     t.boolean "is_college_form_filled", default: false
+    t.boolean "accepted_in_course", default: false
     t.string "enrolled_for_course_image_url"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

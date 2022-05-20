@@ -120,6 +120,7 @@ Rails.application.routes.draw do
       jsonapi_resources :discussion, only: %i[show index create destroy]
       jsonapi_resources :upvote, only: %i[create destroy]
       jsonapi_resources :college_form, only: %i[create]
+      jsonapi_resources :course_curriculum, only: %i[index]
     end
   end
 end
