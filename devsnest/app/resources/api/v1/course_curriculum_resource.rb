@@ -17,7 +17,7 @@ module Api
         data = []
         return data if context[:user].blank?
 
-        assignment_questions_data = AssignmentQuestion.where(course_curriculum: CourseCurriculum.first).map(&:question)
+        assignment_questions_data = AssignmentQuestion.where(course_curriculum: @model).map(&:question)
         assignment_questions_data.each do |assignment_question|
           question_data = {
             name: assignment_question&.name,
