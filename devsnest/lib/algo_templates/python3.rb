@@ -15,6 +15,7 @@ class Templates::Python3 < Templates::BaseHelper
     if @topic == 'linkedlist'
       head_code += linked_list_node_class
       head_code += linked_list_convert_function
+      head_code += linked_list_print_function
     end
     head_code.join("\n")
   end

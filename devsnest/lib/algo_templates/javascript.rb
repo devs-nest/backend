@@ -10,7 +10,12 @@ class Templates::JavaScript < Templates::BaseHelper
   end
 
   def build_head
-    $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: 'template_files/parserat.js').body.read
+    head_code = [$s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: 'template_files/parserat.js').body.read]
+    if @topic == 'linkedlist'
+      head_code += linked_list_node_class
+      head_code += linked_list_convert_function
+      head_code += linked_list_print_function
+    end
   end
 
   def input_code
@@ -30,6 +35,8 @@ class Templates::JavaScript < Templates::BaseHelper
                    ["console.log(...#{value[:name]})"]
                  when 'matrix'
                    ["#{value[:name]}.forEach(", '(element) => console.log(...element)', ');']
+                 when 'linked_list'
+                  'int' => ["printLL(#{value[:name]})"]
                  end
     end
     outputs
@@ -47,5 +54,17 @@ class Templates::JavaScript < Templates::BaseHelper
     tail_code += ['}']
 
     tail_code.join("\n")
+  end
+
+  def linked_list_node_class
+    ['class ListNode {', 'constructor(data) {', "\tthis.data = data", "\tthis.next = null", '}', '}']
+  end
+
+  def linked_list_convert_function
+    ['function convertToLL(arr){', "\tlet head, tail, temp", "\tfor(let i=0; i < a.length; i++){", "\t\tif(!head){", "", "\t\thead = new Node(a[i]);", "\t\ttail = head;", "\t\t}", "\t\telse{", "\t\ttail.next = new Node(a[i]);", "\t\ttail = tail.next", "\t\t}", "\t}", "return head;}"]
+  end
+
+  def linked_list_print_function
+    ['function printLL(head){', 'let s = "";', "\twhile (head){", "\t\ts += head.data;", "\t\thead = head.next", "\t}", "console.log(s)", "}"]
   end
 end
