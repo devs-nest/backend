@@ -21,7 +21,8 @@ class User < ApplicationRecord
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
   after_create :send_registration_email
-  after_update :send_selection_email
+  after_update :send_step_one_mail
+  after_update :send_step_two_mail
 
   def create_username
     username = ''
@@ -200,13 +201,23 @@ class User < ApplicationRecord
     end
   end
 
-  # sending (selection) email to the user when they register for the course
-  def send_selection_email
+  # sending 1st step of the 3 steps
+  def send_step_one_mail
     if saved_change_to_attribute?(:is_fullstack_course_22_form_filled) && is_fullstack_course_22_form_filled
-      template_id = EmailTemplate.find_by(name: 'selection_mail')&.template_id
-      EmailSenderWorker.perform_at(15.minutes.from_now, email, {
-                                     'unsubscribe_token': unsubscribe_token, 'user_accepted': true
-                                   }, template_id)
+      template_id = EmailTemplate.find_by(name: 'step_one_mail')&.template_id
+      EmailSenderWorker.perform_async(email, {
+                                        'unsubscribe_token': unsubscribe_token, 'user_accepted': true
+                                      }, template_id)
+    end
+  end
+
+  # sending 2st step of the 3 steps
+  def send_step_two_mail
+    if web_active == true && saved_change_to_attribute?(:discord_active) && discord_active
+      template_id = EmailTemplate.find_by(name: 'step_two_mail')&.template_id
+      EmailSenderWorker.perform_async(email, {
+                                        'unsubscribe_token': unsubscribe_token
+                                      }, template_id)
     end
   end
 
