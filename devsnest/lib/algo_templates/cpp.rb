@@ -10,7 +10,12 @@ class Templates::CPP < Templates::BaseHelper
   end
 
   def build_head
-    ['#include<bits/stdc++.h>', 'using namespace std;'].join("\n")
+    head_code = ['#include<bits/stdc++.h>', 'using namespace std;'].join("\n")
+    if @topic == 'linkedlist'
+      head_code += linked_list_node_class
+      head_code += linked_list_convert_function
+      head_code += linked_list_print_function
+    end
   end
 
   def build_body
@@ -27,6 +32,18 @@ class Templates::CPP < Templates::BaseHelper
     tail_code += output_code
     tail_code += ['return 0;', '}']
     tail_code.join("\n")
+  end
+
+  def linked_list_node_class
+    ['struct Node {', "\tint data;", "\tstruct Node *next;", '};']
+  end
+
+  def linked_list_convert_function
+    ['Node *convertToLL(int arr[]){', "\tint n = sizeof(arr) / sizeof(arr[0]);", "\tNode *head = NULL;", "\tNode *tail = NULL;", "\tfor (int i = 0; i < n; i++){", "\t\tNode *temp = new Node;", "\t\tif (*head == NULL){", "\t\t*head = temp;", "\t\t*tail = temp;", "\t}", "\telse{", "\t\ttail->temp;", "\t\ttail = tail->next;", "\t}", "}", "return head;", "}"]
+  end
+
+  def linked_list_print_function
+    ['void printLL(Node *head){', "\twhile (head != NULL){", "\t\tcout << head->data << ' ';", "\t\thead - head->next;", "\t}", "}"]
   end
 
   def input_builder(name, datastructure, dtype, dependent)
@@ -48,6 +65,9 @@ class Templates::CPP < Templates::BaseHelper
                     "#{name}[r].push_back(temp);", '}', '}'],
         'string' => ["#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'string temp;',
                      'getline(cin, temp);', "#{name}[r].push_back(temp);", '}', '}']
+      },
+      'linked_list' => {
+        'int' => ["vector<int> raw_array;", "for (int i = 0; i < #{dependent&.first}; i++){", 'int temp;', 'cin >> temp;', "raw_array.push_back(temp);", '}', "Node* head = convertToLL(#{name});"]
       }
     }
     meta[datastructure][dtype]
@@ -69,6 +89,9 @@ class Templates::CPP < Templates::BaseHelper
         'int' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", '}', '}'],
         'float' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", '}', '}'],
         'string' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", '}', '}']
+      },
+      'linked_list' => {
+        'int' => ["printLL(head);"]
       }
     }
     meta[datastructure][dtype]
