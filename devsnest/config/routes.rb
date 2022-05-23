@@ -35,6 +35,8 @@ Rails.application.routes.draw do
         jsonapi_resources :company, only: %i[index create update]
         jsonapi_resources :college_form, only: %i[index]
         jsonapi_resources :link, only: %i[index update create destroy]
+        jsonapi_resources :course, only: %i[index update create destroy]
+        jsonapi_resources :course_curriculum, only: %i[index update create destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
