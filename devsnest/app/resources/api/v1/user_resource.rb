@@ -7,7 +7,7 @@ module Api
                  :github_url, :linkedin_url, :resume_url, :dob, :registration_num, :college_id, :image_url, :google_id, :bot_token, :update_count, :login_count, :discord_id, :is_verified,
                  :working_status, :is_fullstack_course_22_form_filled, :phone_number, :working_role, :company_name, :college_name, :college_year, :is_college_form_filled, :accepted_in_course,
                  :enrolled_for_course_image_url
-      attributes :group_id, :group_name
+      attributes :group_id, :group_name, :group_version
       attributes :college_name
       attributes :solved, :total_by_difficulty
       attributes :activity
@@ -38,6 +38,11 @@ module Api
       def group_name
         member = GroupMember.where(user_id: @model.id).first
         member.present? ? member.group&.name : nil
+      end
+
+      def group_version
+        member = GroupMember.where(user_id: @model.id).first
+        member.present? ? member.group&.version : nil
       end
 
       def college_name

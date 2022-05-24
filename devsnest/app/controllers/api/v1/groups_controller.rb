@@ -15,7 +15,7 @@ module Api
       after_action :assign_leader, only: %i[create]
 
       def context
-        { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present? }
+        { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present?, fetch_all: params[:all_groups].present? }
       end
 
       def check_v2_eligible
@@ -53,6 +53,7 @@ module Api
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
 
+        GroupModifierWorker.perform_async('destroy', group_name)
         group.destroy
       end
 
@@ -63,7 +64,7 @@ module Api
         return render_error('Group not found') if group.nil?
 
         group.update(name: new_group_name)
-
+        GroupModifierWorker.perform_async('update', old_group_name + ' ' + new_group_name)
         render_success(group.as_json.merge({ 'type': 'group' }))
       end
 
@@ -91,10 +92,11 @@ module Api
         ActiveRecord::Base.transaction do
           group.group_members.create!(user_id: user.id)
           user.update(group_assigned: true)
-          raise StandardError.new 'Group is already full!' if group.group_members.count > 16
+          raise StandardError, 'Group is already full!' if group.group_members.count > 16
 
           group.update!(members_count: group.members_count + 1)
         end
+        RoleModifierWorker.perform_async('add_role', user.discord_id, group.name)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
       rescue ActiveRecord::RecordInvalid => e
         render_error(message: e)
@@ -112,12 +114,16 @@ module Api
         group = Group.find(params[:id])
         return render_error(message: 'Group not found') if group.nil?
 
+        group_name = group.name
+
         ActiveRecord::Base.transaction do
           group.group_members.find_by!(user_id: user.id).destroy
           group.update!(members_count: group.members_count - 1)
           group.reassign_leader(user.id)
           user.update(group_assigned: false)
         end
+        RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
+        GroupModifierWorker.perform_async('destroy', group_name) if Group.find_by(id: params[:id]).blank?
 
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
@@ -159,6 +165,8 @@ module Api
           group = Group.find(parsed_response['data']['id'].to_i)
           group.update!(members_count: group.members_count + 1)
           group.group_members.create!(user_id: @current_user.id, owner: true)
+          GroupModifierWorker.perform_async('create', group.name)
+          RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
         end
       end
     end

@@ -9,7 +9,7 @@ module Api
       before_action :bot_auth, only: %i[update_user_group]
 
       def context
-        { user: @current_user }
+        { user: @current_user, group_id: params[:group_id] }
       end
 
       def check_authorization
