@@ -74,7 +74,7 @@ module Api
           template = challenge.algo_templates.find_by(challenge_id: challenge_id, language_id: language[0]) # FIX
           template = challenge.create_template(language) if template.nil?
           next if template.nil?
-
+          
           templates[language[1]] = template.as_json.merge!(judge_zero_id: language[2])
         end
 

@@ -21,13 +21,13 @@ class Templates::Python3 < Templates::BaseHelper
   end
 
   def build_body
-    ["def solve(#{build_argument_list.join(', ')}):", "\t# CODE HERE"].join("\n")
+    ["\ndef solve(#{build_argument_list.join(', ')}):", "\t# CODE HERE"].join("\n")
   end
 
   def build_tail
     # build inputs
     tail_code = []
-    tail_code << "if __name__ == '__main__':"
+    tail_code << "\nif __name__ == '__main__':"
     tail_code += input_code
     # build call
     tail_code << "#{get_output_signature.join(', ')} = solve(#{build_parameter_list.join(', ')})"
@@ -66,14 +66,14 @@ class Templates::Python3 < Templates::BaseHelper
         'string' => ["[ [j for j in input().split()] for i in range(#{dependent&.first})]"]
       },
       'linked_list' => {
-        'int' => ["raw_array = list(map(int, input().split()))", "#{name} = convertToLL(raw_array, len(raw_array))"]
+        'int' => ["raw_array = list(map(int, input().split()))", "\t#{name} = convertToLL(raw_array, len(raw_array))"]
       }
     }
     
     if datastructure == 'linked_list'
-      ["#{meta[datastructure][dtype].join('\n')}"]
+      ["#{meta[datastructure][dtype].join("\n")}"]
     else
-      ["#{name} = #{meta[datastructure][dtype].join('\n')}"]
+      ["#{name} = #{meta[datastructure][dtype].join("\n")}"]
     end
   end
 

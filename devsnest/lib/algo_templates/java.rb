@@ -20,6 +20,18 @@ class Templates::Java < Templates::BaseHelper
     end
   end
 
+  def linked_list_node_class
+    ['static class Node{', "\tint data;", "\tNode next;", "\tNode(int data){", "\t\tthis.data = data;", "\t\tthis.next = null;", "\t}", "}"]
+  end
+
+  def linked_list_convert_function
+    ['static Node convertToLL(int arr[]){', "\tNode head = null;", "\tNode tail = null;", "\tint n = arr.length;", "\tfor (int i = 0; i < n ; i++){", "\t\tNode temp = new Node(arr[i]);", "\t\tif (head == null){", "\t\t\thead = temp;", "\t\t\ttail = temp;", "\t\t\t}", "\t\telse{", "\t\t\ttail.next = temp;", "\t\t\ttail = tail.next;", "\t\t}", "\t}", "return head;", "}"]
+  end
+
+  def linked_list_print_function
+    ['static void printLL(Node head){', "\twhile (head != null){", "\t\tSystem.out.print(head.data + \" \");", "\t\thead = head.next;", "\t}", "}"]
+  end
+
   def input_builder(name, datastructure, dtype, dependent)
     meta = {
       'primitive' => {
@@ -39,6 +51,9 @@ class Templates::Java < Templates::BaseHelper
                     "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToFloat(#{create_class('float', '::')}).toArray();", '}'],
         'string' => ["#{name} = new String[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
                      "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();", '}']
+      },
+      'linked_list' => {
+        'int' => ['int[] raw_array;', "raw_array = new int[#{dependent&.first}];", "raw_array = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();","#{name} = convertToLL(raw_array);"]
       }
     }
     meta[datastructure][dtype]
@@ -60,13 +75,16 @@ class Templates::Java < Templates::BaseHelper
         'int' => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll(\"\\\\[|\\\\]|,\", \"\"));", '}'],
         'float' => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll(\"\\\\[|\\\\]|,\", \"\"));", '}'],
         'string' => ["for (int i = 0; i < #{name}.length; i++){", "System.out.println(Arrays.toString(#{name}[i]).replaceAll(\"\\\\[|\\\\]|,\", \"\"));", '}']
+      },
+      'linked_list' => {
+        'int' => ["printLL(#{name});"]
       }
     }
     meta[datastructure][dtype]
   end
 
   def build_head
-    [
+    head_code = [
       'import java.io.*;',
       'import java.math.*;',
       'import java.security.*;',
@@ -79,7 +97,14 @@ class Templates::Java < Templates::BaseHelper
       'import static java.util.stream.Collectors.joining;',
       'import static java.util.stream.Collectors.toList;',
       'public class Main {'
-    ].join("\n")
+    ]
+
+    if @topic == 'linkedlist'
+      head_code += linked_list_node_class
+      head_code += linked_list_convert_function
+      head_code += linked_list_print_function
+    end
+    head_code.join("\n")
   end
 
   def build_body

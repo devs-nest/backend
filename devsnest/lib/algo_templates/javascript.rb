@@ -36,7 +36,7 @@ class Templates::JavaScript < Templates::BaseHelper
                  when 'matrix'
                    ["#{value[:name]}.forEach(", '(element) => console.log(...element)', ');']
                  when 'linked_list'
-                  'int' => ["printLL(#{value[:name]})"]
+                   ["printLL(#{value[:name]})"]
                  end
     end
     outputs
