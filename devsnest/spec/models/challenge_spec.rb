@@ -24,9 +24,20 @@ RSpec.describe Challenge, type: :model do
       let!(:python3) { create(:language, judge_zero_id: 71, name: 'python3') }
 
       it 'should create a template for python3' do
-        algo_template = Templates::Python3.new(question.input_format, question.output_format)
+        algo_template = Templates::Python3.new(question.input_format, question.output_format, question.topic)
         template = algo_template.build
         expect(template[:head]).to eq('')
+      end
+    end
+
+    context 'python3 linked list template' do
+      let(:user) { create(:user) }
+      let!(:python3) { create(:language, judge_zero_id: 71, name: 'python3') }
+
+      it 'should create a template for python3' do
+        algo_template = Templates::Python3.new(question.input_format, question.output_format, "linkedlist")
+        template = algo_template.build
+        expect(template[:head]).to be_present
       end
     end
 
@@ -35,7 +46,7 @@ RSpec.describe Challenge, type: :model do
       let!(:python2) { create(:language, judge_zero_id: 72, name: 'python2') }
 
       it 'should create a template for python2' do
-        algo_template = Templates::Python2.new(question.input_format, question.output_format)
+        algo_template = Templates::Python2.new(question.input_format, question.output_format, question.topic)
         template = algo_template.build
         expect(template[:head]).to eq('')
       end
@@ -46,7 +57,7 @@ RSpec.describe Challenge, type: :model do
       let!(:java) { create(:language, judge_zero_id: 4, name: 'java', type_array: '_[]', type_matrix: '_[][]', type_string: 'String', type_primitive: '_') }
 
       it 'should create a template for Java' do
-        algo_template = Templates::Java.new(question.input_format, question.output_format)
+        algo_template = Templates::Java.new(question.input_format, question.output_format, question.topic)
         template = algo_template.build
         expect(template[:head]).not_to be_empty
       end
@@ -57,7 +68,7 @@ RSpec.describe Challenge, type: :model do
       let!(:cpp) { create(:language, judge_zero_id: 5, name: 'cpp', type_array: 'vector<_>', type_matrix: 'vector>', type_string: '_', type_primitive: '_') }
       
       it 'should create a template for CPP' do
-        algo_template = Templates::CPP.new(question.input_format, question.output_format)
+        algo_template = Templates::CPP.new(question.input_format, question.output_format, question.topic)
         template = algo_template.build
         expect(template[:head]).not_to be_empty
       end
