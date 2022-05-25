@@ -43,3 +43,12 @@ NotificationBot.all.each do |bot|
     data = {bot_id: bot.id, message: {bot.id},discord_id: [id]}
     AwsSqsWorker.perform_async('notification', data)
 end
+
+# Wrong Mail Format Finder
+User.where(discord_active:false,web_active:false).each do |u|
+      name=u.email.split('@')[0]
+      names.push(u.email) if u.email.count("@")>0 and name.count("a-zA-Z")>0
+    end
+names.each do |u|
+    User.find_by(email:u).update(web_active:true)
+    end
