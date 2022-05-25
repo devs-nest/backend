@@ -35,7 +35,7 @@ RSpec.describe Challenge, type: :model do
       let!(:python3) { create(:language, judge_zero_id: 71, name: 'python3') }
 
       it 'should create a template for python3' do
-        algo_template = Templates::Python3.new(question.input_format, question.output_format, "linkedlist")
+        algo_template = Templates::Python3.new(question.input_format, question.output_format, 'linkedlist')
         template = algo_template.build
         expect(template[:head]).to be_present
       end
@@ -66,7 +66,7 @@ RSpec.describe Challenge, type: :model do
     context 'cpp template' do
       let(:user) { create(:user) }
       let!(:cpp) { create(:language, judge_zero_id: 5, name: 'cpp', type_array: 'vector<_>', type_matrix: 'vector>', type_string: '_', type_primitive: '_') }
-      
+
       it 'should create a template for CPP' do
         algo_template = Templates::CPP.new(question.input_format, question.output_format, question.topic)
         template = algo_template.build
@@ -144,9 +144,9 @@ RSpec.describe Challenge, type: :model do
 
       it 'should re eval' do
         UserScoreUpdate.perform_async([10, 100, question.id])
-        expect {
+        expect do
           UserScoreUpdate.perform_async([10, 100, question.id])
-        }.to change(UserScoreUpdate.jobs, :size).by(1)
+        end.to change(UserScoreUpdate.jobs, :size).by(1)
       end
     end
   end
