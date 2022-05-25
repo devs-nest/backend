@@ -221,6 +221,7 @@ module Api
         return render_error({ message: 'User already exists!' }) if user.present?
 
         user = User.new(sign_up_params)
+        user.web_active = true
         if user.save
           sign_in(user)
           set_current_user
@@ -321,7 +322,7 @@ module Api
       private
 
       def sign_up_params
-        params.permit(:email, :password, :password_confirmation, :name, :web_active)
+        params.permit(:email, :password, :password_confirmation, :name)
       end
     end
   end

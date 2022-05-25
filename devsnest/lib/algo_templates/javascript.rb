@@ -1,7 +1,8 @@
 require 'algo_templates/base_helper'
 class Templates::JavaScript < Templates::BaseHelper
-  def initialize(input_json, output_json)
+  def initialize(input_json, output_json, topic)
     super(input_json, output_json, 'javascript')
+    @topic = topic
 
     @head = build_head
     @body = build_body
@@ -9,7 +10,12 @@ class Templates::JavaScript < Templates::BaseHelper
   end
 
   def build_head
-    $s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: 'template_files/parserat.js').body.read
+    head_code = [$s3.get_object(bucket: ENV['S3_PREFIX'] + 'testcases', key: 'template_files/parserat.js').body.read]
+    if @topic == 'linkedlist'
+      head_code += linked_list_node_class
+      head_code += linked_list_print_function
+    end
+    head_code.join("\n")
   end
 
   def input_code
@@ -29,6 +35,8 @@ class Templates::JavaScript < Templates::BaseHelper
                    ["console.log(...#{value[:name]})"]
                  when 'matrix'
                    ["#{value[:name]}.forEach(", '(element) => console.log(...element)', ');']
+                 when 'linked_list'
+                   ["printLL(#{value[:name]})"]
                  end
     end
     outputs
@@ -46,5 +54,13 @@ class Templates::JavaScript < Templates::BaseHelper
     tail_code += ['}']
 
     tail_code.join("\n")
+  end
+
+  def linked_list_node_class
+    ['class Node {', 'constructor(data) {', "\tthis.data = data", "\tthis.next = null", '}', '}']
+  end
+
+  def linked_list_print_function
+    ['function printLL(head){', 'let s = "";', "\twhile (head){", "\t\ts += head.data + \" \";", "\t\thead = head.next", "\t}", "console.log(s.trim())", "}"]
   end
 end

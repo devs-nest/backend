@@ -11,6 +11,7 @@ class Challenge < ApplicationRecord
   has_many :company_challenge_mappings
   has_many :companies, through: :company_challenge_mappings
   belongs_to :user
+  has_many :assingment_questions
   after_create :create_slug
   validates_uniqueness_of :name, :slug
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
@@ -88,13 +89,13 @@ class Challenge < ApplicationRecord
     template_gen =
       case language[1]
       when 'python3'
-        Templates::Python3.new(input_format, output_format)
+        Templates::Python3.new(input_format, output_format, topic)
       when 'cpp'
-        Templates::CPP.new(input_format, output_format)
+        Templates::CPP.new(input_format, output_format, topic)
       when 'java'
-        Templates::Java.new(input_format, output_format)
+        Templates::Java.new(input_format, output_format, topic)
       when 'javascript'
-        Templates::JavaScript.new(input_format, output_format)
+        Templates::JavaScript.new(input_format, output_format, topic)
       end
     template = template_gen.build if template_gen.present?
 

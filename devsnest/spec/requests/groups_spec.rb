@@ -167,11 +167,11 @@ RSpec.describe Api::V1::GroupsController, type: :request do
 
       it 'deletes group' do
         sign_in(user)
-        create(:group, name: 'rho')
-        delete '/api/v1/groups/delete_group', headers: { 'Token': ENV['DISCORD_TOKEN'], 'User-Type': 'Bot' }, params: { "data": { "attributes": { "group_name": 'rho' } } }
+        create(:group, name: 'delta')
+        delete '/api/v1/groups/delete_group', headers: { 'Token': ENV['DISCORD_TOKEN'], 'User-Type': 'Bot' }, params: { "data": { "attributes": { "group_name": 'delta' } } }
         expect(response.status).to eq(204)
         sign_in(user)
-        get '/api/v1/groups/rho'
+        get '/api/v1/groups/delta'
         expect(response.status).to eq(404)
       end
 
