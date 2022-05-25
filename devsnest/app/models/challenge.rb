@@ -89,13 +89,13 @@ class Challenge < ApplicationRecord
     template_gen =
       case language[1]
       when 'python3'
-        Templates::Python3.new(input_format, output_format)
+        Templates::Python3.new(input_format, output_format, topic)
       when 'cpp'
-        Templates::CPP.new(input_format, output_format)
+        Templates::CPP.new(input_format, output_format, topic)
       when 'java'
-        Templates::Java.new(input_format, output_format)
+        Templates::Java.new(input_format, output_format, topic)
       when 'javascript'
-        Templates::JavaScript.new(input_format, output_format)
+        Templates::JavaScript.new(input_format, output_format, topic)
       end
     template = template_gen.build if template_gen.present?
 

@@ -22,11 +22,13 @@ module Api
 
         if @current_user
           rank = algo_lb.rank_for(@current_user.username)
-          user = {
-            name: @current_user.username,
-            rank: rank,
-            score: algo_lb.score_for(@current_user.username)
-          } if rank.present?
+          if rank.present?
+            user = {
+              name: @current_user.username,
+              rank: rank,
+              score: algo_lb.score_for(@current_user.username)
+            }
+          end
           return render_success({ id: page, type: 'challenge_leaderboard', user: user, scoreboard: scoreboard, rank: rank, count: pages_count })
         end
 
