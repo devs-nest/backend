@@ -16,7 +16,7 @@ class GroupMember < ApplicationRecord
     end
   end
 
-  # setting value to true in user when a user joins a group
+  # setting value to true in user when a user joins a group :)
   def set_prevoiusly_joined_a_group
     user = User.find_by(id: user_id)
     user.update(previously_joined_a_group: true)
