@@ -3,7 +3,7 @@ MassNotifierWorker.perform_async('Hello World!')
 
 #  Role Modifier Example
 discord_id=User.first.discord_id
-RoleModifierWorker.perform_async('add_role', discord_id, 'Role Name')
+RoleModifierWorker.perform_async('add_role', 706820473195069490, 'Devsnest People')
 RoleModifierWorker.perform_async('delete_role', discord_id, 'Role Name')
 
 
@@ -39,8 +39,8 @@ end
 id = User.find_by(name:'Adhikram').discord_id
 
 NotificationBot.all.each do |bot|
-    puts(bot.name)
-    data = {bot_id: bot.id, message: {bot.id},discord_id: [id]}
+    puts(bot.bot_username)
+    data = {bot_id: bot.id, message: bot.bot_username,discord_id: [id]}
     AwsSqsWorker.perform_async('notification', data)
 end
 
