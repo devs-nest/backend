@@ -10,8 +10,8 @@ class GroupMember < ApplicationRecord
     user = User.find_by(id: user_id)
     template_id = EmailTemplate.find_by(name: 'all_steps_completed_mail')&.template_id
     if user.previously_joined_a_group == false && user.web_active && user.is_fullstack_course_22_form_filled
-      EmailSenderWorker.perform_async(email, {
-                                        'unsubscribe_token': unsubscribe_token
+      EmailSenderWorker.perform_async(user.email, {
+                                        'unsubscribe_token': user.unsubscribe_token
                                       }, template_id)
     end
   end

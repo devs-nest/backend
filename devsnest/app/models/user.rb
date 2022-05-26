@@ -218,7 +218,7 @@ class User < ApplicationRecord
 
   # sending 2st step of the 3 steps
   def send_step_two_mail_if_discord_active_false
-    if web_active == true && saved_change_to_attribute?(:discord_active) && discord_active
+    if web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
       template_id = EmailTemplate.find_by(name: 'step_two_mail')&.template_id
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token
