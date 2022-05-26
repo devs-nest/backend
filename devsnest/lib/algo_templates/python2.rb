@@ -1,7 +1,8 @@
 require 'algo_templates/base_helper'
 class Templates::Python2 < Templates::BaseHelper
-  def initialize(input_json, output_json)
+  def initialize(input_json, output_json, topic)
     super(input_json, output_json, 'python2')
+    @topic = topic
 
     @head = build_head
     @body = build_body
@@ -10,6 +11,18 @@ class Templates::Python2 < Templates::BaseHelper
 
   def build_head
     ''
+  end
+
+  def linked_list_node_class
+    ['class Node:', "\tdef __init__(self, data):", "\t\tself.data = data", "\t\tself.next = None"]
+  end
+
+  def linked_list_convert_function
+    ['def convertToLL(arr, n):', "\thead = None", "\ttail = None", "\tfor i in arr:", "\t\tnode = Node(i)", "\t\tif not head:", "\t\t\thead = node", "\t\tif tail:", "\t\t\ttail.next = node", "\t\ttail = node", "\treturn head"]
+  end
+
+  def linked_list_print_function
+    ['def printLL(head):', "\twhile head:", "\t\tprint(head.data, end = ' ')", "\t\thead = head.next", "\tprint()"]
   end
 
   def build_body
