@@ -22,6 +22,7 @@ class User < ApplicationRecord
   after_create :assign_bot_to_user
   after_create :send_registration_email
   after_update :send_step_one_mail
+  after_update :send_step_two_mail_if_discord_active_false
 
   def create_username
     username = ''
