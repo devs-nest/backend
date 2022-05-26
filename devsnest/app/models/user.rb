@@ -192,10 +192,12 @@ class User < ApplicationRecord
 
   # when new user signs up on the website, send them a welcome email
   def send_registration_email
-    template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
-    EmailSenderWorker.perform_async(email, {
-                                      'unsubscribe_token': unsubscribe_token
-                                    }, template_id)
+    if web_active == true
+      template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
+      EmailSenderWorker.perform_async(email, {
+                                        'unsubscribe_token': unsubscribe_token
+                                      }, template_id)
+    end
   end
 
   # sending (selection) email to the user when they register for the course

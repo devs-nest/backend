@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_26_075709) do
+
+ActiveRecord::Schema.define(version: 2022_05_09_121901) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -409,6 +410,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_075709) do
     t.string "bot_token"
     t.string "bot_username"
     t.boolean "is_generic_bot", default: false
+    t.boolean "is_used", default: false
   end
 
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
