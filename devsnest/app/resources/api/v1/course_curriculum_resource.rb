@@ -24,7 +24,7 @@ module Api
             slug: assignment_question&.slug,
             status: 0
           }
-          algo_submissions = AlgoSubmission.where(user: context[:user])
+          algo_submissions = AlgoSubmission.where(user: context[:user], challenge_id: assignment_question&.id)
           if algo_submissions.present?
             status = algo_submissions.where(status: 'Accepted').present? ? 2 : 1
             question_data[:status] = status
