@@ -17,7 +17,7 @@ class AdminNotifierWorker
           discord_id: discord_ids.pluck(:discord_id)
         }
 
-        AwsSqsWorker.perform_async('notification', data)
+        AwsSqsWorker.perform_async('notification', data, ENV['SQS_NOTIFIER_URL'])
       end
       start += 1
 
