@@ -106,7 +106,7 @@ module Api
         return render_error({ message: 'Discord user is already connected to another user' }) if temp_user.web_active?
 
         @current_user.merge_discord_user(temp_user.discord_id, temp_user)
-        Event.generate(Event::VERIFIED, @current_user) if $sqs.present?
+        RoleModifierWorker.perform_async('add_role', @current_user.discord_id, 'Verified')
         RoleModifierWorker.perform_async('add_role', @current_user.discord_id, 'DN JUNE BATCH') if @current_user.accepted_in_course
         render_success(@current_user.as_json.merge({ "type": 'users' }))
       end
