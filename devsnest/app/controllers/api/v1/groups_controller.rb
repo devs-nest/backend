@@ -6,6 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
       before_action :user_auth, only: %i[create show join leave update]
+      before_action :admin_auth, only: %i[promote]
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
@@ -142,19 +143,20 @@ module Api
         params[:data][:attributes][:owner_id] = @current_user.id
       end
 
-      def promote_to_vice_leader
+      def promote
         user_to_be_promoted = params[:data][:attributes][:user_id].to_i
         group_id = params[:data][:attributes][:group_id].to_i
+        promote_to = "#{params[:data][:attributes][:promotion_type]}"
+        promote_to_type = "#{promote_to}_id"
         group = Group.find(group_id)
 
         membership_entity = GroupMember.find_by(user_id: user_to_be_promoted, group_id: group_id)
 
         return render_error(message: 'User does not belong to this group') if membership_entity.nil?
 
-        return render_error(message: 'This user can not be promoted') if membership_entity.owner
+        return render_error(message: "This user can not be promoted to #{promote_to}") if group.send(promote_to_type) == user_to_be_promoted
 
-        membership_entity.update(owner: true)
-        group.update(co_owner_id: user_to_be_promoted)
+        group.promote_user(promote_to, user_to_be_promoted)
 
         render_success(message: 'User has been promoted')
       end

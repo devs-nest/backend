@@ -43,6 +43,14 @@ class Group < ApplicationRecord
     destroy
   end
 
+  def promote_user(promote_to, user_id)
+    if promote_to == "owner" && co_owner_id == user_id || promote_to == "co_owner" && owner_id == user_id
+      update(owner_id: co_owner_id, co_owner_id: owner_id)
+    else
+      update("#{promote_to}_id" => user_id)
+    end
+  end
+
   def check_auth(user)
     return true if group_members.where(user_id: user.id).present? || batch_leader_id == user.id || user.user_type == 'admin'
 
