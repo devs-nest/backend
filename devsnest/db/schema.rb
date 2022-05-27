@@ -532,6 +532,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_134515) do
     t.boolean "accepted_in_course", default: false
     t.string "enrolled_for_course_image_url"
     t.boolean "previously_joined_a_group", default: false
+    t.string "referred_company"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
