@@ -1,5 +1,5 @@
 #  Mass Notifier Example
-MassNotifierWorker.perform_async('Hello World!')
+MassNotifierWorker.perform_async(users,'Hello World!')
 
 #  Role Modifier Example
 discord_id=User.first.discord_id
@@ -16,9 +16,10 @@ MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, 'DN JUNE BATC
 MassRoleModifierWorker.perform_async('delete_mass_role', discord_ids, 'TEAM NAME')
 
 #  Group Modifier Example
-GroupModifierWorker.perform_async('create', group.name)
+GroupModifierWorker.perform_async('create', 'V2 ADHIKRAM TEAM')
 GroupModifierWorker.perform_async('destroy', group.name)
 
+GroupNotifierWorker.perform_async('V2 ADHITEAM', "Hello PEEPS")
 
 #  Mass group Modifier Example
 Group.where(version:2).each do |group|
