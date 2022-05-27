@@ -120,7 +120,7 @@ module Api
           user = User.find_by_email(params['email'])
           return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
         else
-          user = User.fetch_google_user(code, googleId)
+          user = User.fetch_google_user(code, googleId, params['referred_company'].present? ? params['referred_company'] : nil)
         end
 
         if user.present?
