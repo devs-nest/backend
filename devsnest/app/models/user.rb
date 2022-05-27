@@ -45,7 +45,7 @@ class User < ApplicationRecord
     user_details['id']
   end
 
-  def self.fetch_google_user(code, googleId, referred_company)
+  def self.fetch_google_user(code, googleId, referred_company = '')
     user_details = fetch_google_user_details(code)
     return if user_details.nil?
 
@@ -61,7 +61,7 @@ class User < ApplicationRecord
     JSON(response.read_body)
   end
 
-  def self.create_google_user(user_details, googleId, referred_company)
+  def self.create_google_user(user_details, googleId, referred_company = '')
     email = user_details['email']
     name = user_details['name']
     user = User.where(email: email).first
