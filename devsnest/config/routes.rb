@@ -40,7 +40,8 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
-          get :get_by_username, :certifications
+          get :get_by_username, constraints: { id: %r{[^/]+} }
+          get :certifications
         end
         collection do
           post :register
