@@ -156,11 +156,11 @@ module Api
 
         case promote_to
         when 'owner'
-          return render_error(message: "This user can not be promoted to #{promote_to}") if group.owner_id == user_to_be_promoted
+          return render_error(message: "This user is already #{promote_to} of this group") if group.owner_id == user_to_be_promoted
 
           group.promote_to_tl(user_to_be_promoted)
         when 'co_owner'
-          return render_error(message: "This user can not be promoted to #{promote_to}") if group.co_owner_id == user_to_be_promoted
+          return render_error(message: "This user is already #{promote_to} of this group") if group.co_owner_id == user_to_be_promoted
 
           group.promote_to_vtl(user_to_be_promoted)
         end
@@ -173,7 +173,7 @@ module Api
           parsed_response = JSON.parse(response.body)
           group = Group.find(parsed_response['data']['id'].to_i)
           group.update!(members_count: group.members_count + 1)
-          group.group_members.create!(user_id: @current_user.id, owner: true)
+          group.group_members.create!(user_id: @current_user.id)
           GroupModifierWorker.perform_async('create', group.name)
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
         end
