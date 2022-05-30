@@ -65,7 +65,7 @@ Rails.application.routes.draw do
         collection do
           delete :delete_group
           put :update_group_name, :update_batch_leader
-          post :promote_to_vice_leader, :join
+          post :promote, :join
         end
         member do
           post :leave
