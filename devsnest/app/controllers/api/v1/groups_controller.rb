@@ -147,7 +147,6 @@ module Api
         user_to_be_promoted = params[:data][:attributes][:user_id].to_i
         group_id = params[:data][:attributes][:group_id].to_i
         promote_to = params[:data][:attributes][:promotion_type].to_s
-        # promote_to_type = "#{promote_to}_id"
         group = Group.find(group_id)
 
         membership_entity = GroupMember.find_by(user_id: user_to_be_promoted, group_id: group_id)
