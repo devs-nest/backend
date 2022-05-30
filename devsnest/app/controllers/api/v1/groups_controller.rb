@@ -65,7 +65,7 @@ module Api
         return render_error('Group not found') if group.nil?
 
         group.update(name: new_group_name)
-        GroupModifierWorker.perform_async('update', old_group_name + ' ' + new_group_name)
+        GroupModifierWorker.perform_async('update', "#{old_group_name} #{new_group_name}")
         render_success(group.as_json.merge({ 'type': 'group' }))
       end
 
@@ -146,17 +146,24 @@ module Api
       def promote
         user_to_be_promoted = params[:data][:attributes][:user_id].to_i
         group_id = params[:data][:attributes][:group_id].to_i
-        promote_to = "#{params[:data][:attributes][:promotion_type]}"
-        promote_to_type = "#{promote_to}_id"
+        promote_to = params[:data][:attributes][:promotion_type].to_s
+        # promote_to_type = "#{promote_to}_id"
         group = Group.find(group_id)
 
         membership_entity = GroupMember.find_by(user_id: user_to_be_promoted, group_id: group_id)
 
         return render_error(message: 'User does not belong to this group') if membership_entity.nil?
 
-        return render_error(message: "This user can not be promoted to #{promote_to}") if group.send(promote_to_type) == user_to_be_promoted
+        case promote_to
+        when 'owner'
+          return render_error(message: "This user can not be promoted to #{promote_to}") if group.owner_id == user_to_be_promoted
 
-        group.promote_user(promote_to, user_to_be_promoted)
+          group.promote_to_tl(user_to_be_promoted)
+        when 'co_owner'
+          return render_error(message: "This user can not be promoted to #{promote_to}") if group.co_owner_id == user_to_be_promoted
+
+          group.promote_to_vtl(user_to_be_promoted)
+        end
 
         render_success(message: 'User has been promoted')
       end

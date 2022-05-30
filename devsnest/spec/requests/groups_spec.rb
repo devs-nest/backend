@@ -160,7 +160,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Group joined')
 
         sign_in(user)
-        post '/api/v1/groups/promote', params: { "data": { "attributes": { "user_id": new_user.id, "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
+        post '/api/v1/groups/promote', params: { "data": { "attributes": { "user_id": new_user.id, "group_id": group.id, "promotion_type": "co_owner" }, "type": 'group' } }.to_json, headers: HEADERS
         expect(response.status).to eq(200)
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('User has been promoted')
       end

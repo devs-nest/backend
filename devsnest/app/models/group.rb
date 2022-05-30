@@ -43,11 +43,19 @@ class Group < ApplicationRecord
     destroy
   end
 
-  def promote_user(promote_to, user_id)
-    if promote_to == "owner" && co_owner_id == user_id || promote_to == "co_owner" && owner_id == user_id
+  def promote_to_tl(user_id)
+    if co_owner_id == user_id
       update(owner_id: co_owner_id, co_owner_id: owner_id)
     else
-      update("#{promote_to}_id" => user_id)
+      update(owner_id: user_id)
+    end
+  end
+
+  def promote_to_vtl(user_id)
+    if owner_id == user_id
+      update(owner_id: co_owner_id, co_owner_id: owner_id)
+    else
+      update(co_owner_id: user_id)
     end
   end
 
