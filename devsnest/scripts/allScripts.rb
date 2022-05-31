@@ -35,7 +35,9 @@ Group.where(version:2).each do |group|
     MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, 'DN JUNE BATCH')
 end
 
-
+Group.where(version:2).each do |u|
+    puts("#{u.name} has #{u.group_members.count} members and #{u.members_count} members_count") if u.group_members.count != u.members_count
+end
 #Check all bots
 id = User.find_by(name:'Adhikram').discord_id
 

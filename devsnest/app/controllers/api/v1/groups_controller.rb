@@ -85,7 +85,7 @@ module Api
         group = if params[:data][:attributes][:group_id].present?
                   Group.find(params[:data][:attributes][:group_id])
                 else
-                  Group.all.v2.visible.under_12_members.sample
+                  Group.all.v2.visible.under_limited_members.sample
                 end
 
         return render_error(message: 'Group not found') if group.nil?

@@ -18,7 +18,7 @@ class Group < ApplicationRecord
   scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
   scope :visible, -> { where(group_type: 'public') }
-  scope :under_12_members, -> { where('members_count < 12') }
+  scope :under_limited_members, -> { where('members_count < 16') }
 
   def parameterize
     update_attribute(:slug, name.parameterize)
@@ -37,7 +37,7 @@ class Group < ApplicationRecord
     elsif co_owner_id == user_id
       update(co_owner_id: nil)
     end
-  end
+  end1
 
   def disband_group
     destroy
