@@ -37,7 +37,7 @@ class Group < ApplicationRecord
     elsif co_owner_id == user_id
       update(co_owner_id: nil)
     end
-  end1
+  end
 
   def disband_group
     destroy
