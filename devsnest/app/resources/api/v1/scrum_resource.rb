@@ -5,7 +5,8 @@ module Api
     # Resource for Scrum
     class ScrumResource < JSONAPI::Resource
       attributes :user_id, :group_id, :attendance, :saw_last_lecture,
-                 :tha_progress, :topics_to_cover, :backlog_reasons, :class_rating, :creation_date, :last_tha_link
+                 :tha_progress, :topics_to_cover, :backlog_reasons, :class_rating, :creation_date, :last_tha_link,
+                 :total_assignments_solved, :recent_assignments_solved
 
       def self.creatable_fields(context)
         group = Group.find_by(id: context[:group_id_create])
@@ -34,6 +35,38 @@ module Api
         else
 
           super(options)
+        end
+      end
+
+      def total_assignments_solved
+        current_course = Course.last
+        course_curriculum_ids = current_course.course_curriculums.pluck(:id)
+        current_module = 'dsa'
+        case current_module
+        when 'dsa'
+          total_assignments = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
+          solved_assignments = AlgoSubmission.where(user_id: @model.user_id, challenge_id: total_assignments.pluck(:id), is_submitted: true, status: 'Accepted').uniq(&:challenge_id)
+          {
+            solved_assignments: solved_assignments.count,
+            total_assignments: total_assignments.count
+          }
+        end
+      end
+
+      def recent_assignments_solved
+        current_course = Course.last
+        course_curriculum_ids = current_course.course_curriculums.pluck(:id)
+        current_module = 'dsa'
+        case current_module
+        when 'dsa'
+          total_assignments = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge',
+                                                       created_at: (Date.today - 15.days).beginning_of_day..Date.today.end_of_day)
+          solved_assignments = AlgoSubmission.where(user_id: 6712, challenge_id: total_questions.pluck(:id), is_submitted: true, status: 'Accepted',
+                                                    created_at: (Date.today - 15.days).beginning_of_day..Date.today.end_of_day).uniq(&:challenge_id)
+          {
+            solved_assignments: solved_assignments.count,
+            total_assignments: total_assignments.count
+          }
         end
       end
     end
