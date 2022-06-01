@@ -40,7 +40,7 @@ module Api
 
       def total_assignments_solved
         current_course = Course.last
-        course_curriculum_ids = current_course.course_curriculums.pluck(:id)
+        course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
         current_module = 'dsa'
         case current_module
         when 'dsa'
@@ -55,13 +55,13 @@ module Api
 
       def recent_assignments_solved
         current_course = Course.last
-        course_curriculum_ids = current_course.course_curriculums.pluck(:id)
+        course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
         current_module = 'dsa'
         case current_module
         when 'dsa'
           total_assignments = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge',
                                                        created_at: (Date.today - 15.days).beginning_of_day..Date.today.end_of_day)
-          solved_assignments = AlgoSubmission.where(user_id: 6712, challenge_id: total_questions.pluck(:id), is_submitted: true, status: 'Accepted',
+          solved_assignments = AlgoSubmission.where(user_id: 6712, challenge_id: total_assignments.pluck(:id), is_submitted: true, status: 'Accepted',
                                                     created_at: (Date.today - 15.days).beginning_of_day..Date.today.end_of_day).uniq(&:challenge_id)
           {
             solved_assignments: solved_assignments.count,
