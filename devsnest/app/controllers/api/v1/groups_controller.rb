@@ -54,7 +54,7 @@ module Api
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
 
-        GroupModifierWorker.perform_async('destroy', group_name)
+        GroupModifierWorker.perform_async('destroy', [group_name])
         group.destroy
       end
 
@@ -65,7 +65,7 @@ module Api
         return render_error('Group not found') if group.nil?
 
         group.update(name: new_group_name)
-        GroupModifierWorker.perform_async('update', "#{old_group_name} #{new_group_name}")
+        GroupModifierWorker.perform_async('update', [old_group_name, new_group_name])
         render_success(group.as_json.merge({ 'type': 'group' }))
       end
 
@@ -95,7 +95,7 @@ module Api
           user.update(group_assigned: true)
           raise StandardError, 'Group is already full!' if group.group_members.count > 16
 
-          group.update!(members_count: group.members_count + 1)
+          # group.update!(members_count: group.members_count + 1)
         end
         RoleModifierWorker.perform_async('add_role', user.discord_id, group.name)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
@@ -119,12 +119,12 @@ module Api
 
         ActiveRecord::Base.transaction do
           group.group_members.find_by!(user_id: user.id).destroy
-          group.update!(members_count: group.members_count - 1)
+          # group.update!(members_count: group.members_count - 1)
           group.reassign_leader(user.id)
           user.update(group_assigned: false)
         end
         RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
-        GroupModifierWorker.perform_async('destroy', group_name) if Group.find_by(id: params[:id]).blank?
+        GroupModifierWorker.perform_async('destroy', [group_name]) if Group.find_by(id: params[:id]).blank?
 
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
@@ -171,9 +171,9 @@ module Api
         if response.created?
           parsed_response = JSON.parse(response.body)
           group = Group.find(parsed_response['data']['id'].to_i)
-          group.update!(members_count: group.members_count + 1)
+          # group.update!(members_count: group.members_count + 1)
           group.group_members.create!(user_id: @current_user.id)
-          GroupModifierWorker.perform_async('create', group.name)
+          GroupModifierWorker.perform_async('create', [group.name])
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
         end
       end

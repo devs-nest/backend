@@ -101,7 +101,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_134515) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "pvar7IkXg1A"
+    t.string "cuid", default: "nipE0r1LvI0"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -531,8 +531,8 @@ ActiveRecord::Schema.define(version: 2022_05_26_134515) do
     t.boolean "is_college_form_filled", default: false
     t.boolean "accepted_in_course", default: false
     t.string "enrolled_for_course_image_url"
-    t.string "referred_company"
     t.boolean "previously_joined_a_group", default: false
+    t.string "referred_company"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
