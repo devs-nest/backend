@@ -14,7 +14,6 @@ module Api
       # before_action :check_authorization, only: %i[show]
       before_action :create_validations, only: %i[create]
       after_action :assign_leader, only: %i[create]
-      before_action :update_discord_group, only: %i[update]
 
       def context
         { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present?, fetch_all: params[:all_groups].present? }
@@ -177,11 +176,6 @@ module Api
           GroupModifierWorker.perform_async('create', [group.name])
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
         end
-      end
-
-      def update_discord_group
-        group = Group.find(params[:id])
-        GroupModifierWorker.perform_async('update', [group.name, params[:attributes][:name]])
       end
     end
   end
