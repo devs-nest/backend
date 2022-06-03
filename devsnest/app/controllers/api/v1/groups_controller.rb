@@ -95,7 +95,7 @@ module Api
           user.update(group_assigned: true)
           raise StandardError, 'Group is already full!' if group.group_members.count > 16
 
-          # group.update!(members_count: group.members_count + 1)
+          group.update!(members_count: group.members_count + 1)
         end
         RoleModifierWorker.perform_async('add_role', user.discord_id, group.name)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
@@ -119,7 +119,7 @@ module Api
 
         ActiveRecord::Base.transaction do
           group.group_members.find_by!(user_id: user.id).destroy
-          # group.update!(members_count: group.members_count - 1)
+          group.update!(members_count: group.members_count - 1)
           group.reassign_leader(user.id)
           user.update(group_assigned: false)
         end
@@ -171,7 +171,7 @@ module Api
         if response.created?
           parsed_response = JSON.parse(response.body)
           group = Group.find(parsed_response['data']['id'].to_i)
-          # group.update!(members_count: group.members_count + 1)
+          group.update!(members_count: group.members_count + 1)
           group.group_members.create!(user_id: @current_user.id)
           GroupModifierWorker.perform_async('create', [group.name])
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
