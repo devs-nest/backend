@@ -44,12 +44,24 @@ module Templates
     end
 
     def linked_list_convert_function
-      ['def convertToLL(arr, n):', "\thead = None", "\ttail = None", "\tfor i in arr:", "\t\tnode = Node(i)", "\t\tif not head:", "\t\t\thead = node", "\t\tif tail:", "\t\t\ttail.next = node",
+      ['def convertToLL(arr, n):', "\thead = None", "\ttail = None", "\tfor i in arr:", "\t\tnode = Node(int(i))", "\t\tif not head:", "\t\t\thead = node", "\t\tif tail:", "\t\t\ttail.next = node",
        "\t\ttail = node", "\treturn head"]
     end
 
     def linked_list_print_function
       ['def printLL(head):', "\twhile head:", "\t\tprint(head.data, end = ' ')", "\t\thead = head.next", "\tprint()"]
+    end
+
+    def tree_node_class
+      ['class TreeNode:', "\tdef __inti__(self, val):", "\t\tself.left = None", "\t\tself.right = None", "\t\tself.val = val"]
+    end
+
+    def tree_convert_function
+      ["def create_tree(raw_array):", "\troot = TreeNode(raw_array[0])", "\tparent_level = [root]", "\tchild_level = []", "\tnodes_to_be_in_current_level = 2", "\tnodes_to_be_in_next_level = 2 * nodes_to_be_in_current_level", "\tfor i in raw_array[1:]:", "\t\tif not i:", "\t\t\tnodes_to_be_in_next_level -= 2", "\t\t\tnode = None", "\t\telse:", "\t\t\tnode = TreeNode(i)", "\t\tchild_level.append(node)", "\t\tnodes_to_be_in_current_level -= 1", "\t\tif nodes_to_be_in_current_level == 0:", "\t\t\tcreate_tree_level(parent_level, child_level)", "\t\t\tnodes_to_be_in_current_level = nodes_to_be_in_next_level", "\t\t\tnodes_to_be_in_next_level *= 2", "\t\t\tparent_level = child_level", "\t\t\tchild_level = []", "\tif child_level:", "\t\tcreate_tree_level(parent_level, child_level)", "\treturn root"]
+    end
+
+    def tree_create_level
+      ["def create_tree_level(parent, child):", "\tchild_iter = iter(child)", "\tfor p in parent:", "\t\tif not p:", "\t\t\tcontinue", "\t\tp.left = next(child_iter, None)", "\t\tp.right = ext(child_iter, None)"]
     end
 
     def input_builder(name, datastructure, dtype, dependent)
@@ -71,6 +83,9 @@ module Templates
         },
         'linked_list' => {
           'int' => ['raw_array = list(map(int, input().split()))', "\t#{name} = convertToLL(raw_array, len(raw_array))"]
+        },
+        'binary_tree' => {
+          'int' => ['convert_block = lambda x: int(x) if x != "null" else None', "\traw_array = list(map(convert_block, input().split()))", "\t\t#{name} = create_tree(raw_array)"]
         }
       }
 
