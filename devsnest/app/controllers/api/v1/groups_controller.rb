@@ -14,7 +14,7 @@ module Api
       # before_action :check_authorization, only: %i[show]
       before_action :create_validations, only: %i[create]
       after_action :assign_leader, only: %i[create]
-      before_action :update_discord_group, only: %i[update]
+      # before_action :update_discord_group, only: %i[update]
 
       def context
         { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present?, fetch_all: params[:all_groups].present? }
@@ -179,10 +179,10 @@ module Api
         end
       end
 
-      def update_discord_group
-        group = Group.find_by(id: params[:id])
-        GroupModifierWorker.perform_async('update', [group.name, params[:attributes][:name]])
-      end
+      # def update_discord_group
+      #   group = Group.find_by(id: params[:id])
+      #   GroupModifierWorker.perform_async('update', [group.name, params[:attributes][:name]])
+      # end
     end
   end
 end
