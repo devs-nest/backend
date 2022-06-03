@@ -5,11 +5,6 @@ class GroupMember < ApplicationRecord
   belongs_to :group
   after_create :send_all_steps_completed_mail
   after_create :set_prevoiusly_joined_a_group
-  after_commit :adjust_member_count, on: %i[create destroy]
-
-  def adjust_member_count
-    group.update(members_count: group.group_members.count)
-  end
 
   def send_all_steps_completed_mail
     user = User.find_by(id: user_id)
