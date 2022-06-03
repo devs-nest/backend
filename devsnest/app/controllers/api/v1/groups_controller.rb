@@ -180,7 +180,7 @@ module Api
       end
 
       def update_discord_group
-        group = Group.find(params[:id])
+        group = Group.find_by(id: params[:id])
         GroupModifierWorker.perform_async('update', [group.name, params[:attributes][:name]])
       end
     end
