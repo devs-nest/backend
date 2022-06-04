@@ -39,6 +39,9 @@ module Api
       def check_group_admin_auth
         group = Group.find_by(id: params[:id])
         group.group_admin_auth(@current_user)
+        if params[:data][:attributes][:name].present? && group.present? && group.name != params[:data][:attributes][:name]
+          GroupModifierWorker.perform_async('update', [group.name, params[:data][:attributes][:name]])
+        end
       end
 
       def deslug
@@ -65,7 +68,7 @@ module Api
         return render_error('Group not found') if group.nil?
 
         group.update(name: new_group_name)
-        GroupModifierWorker.perform_async('update', [old_group_name, new_group_name])
+        # GroupModifierWorker.perform_async('update', [old_group_name, new_group_name])
         render_success(group.as_json.merge({ 'type': 'group' }))
       end
 
