@@ -6,6 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
       before_action :user_auth, only: %i[create show join leave update]
+      before_action :admin_auth, only: %i[promote]
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
@@ -38,6 +39,9 @@ module Api
       def check_group_admin_auth
         group = Group.find_by(id: params[:id])
         group.group_admin_auth(@current_user)
+        if params[:data][:attributes][:name].present? && group.present? && group.name != params[:data][:attributes][:name]
+          GroupModifierWorker.perform_async('update', [group.name, params[:data][:attributes][:name]])
+        end
       end
 
       def deslug
@@ -53,7 +57,7 @@ module Api
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
 
-        GroupModifierWorker.perform_async('destroy', group_name)
+        GroupModifierWorker.perform_async('destroy', [group_name])
         group.destroy
       end
 
@@ -64,7 +68,7 @@ module Api
         return render_error('Group not found') if group.nil?
 
         group.update(name: new_group_name)
-        GroupModifierWorker.perform_async('update', old_group_name + ' ' + new_group_name)
+        # GroupModifierWorker.perform_async('update', [old_group_name, new_group_name])
         render_success(group.as_json.merge({ 'type': 'group' }))
       end
 
@@ -84,7 +88,7 @@ module Api
         group = if params[:data][:attributes][:group_id].present?
                   Group.find(params[:data][:attributes][:group_id])
                 else
-                  Group.all.v2.visible.under_12_members.sample
+                  Group.all.v2.visible.under_limited_members.sample
                 end
 
         return render_error(message: 'Group not found') if group.nil?
@@ -123,7 +127,7 @@ module Api
           user.update(group_assigned: false)
         end
         RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
-        GroupModifierWorker.perform_async('destroy', group_name) if Group.find_by(id: params[:id]).blank?
+        GroupModifierWorker.perform_async('destroy', [group_name]) if Group.find_by(id: params[:id]).blank?
 
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
@@ -142,19 +146,26 @@ module Api
         params[:data][:attributes][:owner_id] = @current_user.id
       end
 
-      def promote_to_vice_leader
+      def promote
         user_to_be_promoted = params[:data][:attributes][:user_id].to_i
         group_id = params[:data][:attributes][:group_id].to_i
+        promote_to = params[:data][:attributes][:promotion_type].to_s
         group = Group.find(group_id)
 
         membership_entity = GroupMember.find_by(user_id: user_to_be_promoted, group_id: group_id)
 
         return render_error(message: 'User does not belong to this group') if membership_entity.nil?
 
-        return render_error(message: 'This user can not be promoted') if membership_entity.owner
+        case promote_to
+        when 'owner'
+          return render_error(message: "This user is already #{promote_to} of this group") if group.owner_id == user_to_be_promoted
 
-        membership_entity.update(owner: true)
-        group.update(co_owner_id: user_to_be_promoted)
+          group.promote_to_tl(user_to_be_promoted)
+        when 'co_owner'
+          return render_error(message: "This user is already #{promote_to} of this group") if group.co_owner_id == user_to_be_promoted
+
+          group.promote_to_vtl(user_to_be_promoted)
+        end
 
         render_success(message: 'User has been promoted')
       end
@@ -164,8 +175,8 @@ module Api
           parsed_response = JSON.parse(response.body)
           group = Group.find(parsed_response['data']['id'].to_i)
           group.update!(members_count: group.members_count + 1)
-          group.group_members.create!(user_id: @current_user.id, owner: true)
-          GroupModifierWorker.perform_async('create', group.name)
+          group.group_members.create!(user_id: @current_user.id)
+          GroupModifierWorker.perform_async('create', [group.name])
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
         end
       end

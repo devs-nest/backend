@@ -18,7 +18,7 @@ class Group < ApplicationRecord
   scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
   scope :visible, -> { where(group_type: 'public') }
-  scope :under_12_members, -> { where('members_count < 12') }
+  scope :under_limited_members, -> { where('members_count < 16') }
 
   def parameterize
     update_attribute(:slug, name.parameterize)
@@ -41,6 +41,22 @@ class Group < ApplicationRecord
 
   def disband_group
     destroy
+  end
+
+  def promote_to_tl(user_id)
+    if co_owner_id == user_id
+      update(owner_id: co_owner_id, co_owner_id: owner_id)
+    else
+      update(owner_id: user_id)
+    end
+  end
+
+  def promote_to_vtl(user_id)
+    if owner_id == user_id
+      update(owner_id: co_owner_id, co_owner_id: owner_id)
+    else
+      update(co_owner_id: user_id)
+    end
   end
 
   def check_auth(user)
