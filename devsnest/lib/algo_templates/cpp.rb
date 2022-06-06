@@ -95,9 +95,9 @@ module Templates
           'string' => ["for (#{dtype} i: #{name}){", "cout << i << ' ';", '}']
         },
         'matrix' => {
-          'int' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", '}', '}'],
-          'float' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", '}', '}'],
-          'string' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c];", '}', '}']
+          'int' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c] << \" \";", '}', 'cout << endl; }'],
+          'float' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c] << \" \";", '}', 'cout << endl; }'],
+          'string' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c] << \" \";", '}', 'cout << endl; }'],
         },
         'linked_list' => {
           'int' => ["printLL(#{name});"]
