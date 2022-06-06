@@ -52,7 +52,8 @@ module Templates
     end
 
     def read_vector_function(type)
-      ["vector<#{type}> read_vector_#{type}(){", "\tstring line = \"\";", "\tgetline(cin, line);", "\tistringstream iss(line);", "\tvector<#{type}> v;", "\t#{type} x;", "\twhile (iss >> x)", "\t\tv.push_back(x);", "\treturn v;", "}"]
+      ["vector<#{type}> read_vector_#{type}(){", "\tstring line = \"\";", "\tgetline(cin, line);", "\tistringstream iss(line);", "\tvector<#{type}> v;", "\t#{type} x;", "\twhile (iss >> x)",
+       "\t\tv.push_back(x);", "\treturn v;", '}']
     end
 
     def input_builder(name, datastructure, dtype, dependent)
@@ -63,9 +64,9 @@ module Templates
           'string' => ["getline(cin,#{name});"]
         },
         'array' => {
-          'int' => ["string line = \"\";", "getline(cin, line);", "istringstream iss(line);", "int x;", "while (iss >> x)", "\t#{name}.push_back(x);"],
-          'float' => ["string line = \"\";", "getline(cin, line);", "istringstream iss(line);", "float x;", "while (iss >> x)", "\t#{name}.push_back(x);"],
-          'string' => ["string line = \"\";", "getline(cin, line);", "istringstream iss(line);", "string x;", "while (iss >> x)", "\t#{name}.push_back(x);"],
+          'int' => ['string line = "";', 'getline(cin, line);', 'istringstream iss(line);', 'int x;', 'while (iss >> x)', "\t#{name}.push_back(x);"],
+          'float' => ['string line = "";', 'getline(cin, line);', 'istringstream iss(line);', 'float x;', 'while (iss >> x)', "\t#{name}.push_back(x);"],
+          'string' => ['string line = "";', 'getline(cin, line);', 'istringstream iss(line);', 'string x;', 'while (iss >> x)', "\t#{name}.push_back(x);"]
         },
         'matrix' => {
           'int' => ["#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'int temp;', 'cin >> temp;',
@@ -97,7 +98,7 @@ module Templates
         'matrix' => {
           'int' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c] << \" \";", '}', 'cout << endl; }'],
           'float' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c] << \" \";", '}', 'cout << endl; }'],
-          'string' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c] << \" \";", '}', 'cout << endl; }'],
+          'string' => ["for (int r = 0; r < #{name}.size(); r++){", "for (int c = 0; c < #{name}[r].size(); c++){", "cout << #{name}[r][c] << \" \";", '}', 'cout << endl; }']
         },
         'linked_list' => {
           'int' => ["printLL(#{name});"]
