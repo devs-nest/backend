@@ -5,7 +5,7 @@ module Api
     # internal resource feedback
     class InternalFeedbackResource < JSONAPI::Resource
       attributes :id, :user_id, :user_name, :is_resolved, :feedback_type, :problems_faced, :issue_scale, :issue_details, :solution, :group_activity_rating, :TL_rating, :VTL_rating,
-                 :group_morale, :obstacles_faced, :BL_availability, :BL_rating, :comments_on_BL, :created_at, :updated_at
+                 :group_morale, :obstacles_faced, :BL_availability, :BL_rating, :comments_on_BL, :created_at, :updated_at, :tl_vtl_feedback, :most_helpful_teammate_id
 
       def self.records(options = {})
         super(options).where(user: options[:context][:user])
