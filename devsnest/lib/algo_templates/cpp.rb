@@ -51,6 +51,10 @@ module Templates
       ['void printLL(Node *head){', "\twhile (head != NULL){", "\t\tcout << head->data << ' ';", "\t\thead = head->next;", "\t}", '}']
     end
 
+    def read_vector_function(type)
+      ["vector<#{type}> read_vector_#{type}(){", "\tstring line = \"\";", "\tgetline(cin, line);", "\tistringstream iss(line);", "\tvector<#{type}> v;", "\t#{type} x;", "\twhile (iss >> x)", "\t\tv.push_back(x);", "\treturn v;", "}"]
+    end
+
     def input_builder(name, datastructure, dtype, dependent)
       meta = {
         'primitive' => {
@@ -59,9 +63,9 @@ module Templates
           'string' => ["getline(cin,#{name});"]
         },
         'array' => {
-          'int' => ["for (int i = 0; i < #{dependent&.first}; i++){", 'int temp;', 'cin >> temp;', "#{name}.push_back(temp);", '}'],
-          'float' => ["for (int i = 0; i < #{dependent&.first}; i++){", 'float temp;', 'cin >> temp;', "#{name}.push_back(temp);", '}'],
-          'string' => ["for (int i = 0; i < #{dependent&.first}; i++){", 'string temp;', 'cin >> temp;', "#{name}.push_back(temp);", '}']
+          'int' => ["string line = \"\";", "getline(cin, line);", "istringstream iss(line);", "int x;", "while (iss >> x)", "\t#{name}.push_back(x);"],
+          'float' => ["string line = \"\";", "getline(cin, line);", "istringstream iss(line);", "float x;", "while (iss >> x)", "\t#{name}.push_back(x);"],
+          'string' => ["string line = \"\";", "getline(cin, line);", "istringstream iss(line);", "string x;", "while (iss >> x)", "\t#{name}.push_back(x);"],
         },
         'matrix' => {
           'int' => ["#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'int temp;', 'cin >> temp;',
