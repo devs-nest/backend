@@ -64,9 +64,9 @@ module Templates
           'string' => ["getline(cin,#{name});"]
         },
         'array' => {
-          'int' => ['string line = "";', 'getline(cin, line);', 'istringstream iss(line);', 'int x;', 'while (iss >> x)', "\t#{name}.push_back(x);"],
-          'float' => ['string line = "";', 'getline(cin, line);', 'istringstream iss(line);', 'float x;', 'while (iss >> x)', "\t#{name}.push_back(x);"],
-          'string' => ['string line = "";', 'getline(cin, line);', 'istringstream iss(line);', 'string x;', 'while (iss >> x)', "\t#{name}.push_back(x);"]
+          'int' => ['string line = "";', 'getline(cin, line);', 'if (line.empty()){', 'getline(cin, line);','}' ,'istringstream iss(line);', 'int x;', 'while (iss >> x)', "\t#{name}.push_back(x);"],
+          'float' => ['string line = "";', 'getline(cin, line);', 'if (line.empty()){', 'getline(cin, line);','}' , 'istringstream iss(line);', 'float x;', 'while (iss >> x)', "\t#{name}.push_back(x);"],
+          'string' => ['string line = "";', 'getline(cin, line);', 'if (line.empty()){', 'getline(cin, line);','}' , 'istringstream iss(line);', 'string x;', 'while (iss >> x)', "\t#{name}.push_back(x);"]
         },
         'matrix' => {
           'int' => ["#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'int temp;', 'cin >> temp;',
