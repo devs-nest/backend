@@ -20,6 +20,7 @@ module Api
         assignment_questions_data = AssignmentQuestion.where(course_curriculum: @model).map(&:question)
         assignment_questions_data.each do |assignment_question|
           question_data = {
+            id: assingment_question&.id
             name: assignment_question&.name,
             slug: assignment_question&.slug,
             status: 0
