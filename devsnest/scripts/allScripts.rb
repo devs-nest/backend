@@ -13,18 +13,18 @@ discord_ids  = User.where(user_type:1).pluck(:discord_id) # get all admin discor
 discord_ids  = User.where(discord_active:true,accepted_in_course:true).pluck(:discord_id) # get all DN JUNE BATCH PEOPLE
 
 MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, 'DN JUNE BATCH')
+MassRoleModifierWorker.perform_async('add_mass_role', discord_ids.slice(0,10), 'Verified')
 MassRoleModifierWorker.perform_async('delete_mass_role', discord_ids, 'TEAM NAME')
 
 #  Group Modifier Example
-GroupModifierWorker.perform_async('create', 'V2 ADHIKRAM TEAM')
-GroupModifierWorker.perform_async('destroy', group.name)
+GroupModifierWorker.perform_async('create', ['V2 ADHIKRAM TEAM'])
+GroupModifierWorker.perform_async('destroy', [group.name])
 
-GroupNotifierWorker.perform_async('V2 ADHITEAM', "Hello PEEPS")
+GroupNotifierWorker.perform_async('V2 Alpha Tester Team', "Hello PEEPS")
 
 #  Mass group Modifier Example
-Group.where(version:2).each do |group|
+Group.v2.where(name:'V2 Sirius TEAM').each do |group|
     discord_ids=[]
-    GroupModifierWorker.perform_async('create', group.name)
     puts("-----------------------------------------------------")
     puts(group.name)
     group.group_members.each do |member|
@@ -32,11 +32,12 @@ Group.where(version:2).each do |group|
         puts("-------------#{user.name}")
         discord_ids.push(user.discord_id)
     end
-    MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, 'DN JUNE BATCH')
+    MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, group.name)
 end
 
-Group.where(version:2).each do |u|
-    puts("#{u.name} has #{u.group_members.count} members and #{u.members_count} members_count") if u.group_members.count != u.members_count
+Group.v2.each do |u|
+    u.update(members_count:u.group_members.count)
+    # puts("#{u.name} has #{u.group_members.count} members and #{u.members_count} members_count") if u.group_members.count != u.members_count
 end
 #Check all bots
 id = User.find_by(name:'Adhikram').discord_id

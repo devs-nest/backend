@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_26_134515) do
+ActiveRecord::Schema.define(version: 2022_06_06_062035) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -45,6 +45,8 @@ ActiveRecord::Schema.define(version: 2022_05_26_134515) do
     t.integer "course_curriculum_id"
     t.integer "question_id"
     t.string "question_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -101,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_134515) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "pvar7IkXg1A"
+    t.string "cuid", default: "0P8kBBIOHYA"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -330,6 +332,8 @@ ActiveRecord::Schema.define(version: 2022_05_26_134515) do
     t.string "BL_availability"
     t.integer "BL_rating"
     t.text "comments_on_BL"
+    t.text "tl_vtl_feedback"
+    t.integer "most_helpful_teammate_id"
     t.index ["user_id"], name: "index_internal_feedbacks_on_user_id"
   end
 
@@ -458,10 +462,10 @@ ActiveRecord::Schema.define(version: 2022_05_26_134515) do
 
   create_table "unsubscribes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "category", default: 0
+    t.integer "category"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category", unique: true
+    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category"
   end
 
   create_table "upvotes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

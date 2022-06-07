@@ -39,6 +39,9 @@ module Api
       def check_group_admin_auth
         group = Group.find_by(id: params[:id])
         group.group_admin_auth(@current_user)
+        if params[:data][:attributes][:name].present? && group.present? && group.name != params[:data][:attributes][:name]
+          GroupModifierWorker.perform_async('update', [group.name, params[:data][:attributes][:name]])
+        end
       end
 
       def deslug
@@ -54,7 +57,7 @@ module Api
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
 
-        GroupModifierWorker.perform_async('destroy', group_name)
+        GroupModifierWorker.perform_async('destroy', [group_name])
         group.destroy
       end
 
@@ -65,7 +68,7 @@ module Api
         return render_error('Group not found') if group.nil?
 
         group.update(name: new_group_name)
-        GroupModifierWorker.perform_async('update', "#{old_group_name} #{new_group_name}")
+        # GroupModifierWorker.perform_async('update', [old_group_name, new_group_name])
         render_success(group.as_json.merge({ 'type': 'group' }))
       end
 
@@ -124,7 +127,7 @@ module Api
           user.update(group_assigned: false)
         end
         RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
-        GroupModifierWorker.perform_async('destroy', group_name) if Group.find_by(id: params[:id]).blank?
+        GroupModifierWorker.perform_async('destroy', [group_name]) if Group.find_by(id: params[:id]).blank?
 
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
@@ -173,7 +176,7 @@ module Api
           group = Group.find(parsed_response['data']['id'].to_i)
           group.update!(members_count: group.members_count + 1)
           group.group_members.create!(user_id: @current_user.id)
-          GroupModifierWorker.perform_async('create', group.name)
+          GroupModifierWorker.perform_async('create', [group.name])
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
         end
       end
