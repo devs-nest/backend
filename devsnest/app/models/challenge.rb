@@ -88,9 +88,9 @@ class Challenge < ApplicationRecord
 
     not_implemented = {
       'tree': {
-        'cpp': true,      
-        'java': true,      
-        'javascript': true,      
+        'cpp': true,
+        'java': true,
+        'javascript': true
       }
     }
 
