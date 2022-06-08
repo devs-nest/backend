@@ -84,8 +84,7 @@ class Challenge < ApplicationRecord
   end
 
   def create_template(language)
-    return if input_format.nil? || output_format.nil?
-
+    
     not_implemented = {
       'tree': {
         'cpp': true,
@@ -93,15 +92,16 @@ class Challenge < ApplicationRecord
         'javascript': true
       }
     }
-
+    return if input_format.nil? || output_format.nil? || not_implemented[topic.to_sym][language[1].to_sym]
+    
     template_gen =
-      if language[1] == 'python3' && !not_implemented[topic.to_sym][language[1].to_sym]
+      if language[1] == 'python3'
         Templates::Python3.new(input_format, output_format, topic)
-      elsif language[1] == 'cpp' && !not_implemented[topic.to_sym][language[1].to_sym]
+      elsif language[1] == 'cpp'
         Templates::CPP.new(input_format, output_format, topic)
-      elsif language[1] == 'java' && !not_implemented[topic.to_sym][language[1].to_sym]
+      elsif language[1] == 'java'
         Templates::Java.new(input_format, output_format, topic)
-      elsif language[1] == 'javascript' && !not_implemented[topic.to_sym][language[1].to_sym]
+      elsif language[1] == 'javascript'
         Templates::JavaScript.new(input_format, output_format, topic)
       end
     template = template_gen.build if template_gen.present?
