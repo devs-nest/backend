@@ -84,7 +84,14 @@ class Challenge < ApplicationRecord
   end
 
   def create_template(language)
-    return if input_format.nil? || output_format.nil?
+    not_implemented = {
+      'tree': {
+        'cpp': true,
+        'java': true,
+        'javascript': true
+      }
+    }
+    return if input_format.nil? || output_format.nil? || not_implemented[topic.to_sym][language[1].to_sym]
 
     template_gen =
       case language[1]
