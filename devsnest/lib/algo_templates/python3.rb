@@ -75,7 +75,7 @@ module Templates
     end
 
     def parse_tree_function
-      ["def parse_tree(root):", "\tqueue = [root]", "\ttree_array = [root.val]", "\twhile queue:", "\t\tcurr = queue.pop(0)", "\t\tif curr.left:", "\t\t\tqueue.append(curr.left)", "\t\t\ttree_array.append(curr.left.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\t\tif curr.right:", "\t\t\tqueue.append(curr.right)", "\t\t\ttree_array.append(curr.right.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\ttrim_nones(tree_array)", "\treturn tree_array"]
+      ["def parse_tree(root):", "\tqueue = deque([root])", "\ttree_array = [root.val]", "\twhile queue:", "\t\tcurr = queue.pop(0)", "\t\tif curr.left:", "\t\t\tqueue.append(curr.left)", "\t\t\ttree_array.append(curr.left.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\t\tif curr.right:", "\t\t\tqueue.append(curr.right)", "\t\t\ttree_array.append(curr.right.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\ttrim_nones(tree_array)", "\treturn tree_array"]
     end
 
     def input_builder(name, datastructure, dtype, dependent)
