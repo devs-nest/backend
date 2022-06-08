@@ -26,7 +26,7 @@ RSpec.describe Challenge, type: :model do
       it 'should create a template for python3' do
         algo_template = Templates::Python3.new(question.input_format, question.output_format, question.topic)
         template = algo_template.build
-        expect(template[:head]).to eq('')
+        expect(template[:head]).to eq('from collections import deque')
       end
     end
 
