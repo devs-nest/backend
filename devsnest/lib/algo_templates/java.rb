@@ -68,9 +68,9 @@ module Templates
     def output_builder(name, datastructure, dtype)
       meta = {
         'primitive' => {
-          'int' => ["System.out.println(#{name})"],
-          'float' => ["System.out.println(#{name})"],
-          'string' => ["System.out.println(#{name})"]
+          'int' => ["System.out.println(#{name});"],
+          'float' => ["System.out.println(#{name});"],
+          'string' => ["System.out.println(#{name});"]
         },
         'array' => {
           'int' => ["System.out.println(Arrays.toString(#{name}).replaceAll(\"\\\\[|\\\\]|,\", \"\"));"],
