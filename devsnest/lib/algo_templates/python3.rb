@@ -14,12 +14,13 @@ module Templates
     end
 
     def build_head
-      head_code = ["from collections import deque"]
-      if @topic == 'linkedlist'
+      head_code = ['from collections import deque']
+      case @topic
+      when 'linkedlist'
         head_code += linked_list_node_class
         head_code += linked_list_convert_function
         head_code += linked_list_print_function
-      elsif @topic == 'tree'
+      when 'tree'
         head_code += tree_node_class
         head_code += tree_create_level
         head_code += tree_convert_function
@@ -63,19 +64,22 @@ module Templates
     end
 
     def tree_convert_function
-      ["def create_tree(raw_array):", "\troot = TreeNode(raw_array[0])", "\tparent_level = [root]", "\tchild_level = []", "\tnodes_to_be_in_current_level = 2", "\tnodes_to_be_in_next_level = 2 * nodes_to_be_in_current_level", "\tfor i in raw_array[1:]:", "\t\tif not i:", "\t\t\tnodes_to_be_in_next_level -= 2", "\t\t\tnode = None", "\t\telse:", "\t\t\tnode = TreeNode(i)", "\t\tchild_level.append(node)", "\t\tnodes_to_be_in_current_level -= 1", "\t\tif nodes_to_be_in_current_level == 0:", "\t\t\tcreate_tree_level(parent_level, child_level)", "\t\t\tnodes_to_be_in_current_level = nodes_to_be_in_next_level", "\t\t\tnodes_to_be_in_next_level *= 2", "\t\t\tparent_level = child_level", "\t\t\tchild_level = []", "\tif child_level:", "\t\tcreate_tree_level(parent_level, child_level)", "\treturn root"]
+      ['def create_tree(raw_array):', "\troot = TreeNode(raw_array[0])", "\tparent_level = [root]", "\tchild_level = []", "\tnodes_to_be_in_current_level = 2",
+       "\tnodes_to_be_in_next_level = 2 * nodes_to_be_in_current_level", "\tfor i in raw_array[1:]:", "\t\tif not i:", "\t\t\tnodes_to_be_in_next_level -= 2", "\t\t\tnode = None", "\t\telse:", "\t\t\tnode = TreeNode(i)", "\t\tchild_level.append(node)", "\t\tnodes_to_be_in_current_level -= 1", "\t\tif nodes_to_be_in_current_level == 0:", "\t\t\tcreate_tree_level(parent_level, child_level)", "\t\t\tnodes_to_be_in_current_level = nodes_to_be_in_next_level", "\t\t\tnodes_to_be_in_next_level *= 2", "\t\t\tparent_level = child_level", "\t\t\tchild_level = []", "\tif child_level:", "\t\tcreate_tree_level(parent_level, child_level)", "\treturn root"]
     end
 
     def tree_create_level
-      ["def create_tree_level(parent, child):", "\tchild_iter = iter(child)", "\tfor p in parent:", "\t\tif not p:", "\t\t\tcontinue", "\t\tp.left = next(child_iter, None)", "\t\tp.right = next(child_iter, None)"]
+      ['def create_tree_level(parent, child):', "\tchild_iter = iter(child)", "\tfor p in parent:", "\t\tif not p:", "\t\t\tcontinue", "\t\tp.left = next(child_iter, None)",
+       "\t\tp.right = next(child_iter, None)"]
     end
 
     def trim_nones_tree_parse
-      ["def trim_nones(arr):", "\ti = len(arr) - 1", "\twhile arr[i] == 'null':", "\t\tarr.pop()", "\t\ti -= 1"]
+      ['def trim_nones(arr):', "\ti = len(arr) - 1", "\twhile arr[i] == 'null':", "\t\tarr.pop()", "\t\ti -= 1"]
     end
 
     def parse_tree_function
-      ["def parse_tree(root):", "\tqueue = deque([root])", "\ttree_array = [root.val]", "\twhile queue:", "\t\tcurr = queue.pop(0)", "\t\tif curr.left:", "\t\t\tqueue.append(curr.left)", "\t\t\ttree_array.append(curr.left.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\t\tif curr.right:", "\t\t\tqueue.append(curr.right)", "\t\t\ttree_array.append(curr.right.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\ttrim_nones(tree_array)", "\treturn tree_array"]
+      ['def parse_tree(root):', "\tqueue = deque([root])", "\ttree_array = [root.val]", "\twhile queue:", "\t\tcurr = queue.pop(0)", "\t\tif curr.left:", "\t\t\tqueue.append(curr.left)",
+       "\t\t\ttree_array.append(curr.left.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\t\tif curr.right:", "\t\t\tqueue.append(curr.right)", "\t\t\ttree_array.append(curr.right.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\ttrim_nones(tree_array)", "\treturn tree_array"]
     end
 
     def input_builder(name, datastructure, dtype, dependent)
