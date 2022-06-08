@@ -14,11 +14,17 @@ module Templates
     end
 
     def build_head
-      head_code = []
+      head_code = ["from collections import deque"]
       if @topic == 'linkedlist'
         head_code += linked_list_node_class
         head_code += linked_list_convert_function
         head_code += linked_list_print_function
+      elsif @topic == 'tree'
+        head_code += tree_node_class
+        head_code += tree_create_level
+        head_code += tree_convert_function
+        head_code += trim_nones_tree_parse
+        head_code += parse_tree_function
       end
       head_code.join("\n")
     end
@@ -53,7 +59,7 @@ module Templates
     end
 
     def tree_node_class
-      ['class TreeNode:', "\tdef __inti__(self, val):", "\t\tself.left = None", "\t\tself.right = None", "\t\tself.val = val"]
+      ['class TreeNode:', "\tdef __init__(self, val):", "\t\tself.left = None", "\t\tself.right = None", "\t\tself.val = val"]
     end
 
     def tree_convert_function
@@ -61,7 +67,15 @@ module Templates
     end
 
     def tree_create_level
-      ["def create_tree_level(parent, child):", "\tchild_iter = iter(child)", "\tfor p in parent:", "\t\tif not p:", "\t\t\tcontinue", "\t\tp.left = next(child_iter, None)", "\t\tp.right = ext(child_iter, None)"]
+      ["def create_tree_level(parent, child):", "\tchild_iter = iter(child)", "\tfor p in parent:", "\t\tif not p:", "\t\t\tcontinue", "\t\tp.left = next(child_iter, None)", "\t\tp.right = next(child_iter, None)"]
+    end
+
+    def trim_nones_tree_parse
+      ["def trim_nones(arr):", "\ti = len(arr) - 1", "\twhile arr[i] == 'null':", "\t\tarr.pop()", "\t\ti -= 1"]
+    end
+
+    def parse_tree_function
+      ["def parse_tree(root):", "\tqueue = [root]", "\ttree_array = [root.val]", "\twhile queue:", "\t\tcurr = queue.pop(0)", "\t\tif curr.left:", "\t\t\tqueue.append(curr.left)", "\t\t\ttree_array.append(curr.left.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\t\tif curr.right:", "\t\t\tqueue.append(curr.right)", "\t\t\ttree_array.append(curr.right.val)", "\t\telse:", "\t\t\ttree_array.append(\"null\")", "\ttrim_nones(tree_array)", "\treturn tree_array"]
     end
 
     def input_builder(name, datastructure, dtype, dependent)
@@ -85,7 +99,7 @@ module Templates
           'int' => ['raw_array = list(map(int, input().split()))', "\t#{name} = convertToLL(raw_array, len(raw_array))"]
         },
         'binary_tree' => {
-          'int' => ['convert_block = lambda x: int(x) if x != "null" else None', "\traw_array = list(map(convert_block, input().split()))", "\t\t#{name} = create_tree(raw_array)"]
+          'int' => ['convert_block = lambda x: int(x) if x != "null" else None', "\traw_array = list(map(convert_block, input().split(' ')))", "\t#{name} = create_tree(raw_array)"]
         }
       }
 
@@ -115,6 +129,9 @@ module Templates
         },
         'linked_list' => {
           'int' => ["printLL(#{name})"]
+        },
+        'binary_tree' => {
+          'int' => ["print(*parse_tree(#{name}))"]
         }
       }
       meta[datastructure][dtype]
