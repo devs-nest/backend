@@ -91,7 +91,7 @@ class Challenge < ApplicationRecord
         'javascript': true
       }
     }
-    return if input_format.nil? || output_format.nil? || not_implemented[topic.to_sym][language[1].to_sym]
+    return if input_format.nil? || output_format.nil? || not_implemented.dig(topic.to_sym, language[1].to_sym)
 
     template_gen =
       case language[1]
