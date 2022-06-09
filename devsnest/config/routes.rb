@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :servers
   get '/health_check', to: 'health_check#index'
 
   namespace :api do
@@ -53,6 +54,7 @@ Rails.application.routes.draw do
           post :login, :connect_discord
           delete :logout
           get :unsubscribe
+          get :check_group_name
         end
       end
 

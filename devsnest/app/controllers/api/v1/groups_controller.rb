@@ -100,7 +100,7 @@ module Api
 
           group.update!(members_count: group.members_count + 1)
         end
-        RoleModifierWorker.perform_async('add_role', user.discord_id, group.name)
+        RoleModifierWorker.perform_async('add_role', user.discord_id, group.name, group.server.guild_id)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
       rescue ActiveRecord::RecordInvalid => e
         render_error(message: e)
@@ -119,6 +119,7 @@ module Api
         return render_error(message: 'Group not found') if group.nil?
 
         group_name = group.name
+        guild_id = Server.find_by(id: group.server_id)&.guild_id
 
         ActiveRecord::Base.transaction do
           group.group_members.find_by!(user_id: user.id).destroy
@@ -126,8 +127,8 @@ module Api
           group.reassign_leader(user.id)
           user.update(group_assigned: false)
         end
-        RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
-        GroupModifierWorker.perform_async('destroy', [group_name]) if Group.find_by(id: params[:id]).blank?
+        RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name, guild_id)
+        GroupModifierWorker.perform_async('destroy', [group_name], guild_id) if Group.find_by(id: params[:id]).blank?
 
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound

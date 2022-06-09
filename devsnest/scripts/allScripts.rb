@@ -12,12 +12,12 @@ RoleModifierWorker.perform_async('delete_role', discord_id, 'Role Name')
 discord_ids  = User.where(user_type:1).pluck(:discord_id) # get all admin discord ids
 discord_ids  = User.where(discord_active:true,accepted_in_course:true).pluck(:discord_id) # get all DN JUNE BATCH PEOPLE
 
-MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, 'DN JUNE BATCH')
+MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, 'Devsnest People')
 MassRoleModifierWorker.perform_async('add_mass_role', discord_ids.slice(0,10), 'Verified')
 MassRoleModifierWorker.perform_async('delete_mass_role', discord_ids, 'TEAM NAME')
 
 #  Group Modifier Example
-GroupModifierWorker.perform_async('create', ['V2 ADHIKRAM TEAM'])
+GroupModifierWorker.perform_async('create', ['V2 Tumpiya Team'])
 GroupModifierWorker.perform_async('destroy', [group.name])
 
 GroupNotifierWorker.perform_async('V2 Alpha Tester Team', "Hello PEEPS")
@@ -34,11 +34,17 @@ Group.v2.where(name:'V2 Sirius TEAM').each do |group|
     end
     MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, group.name)
 end
-
-Group.v2.each do |u|
-    u.update(members_count:u.group_members.count)
-    # puts("#{u.name} has #{u.group_members.count} members and #{u.members_count} members_count") if u.group_members.count != u.members_count
+if u.group_members.count==0
+    puts(u.name)
 end
+u.update(members_count:u.group_members.count)
+Group.v2.each do |u|
+    if Group.where(slug:u.slug).count > 1
+        puts(Group.where(slug:u.slug).pluck(:name))
+        puts("------------------------------------------------------------------")
+    end
+end
+puts("#{u.name} has #{u.group_members.count} members and #{u.members_count} members_count") if u.group_members.count != u.members_count
 #Check all bots
 id = User.find_by(name:'Adhikram').discord_id
 
@@ -56,3 +62,10 @@ User.where(discord_active:false,web_active:false).each do |u|
 names.each do |u|
     User.find_by(email:u).update(web_active:true)
     end
+
+discord_id=[]
+Group.v2.all.each do |g|
+    g.group_members.each do |m|
+        discord_id.push(User.find_by(id:m.user_id).discord_id)
+    end
+end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_06_062035) do
+ActiveRecord::Schema.define(version: 2022_06_08_160509) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_06_06_062035) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "0P8kBBIOHYA"
+    t.string "cuid", default: "nipE0r1LvI0"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -294,6 +294,7 @@ ActiveRecord::Schema.define(version: 2022_06_06_062035) do
     t.integer "language", default: 0
     t.integer "classification", default: 0
     t.text "description"
+    t.integer "server_id", default: 1
   end
 
   create_table "hackathons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -442,6 +443,13 @@ ActiveRecord::Schema.define(version: 2022_06_06_062035) do
     t.index ["user_id", "creation_date"], name: "index_scrums_on_user_id_and_creation_date", unique: true
   end
 
+  create_table "servers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.string "guild_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "content_id"
@@ -462,10 +470,10 @@ ActiveRecord::Schema.define(version: 2022_06_06_062035) do
 
   create_table "unsubscribes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "category"
+    t.integer "category", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category"
+    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category", unique: true
   end
 
   create_table "upvotes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -535,8 +543,8 @@ ActiveRecord::Schema.define(version: 2022_06_06_062035) do
     t.boolean "is_college_form_filled", default: false
     t.boolean "accepted_in_course", default: false
     t.string "enrolled_for_course_image_url"
-    t.string "referred_company"
     t.boolean "previously_joined_a_group", default: false
+    t.string "referred_company"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
