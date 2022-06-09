@@ -120,7 +120,7 @@ module Api
           user = User.find_by_email(params['email'])
           return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
         else
-          user = User.fetch_google_user(code, googleId, params['referred_company'].present? ? params['referred_company'] : nil)
+          user = User.fetch_google_user(code, googleId, params['referral_code'].present? ? params['referral_code'] : nil)
         end
 
         if user.present?
@@ -221,8 +221,10 @@ module Api
         return render_error({ message: 'User already exists!' }) if user.present?
 
         user = User.new(sign_up_params)
+        referral_code = params[:referral_code]
         user.web_active = true
         if user.save
+          Referral.create(referral_code: referral_code, user_id: user.id) if referral_code.present?
           sign_in(user)
           set_current_user
           render json: user if @current_user.present?
@@ -322,7 +324,7 @@ module Api
       private
 
       def sign_up_params
-        params.permit(:email, :password, :password_confirmation, :name, :referred_company)
+        params.permit(:email, :password, :password_confirmation, :name)
       end
     end
   end
