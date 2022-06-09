@@ -54,11 +54,9 @@ class User < ApplicationRecord
 
   def self.fetch_google_user(code, googleId, referral_code = '')
     user_details = fetch_google_user_details(code)
-    debugger
     return if user_details.nil?
 
     user = create_google_user(user_details, googleId, referral_code)
-    # debugger
     Referral.create!(referral_code: referral_code, user_id: User.last.id) if referral_code.present?
     user
   end
