@@ -469,10 +469,10 @@ ActiveRecord::Schema.define(version: 2022_06_06_194046) do
 
   create_table "unsubscribes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "category"
+    t.integer "category", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category"
+    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category", unique: true
   end
 
   create_table "upvotes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
