@@ -14,6 +14,9 @@ class Templates::JavaScript < Templates::BaseHelper
     if @topic == 'linkedlist'
       head_code += linked_list_node_class
       head_code += linked_list_print_function
+    elsif @topic == 'tree'
+      tree_functions = [tree_node_class, tree_input_convert_block, tree_level_iterator, tree_level_function, tree_create_function].flatten
+      head_code += tree_functions
     end
     head_code.join("\n")
   end
@@ -37,6 +40,8 @@ class Templates::JavaScript < Templates::BaseHelper
                    ["#{value[:name]}.forEach(", '(element) => console.log(...element)', ');']
                  when 'linked_list'
                    ["printLL(#{value[:name]})"]
+                 when 'tree'
+                   ["console.log(...parse_tree(#{value[:name]}))"]
                  end
     end
     outputs
@@ -62,5 +67,33 @@ class Templates::JavaScript < Templates::BaseHelper
 
   def linked_list_print_function
     ['function printLL(head){', 'let s = "";', "\twhile (head){", "\t\ts += head.data + \" \";", "\t\thead = head.next", "\t}", "console.log(s.trim())", "}"]
+  end
+
+  def tree_node_class
+    ['class TreeNode{', "\tconstructor(val) {", "\t\tthis.val = val", "\t\tthis.left = null", "\t\tthis.right = null", "\t}", "}"]
+  end
+
+  def tree_input_convert_block
+    ["function convert_block(num) {", "\tif (num === "null"){", "\t\treturn null", "\t}", "\telse{", "\t\treturn parseInt(num)", "\t}", "}"]
+  end
+
+  def tree_level_iterator
+    ["function* iter(array) {", "\tfor (let i = 0; i < Number.MAX_VALUE; i+=1){", "\t\tif (i >= array.length){", "\t\t\tyield null", "\t\t}", "\t\telse{", "\t\t\tyield array[i]", "\t\t}","\t}", "}"]
+  end
+
+  def tree_level_function
+    ["function create_tree_level(parent, child){", "\tlet child_iter = iter(child)", "\tfor (let p of parent){", "\t\tif (!p){", "\t\t\tcontinue", "\t\t}", "\t\tif (left || left === 0){", "\t\t\tp.left = child_iter.next().value", "\t\t}", "\t\tif (right || right === 0){", "\t\t\tp.right = child_iter.next().value", "\t\t}", "\t}", "}"]
+  end
+
+  def tree_create_function
+    ["function create_tree(raw_array){", "\tlet root = new TreeNode(raw_array[0])", "\tlet root = new TreeNode(raw_array[0])", "\tlet child_level = []", "\tlet nodes_to_be_in_current_level = 2", "\tlet nodes_to_be_in_next_level = 2 * nodes_to_be_in_current_level", "\tfor (let i = 1; i < raw_array.length; i+=1){", "\t\tif (!raw_array[i]){", "\t\t\tnodes_to_be_in_next_level -= 2", "\t\t\tnode = null", "\t\t}", "\t\telse{", "\t\t\tnode = new TreeNode(raw_array[i])", "\t\t}", "\t\tchild_level.push(node)", "\t\tnodes_to_be_in_current_level -= 1", "\t\tif (nodes_to_be_in_current_level === 0){", "\t\t\tcreate_tree_level(parent_level, child_level)", "\t\t\tnodes_to_be_in_current_level = nodes_to_be_in_next_level", "\t\t\tnodes_to_be_in_next_level *= 2", "\t\t\tparent_level = child_level","\t\t\tchild_level = []","\t\t}", "\t}", "\tif (child_level.length){", "\t\tcreate_tree_level(parent_level, child_level)", "\t}", "\treturn root", "}"]
+  end
+
+  def tree_trim_nones_function
+    ["function trim_nones(arr){", "\tlet i = arr.length - 1", "\twhile (arr[i] === null){", "arr.pop()", "\ti -= 1", "\t}", "}"]
+  end
+
+  def tree_parse_function
+    ["function parse_tree(root){", "\tqueue = [root]", "\ttree_array = [root.val]", "\twhile (queue.length){", "\t\tlet curr = queue.shift()", "\t\tif (curr.left){", "\t\t\tqueue.push(curr.left)", "\t\t\ttree_array.push(curr.left.val)", "\t\t}", "\t\telse{", "\t\t\ttree_array.push('null')", "\t\t}", "\t\tif (curr.right){", "\t\t\tqueue.push(curr.right)", "\t\t\ttree_array.push(curr.right.val)", "\t\t}", "\t\telse{", "\t\t\ttree_array.push('null')", "\t\t}", "\t}", "\ttrim_nones(tree_array)", "\treturn tree_array", "}"]
   end
 end
