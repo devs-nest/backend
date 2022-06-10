@@ -15,7 +15,7 @@ class Templates::JavaScript < Templates::BaseHelper
       head_code += linked_list_node_class
       head_code += linked_list_print_function
     elsif @topic == 'tree'
-      tree_functions = [tree_node_class, tree_input_convert_block, tree_level_iterator, tree_level_function, tree_create_function].flatten
+      tree_functions = [tree_node_class, tree_input_convert_block, tree_level_iterator, tree_level_function, tree_create_function, tree_trim_nones_function, tree_parse_function].flatten
       head_code += tree_functions
     end
     head_code.join("\n")
@@ -40,7 +40,7 @@ class Templates::JavaScript < Templates::BaseHelper
                    ["#{value[:name]}.forEach(", '(element) => console.log(...element)', ');']
                  when 'linked_list'
                    ["printLL(#{value[:name]})"]
-                 when 'tree'
+                 when 'binary_tree'
                    ["console.log(...parse_tree(#{value[:name]}))"]
                  end
     end
@@ -74,7 +74,7 @@ class Templates::JavaScript < Templates::BaseHelper
   end
 
   def tree_input_convert_block
-    ["function convert_block(num) {", "\tif (num === "null"){", "\t\treturn null", "\t}", "\telse{", "\t\treturn parseInt(num)", "\t}", "}"]
+    ["function convert_block(num) {", "\tif (num === \"null\"){", "\t\treturn null", "\t}", "\telse{", "\t\treturn parseInt(num)", "\t}", "}"]
   end
 
   def tree_level_iterator
@@ -82,15 +82,15 @@ class Templates::JavaScript < Templates::BaseHelper
   end
 
   def tree_level_function
-    ["function create_tree_level(parent, child){", "\tlet child_iter = iter(child)", "\tfor (let p of parent){", "\t\tif (!p){", "\t\t\tcontinue", "\t\t}", "\t\tif (left || left === 0){", "\t\t\tp.left = child_iter.next().value", "\t\t}", "\t\tif (right || right === 0){", "\t\t\tp.right = child_iter.next().value", "\t\t}", "\t}", "}"]
+    ["function create_tree_level(parent, child){", "\tlet child_iter = iter(child)", "\tfor (let p of parent){", "\t\tif (!p){", "\t\t\tcontinue", "\t\t}", "\t\tp.left = child_iter.next().value", "\t\tp.right = child_iter.next().value", "\t}", "}"]
   end
 
   def tree_create_function
-    ["function create_tree(raw_array){", "\tlet root = new TreeNode(raw_array[0])", "\tlet root = new TreeNode(raw_array[0])", "\tlet child_level = []", "\tlet nodes_to_be_in_current_level = 2", "\tlet nodes_to_be_in_next_level = 2 * nodes_to_be_in_current_level", "\tfor (let i = 1; i < raw_array.length; i+=1){", "\t\tif (!raw_array[i]){", "\t\t\tnodes_to_be_in_next_level -= 2", "\t\t\tnode = null", "\t\t}", "\t\telse{", "\t\t\tnode = new TreeNode(raw_array[i])", "\t\t}", "\t\tchild_level.push(node)", "\t\tnodes_to_be_in_current_level -= 1", "\t\tif (nodes_to_be_in_current_level === 0){", "\t\t\tcreate_tree_level(parent_level, child_level)", "\t\t\tnodes_to_be_in_current_level = nodes_to_be_in_next_level", "\t\t\tnodes_to_be_in_next_level *= 2", "\t\t\tparent_level = child_level","\t\t\tchild_level = []","\t\t}", "\t}", "\tif (child_level.length){", "\t\tcreate_tree_level(parent_level, child_level)", "\t}", "\treturn root", "}"]
+    ["function create_tree(raw_array){", "\tlet root = new TreeNode(raw_array[0])", "\tlet parent_level = [root]", "\tlet child_level = []", "\tlet nodes_to_be_in_current_level = 2", "\tlet nodes_to_be_in_next_level = 2 * nodes_to_be_in_current_level", "\tfor (let i = 1; i < raw_array.length; i+=1){", "\t\tif (!raw_array[i]){", "\t\t\tnodes_to_be_in_next_level -= 2", "\t\t\tnode = null", "\t\t}", "\t\telse{", "\t\t\tnode = new TreeNode(raw_array[i])", "\t\t}", "\t\tchild_level.push(node)", "\t\tnodes_to_be_in_current_level -= 1", "\t\tif (nodes_to_be_in_current_level === 0){", "\t\t\tcreate_tree_level(parent_level, child_level)", "\t\t\tnodes_to_be_in_current_level = nodes_to_be_in_next_level", "\t\t\tnodes_to_be_in_next_level *= 2", "\t\t\tparent_level = child_level","\t\t\tchild_level = []","\t\t}", "\t}", "\tif (child_level.length){", "\t\tcreate_tree_level(parent_level, child_level)", "\t}", "\treturn root", "}"]
   end
 
   def tree_trim_nones_function
-    ["function trim_nones(arr){", "\tlet i = arr.length - 1", "\twhile (arr[i] === null){", "arr.pop()", "\ti -= 1", "\t}", "}"]
+    ["function trim_nones(arr){", "\tlet i = arr.length - 1", "\twhile (arr[i] === 'null'){", "\t\tarr.pop()", "\ti -= 1", "\t}", "}"]
   end
 
   def tree_parse_function
