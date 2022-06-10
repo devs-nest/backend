@@ -1,7 +1,7 @@
 class UpdateReferredField < ActiveRecord::Migration[6.0]
   def change
     create_table :referrals do |t|
-      t.integer :user_id, unique: true
+      t.integer :referred_user_id, unique: true
       t.string :referral_code
       t.timestamps
     end

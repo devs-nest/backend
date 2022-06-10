@@ -24,7 +24,7 @@ class User < ApplicationRecord
   after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
-  after_create :update_unique_referral_code
+  after_create :create_referral_code
 
   def create_username
     username = ''
@@ -38,8 +38,8 @@ class User < ApplicationRecord
     update_attribute(:bot_id, rand(1..20))
   end
 
-  def update_unique_referral_code
-    update_attribute(:referral_code, SecureRandom.hex(6))
+  def create_referral_code
+    update(referral_code: SecureRandom.hex(6))
   end
 
   def self.fetch_discord_id(code)
@@ -57,7 +57,7 @@ class User < ApplicationRecord
     return if user_details.nil?
 
     user = create_google_user(user_details, googleId, referral_code)
-    Referral.create!(referral_code: referral_code, user_id: User.last.id) if referral_code.present?
+    Referral.create(referral_code: referral_code, referred_user_id: User.last.id) if referral_code.present?
     user
   end
 

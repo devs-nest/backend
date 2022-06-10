@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_06_06_194046) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "M7J6T6XCuRA"
+    t.string "cuid", default: "PR94GLqQOWY"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -427,7 +427,7 @@ ActiveRecord::Schema.define(version: 2022_06_06_194046) do
   end
 
   create_table "referrals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.integer "user_id"
+    t.integer "referred_user_id"
     t.string "referral_code"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

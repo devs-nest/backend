@@ -120,7 +120,7 @@ module Api
           user = User.find_by_email(params['email'])
           return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
         else
-          user = User.fetch_google_user(code, googleId, params['referral_code'].present? ? params['referral_code'] : nil)
+          user = User.fetch_google_user(code, googleId, params[:referral_code])
         end
 
         if user.present?
@@ -224,7 +224,7 @@ module Api
         referral_code = params[:referral_code]
         user.web_active = true
         if user.save
-          Referral.create(referral_code: referral_code, user_id: user.id) if referral_code.present?
+          Referral.create(referral_code: referral_code, referred_user_id: user.id) if referral_code.present?
           sign_in(user)
           set_current_user
           render json: user if @current_user.present?

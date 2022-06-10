@@ -9,16 +9,16 @@ module Api
 
       def index
         user_referrals = Referral.where(referral_code: @current_user.referral_code)
-        referrals = []
-        user_referrals.each do |u|
-          referred_user = User.find(u&.user_id)
-          referrals.push({ referred_user: referred_user.name, created_at: u.created_at }).as_json if referred_user.present?
+        referrals = { referrals: [] }
+        user_referrals.each do |q|
+          referred_user = User.find(q.referred_user_id)
+          referrals[:referrals].push({ id: referred_user.id, referred_user: referred_user.name, created_at: q.created_at }) if referred_user.present?
         end
-        data = referrals.sort_by { |hsh| hsh[:created_at] }.reverse
-        if data.present?
-          api_render(200, { type: 'referrals', attributes: data })
+        referrals[:referrals].sort_by { |hsh| hsh[:created_at] }.reverse
+        if referrals.present?
+          api_render(200, referrals.merge(type: 'referrals'))
         else
-          api_render(200, { type: 'referrals', attributes: 'User have no referrals' })
+          render_error(message: 'No referrals found', status: 404)
         end
       end
     end
