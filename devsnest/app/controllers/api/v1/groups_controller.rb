@@ -4,6 +4,7 @@ module Api
   module V1
     class GroupsController < ApplicationController
       include JSONAPI::ActsAsResourceController
+      include UtilConcern
       before_action :simple_auth
       before_action :user_auth, only: %i[create show join leave update]
       before_action :admin_auth, only: %i[promote]
@@ -105,6 +106,7 @@ module Api
           group.update!(members_count: group.members_count + 1)
         end
         RoleModifierWorker.perform_async('add_role', user.discord_id, group.name, group.server&.guild_id)
+        send_group_change_message(user.discord_id, group.name)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
       rescue ActiveRecord::RecordInvalid => e
         render_error(message: e)

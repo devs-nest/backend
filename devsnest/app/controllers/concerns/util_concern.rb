@@ -23,4 +23,11 @@ module UtilConcern
       'No user found'
     end
   end
+
+  def send_group_change_message(discord_id, group_name)
+    puts("Sending group change message to #{discord_id}")
+    server = Group.find_by(name: group_name).server
+    message = "You have been added to the group #{group_name} on #{server.name} /n Join the group here: #{server.link}"
+    MassNotifierWorker.perform_async([discord_id], message)
+  end
 end

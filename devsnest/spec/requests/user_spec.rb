@@ -4,7 +4,6 @@ require 'rails_helper'
 require 'leaderboard'
 
 RSpec.describe Api::V1::UsersController, type: :request do
-
   context 'onboarding basic check' do
     let(:user) { create(:user, discord_active: true) }
     let(:controller) { Api::V1::UsersController }
