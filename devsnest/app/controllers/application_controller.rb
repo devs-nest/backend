@@ -79,25 +79,4 @@ class ApplicationController < ActionController::API
   def initialize_redis_lb
     @leaderboard ||= LeaderboardDevsnest::Initializer::LB
   end
-
-  def group_guild_id(role_name, server_guild_id = ENV['DISCORD_GUILD_ID'])
-    group = Group.find_by(name: role_name)
-    if server_guild_id.present?
-      server_guild_id
-    elsif group.present?
-      group.server.guild_id
-    end
-  end
-
-  def user_group(discord_id)
-    user = User.find_by(discord_id: discord_id)
-    if user.present?
-      groupmember = GroupMember.find_by(user_id: user.id)
-      return 'No group found' if groupmember.nil?
-
-      groupmember.group
-    else
-      'No user found'
-    end
-  end
 end

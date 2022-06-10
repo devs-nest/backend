@@ -3,6 +3,7 @@
 # worker that appends tokens to a message
 class MassRoleModifierWorker
   include Sidekiq::Worker
+  include UtilConcern
   sidekiq_options retry: 2
   def perform(action, discord_ids, role_name, server_guild_id = nil)
     guild_id = group_guild_id(role_name, server_guild_id)
