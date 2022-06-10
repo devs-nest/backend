@@ -44,9 +44,8 @@ module Api
 
       def change_discord_group_name
         group = Group.find_by(id: params[:id])
-        if params[:data][:attributes][:name].present? && group.present? && group.name != params[:data][:attributes][:name]
-          GroupModifierWorker.perform_async('update', [group.name, params[:data][:attributes][:name]], group.server.guild_id)
-        end
+        new_group_name = params[:data][:attributes][:name]
+        GroupModifierWorker.perform_async('update', [group.name, params[:data][:attributes][:name]], group.server.guild_id) if group.name != new_group_name
       end
 
       def deslug
