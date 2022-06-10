@@ -5,7 +5,7 @@ class RoleModifierWorker
   include Sidekiq::Worker
   include UtilConcern
   sidekiq_options retry: 5
-  def perform(action, discord_id, role_name, server_guild_id = nil)
+  def perform(action, discord_id, role_name, server_guild_id = ENV['DISCORD_GUILD_ID'])
     guild_id = group_guild_id(role_name, server_guild_id)
     data = {
       guild_id: guild_id,

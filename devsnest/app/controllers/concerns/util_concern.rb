@@ -3,7 +3,7 @@
 # utils module
 module UtilConcern
   extend ActiveSupport::Concern
-  def group_guild_id(role_name, server_guild_id = ENV['DISCORD_GUILD_ID'])
+  def group_guild_id(role_name, server_guild_id)
     group = Group.find_by(name: role_name)
     if server_guild_id.present?
       server_guild_id

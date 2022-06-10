@@ -5,7 +5,7 @@ class GroupNotifierWorker
   include Sidekiq::Worker
   include UtilConcern
   sidekiq_options retry: 5
-  def perform(group_name, message, server_guild_id = nil)
+  def perform(group_name, message, server_guild_id = ENV['DISCORD_GUILD_ID'])
     guild_id = group_guild_id(group_name[0], server_guild_id)
     data = {
       guild_id: guild_id,

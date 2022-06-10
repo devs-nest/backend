@@ -3,7 +3,7 @@ MassNotifierWorker.perform_async(users,'Hello World!')
 
 #  Role Modifier Example
 discord_id=User.first.discord_id
-RoleModifierWorker.perform_async('add_role', 706820473195069490, 'Devsnest People')
+RoleModifierWorker.perform_async('add_role', 706820473195069490, 'DN JUNE BATCH')
 RoleModifierWorker.perform_async('delete_role', discord_id, 'Role Name')
 
 

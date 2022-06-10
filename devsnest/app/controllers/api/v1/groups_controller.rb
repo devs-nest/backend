@@ -9,6 +9,7 @@ module Api
       before_action :admin_auth, only: %i[promote]
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
+      before_action :change_discord_group_name, only: %i[update]
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
@@ -39,8 +40,12 @@ module Api
       def check_group_admin_auth
         group = Group.find_by(id: params[:id])
         group.group_admin_auth(@current_user)
+      end
+
+      def change_discord_group_name
+        group = Group.find_by(id: params[:id])
         if params[:data][:attributes][:name].present? && group.present? && group.name != params[:data][:attributes][:name]
-          GroupModifierWorker.perform_async('update', [group.name, params[:data][:attributes][:name]])
+          GroupModifierWorker.perform_async('update', [group.name, params[:data][:attributes][:name]], group.server.guild_id)
         end
       end
 
@@ -127,6 +132,7 @@ module Api
           group.reassign_leader(user.id)
           user.update(group_assigned: false)
         end
+        # we need to pass guild id here because we do not have the group now
         RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name, guild_id)
         GroupModifierWorker.perform_async('destroy', [group_name], guild_id) if Group.find_by(id: params[:id]).blank?
 
