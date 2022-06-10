@@ -5,14 +5,7 @@ class RoleModifierWorker
   include Sidekiq::Worker
   sidekiq_options retry: 5
   def perform(action, discord_id, role_name, server_guild_id = nil)
-    group = Group.find_by(name: role_name)
-    guild_id = if server_guild_id.present?
-                 server_guild_id
-               elsif group.present?
-                 group.server.guild_id
-               else
-                 ENV['DISCORD_GUILD_ID']
-               end
+    guild_id = group_guild_id(role_name, server_guild_id)
     data = {
       guild_id: guild_id,
       action: action,

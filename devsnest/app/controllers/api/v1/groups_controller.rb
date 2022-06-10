@@ -16,7 +16,7 @@ module Api
       after_action :assign_leader, only: %i[create]
 
       def context
-        { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present?, fetch_all: params[:all_groups].present? }
+        { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present?, fetch_all: params[:all_groups].present?, group_id: params[:group_id] }
       end
 
       def check_v2_eligible
@@ -100,7 +100,7 @@ module Api
 
           group.update!(members_count: group.members_count + 1)
         end
-        RoleModifierWorker.perform_async('add_role', user.discord_id, group.name, group.server.guild_id)
+        RoleModifierWorker.perform_async('add_role', user.discord_id, group.name, group.server&.guild_id)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
       rescue ActiveRecord::RecordInvalid => e
         render_error(message: e)

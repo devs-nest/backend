@@ -17,13 +17,13 @@ MassRoleModifierWorker.perform_async('add_mass_role', discord_ids.slice(0,10), '
 MassRoleModifierWorker.perform_async('delete_mass_role', discord_ids, 'TEAM NAME')
 
 #  Group Modifier Example
-GroupModifierWorker.perform_async('create', ['V2 Tumpiya Team'])
+GroupModifierWorker.perform_async('create', ['V2 PHENOMENAL  CULTS Team'])
 GroupModifierWorker.perform_async('destroy', [group.name])
 
 GroupNotifierWorker.perform_async('V2 Alpha Tester Team', "Hello PEEPS")
 
 #  Mass group Modifier Example
-Group.v2.where(name:'V2 Sirius TEAM').each do |group|
+Group.v2.where(name:'V2 26 Squadron Team').each do |group|
     discord_ids=[]
     puts("-----------------------------------------------------")
     puts(group.name)

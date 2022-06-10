@@ -25,9 +25,10 @@ class Group < ApplicationRecord
   def parameterize
     update_attribute(:slug, name.parameterize)
   end
+
   def assign_server
     server = Server.find_by(id: ENV['SERVER_ID'])
-    update_attribute(:server_id, server.id) if server.present?
+    update(server_id: server.id) if server.present?
   end
 
   def reassign_leader(user_id)
