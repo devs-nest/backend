@@ -10,7 +10,8 @@ RSpec.describe WeeklyTodo, type: :request do
     let(:co_owner) { create(:user) }
     let(:batch_leader) { create(:user) }
     let!(:admin) { create(:user, user_type: 1) }
-    let(:group1) { create(:group, owner_id: owner.id, co_owner_id: co_owner.id, batch_leader_id: batch_leader.id) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group1) { create(:group, owner_id: owner.id, co_owner_id: co_owner.id, batch_leader_id: batch_leader.id, server_id: server1.id) }
     let!(:group_member) { create(:group_member, user_id: user1.id, group_id: group1.id) }
     let!(:wt1) { create(:weekly_todo, group_id: group1.id) }
     let(:parameters_index) do
