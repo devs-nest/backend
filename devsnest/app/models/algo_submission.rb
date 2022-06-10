@@ -151,11 +151,11 @@ class AlgoSubmission < ApplicationRecord
     submissions = user.algo_submissions.where(challenge_id: challenge_id)
     best_submission = submissions.find_by(is_best_submission: true)
 
-    if best_submission.blank?
-      mark_current_as_best_submission = true
-    else
-      mark_current_as_best_submission = passed_test_cases > best_submission.passed_test_cases
-    end
+    mark_current_as_best_submission = if best_submission.blank?
+                                        true
+                                      else
+                                        passed_test_cases > best_submission.passed_test_cases
+                                      end
 
     [best_submission, mark_current_as_best_submission]
   end
