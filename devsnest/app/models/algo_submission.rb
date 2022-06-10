@@ -146,17 +146,17 @@ class AlgoSubmission < ApplicationRecord
     ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
   end
 
-  def update_best_submission
+  def check_for_best_submission
     user = User.find(user_id)
     submissions = user.algo_submissions.where(challenge_id: challenge_id)
     best_submission = submissions.find_by(is_best_submission: true)
-    return update(is_best_submission: true) if best_submission.nil?
 
-    submissions.update_all(is_best_submission: false)
-    if passed_test_cases > best_submission.passed_test_cases
-      update(is_best_submission: true)
+    if best_submission.blank?
+      mark_current_as_best_submission = true
     else
-      best_submission.update(is_best_submission: true)
+      mark_current_as_best_submission = passed_test_cases > best_submission.passed_test_cases
     end
+
+    [best_submission, mark_current_as_best_submission]
   end
 end
