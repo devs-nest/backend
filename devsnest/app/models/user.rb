@@ -9,6 +9,7 @@ class User < ApplicationRecord
   enum user_type: %i[user admin problem_setter]
   after_create :create_username
   validates_uniqueness_of :username
+  validates :referral_code, uniqueness: true
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
@@ -24,6 +25,8 @@ class User < ApplicationRecord
   after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
+  after_update :update_user_coins_for_signup
+  after_create :create_referral_code
 
   def create_username
     username = ''
@@ -37,6 +40,10 @@ class User < ApplicationRecord
     update_attribute(:bot_id, rand(1..20))
   end
 
+  def create_referral_code
+    update(referral_code: SecureRandom.hex(2)) if web_active == true
+  end
+
   def self.fetch_discord_id(code)
     token = fetch_discord_access_token(code)
     return if token.nil?
@@ -47,11 +54,13 @@ class User < ApplicationRecord
     user_details['id']
   end
 
-  def self.fetch_google_user(code, googleId, referred_company = '')
+  def self.fetch_google_user(code, googleId, referral_code = '')
     user_details = fetch_google_user_details(code)
     return if user_details.nil?
 
-    create_google_user(user_details, googleId, referred_company)
+    user = create_google_user(user_details, googleId, referral_code)
+    Referral.create(referral_code: referral_code, referred_user_id: User.last.id) if referral_code.present?
+    user
   end
 
   def self.fetch_google_user_details(code)
@@ -63,7 +72,7 @@ class User < ApplicationRecord
     JSON(response.read_body)
   end
 
-  def self.create_google_user(user_details, googleId, referred_company = '')
+  def self.create_google_user(user_details, googleId, _referral_code = '')
     email = user_details['email']
     name = user_details['name']
     user = User.where(email: email).first
@@ -82,8 +91,7 @@ class User < ApplicationRecord
       web_active: true,
       image_url: avatar,
       google_id: googleId,
-      is_verified: true,
-      referred_company: referred_company.present? ? referred_company : nil
+      is_verified: true
     )
   end
 
@@ -225,6 +233,17 @@ class User < ApplicationRecord
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token
                                       }, template_id)
+    end
+  end
+
+  def update_user_coins_for_signup
+    # byebug
+    if web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
+      referred_user = Referral.find_by(referred_user_id: id)
+      if referred_user.present?
+        refered_by = User.find_by(referral_code: referred_user.referral_code)
+        refered_by.update(coins: refered_by.coins + 10)
+      end
     end
   end
 

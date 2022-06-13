@@ -133,6 +133,7 @@ Rails.application.routes.draw do
       jsonapi_resources :upvote, only: %i[create destroy]
       jsonapi_resources :college_form, only: %i[create]
       jsonapi_resources :course_curriculum, only: %i[index]
+      jsonapi_resources :referral, only: %i[index]
     end
   end
 end
