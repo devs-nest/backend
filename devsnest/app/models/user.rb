@@ -26,7 +26,7 @@ class User < ApplicationRecord
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
-  before_validation :create_referral_code, if: :is_referall_non_empty?
+  before_validation :create_referral_code, if: :is_referall_empty?
 
   def create_username
     username = ''
@@ -36,7 +36,7 @@ class User < ApplicationRecord
     update_attribute(:username, temp + username)
   end
 
-  def is_referall_non_empty?
+  def is_referall_empty?
     referral_code.blank?
   end
 
