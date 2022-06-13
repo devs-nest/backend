@@ -46,6 +46,9 @@ module Api
 
         # return render_unauthorized if submission.created_at > Time.now - 1.day
 
+        previous_best_submission, mark_current_as_best_submission = submission.check_for_best_submission
+        previous_best_submission.update(is_best_submission: false) if previous_best_submission.present? && mark_current_as_best_submission
+
         submission.with_lock do
           res_hash = AlgoSubmission.prepare_test_case_result(params)
           submission.status = res_hash['status_description'] if AlgoSubmission.order_status(submission.status) <= AlgoSubmission.order_status(res_hash['status_description'])
@@ -54,7 +57,7 @@ module Api
           submission.test_cases[params[:token]] = submission.test_cases[params[:token]].merge(res_hash)
           submission.passed_test_cases += 1 if params[:status][:id] == 3
           submission.status = 'Pending' if submission.status == 'Accepted' && submission.total_test_cases != submission.passed_test_cases
-          submission.update_best_submission
+          submission.is_best_submission = mark_current_as_best_submission
           submission.save!
         end
       end
