@@ -41,7 +41,7 @@ class User < ApplicationRecord
   end
 
   def create_referral_code
-    update(referral_code: SecureRandom.hex(2)) if web_active == true
+    Rails.logger.info 'Retrying referral code generation' while update(referral_code: SecureRandom.hex(2)) == false if web_active == true
   end
 
   def self.fetch_discord_id(code)
