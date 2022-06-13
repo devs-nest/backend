@@ -241,7 +241,7 @@ class User < ApplicationRecord
       referred_user = Referral.find_by(referred_user_id: id)
       if referred_user.present?
         refered_by = User.find_by(referral_code: referred_user.referral_code)
-        refered_by.update(coins: refered_by.coins + 1)
+        refered_by.update(coins: refered_by.coins + 100)
       end
     end
   end
