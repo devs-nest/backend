@@ -26,7 +26,7 @@ class User < ApplicationRecord
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
-  after_create :create_referral_code
+  before_validation :create_referral_code, if: :is_referall_empty?
 
   def create_username
     username = ''
@@ -36,12 +36,16 @@ class User < ApplicationRecord
     update_attribute(:username, temp + username)
   end
 
+  def is_referall_empty?
+    referral_code.blank?
+  end
+
   def assign_bot_to_user
     update_attribute(:bot_id, rand(1..20))
   end
 
   def create_referral_code
-    update(referral_code: SecureRandom.hex(2)) if web_active == true
+    Rails.logger.info 'Retrying referral code generation' while update(referral_code: SecureRandom.hex(2)) == false if web_active == true
   end
 
   def self.fetch_discord_id(code)
