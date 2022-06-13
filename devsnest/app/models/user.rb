@@ -26,7 +26,7 @@ class User < ApplicationRecord
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
-  after_create :create_referral_code
+  before_create :create_referral_code
 
   def create_username
     username = ''
