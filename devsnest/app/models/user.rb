@@ -9,6 +9,7 @@ class User < ApplicationRecord
   enum user_type: %i[user admin problem_setter]
   after_create :create_username
   validates_uniqueness_of :username
+  validates :referral_code, uniqueness: true
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
@@ -40,7 +41,7 @@ class User < ApplicationRecord
   end
 
   def create_referral_code
-    update(referral_code: SecureRandom.hex(6))
+    update(referral_code: SecureRandom.hex(2)) if web_active == true
   end
 
   def self.fetch_discord_id(code)
@@ -241,7 +242,7 @@ class User < ApplicationRecord
       referred_user = Referral.find_by(referred_user_id: id)
       if referred_user.present?
         refered_by = User.find_by(referral_code: referred_user.referral_code)
-        refered_by.update(coins: refered_by.coins + 100)
+        refered_by.update(coins: refered_by.coins + 10)
       end
     end
   end

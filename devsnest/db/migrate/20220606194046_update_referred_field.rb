@@ -7,7 +7,7 @@ class UpdateReferredField < ActiveRecord::Migration[6.0]
     end
 
     remove_column :users, :referred_company
-    add_column :users, :referral_code, :string
+    add_column :users, :referral_code, :string, unique: true
     add_column :users, :coins, :integer, default: 0
   end
 end
