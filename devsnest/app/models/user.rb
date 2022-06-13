@@ -26,7 +26,7 @@ class User < ApplicationRecord
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
-  before_create :create_referral_code
+  before_validation :create_referral_code, if: :is_referall_non_empty?
 
   def create_username
     username = ''
@@ -34,6 +34,10 @@ class User < ApplicationRecord
     temp = email.split('@')[0].gsub(/[^0-9A-Za-z]/, '')
     username = (count += 1).to_s while User.find_by(username: temp + username)
     update_attribute(:username, temp + username)
+  end
+
+  def is_referall_non_empty?
+    referral_code.blank?
   end
 
   def assign_bot_to_user

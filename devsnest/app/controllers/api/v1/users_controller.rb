@@ -229,6 +229,7 @@ module Api
           set_current_user
           render json: user if @current_user.present?
         else
+          byebug
           render_error(user.errors.to_s)
         end
       end
