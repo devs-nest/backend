@@ -12,7 +12,8 @@ module Api
         referrals = { referrals: [] }
         user_referrals.each do |q|
           referred_user = User.find(q.referred_user_id)
-          referrals[:referrals].push({ id: referred_user.id, referred_user: referred_user.name, created_at: q.created_at }) if referred_user.present?
+          referrals[:referrals].push({ id: referred_user.id, referred_user: referred_user.name, registered_for_the_course: referred_user.is_fullstack_course_22_form_filled,
+                                       is_discord_connected: referred_user.discord_active, created_at: q.created_at })
         end
         referrals[:referrals].sort_by { |hsh| hsh[:created_at] }.reverse
         if referrals.present?

@@ -24,6 +24,7 @@ class User < ApplicationRecord
   after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
+  after_update :update_user_coins_for_signup
   after_create :create_referral_code
 
   def create_username
@@ -231,6 +232,17 @@ class User < ApplicationRecord
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token
                                       }, template_id)
+    end
+  end
+
+  def update_user_coins_for_signup
+    # byebug
+    if web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
+      referred_user = Referral.find_by(referred_user_id: id)
+      if referred_user.present?
+        refered_by = User.find_by(referral_code: referred_user.referral_code)
+        refered_by.update(coins: refered_by.coins + 1)
+      end
     end
   end
 

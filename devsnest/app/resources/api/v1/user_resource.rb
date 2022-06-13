@@ -16,6 +16,8 @@ module Api
       attributes :markdown, :bio
       attributes :type
 
+      attr_reader :coins
+
       def markdown
         @model.markdown.dup.encode('ISO-8859-1').force_encoding('utf-8') unless @model.markdown.blank?
       end
