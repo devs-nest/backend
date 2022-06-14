@@ -320,7 +320,7 @@ module Api
       end
 
       def check_group_name
-        discord_id = params['data']['attributes']['discord_id']
+        discord_id = params.dig(:data, :attributes, 'discord_id')
         user = User.find_by(discord_id: discord_id)
         groupmember = GroupMember.find_by(user_id: user.id)
 

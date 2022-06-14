@@ -41,13 +41,6 @@ module Api
 
       def server_link
         @model.server.link
-        # if context[:group_id].present?
-        #   group = Group.find_by(id: context[:group_id])
-        #   group.server.link if group.present?
-        #   puts(@model.server.link)
-        # else
-        #   @model.server.link
-        # end
       end
 
       def self.records(options = {})
