@@ -27,8 +27,8 @@ class Group < ApplicationRecord
   end
 
   def assign_server
-    server = Server.find_by(id: ENV['SERVER_ID'])
-    self.server_id = server.id
+    server = Server.last
+    self.server_id = server&.id
   end
 
   def reassign_leader(user_id)
