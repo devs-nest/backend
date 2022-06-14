@@ -24,8 +24,8 @@ FactoryBot.define do
   factory :algo_submission do
     sequence(:user_id) { |n| n }
     sequence(:challenge_id) { |n| n }
-    sequence(:is_best_submission) { |n| false }
-    sequence(:is_submitted) { |n| true }
+    sequence(:is_best_submission) { |_n| false }
+    sequence(:is_submitted) { |_n| true }
   end
 
   factory :frontend_question do
@@ -58,6 +58,7 @@ FactoryBot.define do
     sequence(:batch_leader_id) { |n| n }
     sequence(:owner_id) { |n| n }
     sequence(:co_owner_id) { |n| n }
+    sequence(:server_id) { |n| n }
   end
   factory :group_member do
     sequence(:user_id) { |n| n }
@@ -147,5 +148,11 @@ FactoryBot.define do
   factory :language do
     sequence(:name) { |n| "test#{n}" }
     sequence(:judge_zero_id) { |n| n }
+  end
+
+  factory :server do
+    sequence(:name) { |n| "test#{n}" }
+    sequence(:guild_id) { |n| "test#{n}" }
+    sequence(:link) { |n| "test#{n}" }
   end
 end

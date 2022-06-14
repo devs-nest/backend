@@ -29,6 +29,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
   context 'onboarding' do
     let(:user) { create(:user, discord_active: true) }
     let(:controller) { Api::V1::UsersController }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
 
     before :each do
       # @mock_controller.stub(:current_user).and_return(User.first)
@@ -43,7 +44,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
 
     it 'when user is already in group' do
-      group = create(:group)
+      group = create(:group, server_id: server1.id)
       create(:group_member, user_id: user.id, group_id: group.id)
       put '/api/v1/users/onboard', params: USER_SPEC_PARAMS.to_json, headers: HEADERS
       expect(response.status).to eq(400)
@@ -445,12 +446,14 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
   context 'Connect discord with code ' do
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
     let!(:event) { create(:event, event_type: 'welcome', bot_type: 1) }
     let!(:event1) { create(:event, event_type: 'verification', bot_type: 0) }
     let!(:bot) { create(:notification_bot, bot_token: 'abchefljfhlf') }
     let!(:user1) { create(:user) }
     let!(:discord_user) { create(:user, discord_active: true, web_active: false) }
-    let(:group) { create(:group, co_owner_id: discord_user.id) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, co_owner_id: discord_user.id, server_id: server1.id) }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: discord_user.id) }
     it ' Connect discord ' do
       allow(User).to receive_message_chain(:fetch_discord_access_token).and_return('token')
@@ -468,12 +471,14 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
   context 'Connect discord with token' do
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
     let!(:event) { create(:event, event_type: 'welcome', bot_type: 1) }
     let!(:event1) { create(:event, event_type: 'verification', bot_type: 0) }
     let(:bot) { create(:notification_bot, bot_token: 'abchefljfhlf') }
     let!(:user1) { create(:user) }
     let(:discord_user) { create(:user, discord_active: true, web_active: false) }
-    let(:group) { create(:group, owner_id: discord_user.id) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, owner_id: discord_user.id, server_id: server1.id) }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: discord_user.id) }
     it ' Connect discord ' do
       user1.update(bot_id: bot.id)

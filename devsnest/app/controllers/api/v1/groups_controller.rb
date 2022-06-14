@@ -9,6 +9,7 @@ module Api
       before_action :admin_auth, only: %i[promote]
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
+      before_action :change_discord_group_name, only: %i[update]
       before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
@@ -16,7 +17,12 @@ module Api
       after_action :assign_leader, only: %i[create]
 
       def context
-        { user: @current_user, is_create: request.post?, slug: params[:id], fetch_v1: params[:v1].present?, fetch_all: params[:all_groups].present? }
+        {
+          user: @current_user, is_create: request.post?,
+          slug: params[:id], fetch_v1: params[:v1].present?,
+          fetch_all: params[:all_groups].present?,
+          group_id: params[:group_id]
+        }
       end
 
       def check_v2_eligible
@@ -39,9 +45,14 @@ module Api
       def check_group_admin_auth
         group = Group.find_by(id: params[:id])
         group.group_admin_auth(@current_user)
-        if params[:data][:attributes][:name].present? && group.present? && group.name != params[:data][:attributes][:name]
-          GroupModifierWorker.perform_async('update', [group.name, params[:data][:attributes][:name]])
-        end
+      end
+
+      def change_discord_group_name
+        group = Group.find_by(id: params[:id])
+        new_group_name = params.dig(:data, :attributes, 'name')
+        return if group.nil? || new_group_name.nil?
+
+        GroupModifierWorker.perform_async('update', [group.name, new_group_name], group.server.guild_id) if group.name != new_group_name
       end
 
       def deslug
@@ -100,7 +111,8 @@ module Api
 
           group.update!(members_count: group.members_count + 1)
         end
-        RoleModifierWorker.perform_async('add_role', user.discord_id, group.name)
+        RoleModifierWorker.perform_async('add_role', user&.discord_id, group&.name, group&.server&.guild_id)
+        send_group_change_message(user&.id, group&.name)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
       rescue ActiveRecord::RecordInvalid => e
         render_error(message: e)
@@ -119,6 +131,7 @@ module Api
         return render_error(message: 'Group not found') if group.nil?
 
         group_name = group.name
+        guild_id = Server.find_by(id: group.server_id)&.guild_id
 
         ActiveRecord::Base.transaction do
           group.group_members.find_by!(user_id: user.id).destroy
@@ -126,8 +139,9 @@ module Api
           group.reassign_leader(user.id)
           user.update(group_assigned: false)
         end
-        RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name)
-        GroupModifierWorker.perform_async('destroy', [group_name]) if Group.find_by(id: params[:id]).blank?
+        # we need to pass guild id here because we do not have the group now
+        RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name, guild_id)
+        GroupModifierWorker.perform_async('destroy', [group_name], guild_id) if Group.find_by(id: params[:id]).blank?
 
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
@@ -178,6 +192,7 @@ module Api
           group.group_members.create!(user_id: @current_user.id)
           GroupModifierWorker.perform_async('create', [group.name])
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
+          send_group_change_message(@current_user.id, group.name)
         end
       end
     end

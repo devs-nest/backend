@@ -5,7 +5,7 @@ module Api
     # Scrum Resourses
     class GroupResource < JSONAPI::Resource
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
-                 :classification, :description, :version
+                 :classification, :description, :version, :server_link
       has_many :group_members
       filter :classification
       filter :language
@@ -37,6 +37,10 @@ module Api
         else
           false
         end
+      end
+
+      def server_link
+        @model.server.link
       end
 
       def self.records(options = {})

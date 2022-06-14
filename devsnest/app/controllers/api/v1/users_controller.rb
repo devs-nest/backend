@@ -5,7 +5,7 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
-      before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username]
+      before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name]
       before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
@@ -319,6 +319,16 @@ module Api
         image_link = "https://#{ENV['S3_PREFIX']}custom-images.s3.amazonaws.com/#{key}"
         user.update(enrolled_for_course_image_url: image_link)
         render_success({ message: 'Image uploaded successfully' })
+      end
+
+      def check_group_name
+        discord_id = params.dig(:data, :attributes, 'discord_id')
+        user = User.find_by(discord_id: discord_id)
+        groupmember = GroupMember.find_by(user_id: user.id)
+
+        return render_error({ message: 'No group found' }) if groupmember.nil?
+
+        render_success({ name: groupmember.group.name })
       end
 
       private

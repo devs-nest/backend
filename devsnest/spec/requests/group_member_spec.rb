@@ -5,7 +5,8 @@ require 'rails_helper'
 RSpec.describe GroupMember, type: :request do
   context 'GroupMember - request specs' do
     context 'Get GroupMember' do
-      let(:group) { create(:group) }
+      let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+      let(:group) { create(:group, server_id: server1.id) }
       let(:user) { create(:user) }
       let(:group_member) { create(:group_member) }
 
@@ -45,8 +46,9 @@ RSpec.describe GroupMember, type: :request do
     end
 
     context 'Create Group Member' do
-      let(:group) { create(:group) }
-      let(:newgroup) { create(:group) }
+      let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+      let(:group) { create(:group, server_id: server1.id) }
+      let(:newgroup) { create(:group, server_id: server1.id) }
       let(:user) { create(:user) }
       let(:group_member) { create(:group_member) }
       let(:discord_id) { user.discord_id }

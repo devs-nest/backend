@@ -58,6 +58,7 @@ Rails.application.routes.draw do
           post :login, :connect_discord
           delete :logout
           get :unsubscribe
+          get :check_group_name
         end
       end
 

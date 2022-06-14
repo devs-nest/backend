@@ -4,7 +4,8 @@ require 'rails_helper'
 
 RSpec.describe BatchLeaderSheet, type: :request do
   context 'get batch_leader_sheets' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:batchleadersheet) { create(:batch_leader_sheet, creation_week: Date.current.at_beginning_of_week) }
 
@@ -31,7 +32,8 @@ RSpec.describe BatchLeaderSheet, type: :request do
   end
 
   context 'errors check while getting batch_leader_sheets' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:batchleadersheet) { create(:batch_leader_sheet, creation_week: Date.current.at_beginning_of_week) }
 
@@ -59,7 +61,8 @@ RSpec.describe BatchLeaderSheet, type: :request do
   end
 
   context 'create batch_leader_sheets' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
 
     before :each do
@@ -112,7 +115,8 @@ RSpec.describe BatchLeaderSheet, type: :request do
   end
 
   context 'update batch_leader_sheets when user is admin or barch_leader' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:batchleadersheet) { create(:batch_leader_sheet, user_id: user.id, group_id: group.id) }
     before :each do
@@ -176,7 +180,8 @@ RSpec.describe BatchLeaderSheet, type: :request do
   end
 
   context 'update batch_leader_sheets in not admin or batch_leader' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:batchleadersheet) { create(:batch_leader_sheet, user_id: user.id, group_id: group.id) }
     before :each do

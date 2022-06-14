@@ -4,7 +4,8 @@ require 'rails_helper'
 
 RSpec.describe Scrum, type: :request do
   context 'get Scrums basic errors ckecks checks' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum) }
     let(:date) { Date.current }
@@ -30,7 +31,8 @@ RSpec.describe Scrum, type: :request do
   end
 
   context 'get Scrums (User checks)' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum) }
     let(:group_member) { create(:group_member) }
@@ -61,7 +63,8 @@ RSpec.describe Scrum, type: :request do
   end
 
   context 'get Scrums (Batch leader) checks' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum) }
     let(:date) { Date.current }
@@ -91,7 +94,8 @@ RSpec.describe Scrum, type: :request do
   end
 
   context 'get Scrums (Admin) checks' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum) }
     let(:date) { Date.current }
@@ -121,7 +125,8 @@ RSpec.describe Scrum, type: :request do
   end
 
   context 'Create Scrums' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum) }
     let(:group_member) { create(:group_member) }
@@ -183,7 +188,8 @@ RSpec.describe Scrum, type: :request do
   end
 
   context 'Create Scrums' do
-    let(:group) { create(:group) }
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let(:group) { create(:group, server_id: server1.id) }
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum, user_id: user.id, group_id: group.id) }
     let(:group_member) { create(:group_member) }

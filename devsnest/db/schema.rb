@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_06_194046) do
+ActiveRecord::Schema.define(version: 2022_06_08_160509) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -294,6 +294,7 @@ ActiveRecord::Schema.define(version: 2022_06_06_194046) do
     t.integer "language", default: 0
     t.integer "classification", default: 0
     t.text "description"
+    t.integer "server_id", default: 1
   end
 
   create_table "hackathons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -447,6 +448,14 @@ ActiveRecord::Schema.define(version: 2022_06_06_194046) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "last_tha_link"
     t.index ["user_id", "creation_date"], name: "index_scrums_on_user_id_and_creation_date", unique: true
+  end
+
+  create_table "servers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.string "guild_id"
+    t.string "link"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

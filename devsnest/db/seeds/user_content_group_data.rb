@@ -100,7 +100,7 @@ User.create(username: 'Araika', name: 'Araika didi', discord_id: 'ebcd', passwor
 User.create(username: 'Haider', name: 'Haider Pro', discord_id: 'ywer', password: '1237801', email: 'haider@gmail.com')
 
 # Groups
-
+Server.create(name: 'Devsnest', guild_id: '12345667', link: 'https://discord.gg/12345667')
 Group.create(owner_id: User.last.id, co_owner_id: User.first.id, name: 'Alpha Team')
 Group.create(owner_id: 2, co_owner_id: 4, name: 'Beta Team')
 Group.create(owner_id: 8, co_owner_id: 11, name: 'Gamma Team')

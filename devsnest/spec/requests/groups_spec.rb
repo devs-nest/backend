@@ -4,6 +4,8 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::GroupsController, type: :request do
   context 'Groups Request Spec' do
+    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let!(:server2) { create(:server, name: 'Devsnest1', guild_id: '123456789') }
     context 'Create Groups' do
       let!(:user) { create(:user, user_type: 1) } # admin
       let!(:user2) { create(:user, user_type: 0, discord_active: true) }
@@ -104,11 +106,11 @@ RSpec.describe Api::V1::GroupsController, type: :request do
       let!(:user2) { create(:user, user_type: 0) }
       let!(:new_user) { create(:user, user_type: 0, discord_active: true, accepted_in_course: true) }
       let(:controller) { Api::V1::AdminController }
-      let(:group) { create(:group, owner_id: user.id) }
+      let(:group) { create(:group, owner_id: user.id, server_id: server1.id) }
 
       it 'check deslug' do
         sign_in(user)
-        group1 = create(:group, name: 'delta')
+        group1 = create(:group, name: 'delta', server_id: server1.id)
         create(:group_member, user_id: user.id, group_id: group1.id)
         get '/api/v1/groups/delta'
         expect(response.status).to eq(200)
@@ -117,7 +119,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
 
       it 'list v1 groups' do
         sign_in(new_user)
-        group1 = create(:group, name: 'delta')
+        group1 = create(:group, name: 'delta', server_id: server1.id)
         create(:group_member, user_id: user.id, group_id: group1.id)
         get '/api/v1/groups?v1=true'
         expect(response.status).to eq(200)
@@ -160,14 +162,14 @@ RSpec.describe Api::V1::GroupsController, type: :request do
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Group joined')
 
         sign_in(user)
-        post '/api/v1/groups/promote', params: { "data": { "attributes": { "user_id": new_user.id, "group_id": group.id, "promotion_type": "co_owner" }, "type": 'group' } }.to_json, headers: HEADERS
+        post '/api/v1/groups/promote', params: { "data": { "attributes": { "user_id": new_user.id, "group_id": group.id, "promotion_type": 'co_owner' }, "type": 'group' } }.to_json, headers: HEADERS
         expect(response.status).to eq(200)
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('User has been promoted')
       end
 
       it 'deletes group' do
         sign_in(user)
-        create(:group, name: 'delta')
+        create(:group, name: 'delta', server_id: server1.id)
         delete '/api/v1/groups/delete_group', headers: { 'Token': ENV['DISCORD_TOKEN'], 'User-Type': 'Bot' }, params: { "data": { "attributes": { "group_name": 'delta' } } }
         expect(response.status).to eq(204)
         sign_in(user)
@@ -178,7 +180,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
       it 'shows group data of a valid member' do
         sign_in(user2)
         co_owner = create(:user, name: 'co-owner')
-        group1 = create(:group, name: 'omega', owner_id: user2.id, co_owner_id: co_owner.id)
+        group1 = create(:group, name: 'omega', owner_id: user2.id, co_owner_id: co_owner.id, server_id: server1.id)
         create(:group_member, user_id: user2.id, group_id: group1.id)
         get '/api/v1/groups', headers: HEADERS
         expect(response.status).to eq(200)
@@ -187,7 +189,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
 
     context 'Update Groups' do
       let(:user) { create(:user, user_type: 1) }
-      let(:group) { create(:group) }
+      let(:group) { create(:group, name: 'Example', server_id: server1.id) }
 
       before :each do
         sign_in(user)
@@ -211,7 +213,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
       end
 
       it 'renames group' do
-        group4 = create(:group, name: 'omega')
+        group4 = create(:group, name: 'omega', server_id: server1.id)
         new_group_name = 'zeta'
         put '/api/v1/groups/update_group_name', headers: headers,
                                                 params: { "data": { "attributes": { "old_group_name": group4.name, "new_group_name": new_group_name } } }
