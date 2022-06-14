@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::API
   include ApiRenderConcern
+  include UtilConcern
   before_action :set_current_user
   before_action :validate_bot_user
   before_action :initialize_redis_lb

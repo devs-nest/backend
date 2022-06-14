@@ -27,7 +27,8 @@ module UtilConcern
   def send_group_change_message(discord_id, group_name)
     puts("Sending group change message to #{discord_id}")
     server = Group.find_by(name: group_name).server
-    message = "You have been added to the group #{group_name} on #{server.name} /n Join the group here: #{server.link}"
-    MassNotifierWorker.perform_async([discord_id], message)
+    message = "Congrats, You have joined the group #{group_name},\nPlease join this server, if you haven't already\n#{server.link}\nOnce you join this server, you will automatically be able to talk to your group and meet them in a voice call"
+    UserNotifierWorker.perform_async(discord_id, message)
+    true
   end
 end

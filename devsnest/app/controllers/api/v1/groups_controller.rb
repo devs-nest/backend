@@ -4,7 +4,6 @@ module Api
   module V1
     class GroupsController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      include UtilConcern
       before_action :simple_auth
       before_action :user_auth, only: %i[create show join leave update]
       before_action :admin_auth, only: %i[promote]
@@ -186,6 +185,7 @@ module Api
           group.group_members.create!(user_id: @current_user.id)
           GroupModifierWorker.perform_async('create', [group.name])
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
+          send_group_change_message(@current_user.discord_id, group.name)
         end
       end
     end

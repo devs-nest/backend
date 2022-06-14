@@ -23,7 +23,7 @@ GroupModifierWorker.perform_async('destroy', [group.name])
 GroupNotifierWorker.perform_async('V2 Alpha Tester Team', "Hello PEEPS")
 
 #  Mass group Modifier Example
-Group.v2.where(name:'V2 26 Squadron Team').each do |group|
+Group.v2.where(name:'V2 Adhikram Team').each do |group|
     discord_ids=[]
     puts("-----------------------------------------------------")
     puts(group.name)
@@ -69,3 +69,5 @@ Group.v2.all.each do |g|
         discord_id.push(User.find_by(id:m.user_id).discord_id)
     end
 end
+# Server.create(name: 'Devsnest Main', guild_id: '781576398414413854', link: 'https://discord.gg/ZqXBanhE')
+# Server.create(name: 'Devsnest Community 2.0', guild_id: '985833665940578304', link: 'https://discord.gg/rwSfztZf')
