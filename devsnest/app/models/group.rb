@@ -7,7 +7,7 @@ class Group < ApplicationRecord
   has_many :group_members
   belongs_to :server
   after_create :parameterize
-  after_create :assign_server
+  before_create :assign_server
   validates :members_count, numericality: { less_than_or_equal_to: 20, message: 'The group is full' }
   validates :members_count, numericality: { greater_than_or_equal_to: 0, message: 'The group members count can\'t be negetive' }
   validates :name, length: { minimum: 4, maximum: 33, message: 'The group name must be between 4 and 25 characters' }
@@ -28,7 +28,7 @@ class Group < ApplicationRecord
 
   def assign_server
     server = Server.find_by(id: ENV['SERVER_ID'])
-    update(server_id: server.id) if server.present?
+    self.server_id = server.id
   end
 
   def reassign_leader(user_id)
