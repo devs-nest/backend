@@ -329,6 +329,7 @@ module Api
         return render_error({ message: 'No group found' }) if groupmember.nil?
 
         render_success({ name: groupmember.group.name, server_guild_id: groupmember.group&.server&.guild_id })
+
       end
 
       private
