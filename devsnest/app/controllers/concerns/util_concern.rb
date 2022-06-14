@@ -24,11 +24,19 @@ module UtilConcern
     end
   end
 
-  def send_group_change_message(discord_id, group_name)
-    puts("Sending group change message to #{discord_id}")
+  def send_group_change_message(user_id, group_name)
+    user = User.find_by(id: user_id)
+    puts("Sending group change message to #{user.discord_id}")
     server = Group.find_by(name: group_name).server
-    message = "Congrats, You have joined the group #{group_name},\nPlease join this server, if you haven't already\n#{server.link}\nOnce you join this server, you will automatically be able to talk to your group and meet them in a voice call"
-    UserNotifierWorker.perform_async(discord_id, message)
-    true
+    link = server.link
+    message = "Congrats  #{user.username}, You have joined the group #{group_name},\nPlease join this server, if you haven't already\n#{link}\nOnce you join this server, you will automatically be able to talk to your group and meet them in a voice call"
+    UserNotifierWorker.perform_async(user.discord_id, message)
+    template_id = EmailTemplate.find_by(name: 'group_join_message')&.template_id
+    EmailSenderWorker.perform_async(user.email, {
+                                      'unsubscribe_token': user.unsubscribe_token,
+                                      'username': user.username,
+                                      'group_name': group_name,
+                                      'server_link': link
+                                    }, template_id)
   end
 end

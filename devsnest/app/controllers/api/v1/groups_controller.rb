@@ -105,7 +105,7 @@ module Api
           group.update!(members_count: group.members_count + 1)
         end
         RoleModifierWorker.perform_async('add_role', user.discord_id, group.name, group.server&.guild_id)
-        send_group_change_message(user.discord_id, group.name)
+        send_group_change_message(user.id, group.name)
         api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
       rescue ActiveRecord::RecordInvalid => e
         render_error(message: e)
@@ -185,7 +185,7 @@ module Api
           group.group_members.create!(user_id: @current_user.id)
           GroupModifierWorker.perform_async('create', [group.name])
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
-          send_group_change_message(@current_user.discord_id, group.name)
+          send_group_change_message(@current_user.id, group.name)
         end
       end
     end
