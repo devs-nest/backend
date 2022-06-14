@@ -68,7 +68,7 @@ module Api
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
 
-        GroupModifierWorker.perform_async('destroy', [group_name])
+        GroupModifierWorker.perform_async('destroy', [group_name], group&.server&.guild_id)
         group.destroy
       end
 
@@ -79,7 +79,6 @@ module Api
         return render_error('Group not found') if group.nil?
 
         group.update(name: new_group_name)
-        # GroupModifierWorker.perform_async('update', [old_group_name, new_group_name])
         render_success(group.as_json.merge({ 'type': 'group' }))
       end
 
@@ -190,8 +189,8 @@ module Api
           group = Group.find(parsed_response['data']['id'].to_i)
           group.update!(members_count: group.members_count + 1)
           group.group_members.create!(user_id: @current_user.id)
-          GroupModifierWorker.perform_async('create', [group.name])
-          RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name)
+          GroupModifierWorker.perform_async('create', [group.name], group.server&.guild_id)
+          RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name, group.server&.guild_id)
           send_group_change_message(@current_user.id, group.name)
         end
       end
