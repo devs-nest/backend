@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_06_08_160509) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "6r0HwE1gibs"
+    t.string "cuid", default: "aqODC2g5TJ8"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -427,6 +427,13 @@ ActiveRecord::Schema.define(version: 2022_06_08_160509) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "referrals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "referred_user_id"
+    t.string "referral_code"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "group_id"
@@ -544,8 +551,9 @@ ActiveRecord::Schema.define(version: 2022_06_08_160509) do
     t.boolean "is_college_form_filled", default: false
     t.boolean "accepted_in_course", default: false
     t.string "enrolled_for_course_image_url"
-    t.string "referred_company"
     t.boolean "previously_joined_a_group", default: false
+    t.string "referral_code"
+    t.integer "coins", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
