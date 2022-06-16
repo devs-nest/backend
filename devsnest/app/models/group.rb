@@ -63,14 +63,14 @@ class Group < ApplicationRecord
     new_co_owner_id = options[:co_owner_id] || group_1.co_owner_id || group_2.co_owner_id
     preserved_group.update!(name: new_group_name, owner_id: new_owner_id, co_owner_id: new_co_owner_id)
     group_to_be_destroyed = group_to_be_destroyed_id == group_2.id ? group2 : group1
-    new_group = new_group_name == group_2.name ? group_2 : group_1
     # change tags for the group members
     discord_ids = []
-    new_group.group_members.each do |member|
-      discord_ids.push(User.find_by(id: member.user_id).discord_id)
+    preserved_group.group_members.each do |member|
+      discord_ids << User.find_by(id: member.user_id)&.discord_id
     end
+    discord_ids = discord_ids.compact.uniq
     # Sending new_group_name as a role tag to the discord ids
-    MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, new_group_name, new_group&.server&.guild_id)
+    MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, new_group_name, preserved_group&.server&.guild_id)
     GroupModifierWorker.perform_async('destroy', [group_to_be_destroyed.name], group_to_be_destroyed&.server&.guild_id)
     group_to_be_destroyed.destroy
   rescue StandardError
