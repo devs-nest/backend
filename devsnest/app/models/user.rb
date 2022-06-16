@@ -241,12 +241,11 @@ class User < ApplicationRecord
   end
 
   def update_user_coins_for_signup
-    # byebug
     if web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
       referred_user = Referral.find_by(referred_user_id: id)
       if referred_user.present?
         refered_by = User.find_by(referral_code: referred_user.referral_code)
-        refered_by.update(coins: refered_by.coins + 10)
+        refered_by.update(coins: refered_by.coins + 10) if refered_by.present?
       end
     end
   end
