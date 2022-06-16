@@ -42,6 +42,11 @@ Rails.application.routes.draw do
             post :add_assignment_questions
           end
         end
+        jsonapi_resources :groups, only: %i[] do
+          collection do
+            post :merge_two_groups
+          end
+        end
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -77,7 +82,7 @@ Rails.application.routes.draw do
           post :leave
         end
       end
-      jsonapi_resources :group_members, only: %i[index show] do
+      jsonapi_resources :group_members, only: %i[index show destroy] do
         collection do
           post :update_user_group
         end

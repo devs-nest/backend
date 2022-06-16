@@ -7,6 +7,7 @@ module Api
       before_action :simple_auth
       # before_action :check_authorization, except: %i[update_user_group show index]
       before_action :bot_auth, only: %i[update_user_group]
+      before_action :admin_auth, only: %i[destroy]
 
       def context
         { user: @current_user, group_id: params[:group_id] }
