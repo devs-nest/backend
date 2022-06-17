@@ -159,9 +159,7 @@ class AlgoSubmission < ApplicationRecord
                                       end
 
     deduct_previous_score_from_user(user, best_submission) if best_submission.present? && mark_current_as_best_submission
-
-    deduct_previous_score_from_user(user, best_submission) if best_submission.present? && mark_current_as_best_submission
-
+    
     [best_submission, mark_current_as_best_submission]
   end
 end
