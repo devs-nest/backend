@@ -46,7 +46,7 @@ class Group < ApplicationRecord
     end
   end
 
-  def merge_two_groups(group_1_id, group_2_id, preserved_group_id, options = {})
+  def self.merge_two_groups(group_1_id, group_2_id, preserved_group_id, options = {})
     group_1 = Group.find(group_1_id) # used find to throw error in case of invalid group id
     group_2 = Group.find(group_2_id) # used find to throw error in case of invalid group id
     group_to_be_destroyed_id = group_1_id == preserved_group_id ? group_2_id : group_1_id
