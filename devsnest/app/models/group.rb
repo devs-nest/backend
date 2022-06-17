@@ -62,7 +62,7 @@ class Group < ApplicationRecord
     new_owner_id = options[:owner_id] || group_1.owner_id || group_2.owner_id
     new_co_owner_id = options[:co_owner_id] || group_1.co_owner_id || group_2.co_owner_id
     preserved_group.update!(name: new_group_name, owner_id: new_owner_id, co_owner_id: new_co_owner_id)
-    group_to_be_destroyed = group_to_be_destroyed_id == group_2.id ? group2 : group1
+    group_to_be_destroyed = group_to_be_destroyed_id == group_2.id ? group_2 : group_1
     # change tags for the group members
     discord_ids = []
     preserved_group.group_members.each do |member|
