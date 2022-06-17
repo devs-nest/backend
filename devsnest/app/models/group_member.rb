@@ -5,6 +5,7 @@ class GroupMember < ApplicationRecord
   belongs_to :group
   after_create :send_all_steps_completed_mail
   after_create :set_prevoiusly_joined_a_group
+  after_create :send_scrum_message_in_group
 
   def send_all_steps_completed_mail
     user = User.find_by(id: user_id)
@@ -21,5 +22,11 @@ class GroupMember < ApplicationRecord
   def set_prevoiusly_joined_a_group
     user = User.find_by(id: user_id)
     user.update(previously_joined_a_group: true)
+  end
+
+  def send_scrum_message_in_group
+    message = "Hope you are enjoying the Server! \r\nYou can connect with your group here and here, Let's catch up tomorrow for our first meeting and get to know each other.\r\nThe agenda of the meeting will be \r\n\r\n1. Get to know each other\r\n2 To decide a daily catchup time that works for you all \r\n3. Choose your goals for the course\r\n4. Talk to your team and vice team leaders and see how all you can manage responsibilities together"
+    group = Group.find_by(id: group_id)
+    GroupNotifierWorker.perform_async([group.name], message, group.server&.guild_id) if group.group_members.count == 5
   end
 end
