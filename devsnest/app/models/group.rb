@@ -72,7 +72,7 @@ class Group < ApplicationRecord
       end
       discord_ids = discord_ids.compact.uniq
       # Sending new_group_name as a role tag to the discord ids
-      MassRoleModifierWorker.dperform_async('add_mass_role', GroupMember.where(group_id: group_to_be_destroyed_id), 'Devsnest People')
+      MassRoleModifierWorker.perform_async('add_mass_role', GroupMember.where(group_id: group_to_be_destroyed_id), 'Devsnest People')
       MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, new_group_name, preserved_group&.server&.guild_id)
       GroupModifierWorker.perform_async('destroy', [group_to_be_destroyed.name], group_to_be_destroyed&.server&.guild_id)
       group_to_be_destroyed.destroy
