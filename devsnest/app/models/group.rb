@@ -11,7 +11,7 @@ class Group < ApplicationRecord
   validates :members_count, numericality: { less_than_or_equal_to: 20, message: 'The group is full' }
   validates :members_count, numericality: { greater_than_or_equal_to: 0, message: 'The group members count can\'t be negetive' }
   validates :name, length: { minimum: 4, maximum: 33, message: 'The group name must be between 4 and 25 characters' }
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, message: 'The group name is already taken'
   validates_uniqueness_of :slug
   enum group_type: %i[public private], _prefix: :group
   enum language: %i[english hindi]
