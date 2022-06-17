@@ -15,7 +15,7 @@ class Challenge < ApplicationRecord
   after_create :create_slug
   validates_uniqueness_of :name, :slug
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
-  before_save :re_evaluate_user_scores, if: :will_save_change_to_score?
+  before_update :re_evaluate_user_scores, if: :will_save_change_to_score?
   after_save :remove_saved_templates
   Language.all.each do |language|
     require "algo_templates/#{language.name}"
