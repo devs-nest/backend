@@ -4,7 +4,7 @@ module Api
   module V1
     module Admin
       # Group Controller for Admin
-      class GroupController < ApplicationController
+      class GroupsController < ApplicationController
         include JSONAPI::ActsAsResourceController
         before_action :admin_auth
 
