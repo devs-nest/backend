@@ -51,6 +51,7 @@ class Group < ApplicationRecord
     group_1 = Group.find(group_1_id) # used find to throw error in case of invalid group id
     group_2 = Group.find(group_2_id) # used find to throw error in case of invalid group id
     group_to_be_destroyed_id = group_1_id == preserved_group_id ? group_2_id : group_1_id
+
     # Update all the existing tables with the new group id
     ActiveRecord::Base.transaction do
       group_to_be_destroyed = group_to_be_destroyed_id == group_2.id ? group_2 : group_1
@@ -66,6 +67,7 @@ class Group < ApplicationRecord
       group_to_be_destroyed.update!(name: SecureRandom.hex(6).to_s)
       new_owner_id = options[:owner_id] || group_1.owner_id || group_2.owner_id
       new_co_owner_id = options[:co_owner_id] || group_1.co_owner_id || group_2.co_owner_id
+      old_group_name = preserved_group.name
       preserved_group.update!(name: new_group_name, owner_id: new_owner_id, co_owner_id: new_co_owner_id)
       # change tags for the group members
       discord_ids = []
@@ -78,7 +80,11 @@ class Group < ApplicationRecord
         send_group_change_message(user_id, preserved_group.name)
       end
       # Sending new_group_name as a role tag to the discord ids
-      MassRoleModifierWorker.perform_async('add_mass_role', GroupMember.where(group_id: group_to_be_destroyed_id), 'Devsnest People')
+      if preserve_group&.server_id != group_to_be_destroyed&.server_id
+        destroyed_discord_ids = User.find_by(id: destroyed_group_user_ids).pluck(:discord_id)
+        MassRoleModifierWorker.perform_async('add_mass_role', destroyed_discord_ids, 'Devsnest People')
+      end
+      GroupModifierWorker.perform_async('update', [old_group_name, new_group_name], preserved_group.server.guild_id) if old_group_name != new_group_name
       MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, new_group_name, preserved_group&.server&.guild_id)
       GroupModifierWorker.perform_async('destroy', [group_to_be_destroyed.name], group_to_be_destroyed&.server&.guild_id)
       group_to_be_destroyed.destroy
