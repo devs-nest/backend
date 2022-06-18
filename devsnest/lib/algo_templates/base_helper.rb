@@ -14,7 +14,12 @@ module Templates
     def add_signatures(var_data, language_name)
       language = Language.find_by(name: language_name)
       var_data.each do |value|
-        dtype = language["type_#{value[:variable][:datastructure]}"].to_s.gsub(/_/, value[:variable][:dtype])
+        sig_type = if value[:variable][:dtype] == 'string'
+                     'type_string'
+                   else
+                     "type_#{value[:variable][:datastructure]}"
+                   end
+        dtype = language[sig_type.to_s].to_s.gsub(/_/, value[:variable][:dtype])
         value.merge!(signature: "#{dtype} #{value[:name]}".strip)
       end
       var_data
@@ -46,7 +51,7 @@ module Templates
 
     def build_argument_list
       @input_format.map do |value|
-        value[:name]
+        value[:signature].split(' ')&.first
       end
     end
 
