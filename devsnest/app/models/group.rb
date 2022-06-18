@@ -2,6 +2,7 @@
 
 # Model for Group
 class Group < ApplicationRecord
+  include UtilConcern
   # belongs_to :batch
   audited
   has_many :group_members
