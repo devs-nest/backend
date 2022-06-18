@@ -70,6 +70,7 @@ class Group < ApplicationRecord
       new_co_owner_id = options[:co_owner_id] || group_1.co_owner_id || group_2.co_owner_id
       old_group_name = preserved_group.name
       preserved_group.update!(name: new_group_name, owner_id: new_owner_id, co_owner_id: new_co_owner_id)
+      preserved_group.update!(members_count: preserved_group.group_members.count)
       # change tags for the group members
       discord_ids = []
       preserved_group.group_members.each do |member|
@@ -81,7 +82,7 @@ class Group < ApplicationRecord
         send_group_change_message(user_id, preserved_group.name)
       end
       # Sending new_group_name as a role tag to the discord ids
-      if preserve_group&.server_id != group_to_be_destroyed&.server_id
+      if preserved_group&.server_id != group_to_be_destroyed&.server_id
         destroyed_discord_ids = User.find_by(id: destroyed_group_user_ids).pluck(:discord_id)
         MassRoleModifierWorker.perform_async('add_mass_role', destroyed_discord_ids, 'Devsnest People')
       end
