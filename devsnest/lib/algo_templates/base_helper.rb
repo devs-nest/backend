@@ -51,7 +51,7 @@ module Templates
 
     def build_argument_list
       @input_format.map do |value|
-        value[:signature].split(' ')&.first
+        value[:name]
       end
     end
 
