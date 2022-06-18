@@ -8,7 +8,7 @@ module Api
       attributes :score_achieved, :next_question
 
       def next_question
-        return nil if @model.status != 'Accepted' || !@model.challenge.is_submitted
+        return nil if @model.status != 'Accepted' || !@model&.is_submitted
 
         topic = @model.challenge.topic
         topic_challenge_ids = Challenge.where(topic: topic).pluck(:id)
