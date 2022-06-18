@@ -53,6 +53,7 @@ class Group < ApplicationRecord
     # Update all the existing tables with the new group id
     ActiveRecord::Base.transaction do
       group_to_be_destroyed = group_to_be_destroyed_id == group_2.id ? group_2 : group_1
+      destroyed_group_user_ids = GroupMember.where(group_id: group_to_be_destroyed_id).pluck(:user_id)
       GroupMember.where(group_id: group_to_be_destroyed_id).update_all(group_id: preserved_group_id)
       Scrum.where(group_id: group_to_be_destroyed_id).update_all(group_id: preserved_group_id)
       BatchLeaderSheet.where(group_id: group_to_be_destroyed_id).update_all(group_id: preserved_group_id)
@@ -71,6 +72,10 @@ class Group < ApplicationRecord
         discord_ids << User.find_by(id: member&.user_id)&.discord_id
       end
       discord_ids = discord_ids.compact.uniq
+
+      destroyed_group_user_ids.each do |user_id|
+        send_group_change_message(user_id, preserved_group.name)
+      end
       # Sending new_group_name as a role tag to the discord ids
       MassRoleModifierWorker.perform_async('add_mass_role', GroupMember.where(group_id: group_to_be_destroyed_id), 'Devsnest People')
       MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, new_group_name, preserved_group&.server&.guild_id)
