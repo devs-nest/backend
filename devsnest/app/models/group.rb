@@ -83,7 +83,7 @@ class Group < ApplicationRecord
       end
       # Sending new_group_name as a role tag to the discord ids
       if preserved_group&.server_id != group_to_be_destroyed&.server_id
-        destroyed_discord_ids = User.find_by(id: destroyed_group_user_ids).pluck(:discord_id)
+        destroyed_discord_ids = User.where(id: destroyed_group_user_ids).pluck(:discord_id)
         MassRoleModifierWorker.perform_async('add_mass_role', destroyed_discord_ids, 'Devsnest People')
       end
       GroupModifierWorker.perform_async('update', [old_group_name, new_group_name], preserved_group.server.guild_id) if old_group_name != new_group_name
