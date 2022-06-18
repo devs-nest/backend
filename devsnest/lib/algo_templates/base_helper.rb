@@ -14,7 +14,7 @@ module Templates
     def add_signatures(var_data, language_name)
       language = Language.find_by(name: language_name)
       var_data.each do |value|
-        sig_type = if value[:variable][:dtype] == 'string'
+        sig_type = if value[:variable][:dtype] == 'string' && value[:variable][:datastructure] == 'primitive'
                      'type_string'
                    else
                      "type_#{value[:variable][:datastructure]}"
