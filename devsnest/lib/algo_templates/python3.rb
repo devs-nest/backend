@@ -95,9 +95,9 @@ module Templates
           'string' => ['input().split()']
         },
         'matrix' => {
-          'int' => ["mat_dims = list(map(int, input().split()))", "\t#{name} = [ [int(j) for j in input().split()] for i in range(#{dependent&.first})]"],
-          'float' => ["mat_dims = list(map(int, input().split()))", "\t#{name} = [ [float(j) for j in input().split()] for i in range(#{dependent&.first})]"],
-          'string' => ["mat_dims = list(map(int, input().split()))", "\t#{name} = [ [j for j in input().split()] for i in range(#{dependent&.first})]"]
+          'int' => ['mat_dims = list(map(int, input().split()))', "\t#{name} = [ [int(j) for j in input().split()] for i in range(#{dependent&.first})]"],
+          'float' => ['mat_dims = list(map(int, input().split()))', "\t#{name} = [ [float(j) for j in input().split()] for i in range(#{dependent&.first})]"],
+          'string' => ['mat_dims = list(map(int, input().split()))', "\t#{name} = [ [j for j in input().split()] for i in range(#{dependent&.first})]"]
         },
         'linked_list' => {
           'int' => ['raw_array = list(map(int, input().split()))', "\t#{name} = convertToLL(raw_array, len(raw_array))"]
@@ -107,7 +107,7 @@ module Templates
         }
       }
 
-      if datastructure == 'linked_list' || datastructure == 'matrix'
+      if %w[linked_list matrix].include?(datastructure)
         [meta[datastructure][dtype].join("\n").to_s]
       else
         ["#{name} = #{meta[datastructure][dtype].join("\n")}"]

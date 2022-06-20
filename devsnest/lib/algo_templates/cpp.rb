@@ -69,11 +69,11 @@ module Templates
           'string' => ["for (int i = 0; i < #{dependent&.first}; i++){", 'string temp;', 'cin >> temp;', "#{name}.push_back(temp);", '}']
         },
         'matrix' => {
-          'int' => ["vector<int> mat_dims(2);", "for(int i = 0; i < 2; i++){", "cin >> mat_dims[i];", "}", "#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'int temp;', 'cin >> temp;',
+          'int' => ['vector<int> mat_dims(2);', 'for(int i = 0; i < 2; i++){', 'cin >> mat_dims[i];', '}', "#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'int temp;', 'cin >> temp;',
                     "#{name}[r].push_back(temp);", '}', '}'],
-          'float' => ["vector<int> mat_dims(2);", "for(int i = 0; i < 2; i++){", "cin >> mat_dims[i];", "}", "#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'float temp;', 'cin >> temp;',
+          'float' => ['vector<int> mat_dims(2);', 'for(int i = 0; i < 2; i++){', 'cin >> mat_dims[i];', '}', "#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'float temp;', 'cin >> temp;',
                       "#{name}[r].push_back(temp);", '}', '}'],
-          'string' => ["vector<int> mat_dims(2);", "for(int i = 0; i < 2; i++){", "cin >> mat_dims[i];", "}", "#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'string temp;',
+          'string' => ['vector<int> mat_dims(2);', 'for(int i = 0; i < 2; i++){', 'cin >> mat_dims[i];', '}', "#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'string temp;',
                        'getline(cin, temp);', "#{name}[r].push_back(temp);", '}', '}']
         },
         'linked_list' => {
