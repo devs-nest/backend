@@ -12,6 +12,25 @@ module Templates
       @tail = build_tail
     end
 
+    def add_signatures(var_data, language_name)
+      language = Language.find_by(name: language_name)
+      var_data.each do |value|
+        sig_type = if value[:variable][:dtype] == 'string' && value[:variable][:datastructure] == 'primitive'
+                     'type_string'
+                   else
+                     "type_#{value[:variable][:datastructure]}"
+                   end
+        dtype = language[sig_type.to_s].to_s.gsub(/_/, cast_token(value[:variable][:dtype]))
+        value.merge!(signature: "#{dtype} #{value[:name]}".strip)
+      end
+      var_data
+    end
+
+    def cast_token(dtype)
+      dtype = dtype.capitalize if dtype == 'string'
+      dtype
+    end
+
     def create_class(type, conn)
       case type
       when 'int'
@@ -50,11 +69,11 @@ module Templates
           'string' => ["#{name} = new String[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();"]
         },
         'matrix' => {
-          'int' => ["#{name} = new int[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
+          'int' => ['int mat_dims[] = new int[2];', "mat_dims = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = new int[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
                     "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", '}'],
-          'float' => ["#{name} = new float[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
+          'float' => ['int mat_dims[] = new int[2];', "mat_dims = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = new float[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
                       "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToFloat(#{create_class('float', '::')}).toArray();", '}'],
-          'string' => ["#{name} = new String[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
+          'string' => ['int mat_dims[] = new int[2];', "mat_dims = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = new String[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
                        "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();", '}']
         },
         'linked_list' => {
