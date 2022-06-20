@@ -23,7 +23,7 @@ module Api
       def destroy
         group_member = GroupMember.find_by(id: params[:id])
         group_id = group_member.group_id
-        group = GroupMember.group
+        group = group_member.group
         group_name = group.name
 
         guild_id = group.server&.guild_id

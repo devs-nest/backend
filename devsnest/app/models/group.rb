@@ -93,9 +93,6 @@ class Group < ApplicationRecord
       # Is This required
       MassRoleModifierWorker.perform_async('delete_role', destroyed_discord_ids, group_to_be_destroyed_name, group_to_be_destroyed&.server&.guild_id)
       group_to_be_destroyed.destroy
-
-
-
     end
   rescue StandardError
     false
