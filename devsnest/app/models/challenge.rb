@@ -105,7 +105,7 @@ class Challenge < ApplicationRecord
       end
     template = template_gen.build if template_gen.present?
 
-    AlgoTemplate.create(challenge_id: id, language_id: language[0], head: template[:head], body: template[:body], tail: template[:tail]) if template.present? # FIX
+    # AlgoTemplate.create(challenge_id: id, language_id: language[0], head: template[:head], body: template[:body], tail: template[:tail]) if template.present? # FIX
     template
   end
 
