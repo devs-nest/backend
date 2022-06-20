@@ -10,7 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< Updated upstream
 ActiveRecord::Schema.define(version: 2022_06_20_114859) do
+=======
+ActiveRecord::Schema.define(version: 2022_06_20_130958) do
+>>>>>>> Stashed changes
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -103,7 +107,11 @@ ActiveRecord::Schema.define(version: 2022_06_20_114859) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
+<<<<<<< Updated upstream
     t.string "cuid", default: "aqODC2g5TJ8"
+=======
+    t.string "cuid", default: "+MKChGYKB_Y"
+>>>>>>> Stashed changes
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -296,7 +304,10 @@ ActiveRecord::Schema.define(version: 2022_06_20_114859) do
     t.text "description"
     t.integer "server_id", default: 1
     t.boolean "five_members_flag", default: false
+<<<<<<< Updated upstream
     t.index ["members_count"], name: "index_groups_on_members_count"
+=======
+>>>>>>> Stashed changes
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true
   end
@@ -560,6 +571,7 @@ ActiveRecord::Schema.define(version: 2022_06_20_114859) do
     t.integer "coins", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   create_table "weekly_todos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
