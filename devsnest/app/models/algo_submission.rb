@@ -16,8 +16,8 @@ class AlgoSubmission < ApplicationRecord
       end
     end
 
-    stdin = Base64.encode64(inpf || '') if mode == 'run_sample'
-    expected_out = Base64.encode64(outf || '') if mode == 'run_sample'
+    stdin = Base64.encode64(inpf || '')
+    expected_out = Base64.encode64(outf || '')
     # jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': '4p2j-8mgt-ek0g-sh7m-k9kp' }
     payload = {
       "source_code": source_code,
@@ -87,6 +87,7 @@ class AlgoSubmission < ApplicationRecord
     {
       'stdout' => data['stdout'],
       'stderr' => data['stderr'],
+      'compile_output' => data['compile_output'],
       'time' => data['time'],
       'memory' => data['memory'],
       'status_id' => data['status']['id'],
