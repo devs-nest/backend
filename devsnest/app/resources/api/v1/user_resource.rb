@@ -75,7 +75,7 @@ module Api
         user_group_id = GroupMember.find_by(user_id: @model.id)&.group_id
         return nil if user_group_id.nil?
 
-        Group.find_by(id: user_group_id).slug
+        Group.find_by(id: user_group_id).try(:slug)
       end
     end
   end
