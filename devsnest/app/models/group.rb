@@ -82,15 +82,10 @@ class Group < ApplicationRecord
         send_group_change_message(user_id, preserved_group.name)
       end
       # Sending new_group_name as a role tag to the discord ids
-      if preserved_group&.server_id != group_to_be_destroyed&.server_id
-        destroyed_discord_ids = User.where(id: destroyed_group_user_ids).pluck(:discord_id)
-        MassRoleModifierWorker.perform_async('add_mass_role', destroyed_discord_ids, 'Devsnest People')
-      end
       GroupModifierWorker.perform_async('update', [old_group_name, new_group_name], preserved_group.server.guild_id) if old_group_name != new_group_name
       MassRoleModifierWorker.perform_async('add_mass_role', discord_ids, new_group_name, preserved_group&.server&.guild_id)
       GroupModifierWorker.perform_async('destroy', [group_to_be_destroyed_name], group_to_be_destroyed&.server&.guild_id)
-      # Is This required
-      MassRoleModifierWorker.perform_async('delete_role', destroyed_discord_ids, group_to_be_destroyed_name, group_to_be_destroyed&.server&.guild_id)
+
       group_to_be_destroyed.destroy
     end
   rescue StandardError
