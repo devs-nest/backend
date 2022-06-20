@@ -31,9 +31,7 @@ module Api
       end
 
       def group_id
-        return nil if context[:user].nil?
-
-        member = GroupMember.where(user_id: context[:user].id).first
+        member = GroupMember.find_by(user_id: @model.id)
         member.present? ? member.group_id : nil
       end
 
