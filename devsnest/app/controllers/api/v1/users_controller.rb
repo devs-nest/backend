@@ -324,7 +324,7 @@ module Api
       def check_group_name
         discord_id = params.dig(:data, :attributes, 'discord_id')
         user = User.find_by(discord_id: discord_id)
-        groupmember = user.presnt? ? GroupMember.find_by(user_id: user.id) : nil
+        groupmember = user.present? ? GroupMember.find_by(user_id: user.id) : nil
 
         return render_error({ message: 'No group found' }) if groupmember.nil?
 
