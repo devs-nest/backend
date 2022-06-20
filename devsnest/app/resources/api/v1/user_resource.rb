@@ -14,7 +14,7 @@ module Api
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
       attributes :frontend_activity
       attributes :markdown, :bio
-      attributes :type
+      attributes :type, :user_group_slug
 
       attr_reader :coins
 
@@ -71,6 +71,13 @@ module Api
         return nil unless @model.user_type != 1
 
         @model.user_type
+      end
+
+      def user_group_slug
+        user_group = GroupMember.find_by(user_id: @model.id).group_id
+        return nil if user_group.nil?
+
+        Group.find_by(id: user_group).slug
       end
     end
   end
