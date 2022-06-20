@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_17_140535) do
+ActiveRecord::Schema.define(version: 2022_06_20_114859) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_06_17_140535) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "0P8kBBIOHYA"
+    t.string "cuid", default: "aqODC2g5TJ8"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -295,6 +295,8 @@ ActiveRecord::Schema.define(version: 2022_06_17_140535) do
     t.integer "classification", default: 0
     t.text "description"
     t.integer "server_id", default: 1
+    t.boolean "five_members_flag", default: false
+    t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true
   end
@@ -480,10 +482,10 @@ ActiveRecord::Schema.define(version: 2022_06_17_140535) do
 
   create_table "unsubscribes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "category"
+    t.integer "category", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category"
+    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category", unique: true
   end
 
   create_table "upvotes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
