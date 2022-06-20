@@ -20,6 +20,30 @@ module Api
         return render_forbidden unless group.check_auth(@current_user)
       end
 
+      def destroy
+        group_member = GroupMember.find_by(id: params[:id])
+        group_id = group_member.group_id
+        group = group_member.group
+        group_name = group.name
+
+        guild_id = group.server&.guild_id
+        user = User.find_by(id: group_member.user_id)
+
+        ActiveRecord::Base.transaction do
+          group_member.destroy
+          group.update!(members_count: group.members_count - 1)
+          group.reassign_leader(user.id)
+          user.update(group_assigned: false)
+        end
+        # we need to pass guild id here because we do not have the group now
+        RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name, guild_id)
+        GroupModifierWorker.perform_async('destroy', [group_name], guild_id) if Group.find_by(id: group_id).blank?
+
+        render_success(message: 'Group left')
+      rescue StandardError => e
+        render_error(message: "Something went wrong! : #{e}")
+      end
+
       def update_user_group
         discord_id = params['data']['attributes']['discord_id']
         updated_group_name = params['data']['attributes']['updated_group_name']
