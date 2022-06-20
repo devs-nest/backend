@@ -74,10 +74,10 @@ module Api
       end
 
       def user_group_slug
-        user_group = GroupMember.find_by(user_id: @model.id).group_id
-        return nil if user_group.nil?
+        user_group_id = GroupMember.find_by(user_id: @model.id)&.group_id
+        return nil if user_group_id.nil?
 
-        Group.find_by(id: user_group).slug
+        Group.find_by(id: user_group_id).slug
       end
     end
   end
