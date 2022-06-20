@@ -58,7 +58,6 @@ class Group < ApplicationRecord
       group_to_be_destroyed = group_to_be_destroyed_id == group_2.id ? group_2 : group_1
       destroyed_group_user_ids = GroupMember.where(group_id: group_to_be_destroyed_id).pluck(:user_id)
       GroupMember.where(group_id: group_to_be_destroyed_id).update_all(group_id: preserved_group_id)
-      Scrum.where(group_id: group_to_be_destroyed_id).update_all(group_id: preserved_group_id)
       BatchLeaderSheet.where(group_id: group_to_be_destroyed_id).update_all(group_id: preserved_group_id)
       WeeklyTodo.where(group_id: group_to_be_destroyed_id).update_all(group_id: preserved_group_id)
 
