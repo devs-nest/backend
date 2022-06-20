@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_18_074727) do
+ActiveRecord::Schema.define(version: 2022_06_20_181205) do
+
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -102,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_06_18_074727) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "iVFnDsk602E"
+    t.string "cuid", default: "0mEjTo1Rm9w"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -451,6 +452,11 @@ ActiveRecord::Schema.define(version: 2022_06_18_074727) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "last_tha_link"
     t.index ["user_id", "creation_date"], name: "index_scrums_on_user_id_and_creation_date", unique: true
+  end
+
+  create_table "server_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "server_id"
   end
 
   create_table "servers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

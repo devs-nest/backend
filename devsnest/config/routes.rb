@@ -74,6 +74,7 @@ Rails.application.routes.draw do
       jsonapi_resources :groups, only: %i[show index create update] do
         jsonapi_relationships
         collection do
+          get :server_details
           delete :delete_group
           put :update_group_name, :update_batch_leader
           post :promote, :join
@@ -140,6 +141,7 @@ Rails.application.routes.draw do
       jsonapi_resources :college_form, only: %i[create]
       jsonapi_resources :course_curriculum, only: %i[index]
       jsonapi_resources :referral, only: %i[index]
+      jsonapi_resources :server_user, only: %i[create]
     end
   end
 end

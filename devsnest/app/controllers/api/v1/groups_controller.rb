@@ -10,7 +10,7 @@ module Api
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
       before_action :change_discord_group_name, only: %i[update]
-      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader]
+      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader,server_details]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
       before_action :create_validations, only: %i[create]
@@ -193,6 +193,13 @@ module Api
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name, group.server&.guild_id)
           send_group_change_message(@current_user.id, group.name)
         end
+      end
+
+      def server_details
+        server = Server.find_by(guild_id: params[:data][:attributes][:server_id])
+        return render_error(message: 'Server not found') if server.nil?
+
+        render_success({ groups: Group.where(server_id: server.id).pluck(:name) })
       end
     end
   end
