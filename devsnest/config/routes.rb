@@ -141,7 +141,7 @@ Rails.application.routes.draw do
       jsonapi_resources :college_form, only: %i[create]
       jsonapi_resources :course_curriculum, only: %i[index]
       jsonapi_resources :referral, only: %i[index]
-      jsonapi_resources :server_users, only: %i[create]
+      jsonapi_resources :server_users, only: %i[create update]
     end
   end
 end
