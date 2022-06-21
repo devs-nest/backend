@@ -154,7 +154,7 @@ module Api
 
         return render_error(message: "User in a group can't create another group") if @current_user.group_assigned || GroupMember.find_by_user_id(@current_user.id).present?
 
-        return render_error(message: 'Group with this name already exists') if Group.find_by_slug(params[:data][:attributes][:name]).present?
+        render_error(message: 'Group with this name already exists') if Group.find_by(name: params[:data][:attributes][:name]).present?
 
         params[:data][:attributes][:owner_id] = @current_user.id
       end
