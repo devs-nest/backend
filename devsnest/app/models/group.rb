@@ -136,4 +136,11 @@ class Group < ApplicationRecord
 
     false
   end
+
+  def invite_inactive_members
+    self.group_members.each do |member|
+      server_user = ServerUser.find_by(user_id: member.user_id, server_id: self.server_id)
+      send_group_change_message(member.user_id, self.name) unless server_user.present?
+    end
+  end  
 end
