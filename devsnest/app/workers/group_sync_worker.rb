@@ -18,8 +18,8 @@ class GroupSyncWorker
       end
     elsif server_id.!empty?
     # If server_id present then sync server
-      Group.where(server_id: server_id).each do |_group|
-        Group.find_by(name: group_name).group_members.each do |member|
+      Group.where(server_id: server_id).each do |group|
+        Group.find_by(name: group.name).group_members.each do |member|
           server_user = ServerUser.find_by(user_id: member.user_id, server_id: member.group.server_id)
           unless server_user.present?
             user = User.find_by(id: member.user_id)
