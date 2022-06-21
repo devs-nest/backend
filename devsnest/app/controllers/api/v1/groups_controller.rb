@@ -150,12 +150,11 @@ module Api
       end
 
       def create_validations
-        group_slug = Group.find_by(name: params[:data][:attributes][:name]).slug
         return render_error(message: 'User not connected to discord') unless @current_user.discord_active
 
         return render_error(message: "User in a group can't create another group") if @current_user.group_assigned || GroupMember.find_by_user_id(@current_user.id).present?
 
-        render_error(message: 'Group with this name already exists') if group_slug.present?
+        render_error(message: 'Group with this name already exists') if Group.find_by(name: params[:data][:attributes][:name]).present?
 
         params[:data][:attributes][:owner_id] = @current_user.id
       end
