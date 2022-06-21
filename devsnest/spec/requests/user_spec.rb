@@ -29,7 +29,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
   context 'onboarding' do
     let(:user) { create(:user, discord_active: true) }
     let(:controller) { Api::V1::UsersController }
-    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let!(:server1) { create(:server, name: 'Devsnest', guild_id: '123456789') }
 
     before :each do
       # @mock_controller.stub(:current_user).and_return(User.first)
@@ -446,13 +446,13 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
   context 'Connect discord with code ' do
-    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let!(:server1) { create(:server, name: 'Devsnest', guild_id: '123456789') }
     let!(:event) { create(:event, event_type: 'welcome', bot_type: 1) }
     let!(:event1) { create(:event, event_type: 'verification', bot_type: 0) }
     let!(:bot) { create(:notification_bot, bot_token: 'abchefljfhlf') }
     let!(:user1) { create(:user) }
     let!(:discord_user) { create(:user, discord_active: true, web_active: false) }
-    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let!(:server1) { create(:server, name: 'Devsnest', guild_id: '123456789') }
     let(:group) { create(:group, co_owner_id: discord_user.id, server_id: server1.id) }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: discord_user.id) }
     it ' Connect discord ' do
@@ -471,13 +471,13 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
   end
   context 'Connect discord with token' do
-    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let!(:server1) { create(:server, name: 'Devsnest', guild_id: '123456789') }
     let!(:event) { create(:event, event_type: 'welcome', bot_type: 1) }
     let!(:event1) { create(:event, event_type: 'verification', bot_type: 0) }
     let(:bot) { create(:notification_bot, bot_token: 'abchefljfhlf') }
     let!(:user1) { create(:user) }
     let(:discord_user) { create(:user, discord_active: true, web_active: false) }
-    let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+    let!(:server1) { create(:server, name: 'Devsnest', guild_id: '123456789') }
     let(:group) { create(:group, owner_id: discord_user.id, server_id: server1.id) }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: discord_user.id) }
     it ' Connect discord ' do
