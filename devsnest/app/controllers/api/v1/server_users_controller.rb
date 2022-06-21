@@ -16,6 +16,10 @@ module Api
         server_user = ServerUser.where(user_id: user.id, server_id: server.id).first_or_create(user_id: user.id, server_id: server.id)
         server_user.active = params['data']['attributes']['active']
         server_user.save
+        if server_user.active && user.web_active == true
+          RoleModifierWorker.perform_async('add_role', user.discord_id, 'Verified', server.guild_id)
+          RoleModifierWorker.perform_async('add_role', user.discord_id, 'DN JUNE BATCH', server.guild_id) if user.accepted_in_course
+        end
         render_success({ message: 'Data updated' })
       end
     end
