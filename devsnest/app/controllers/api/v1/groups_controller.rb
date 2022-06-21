@@ -15,7 +15,6 @@ module Api
       # before_action :check_authorization, only: %i[show]
       before_action :create_validations, only: %i[create]
       after_action :assign_leader, only: %i[create]
-      before_action :check_group_existence, only: %i[create]
 
       def context
         {
@@ -151,9 +150,12 @@ module Api
       end
 
       def create_validations
+        group_slug = Group.find_by(name: params[:data][:attributes][:name]).slug
         return render_error(message: 'User not connected to discord') unless @current_user.discord_active
 
         return render_error(message: "User in a group can't create another group") if @current_user.group_assigned || GroupMember.find_by_user_id(@current_user.id).present?
+
+        render_error(message: 'Group with this name already exists') if group_slug.present?
 
         params[:data][:attributes][:owner_id] = @current_user.id
       end
@@ -192,11 +194,6 @@ module Api
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name, group.server&.guild_id)
           send_group_change_message(@current_user.id, group.name)
         end
-      end
-
-      def check_group_existence
-        group_slug = Group.find_by(name: params[:data][:attributes][:name]).slug
-        render_error(message: 'Group with this name already exists') if group_slug.present?
       end
     end
   end
