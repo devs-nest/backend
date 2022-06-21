@@ -80,6 +80,7 @@ Rails.application.routes.draw do
         end
         member do
           post :leave
+          put :update_scrum_time
         end
       end
       jsonapi_resources :group_members, only: %i[index show destroy] do
