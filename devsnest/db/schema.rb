@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_06_20_181205) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "GuOMuoxpg5Y"
+    t.string "cuid", default: "BlMpnx1e1iE"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -460,6 +460,7 @@ ActiveRecord::Schema.define(version: 2022_06_20_181205) do
     t.boolean "active", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "server_id"], name: "index_server_users_on_user_id_and_server_id"
   end
 
   create_table "servers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

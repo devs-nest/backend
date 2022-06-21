@@ -6,5 +6,6 @@ class AddServerUserTables < ActiveRecord::Migration[6.0]
       t.boolean :active, default: false
       t.timestamps
     end
+    add_index :server_users, [:user_id, :server_id]
   end
 end
