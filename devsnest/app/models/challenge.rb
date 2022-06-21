@@ -148,6 +148,8 @@ class Challenge < ApplicationRecord
   end
 
   def re_evaluate_user_scores
+    return if id.nil?
+
     UserScoreUpdate.perform_async([score_was, score, id])
   end
 

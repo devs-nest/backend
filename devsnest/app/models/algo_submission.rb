@@ -4,7 +4,9 @@
 class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
-  after_commit :assign_score_to_user, if: :score_should_be_updated, on: %i[create update]
+  after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
+  # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
+  # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
 
   def self.add_submission(source_code, lang, test_case, challenge_id, mode)
     if mode != 'run'
@@ -128,38 +130,38 @@ class AlgoSubmission < ApplicationRecord
   def assign_score_to_user
     user = User.find(user_id)
     challenge = Challenge.find(challenge_id)
-
-    return unless is_best_submission
-
+    best_submission = user.algo_submissions.find_by(challenge_id: challenge.id, is_best_submission: true)
+    previous_max_score = if best_submission.nil?
+                           0
+                         else
+                           (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score
+                         end
     new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
-    ch_lb = challenge.generate_leaderboard
-    recalculated_score_of_user = user.score + new_score
-    user.update!(score: recalculated_score_of_user)
-    ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
+    if previous_max_score < new_score
+      ch_lb = challenge.generate_leaderboard
+      recalculated_score_of_user = user.score - previous_max_score + new_score
+      user.update!(score: recalculated_score_of_user)
+      ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
+    end
+
+    update_best_submission
   end
 
-  def score_should_be_updated
+  def execution_completed
     ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
   end
 
-  def deduct_previous_score_from_user(user, previous_best_submission)
-    score = user.score - (previous_best_submission.challenge.score * (previous_best_submission.passed_test_cases.to_f / previous_best_submission.total_test_cases))
-    user.update!(score: score)
-  end
-
-  def check_for_best_submission
+  def update_best_submission
     user = User.find(user_id)
     submissions = user.algo_submissions.where(challenge_id: challenge_id)
     best_submission = submissions.find_by(is_best_submission: true)
+    return if is_best_submission
 
-    mark_current_as_best_submission = if best_submission.blank?
-                                        true
-                                      else
-                                        passed_test_cases > best_submission.passed_test_cases
-                                      end
+    return update_column(:is_best_submission, true) if best_submission.nil?
 
-    deduct_previous_score_from_user(user, best_submission) if best_submission.present? && mark_current_as_best_submission
-
-    [best_submission, mark_current_as_best_submission]
+    if passed_test_cases > best_submission.passed_test_cases
+      best_submission.update_column(:is_best_submission, false)
+      update_column(:is_best_submission, true)
+    end
   end
 end
