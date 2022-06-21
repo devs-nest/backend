@@ -102,6 +102,7 @@ class User < ApplicationRecord
   def merge_discord_user(discord_id, temp_user)
     update(discord_id: discord_id, discord_active: true)
     if temp_user.present?
+      ServerUser.where(user_id: temp_user.id).update_all(user_id: id)
       group_member = GroupMember.find_by(user_id: temp_user.id)
       if group_member.present?
         group_member.update(user_id: id)
