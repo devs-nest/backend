@@ -61,7 +61,7 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def self.run_code(params, lang, challenge_id, source_code)
-    test_case = params[:data][:attributes][:test_case]
+    test_case = params.dig(:data, :attributes, :test_case)
     mode = 'run'
     batch = []
     expected_output_batch = []
