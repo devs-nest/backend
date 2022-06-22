@@ -5,7 +5,7 @@ module Api
     # Scrum Resourses
     class GroupResource < JSONAPI::Resource
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
-                 :classification, :description, :version, :server_link
+                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time
       has_many :group_members
       filter :classification
       filter :language
@@ -13,6 +13,14 @@ module Api
       filter :members, apply: lambda { |records, value, _options|
         records.where('members_count >= ? AND members_count <= ?', value[0], value[1])
       }
+
+      def scrum_start_time
+        @model&.scrum_start_time&.to_formatted_s(:time)
+      end
+
+      def scrum_end_time
+        @model&.scrum_end_time&.to_formatted_s(:time)
+      end
 
       def owner_name
         scopeuser = User.find_by(id: owner_id)
