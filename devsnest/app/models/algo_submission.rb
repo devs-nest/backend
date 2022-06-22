@@ -61,7 +61,7 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def self.run_code(params, lang, challenge_id, source_code)
-    test_case = params[:data][:attributes][:test_case]
+    test_case = params.dig(:data, :attributes, :test_case)
     mode = 'run'
     batch = []
     expected_output_batch = []
@@ -173,5 +173,10 @@ class AlgoSubmission < ApplicationRecord
 
   def expire_cache
     Rails.cache.delete("algo_submission_#{id}")
+  end
+
+  def passed_test_cases_count
+    a = [test_cases.select {|k, h| h["status_id"] == 3}.count, passed_test_cases]
+    a.max
   end
 end
