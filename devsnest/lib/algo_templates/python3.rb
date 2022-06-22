@@ -31,7 +31,7 @@ module Templates
     end
 
     def build_body
-      ["def solve(#{build_argument_list.join(', ')}):", "    # CODE HERE"].join("\n")
+      ["\ndef solve(#{build_argument_list.join(', ')}):", "\t# CODE HERE"].join("\n")
     end
 
     def build_tail
