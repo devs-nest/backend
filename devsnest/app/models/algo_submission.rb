@@ -164,4 +164,9 @@ class AlgoSubmission < ApplicationRecord
       update_column(:is_best_submission, true)
     end
   end
+
+  def passed_test_cases_count
+    a = [test_cases.select {|k, h| h["status_id"] == 3}.count, passed_test_cases]
+    a.max
+  end
 end

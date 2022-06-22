@@ -56,7 +56,7 @@ module Api
           submission.total_runtime = submission.total_runtime.to_f + res_hash['time'].to_f
           submission.total_memory = submission.total_memory.to_i + res_hash['memory'].to_i
           submission.test_cases[params[:token]] = submission.test_cases[params[:token]].merge(res_hash)
-          submission.passed_test_cases += 1 if params[:status][:id] == 3
+          submission.passed_test_cases =submission.passed_test_cases_count
           submission.status = 'Pending' if submission.status == 'Accepted' && submission.total_test_cases > submission.passed_test_cases
           # submission.is_best_submission = mark_current_as_best_submission
           submission.save!
