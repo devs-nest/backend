@@ -6,22 +6,20 @@ namespace :regenerate_ch_leaderboards do
     challenges = Challenge.all
 
     challenges.each do |challenge|
-      begin
-        ch_lb = LeaderboardDevsnest::AlgoLeaderboard.new("#{challenge.slug}-lb").call
-      
-        ch_lb.delete_leaderboard
-        ch_lb_new = LeaderboardDevsnest::AlgoLeaderboard.new("#{challenge.slug}-lb").call
+      ch_lb = LeaderboardDevsnest::AlgoLeaderboard.new("#{challenge.slug}-lb").call
 
-        best_submissions = challenge.algo_submissions.where(is_best_submission: true)
-        best_submissions.each do |submission|
-          user = User.find(submission.user_id)
+      ch_lb.delete_leaderboard
+      ch_lb_new = LeaderboardDevsnest::AlgoLeaderboard.new("#{challenge.slug}-lb").call
 
-          ch_lb_new.rank_member("#{user.username}", challenge.score * (submission.passed_test_cases.to_f / submission.total_test_cases))
-        end   
-        p "Done for #{challenge.slug}"
-      rescue => exception
-        p "Failed: #{exception}"
+      best_submissions = challenge.algo_submissions.where(is_best_submission: true)
+      best_submissions.each do |submission|
+        user = User.get_by_cache(submission.user_id)
+
+        ch_lb_new.rank_member(user.username.to_s, challenge.score * (submission.passed_test_cases.to_f / submission.total_test_cases))
       end
+      p "Done for #{challenge.slug}"
+    rescue StandardError => e
+      p "Failed: #{e}"
     end
   end
 end

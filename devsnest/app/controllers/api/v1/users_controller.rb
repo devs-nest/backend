@@ -264,7 +264,7 @@ module Api
 
         decoded_data = $cryptor.decrypt_and_verify(params[:uid])
 
-        user = User.find(decoded_data[:user_id])
+        user = User.get_by_cache(decoded_data[:user_id])
         user.update(password: params[:password])
         query.update(is_fulfilled: true)
 
@@ -296,7 +296,7 @@ module Api
 
         decoded_data = $cryptor.decrypt_and_verify(params[:uid])
 
-        user = User.find(decoded_data[:user_id])
+        user = User.get_by_cache(decoded_data[:user_id])
 
         user.update(is_verified: true)
         query.update(is_fulfilled: true)
