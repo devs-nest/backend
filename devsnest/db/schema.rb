@@ -349,6 +349,7 @@ ActiveRecord::Schema.define(version: 2022_06_21_080326) do
     t.string "token"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["token", "submission_id"], name: "index_judgeztokens_on_token_and_submission_id"
   end
 
   create_table "jwt_blacklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
