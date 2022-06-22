@@ -206,13 +206,14 @@ module Api
         group = Group.find_by(name:  params.dig(:data, :attributes, 'group_name'))
         return render_error(message: 'Group not found') if group.nil?
 
-        team_leader = User.where(id: group.owner_id)&.pluck(:name, :discord_id) if group.owner_id.present?
-        vice_team_leader = User.where(id: group.co_owner_id)&.pluck(:name, :discord_id) if group.co_owner_id.present?
+        team_leader = group&.owner_id.present? ? User.find_by(id: group&.owner_id) : nil
+        vice_team_leader = group&.co_owner_id.present? ? User.find_by(id: group.co_owner_id) : nil
 
-        member_list = group.group_members.where.not(user_id: [group.owner_id, group.co_owner_id]).pluck(:user_id)
+        member_list = group.group_members.where.not(user_id: [group&.owner_id, group&.co_owner_id]).pluck(:user_id)
         group_members = User.where(id: member_list).pluck(:name, :discord_id)
 
-        render_success({ team_leader: team_leader[0], vice_team_leader: vice_team_leader.present? ? vice_team_leader[0] : nil, members: group_members })
+        render_success({ team_leader: team_leader.present? ? [team_leader&.name, team_leader&.discord_id] : nil,
+                         vice_team_leader: vice_team_leader.present? ? [team_leader&.name, team_leader&.discord_id] : nil, members: group_members })
       end
     end
   end
