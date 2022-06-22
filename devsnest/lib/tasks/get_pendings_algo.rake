@@ -6,7 +6,7 @@ namespace :get_pendings do
 
     
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'], 'x-rapidapi-key': ENV['JZ_RAPID_KEY'] }
-    pending_submissions_batches = AlgoSubmission.where(status: "Pending").in_batches(of: 500)
+    pending_submissions_batches = AlgoSubmission.where(status: "Pending").first(100)
     done = 0
     err = []
     pending_submissions_batches.each do |pending_submissions|
@@ -40,3 +40,10 @@ namespace :get_pendings do
     p err
   end
 end
+
+
+ AlgoSubmission.where(status: "Pending", test_cases: {}).each do |s|
+   if s.test_cases.empty?
+     p s.id
+   end
+ end;0
