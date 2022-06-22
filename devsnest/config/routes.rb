@@ -75,6 +75,7 @@ Rails.application.routes.draw do
         jsonapi_relationships
         collection do
           get :server_details
+          get :team_details
           delete :delete_group
           put :update_group_name, :update_batch_leader
           post :promote, :join

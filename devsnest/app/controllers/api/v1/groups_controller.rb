@@ -10,7 +10,7 @@ module Api
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
       before_action :change_discord_group_name, only: %i[update]
-      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader,server_details]
+      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader,server_details,team_details]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
       before_action :create_validations, only: %i[create]
@@ -200,6 +200,19 @@ module Api
         return render_error(message: 'Server not found') if server.nil?
 
         render_success({ groups: Group.where(server_id: server.id).pluck(:name) })
+      end
+
+      def team_details
+        group = Group.find_by(name:  params.dig(:data, :attributes, 'group_name'))
+        return render_error(message: 'Group not found') if group.nil?
+
+        team_leader = User.where(id: group.owner_id)&.pluck(:name, :discord_id) if group.owner_id.present?
+        vice_team_leader = User.where(id: group.co_owner_id)&.pluck(:name, :discord_id) if group.co_owner_id.present?
+
+        member_list = group.group_members.where.not(user_id: [group.owner_id, group.co_owner_id]).pluck(:user_id)
+        group_members = User.where(id: member_list).pluck(:name, :discord_id)
+
+        render_success({ team_leader: team_leader[0], vice_team_leader: vice_team_leader.present? ? vice_team_leader[0] : nil, members: group_members })
       end
     end
   end
