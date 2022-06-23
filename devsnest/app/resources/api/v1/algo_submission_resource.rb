@@ -14,11 +14,11 @@ module Api
         topic_challenge_ids = Challenge.where(topic: topic).pluck(:id)
 
         # refactor heres
-        user_success_submissions_for_topic = AlgoSubmission.where(challenge_id: topic_challenge_ids, is_best_submission: true, user_id: context[:user].id, status: 'Accepted')
-        relevent_unsolved_submissions = topic_challenge_ids - user_success_submissions_for_topic.pluck(:challenge_id)
+        user_success_topic_challenge_ids = AlgoSubmission.where(user_id: context[:user].id, challenge_id: topic_challenge_ids, is_submitted: true, status: 'Accepted').distinct.pluck(:challenge_id)
+        relevent_unsolved_submissions = topic_challenge_ids - user_success_topic_challenge_ids
 
         if relevent_unsolved_submissions.empty?
-          all_submitted_challenges = AlgoSubmission.where(is_best_submission: true, user_id: context[:user].id, status: 'Accepted').pluck(:challenge_id)
+          all_submitted_challenges = AlgoSubmission.where(user_id: context[:user].id, is_submitted: true, status: 'Accepted').distinct.pluck(:challenge_id)
           relevent_unsolved_submissions = Challenge.all.pluck(:id) - all_submitted_challenges
         end
 
@@ -28,10 +28,11 @@ module Api
       end
 
       def score_achieved
-        testcases_count = @model.challenge.testcases.count
+        challenge = @model.challenge
+        testcases_count = challenge.testcases.count
         return 0 if testcases_count.zero?
 
-        (@model.passed_test_cases / testcases_count.to_f) * @model.challenge.score
+        (@model.passed_test_cases / testcases_count.to_f) * challenge.score
       end
     end
   end

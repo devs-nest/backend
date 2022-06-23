@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_21_145602) do
+ActiveRecord::Schema.define(version: 2022_06_23_064353) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -27,7 +27,8 @@ ActiveRecord::Schema.define(version: 2022_06_21_145602) do
     t.string "total_runtime"
     t.string "total_memory"
     t.boolean "is_best_submission", default: false
-    t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
+    t.index ["is_submitted", "status"], name: "index_algo_submissions_on_is_submitted_and_status"
+    t.index ["user_id", "challenge_id", "is_submitted", "status"], name: "index_algo_submissions_all"
   end
 
   create_table "algo_templates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -103,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_06_21_145602) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "BlMpnx1e1iE"
+    t.string "cuid", default: "0P8kBBIOHYA"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -490,14 +491,15 @@ ActiveRecord::Schema.define(version: 2022_06_21_145602) do
     t.string "output_path"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["challenge_id", "is_sample"], name: "index_testcases_on_challenge_id_and_is_sample"
   end
 
   create_table "unsubscribes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "category", default: 0
+    t.integer "category"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category", unique: true
+    t.index ["user_id", "category"], name: "index_unsubscribes_on_user_id_and_category"
   end
 
   create_table "upvotes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
