@@ -5,7 +5,7 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
-      before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name]
+      before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
@@ -332,6 +332,17 @@ module Api
         return render_error({ message: 'No group found' }) if groupmember.nil?
 
         render_success({ name: groupmember.group.name, server_guild_id: groupmember.group&.server&.guild_id })
+      end
+
+      def check_user_detais
+        discord_id = params.dig(:data, :attributes, 'discord_id')
+        user = User.find_by(discord_id: discord_id)
+        return render_error({ message: 'User not found' }) if user.nil?
+
+        group = GroupMember.find_by(user_id: user.id)&.group
+
+        render_success({ name: user.name, discord_id: user.discord_id, email: user.web_active ? user.email : nil, group_name: group.present? ? group&.name : nil,
+                         group_server_link: group.present? ? group&.server&.link : nil })
       end
 
       private
