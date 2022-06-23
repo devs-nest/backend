@@ -42,7 +42,7 @@ module Api
 
         return render_unauthorized if submission_id.nil?
 
-        submission = AlgoSubmission.find_by(id: submission_id)
+        submission = AlgoSubmission.get_by_cache(submission_id)
 
         return render_forbidden if submission.test_cases[params[:token]]["status_description"].present?
         # return render_unauthorized if submission.created_at > Time.now - 1.day

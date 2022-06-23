@@ -21,7 +21,7 @@ class Submission < ApplicationRecord
 
   def self.create_submission(user_id, content_id, choice, leaderboard)
     submission = Submission.find_by(user_id: user_id, content_id: content_id)
-    user = User.find(user_id)
+    user = User.get_by_cache(user_id)
 
     unless submission.present?
       submission = Submission.create(user_id: user_id, content_id: content_id, status: choice)

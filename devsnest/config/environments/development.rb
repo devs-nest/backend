@@ -59,6 +59,8 @@ Rails.application.configure do
     authentication: :login,
     enable_starttls_auto: true
   }
+  config.cache_store = :redis_cache_store, { url: ENV['REDIS_HOST_CACHE_URI'] }
+  config.active_record.cache_versioning = false
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
 
