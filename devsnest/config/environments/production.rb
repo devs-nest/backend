@@ -74,6 +74,8 @@ Rails.application.configure do
     authentication: :login,
     enable_starttls_auto: true
   }
+  config.cache_store = :redis_cache_store, { url: ENV['REDIS_HOST_CACHE_URI'] }
+  config.active_record.cache_versioning = false
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
