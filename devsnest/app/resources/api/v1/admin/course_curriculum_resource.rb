@@ -19,19 +19,17 @@ module Api
           data = []
           return data if context[:user].blank?
 
-          assignment_questions_data = AssignmentQuestion.where(course_curriculum: @model).map(&:question)
+          question_ids = AssignmentQuestion.where(course_curriculum: @model).pluck(:question_id)
+          algo_submissions_succeded = AlgoSubmission.where(user: context[:user], challenge_id: question_ids, is_submitted: true, status: 'Accepted').distinct.pluck(:challenge_id)
+          algo_submissions_failed = AlgoSubmission.where(user: context[:user], challenge_id: question_ids, is_submitted: true).where.not(status: 'Accepted').distinct.pluck(:challenge_id)
+          assignment_questions_data = Challenge.where(id: question_ids)
           assignment_questions_data.each do |assignment_question|
             question_data = {
               id: assignment_question&.id,
               name: assignment_question&.name,
               slug: assignment_question&.slug,
-              status: 0
+              status: algo_submissions_succeded.include?(assignment_question.id) ? 2 : algo_submissions_failed.include?(assignment_question.id) ? 1 : 0
             }
-            algo_submissions = AlgoSubmission.where(user: context[:user], challenge_id: assignment_question&.id, is_submitted: true)
-            if algo_submissions.present?
-              status = algo_submissions.where(status: 'Accepted').present? ? 2 : 1
-              question_data[:status] = status
-            end
             data << question_data
           end
           data
