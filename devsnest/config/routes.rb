@@ -64,6 +64,7 @@ Rails.application.routes.draw do
           delete :logout
           get :unsubscribe
           get :check_group_name
+          get :check_user_detais
         end
       end
 

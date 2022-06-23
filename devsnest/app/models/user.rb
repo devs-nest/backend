@@ -120,6 +120,13 @@ class User < ApplicationRecord
     end
   end
 
+  def un_merge_discord_user
+    new_discord_id = discord_id
+    update(discord_id: '', discord_active: false)
+    temp_user = User.create(discord_id: new_discord_id, discord_active: true)
+    ServerUser.where(user_id: id).update_all(user_id: temp_user.id)
+  end
+
   def self.fetch_discord_access_token(code)
     url = URI('https://discordapp.com/api/oauth2/token')
     token = "Basic #{Base64.strict_encode64("#{ENV['DISCORD_CLIENT_ID']}:#{ENV['DISCORD_CLIENT_SECRET']}")}"
