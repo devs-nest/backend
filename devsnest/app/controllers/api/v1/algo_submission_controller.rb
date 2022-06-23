@@ -43,7 +43,7 @@ module Api
 
         submission = AlgoSubmission.find_by(id: submission_id)
 
-        return render_forbidden if submission.test_cases.dig(params[:token], "status_description").present?
+        return render_success if submission.test_cases.dig(params[:token], "status_description").present?
         # return render_unauthorized if submission.created_at > Time.now - 1.day
 
         # previous_best_submission, mark_current_as_best_submission = submission.check_for_best_submission
