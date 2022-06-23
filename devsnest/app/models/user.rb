@@ -136,7 +136,7 @@ class User < ApplicationRecord
       RoleModifierWorker.perform_async('delete_role', new_discord_id, 'Verified', server.guild_id)
       RoleModifierWorker.perform_async('delete_role', new_discord_id, 'DN JUNE BATCH', server.guild_id) if accepted_in_course
     end
-    discord_user = User.create(name: name, username: username, email: "#{discord_id}@gmail.com", discord_id: new_discord_id, discord_active: true)
+    discord_user = User.create(name: name, username: new_discord_id, email: "#{new_discord_id}@gmail.com", discord_id: new_discord_id, discord_active: true)
 
     ServerUser.where(user_id: id).update_all(user_id: discord_user.id) if discord_user.present?
   end
