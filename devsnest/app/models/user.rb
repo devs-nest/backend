@@ -106,32 +106,39 @@ class User < ApplicationRecord
     )
   end
 
-  def merge_discord_user(discord_id, temp_user)
+  def merge_discord_user(discord_id, discord_user)
     update(discord_id: discord_id, discord_active: true)
-    if temp_user.present?
-      ServerUser.where(user_id: temp_user.id).update_all(user_id: id)
-      group_member = GroupMember.find_by(user_id: temp_user.id)
-      if group_member.present?
-        group_member.update(user_id: id)
-        group = Group.find_by(id: group_member.group_id)
-        if group.owner_id == temp_user.id
-          group.update(owner_id: id)
-        elsif group.co_owner_id == temp_user.id
-          group.update(co_owner_id: id)
-        end
-      end
-      Group.where(batch_leader_id: temp_user.id).update_all(batch_leader_id: id)
-      Submission.merge_submission(temp_user, self)
-      update(score: Submission.where(user_id: id, status: 'done').count)
-      temp_user.destroy
+
+    group = GroupMember.find_by(user_id: id)&.group
+    RoleModifierWorker.perform_async('add_role', discord_id, group.name, group.server&.guild_id) if group.present? # Giving group role to newly added discord id
+
+    ServerUser.where(user_id: id, active: true).each do |server_user| # Giving other roles
+      server = Server.find_by(id: server_user.server_id)
+      RoleModifierWorker.perform_async('add_role', discord_id, 'Verified', server.guild_id)
+      RoleModifierWorker.perform_async('add_role', discord_id, 'DN JUNE BATCH', server.guild_id) if accepted_in_course
     end
+
+    return unless discord_user.present?
+
+    ServerUser.where(user_id: discord_user.id).update_all(user_id: id)
+    discord_user.destroy
   end
 
   def un_merge_discord_user
     new_discord_id = discord_id
     update(discord_id: '', discord_active: false)
-    temp_user = User.create(discord_id: new_discord_id, discord_active: true)
-    ServerUser.where(user_id: id).update_all(user_id: temp_user.id)
+
+    group = GroupMember.find_by(user_id: id)&.group
+    RoleModifierWorker.perform_async('delete_role', new_discord_id, group.name, group.server&.guild_id) if group.present? # Removing role from old user
+
+    ServerUser.where(user_id: id, active: true).each do |server_user| # Removing other roles
+      server = Server.find_by(id: server_user.server_id)
+      RoleModifierWorker.perform_async('delete_role', new_discord_id, 'Verified', server.guild_id)
+      RoleModifierWorker.perform_async('delete_role', new_discord_id, 'DN JUNE BATCH', server.guild_id) if accepted_in_course
+    end
+    discord_user = User.create(name: name, username: username, email: "#{discord_id}@gmail.com", discord_id: new_discord_id, discord_active: true)
+
+    ServerUser.where(user_id: id).update_all(user_id: discord_user.id) if discord_user.present?
   end
 
   def self.fetch_discord_access_token(code)

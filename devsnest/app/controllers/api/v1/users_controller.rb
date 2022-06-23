@@ -106,11 +106,6 @@ module Api
         return render_error({ message: 'Discord user is already connected to another user' }) if temp_user.web_active?
 
         @current_user.merge_discord_user(temp_user.discord_id, temp_user)
-        ServerUser.where(user_id: @current_user.id, active: true).each do |server_user|
-          server = Server.find_by(id: server_user.server_id)
-          RoleModifierWorker.perform_async('add_role', @current_user.discord_id, 'Verified', server.guild_id)
-          RoleModifierWorker.perform_async('add_role', @current_user.discord_id, 'DN JUNE BATCH', server.guild_id) if @current_user.accepted_in_course
-        end
         render_success(@current_user.as_json.merge({ "type": 'users' }))
       end
 
