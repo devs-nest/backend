@@ -24,14 +24,13 @@ module Api
           batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.submit_code(params, lang, challenge_id, source_code)
         end
 
-        submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted,
+        submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, total_test_cases: total_test_cases, is_submitted: is_submitted,
                                            status: 'Pending')
         tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
 
         zipped_tokens = tokens.zip(expected_output_batch, stdins)
         submission.ingest_tokens(zipped_tokens, submission)
 
-        submission.update(total_test_cases: total_test_cases)
         api_render(201, { id: submission[:id], type: 'algo_submissions' })
       end
 
@@ -44,7 +43,7 @@ module Api
 
         submission = AlgoSubmission.find_by(id: submission_id)
 
-        return render_forbidden if submission.test_cases[params[:token]]["status_description"].present?
+        return render_forbidden if submission.test_cases.dig(params[:token], "status_description").present?
         # return render_unauthorized if submission.created_at > Time.now - 1.day
 
         # previous_best_submission, mark_current_as_best_submission = submission.check_for_best_submission

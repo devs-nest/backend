@@ -101,10 +101,14 @@ class AlgoSubmission < ApplicationRecord
     tokens.each do |token, expected_output, stdin|
       tstring = token['token'].to_s
       Judgeztoken.create(submission_id: id, token: tstring)
-      JudgeZWorker.perform_in(3.minutes, tstring, id)
 
       submission.test_cases[tstring] = { 'expected_output' => expected_output, 'stdin' => stdin }
-      submission.save!
+    end
+    submission.save!
+
+    tokens.each do |token, expected_output, stdin|
+      tstring = token['token'].to_s
+      JudgeZWorker.perform_in(3.minutes, tstring, id)
     end
   end
 
