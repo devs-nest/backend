@@ -27,7 +27,7 @@ module Api
         end
 
         def disconnect_user
-          user = User.find_by(id: params['id'])
+          user = User.find_by(id: params.dig(:data, :attributes, 'id'))
 
           return render_error(message: 'No Data Found') if user.nill?
           return render_error(message: 'Can\'t Decupple the user') unless user.discord_active && user.web_active

@@ -13,7 +13,7 @@ Rails.application.routes.draw do
         jsonapi_resources :internal_feedback, only: %i[index update]
         jsonapi_resources :users, only: %i[index] do
           collection do
-            get :disconnect_user
+            post :disconnect_user
             get :check_user_detais
           end
         end
