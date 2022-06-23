@@ -135,7 +135,7 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :certification, only: %i[show]
       jsonapi_resources :frontend_project, only: %i[show index create update destroy]
-      jsonapi_resources :company, only: %i[index create show]
+      jsonapi_resources :company, only: %i[index create]
       jsonapi_resources :discussion, only: %i[show index create destroy]
       jsonapi_resources :upvote, only: %i[create destroy]
       jsonapi_resources :college_form, only: %i[create]
