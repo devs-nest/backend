@@ -10,7 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_19_070844) do
+ActiveRecord::Schema.define(version: 2022_06_24_132625) do
+
+  create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "challenge_id"
+    t.text "source_code"
+    t.string "language"
+    t.json "test_cases"
+    t.integer "total_test_cases", default: 0
+    t.integer "passed_test_cases", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_submitted"
+    t.string "status"
+    t.string "total_runtime"
+    t.string "total_memory"
+    t.boolean "is_best_submission", default: false
+    t.index ["is_submitted", "status"], name: "index_algo_submissions_on_is_submitted_and_status"
+    t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
+  end
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -484,6 +503,22 @@ ActiveRecord::Schema.define(version: 2022_07_19_070844) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "run_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "challenge_id"
+    t.text "source_code"
+    t.string "language"
+    t.json "test_cases"
+    t.integer "total_test_cases", default: 0
+    t.integer "passed_test_cases", default: 0
+    t.string "total_runtime"
+    t.string "total_memory"
+    t.string "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "challenge_id"], name: "index_run_submissions_on_user_id_and_challenge_id"
+  end
+
   create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "group_id"
@@ -599,11 +634,11 @@ ActiveRecord::Schema.define(version: 2022_07_19_070844) do
     t.string "registration_num"
     t.integer "grad_start"
     t.integer "grad_end"
-    t.string "bot_token"
-    t.string "google_id"
     t.integer "user_type", default: 0
     t.integer "update_count", default: 0
     t.integer "login_count", default: 0
+    t.string "bot_token"
+    t.string "google_id"
     t.string "discord_username"
     t.string "school"
     t.string "work_exp"

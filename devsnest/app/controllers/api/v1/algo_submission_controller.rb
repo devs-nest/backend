@@ -31,6 +31,8 @@ module Api
         submission.update(total_test_cases: total_test_cases)
 
         tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
+        submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, total_test_cases: total_test_cases, is_submitted: is_submitted,
+                                           status: 'Pending')
 
         zipped_tokens = tokens.zip(expected_output_batch, stdins)
         submission.ingest_tokens(zipped_tokens, submission)
