@@ -27,7 +27,13 @@ class User < ApplicationRecord
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
   after_update :expire_cache
+  after_update :update_user_score_lb, if: :saved_change_to_score?
   before_validation :create_referral_code, if: :is_referall_empty?
+
+  def update_user_score_lb
+    main_lb = LeaderboardDevsnest::Initializer::LB
+    main_lb.rank_member(self.username, self.score || 0)
+  end
 
   def create_username
     username = ''
