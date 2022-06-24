@@ -39,11 +39,11 @@ module Api
 
         submission_id = Judgeztoken.find_by(token: params[:token]).try(:submission_id)
 
-        return render_error if submission_id.nil?
+        return render_error("test case not found in judgezero records") if submission_id.nil?
         
         submission = AlgoSubmission.get_by_cache(submission_id)
 
-        return render_error if submission.test_cases.key?(params[:token]).blank?
+        return render_error("test case not found in submission") if submission.test_cases.key?(params[:token]).blank?
 
         return render_success if submission.test_cases.dig(params[:token], "status_description").present?
         # return render_unauthorized if submission.created_at > Time.now - 1.day
