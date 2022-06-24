@@ -11,6 +11,12 @@ module Api
         { user: @current_user }
       end
 
+      def show
+        submission = AlgoSubmission.get_by_cache(params[:id])
+        return render_error(message: "Stale Submission") if submission.status == "stale"
+        super
+      end
+
       def create
         lang = params[:data][:attributes][:language].to_s
         challenge_id = params[:data][:attributes][:challenge_id].to_s
