@@ -11,7 +11,12 @@ Rails.application.routes.draw do
       devise_for :users, skip: %i[registrations]
       namespace :admin do
         jsonapi_resources :internal_feedback, only: %i[index update]
-        jsonapi_resources :users, only: %i[index]
+        jsonapi_resources :users, only: %i[index] do
+          collection do
+            post :disconnect_user
+            get :check_user_detais
+          end
+        end
         jsonapi_resources :certification, only: %i[index create update]
         jsonapi_resources :challenge, only: %i[show index create update] do
           collection do

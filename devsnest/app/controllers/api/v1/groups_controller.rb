@@ -208,12 +208,15 @@ module Api
 
         team_leader = group&.owner_id.present? ? User.find_by(id: group&.owner_id) : nil
         vice_team_leader = group&.co_owner_id.present? ? User.find_by(id: group.co_owner_id) : nil
+        batch_leader = group&.batch_leader_id.present? ? User.find_by(id: group.batch_leader_id) : nil
 
         member_list = group.group_members.where.not(user_id: [group&.owner_id, group&.co_owner_id]).pluck(:user_id)
         group_members = User.where(id: member_list).pluck(:name, :discord_id)
-
-        render_success({ team_leader: team_leader.present? ? [team_leader&.name, team_leader&.discord_id] : nil,
-                         vice_team_leader: vice_team_leader.present? ? [vice_team_leader&.name, vice_team_leader&.discord_id] : nil, members: group_members })
+        data = { team_leader: team_leader.present? ? [team_leader&.name, team_leader&.discord_id] : nil,
+                 vice_team_leader: vice_team_leader.present? ? [vice_team_leader&.name, vice_team_leader&.discord_id] : nil,
+                 batch_leader: batch_leader.present? ? [batch_leader&.name, batch_leader_leader&.discord_id] : nil,
+                 members: group_members }
+        render_success(data)
       end
     end
   end

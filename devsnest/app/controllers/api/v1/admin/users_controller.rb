@@ -13,6 +13,28 @@ module Api
             user: @current_user
           }
         end
+
+        def check_user_detais
+          identifier = params['identifier']
+
+          discord_user = User.find_by(discord_id: identifier)
+          email_user = User.find_by(email: identifier)
+
+          user = discord_user.present? ? discord_user : email_user
+          return render_error({ message: 'User not found' }) unless user.present?
+
+          render_success({ id: user.id, name: user.name, discord_id: user.discord_id, email: user.email, mergeable: user.discord_active && user.web_active })
+        end
+
+        def disconnect_user
+          user = User.find_by(id: params.dig(:data, :attributes, 'id'))
+
+          return render_error(message: 'No Data Found') unless user.present?
+          return render_error(message: 'Can\'t decouple the user') unless user.discord_active && user.web_active
+
+          user.un_merge_discord_user
+          render_success({ message: 'User is decoupled!' })
+        end
       end
     end
   end
