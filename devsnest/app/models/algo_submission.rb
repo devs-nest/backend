@@ -135,6 +135,8 @@ class AlgoSubmission < ApplicationRecord
   def assign_score_to_user
     user = User.get_by_cache(user_id)
     challenge = Challenge.find(challenge_id)
+    return unless challenge.is_active
+    
     best_submission = user.algo_submissions.find_by(challenge_id: challenge.id, is_best_submission: true)
     previous_max_score = if best_submission.nil?
                            0
