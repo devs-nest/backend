@@ -23,7 +23,7 @@ module Api
       end
 
       def fetchable_fields
-        context[:user].nil? || context[:user].id == @model.id ? super - %i[password] : super - %i[password email]
+        context[:user].present? && context[:user].id == @model.id ? super - %i[password] : super - %i[password email phone_number discord_username discord_id]
       end
 
       def self.updatable_fields(context)
