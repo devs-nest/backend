@@ -14,7 +14,7 @@ Rails.application.routes.draw do
         jsonapi_resources :users, only: %i[index] do
           collection do
             post :disconnect_user
-            get :check_user_detais
+            get :check_user_details
           end
         end
         jsonapi_resources :certification, only: %i[index create update]
