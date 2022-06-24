@@ -13,7 +13,7 @@ module Api
 
       def show
         submission = AlgoSubmission.get_by_cache(params[:id])
-        return render_error(message: "Stale Submission") if submission.status == "stale"
+        return render_error(message: "Stale Submission") if submission.status == "Stale"
         super
       end
 
