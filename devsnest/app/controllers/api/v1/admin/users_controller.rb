@@ -14,7 +14,7 @@ module Api
           }
         end
 
-        def check_user_detais
+        def check_user_details
           identifier = params['identifier']
 
           discord_user = User.find_by(discord_id: identifier)
