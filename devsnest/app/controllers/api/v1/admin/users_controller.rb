@@ -23,7 +23,7 @@ module Api
           user = discord_user.present? ? discord_user : email_user
           return render_error({ message: 'User not found' }) unless user.present?
 
-          render_success({ id: user.id, name: user.name, discord_id: user.discord_id, email: user.email, mergeable: user.discord_active || user.web_active })
+          render_success({ id: user.id, name: user.name, discord_id: user.discord_id, email: user.email, mergeable: user.discord_active && user.web_active })
         end
 
         def disconnect_user
