@@ -336,8 +336,14 @@ module Api
 
         group = GroupMember.find_by(user_id: user.id)&.group
 
-        render_success({ name: user.name, discord_id: user.discord_id, email: user.web_active ? user.email : nil, group_name: group.present? ? group&.name : nil,
-                         group_server_link: group.present? ? group&.server&.link : nil })
+        data = { name: user.name,
+                 discord_id: user.discord_id,
+                 email: user.web_active ? user.email : nil,
+                 verified: user.web_active || user.discord_active,
+                 batch_eligible: user.web_active || user.discord_active || user.accepted_in_course,
+                 group_name: group.present? ? group&.name : nil,
+                 group_server_link: group.present? ? group&.server&.link : nil }
+        render_success(data)
       end
 
       private
