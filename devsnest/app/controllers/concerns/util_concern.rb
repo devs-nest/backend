@@ -24,6 +24,27 @@ module UtilConcern
     end
   end
 
+  def assign_role_to_batchleader(user, groups)
+    groups.each do |g|
+      old_batch_leader = User.get_by_cache(id: g.batch_leader_id)
+      RoleModifierWorker.perform_async('delete_role', old_batch_leader.discord_id, g.name, g.sever&.guild_id) if old_batch_leader.present?
+      g.update(batch_leader_id: user.id)
+      RoleModifierWorker.perform_async('add_role', user.discord_id, g.name, g.sever&.guild_id)
+    end
+  end
+
+  def get_user_details(user)
+    server_details = Server.where(id: ServerUser.where(id: user.id)&.pluck(:server_id))&.pluck(:name)
+    {
+      id: user.id,
+      name: user.name,
+      discord_id: user.discord_id,
+      email: user.email,
+      mergeable: user.discord_active && user.web_active,
+      server_details: server_details
+    }
+  end
+
   def send_group_change_message(user_id, group_name)
     user = User.find_by(id: user_id)
     puts("Sending group change message to #{user.discord_id}")
