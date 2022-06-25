@@ -18,11 +18,30 @@ module Api
           params = request.params[:data][:attributes]
           return render_error({ message: 'Group with this Name Already Exists' }) if Group.find_by(name: params[:new_group_name])
 
-          if Group.merge_two_groups(params[:group_1_id], params[:group_2_id], params[:preserved_group_id], { name: params[:new_group_name], owner_id: params[:owner_id], co_owner_id: params[:co_owner_id] })
+          if Group.merge_two_groups(params[:group_1_id], params[:group_2_id], params[:preserved_group_id],
+                                    { name: params[:new_group_name], owner_id: params[:owner_id], co_owner_id: params[:co_owner_id] })
             render_success({ message: 'Group Merged Succesfully!' })
           else
-            render_error({message: 'Error Occured while Merging, Please Verify all the Parameters!'})
+            render_error({ message: 'Error Occured while Merging, Please Verify all the Parameters!' })
           end
+        end
+
+        def fetch_group_details
+          final_details = []
+          Group.v2.all.each do |g|
+            user = User.get_by_cache(id: g.batch_leader_id) if g.batch_leader_id.present?
+            final_details << [g.server&.name, g.id, g.name, user.present? ? user.name : 'NA']
+          end
+          render_success({ data: final_details })
+        end
+
+        def assign_batch_leader
+          user = User.get_by_cache(params.dig(:data, :attributes, 'user_id'))
+          render_error({ message: 'User Not Found' }) unless user.present?
+
+          assign_role_to_batchleader(user, Group.v2.where(id: params.dig(:data, :attributes, 'group_ids')))
+
+          render_success({ message: 'Batch Leader Assigned Successfully!' })
         end
       end
     end
