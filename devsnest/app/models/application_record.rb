@@ -10,7 +10,11 @@ class ApplicationRecord < ActiveRecord::Base
     key = "#{self.name.downcase}_#{id}"
 
     Rails.cache.fetch(key, expires_in: 1.day) do
-      self.find(id)
+      begin
+        self.find(id)
+      rescue ActiveRecord::RecordNotFound
+        nil
+      end
     end
   end
 
