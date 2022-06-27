@@ -5,20 +5,15 @@ class ApplicationRecord < ActiveRecord::Base
 
   after_update :expire_cache
 
-
   def self.get_by_cache(id)
-    key = "#{self.name.downcase}_#{id}"
+    key = "#{name.downcase}_#{id}"
 
     Rails.cache.fetch(key, expires_in: 1.day) do
-      begin
-        self.find(id)
-      rescue ActiveRecord::RecordNotFound
-        nil
-      end
+      find_by(id: id)
     end
   end
 
   def expire_cache
-    Rails.cache.delete("#{self.class.name.downcase}_#{self.id}")
+    Rails.cache.delete("#{self.class.name.downcase}_#{id}")
   end
 end
