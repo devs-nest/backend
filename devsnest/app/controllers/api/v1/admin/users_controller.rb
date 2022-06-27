@@ -7,7 +7,7 @@ module Api
       class UsersController < ApplicationController
         include JSONAPI::ActsAsResourceController
         include UtilConcern
-        # before_action :admin_auth
+        before_action :admin_auth
 
         def context
           {

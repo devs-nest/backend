@@ -13,8 +13,8 @@ class Group < ApplicationRecord
   validates :members_count, numericality: { less_than_or_equal_to: 20, message: 'The group is full' }
   validates :members_count, numericality: { greater_than_or_equal_to: 0, message: 'The group members count can\'t be negetive' }
   validates :name, length: { minimum: 4, maximum: 33, message: 'The group name must be between 4 and 25 characters' }
-  validates_uniqueness_of :name
-  validates_uniqueness_of :slug
+  validates_uniqueness_of :name, case_sensitive: true
+  validates_uniqueness_of :slug, case_sensitive: true
   enum group_type: %i[public private], _prefix: :group
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
@@ -138,9 +138,9 @@ class Group < ApplicationRecord
   end
 
   def invite_inactive_members
-    self.group_members.each do |member|
-      server_user = ServerUser.find_by(user_id: member.user_id, server_id: self.server_id)
-      send_group_change_message(member.user_id, self.name) unless server_user.present?
+    group_members.each do |member|
+      server_user = ServerUser.find_by(user_id: member.user_id, server_id: server_id)
+      send_group_change_message(member.user_id, name) unless server_user.present?
     end
-  end  
+  end
 end

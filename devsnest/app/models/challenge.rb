@@ -13,7 +13,7 @@ class Challenge < ApplicationRecord
   belongs_to :user
   has_many :assingment_questions
   after_create :create_slug
-  validates_uniqueness_of :name, :slug
+  validates_uniqueness_of :name, :slug, case_sensitive: true
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
   before_update :re_evaluate_user_scores, if: :will_save_change_to_score?
   after_save :remove_saved_templates
