@@ -5,7 +5,6 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
-  after_update :expire_cache
   # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
   # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
 
@@ -174,16 +173,6 @@ class AlgoSubmission < ApplicationRecord
   def self.update_best_submission(best_submission, previous_best_submission)
     previous_best_submission.update_column(:is_best_submission, false) if previous_best_submission.present? 
     best_submission.update_column(:is_best_submission, true)
-  end
-
-  def self.get_by_cache(id)
-    Rails.cache.fetch("algo_submission_#{id}", expires_in: 1.hour) do
-      AlgoSubmission.find(id)
-    end
-  end
-
-  def expire_cache
-    Rails.cache.delete("algo_submission_#{id}")
   end
 
   def passed_test_cases_count

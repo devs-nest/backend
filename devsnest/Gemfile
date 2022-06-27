@@ -33,6 +33,7 @@ group :development, :test do
   gem 'factory_bot_rails', '~> 6.2'
   gem 'rspec-rails', '~> 3.8'
   gem 'simplecov', '~> 0.21.2'
+  gem 'pry', '0.14.1'
 end
 
 group :development do
