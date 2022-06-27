@@ -8,8 +8,8 @@ class User < ApplicationRecord
   after_create :create_bot_token
   enum user_type: %i[user admin problem_setter]
   after_create :create_username
-  validates_uniqueness_of :username
-  validates :referral_code, uniqueness: true
+  validates_uniqueness_of :username, case_sensitive: true
+  validates_uniqueness_of :referral_code, case_sensitive: true
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
@@ -32,7 +32,7 @@ class User < ApplicationRecord
 
   def update_user_score_lb
     main_lb = LeaderboardDevsnest::Initializer::LB
-    main_lb.rank_member(self.username, self.score || 0)
+    main_lb.rank_member(username, score || 0)
   end
 
   def create_username

@@ -4,7 +4,7 @@
 class CompanyChallengeMapping < ApplicationRecord
   belongs_to :challenge
   belongs_to :company
-  validates :company_id, uniqueness: { scope: :challenge_id }
+  validates_uniqueness_of :company_id, scope: :challenge_id
   after_commit :cache_expire
 
   def cache_expire
