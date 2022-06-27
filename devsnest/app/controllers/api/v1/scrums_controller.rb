@@ -41,7 +41,7 @@ module Api
         if (@current_user.id == user_id && group.group_members.where(user_id: user_id).present?) || group.admin_rights_auth(@current_user)
           scrum = Scrum.find_by(user_id: user_id, group_id: group.id, creation_date: Date.current)
           if scrum.present? 
-            scrum.handle_manual_update(params, group, @current_user) ? render_success(scrum: scrum.to_json) : render_error('message': 'Something Went Wrong')
+            scrum.handle_manual_update(params, group, @current_user) ? render_success(scrum: scrum.as_json) : render_error('message': 'Something Went Wrong')
           else
             true
           end
