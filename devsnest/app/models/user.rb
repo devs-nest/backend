@@ -26,7 +26,6 @@ class User < ApplicationRecord
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
-  after_update :expire_cache
   after_update :update_user_score_lb, if: :saved_change_to_score?
   before_validation :create_referral_code, if: :is_referall_empty?
 
@@ -279,15 +278,5 @@ class User < ApplicationRecord
 
   def is_admin?
     user_type == 'admin'
-  end
-
-  def self.get_by_cache(id)
-    Rails.cache.fetch("user_#{id}", expires_in: 1.day) do
-      User.find(id)
-    end
-  end
-
-  def expire_cache
-    Rails.cache.delete("user_#{id}")
   end
 end
