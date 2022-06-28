@@ -48,6 +48,7 @@ module Api
         sleep(5) if submission.test_cases.key?(params[:token]).blank? # token not set
         submission.reload
 
+        return render_error("test case not found in submission") if submission.test_cases.key?(params[:token]).blank?
         return render_success if submission.test_cases.dig(params[:token], "status_description").present?
         # return render_unauthorized if submission.created_at > Time.now - 1.day
 
