@@ -18,14 +18,15 @@ module Api
 
         if params[:run_code].present?
           is_submitted = false
-          batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.run_code(params, lang, challenge_id, source_code)
+          submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted, status: 'Pending')
+          batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.run_code(params, lang, challenge_id, source_code, submission.id)
         else
           is_submitted = true
-          batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.submit_code(params, lang, challenge_id, source_code)
+          submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted, status: 'Pending')
+          batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.submit_code(params, lang, challenge_id, source_code, submission.id)
         end
+        submission.update(total_test_cases: total_test_cases)
 
-        submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, total_test_cases: total_test_cases, is_submitted: is_submitted,
-                                           status: 'Pending')
         tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
 
         zipped_tokens = tokens.zip(expected_output_batch, stdins)
@@ -37,13 +38,14 @@ module Api
       def callback
         return render_unauthorized if params[:token].nil?
 
-        submission_id = Judgeztoken.find_by(token: params[:token]).try(:submission_id)
+        submission_id = params[:submission_id]
 
         return render_error("test case not found in judgezero records") if submission_id.nil?
         
         submission = AlgoSubmission.get_by_cache(submission_id)
 
-        return render_error("test case not found in submission") if submission.test_cases.key?(params[:token]).blank?
+        sleep(5) if submission.test_cases.key?(params[:token]).blank? # token not set
+        submission.reload
 
         return render_success if submission.test_cases.dig(params[:token], "status_description").present?
         # return render_unauthorized if submission.created_at > Time.now - 1.day
