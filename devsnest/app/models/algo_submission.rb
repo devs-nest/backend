@@ -74,7 +74,7 @@ class AlgoSubmission < ApplicationRecord
       mode = 'run_sample'
     end
     total_test_cases = 1
-    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, mode, submission_idS)
+    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, mode, submission_id)
     batch << loader
     expected_output_batch << expected_output
     stdins << stdin
