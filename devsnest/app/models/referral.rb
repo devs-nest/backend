@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 class Referral < ApplicationRecord
-  validates :referred_user_id, uniqueness: true
+  validates_uniqueness_of :referred_user_id, case_sensitive: true
 end

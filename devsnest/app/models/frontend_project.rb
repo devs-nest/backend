@@ -3,7 +3,7 @@
 # Project Model
 class FrontendProject < ApplicationRecord
   include MinibootcampHelper
-  validates :name, uniqueness: { scope: :user_id, case_sensitive: true }
+  validates_uniqueness_of :name, case_sensitive: true, scope: :user_id
   belongs_to :user
   after_create :create_slug
   enum template: %i[angular react react-ts vanilla vanilla-ts vue vue3 svelte]

@@ -2,8 +2,7 @@
 
 # Model
 class BatchLeaderSheet < ApplicationRecord
-  validates :group_id, uniqueness: { scope: :creation_week }
-
+  validates_uniqueness_of :group_id, scope: :creation_week
   serialize :doubt_session_taker, Array
   serialize :active_members, Array
   serialize :par_active_members, Array

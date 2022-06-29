@@ -50,6 +50,8 @@ Rails.application.routes.draw do
         jsonapi_resources :groups, only: %i[] do
           collection do
             post :merge_two_groups
+            get :fetch_group_details
+            post :assign_batch_leader
           end
         end
       end
@@ -69,7 +71,7 @@ Rails.application.routes.draw do
           delete :logout
           get :unsubscribe
           get :check_group_name
-          get :check_user_detais
+          get :check_user_details
         end
       end
 
