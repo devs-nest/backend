@@ -40,6 +40,7 @@ module Api
           return render_error({ message: 'User Not Found' }) unless user.present?
 
           Group.where(batch_leader_id: user.id).each do |g|
+            g.update(batch_leader_id: nil)
             RoleModifierWorker.perform_async('delete_role', user.discord_id, g.name, g.server&.guild_id)
           end
           assign_role_to_batchleader(user, Group.v2.where(id: params.dig(:data, :attributes, 'group_ids')))
