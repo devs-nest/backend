@@ -9,7 +9,9 @@ class AlgoSubmission < ApplicationRecord
   # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
   # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
 
-  def self.add_submission(source_code, lang, test_case, challenge_id, mode)
+  scope :accessible, -> { where.not(status: "Stale") }
+
+  def self.add_submission(source_code, lang, test_case, challenge_id, mode, submission_id = nil)
     if mode != 'run'
       begin
         inpf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/input/#{test_case[:input_path]}").body.read
@@ -37,20 +39,20 @@ class AlgoSubmission < ApplicationRecord
       "enable_per_process_and_thread_time_limit": false,
       "enable_per_process_and_thread_memory_limit": false,
       "max_file_size": '4096',
-      "callback_url": ENV['JUDGEZERO_CALLBACK']
+      "callback_url": ENV['JUDGEZERO_CALLBACK'] + "?submission_id=#{submission_id.to_s}"
     }
 
     [payload, expected_out, stdin]
   end
 
-  def self.submit_code(_params, lang, challenge_id, source_code)
+  def self.submit_code(_params, lang, challenge_id, source_code, submission_id = nil)
     test_cases = Testcase.where(challenge_id: challenge_id)
     total_test_cases = 0
     batch = []
     expected_output_batch = []
     stdins = []
     test_cases.each do |test_case|
-      loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, 'submit')
+      loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, 'submit', submission_id)
       next if loader.key?('error')
 
       batch << loader
@@ -61,7 +63,7 @@ class AlgoSubmission < ApplicationRecord
     [batch, total_test_cases, expected_output_batch, stdins]
   end
 
-  def self.run_code(params, lang, challenge_id, source_code)
+  def self.run_code(params, lang, challenge_id, source_code, submission_id = nil)
     test_case = params.dig(:data, :attributes, :test_case)
     mode = 'run'
     batch = []
@@ -72,7 +74,7 @@ class AlgoSubmission < ApplicationRecord
       mode = 'run_sample'
     end
     total_test_cases = 1
-    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, mode)
+    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, mode, submission_id)
     batch << loader
     expected_output_batch << expected_output
     stdins << stdin
