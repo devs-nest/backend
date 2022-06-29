@@ -34,7 +34,7 @@ module UtilConcern
   end
 
   def get_user_details(user)
-    server_details = Server.where(id: ServerUser.where(id: user.id)&.pluck(:server_id))&.pluck(:name)
+    server_details = Server.where(id: ServerUser.where(user_id: user.id)&.pluck(:server_id))&.pluck(:name)
     group = GroupMember.find_by(user_id: user.id)&.group
     {
       id: user.id,
