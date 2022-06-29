@@ -13,6 +13,7 @@ module Api
         user_referrals.each do |q|
           referred_user = User.get_by_cache(q.referred_user_id)
           next if referred_user.blank?
+
           referrals[:referrals].push({ id: referred_user.id, referred_user: referred_user.name, registered_for_the_course: referred_user.is_fullstack_course_22_form_filled,
                                        is_discord_connected: referred_user.discord_active, created_at: q.created_at })
         end
