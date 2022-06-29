@@ -6,7 +6,7 @@ module Api
       # Group Controller for Admin
       class GroupsController < ApplicationController
         include JSONAPI::ActsAsResourceController
-        # before_action :admin_auth
+        before_action :admin_auth
 
         def context
           {
