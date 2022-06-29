@@ -26,22 +26,28 @@ module UtilConcern
 
   def assign_role_to_batchleader(user, groups)
     groups.each do |g|
-      old_batch_leader = User.get_by_cache(id: g.batch_leader_id)
-      RoleModifierWorker.perform_async('delete_role', old_batch_leader.discord_id, g.name, g.sever&.guild_id) if old_batch_leader.present?
+      old_batch_leader = User.find_by(id: g.batch_leader_id)
+      RoleModifierWorker.perform_async('delete_role', old_batch_leader.discord_id, g.name, g.server&.guild_id) if old_batch_leader.present?
       g.update(batch_leader_id: user.id)
-      RoleModifierWorker.perform_async('add_role', user.discord_id, g.name, g.sever&.guild_id)
+      RoleModifierWorker.perform_async('add_role', user.discord_id, g.name, g.server&.guild_id)
     end
   end
 
   def get_user_details(user)
     server_details = Server.where(id: ServerUser.where(id: user.id)&.pluck(:server_id))&.pluck(:name)
+    group = GroupMember.find_by(user_id: user.id)&.group
     {
       id: user.id,
       name: user.name,
       discord_id: user.discord_id,
-      email: user.email,
+      email: user.web_active ? user.email : nil,
       mergeable: user.discord_active && user.web_active,
-      server_details: server_details
+      server_details: server_details,
+      batch_leader_details: Group.where(batch_leader_id: user.id)&.pluck(:name),
+      batch_eligible: user.web_active && user.discord_active && user.accepted_in_course,
+      verified: user.web_active && user.discord_active,
+      group_name: group.present? ? group&.name : nil,
+      group_server_link: group.present? ? group&.server&.link : nil
     }
   end
 

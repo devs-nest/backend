@@ -329,20 +329,12 @@ module Api
         render_success({ name: groupmember.group.name, server_guild_id: groupmember.group&.server&.guild_id })
       end
 
-      def check_user_detais
+      def check_user_details
         discord_id = params.dig(:data, :attributes, 'discord_id')
         user = User.find_by(discord_id: discord_id)
         return render_error({ message: 'User not found' }) if user.nil?
 
-        group = GroupMember.find_by(user_id: user.id)&.group
-
-        data = { name: user.name,
-                 discord_id: user.discord_id,
-                 email: user.web_active ? user.email : nil,
-                 verified: user.web_active && user.discord_active,
-                 batch_eligible: user.web_active && user.discord_active && user.accepted_in_course,
-                 group_name: group.present? ? group&.name : nil,
-                 group_server_link: group.present? ? group&.server&.link : nil }
+        data = get_user_details(user)
         render_success(data)
       end
 

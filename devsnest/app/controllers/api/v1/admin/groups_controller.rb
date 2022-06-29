@@ -6,7 +6,7 @@ module Api
       # Group Controller for Admin
       class GroupsController < ApplicationController
         include JSONAPI::ActsAsResourceController
-        before_action :admin_auth
+        # before_action :admin_auth
 
         def context
           {
@@ -30,7 +30,7 @@ module Api
           final_details = []
           Group.v2.all.each do |g|
             user = User.find_by(id: g.batch_leader_id) if g.batch_leader_id.present?
-            final_details << [g.server&.name, g.id, g.name, user.present? ? user.name : 'NA']
+            final_details << { server_name: g.server&.name, group_id: g.id, group_name: g.name, batch_leader_id: g.batch_leader_id, batch_leader_id_name: user.present? ? user.name : 'NA' }
           end
           render_success({ data: final_details })
         end
@@ -40,7 +40,7 @@ module Api
           return render_error({ message: 'User Not Found' }) unless user.present?
 
           Group.where(batch_leader_id: user.id).each do |g|
-            RoleModifierWorker.perform_async('delete_role', user.discord_id, g.name, g.sever&.guild_id)
+            RoleModifierWorker.perform_async('delete_role', user.discord_id, g.name, g.server&.guild_id)
           end
           assign_role_to_batchleader(user, Group.v2.where(id: params.dig(:data, :attributes, 'group_ids')))
 
