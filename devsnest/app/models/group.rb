@@ -6,7 +6,7 @@ class Group < ApplicationRecord
   include UtilConcern
   # belongs_to :batch
   audited
-  has_many :group_members
+  has_many :group_members, dependent: :destroy
   belongs_to :server
   after_create :parameterize
   before_create :assign_server
