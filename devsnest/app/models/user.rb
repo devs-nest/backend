@@ -283,7 +283,7 @@ class User < ApplicationRecord
 
   def self.get_by_cache(id)
     Rails.cache.fetch("user_#{id}", expires_in: 1.day) do
-      User.find(id)
+      User.find_by(id: id)
     end
   end
 
