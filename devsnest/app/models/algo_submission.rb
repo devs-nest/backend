@@ -12,10 +12,10 @@ class AlgoSubmission < ApplicationRecord
 
   def self.add_submission(source_code, lang, test_case, challenge_id, mode, submission_id = nil)
     if mode != 'run'
-      begin
-        inpf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/input/#{test_case[:input_path]}").body.read
-        outf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/output/#{test_case[:output_path]}").body.read
-      rescue StandardError
+      inpf = test_case.input_case
+      outf = test_case.output_case
+
+      if inpf.nil? || outf.nil?
         return { 'error' => 'Something went wrong!' }
       end
     end
