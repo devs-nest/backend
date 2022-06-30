@@ -52,6 +52,8 @@ module Devsnest
       end
     end
 
+    config.testcase_bucket_prefix = ENV['S3_PREFIX']
+
     # config.session_store :cookie_store, key: '_interslice_session', domain: :all, tld_length: 2, httponly: false
     # config.middleware.use ActionDispatch::Cookies # Required for all session management
     # config.middleware.use ActionDispatch::Session::CookieStore, config.session_options

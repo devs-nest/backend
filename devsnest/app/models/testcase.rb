@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+
+# testcase class - stores and fetches testcases for a challenge from s3
 class Testcase < ApplicationRecord
   belongs_to :challenge
   after_update :expire_cache
@@ -12,15 +14,13 @@ class Testcase < ApplicationRecord
     read_from_s3 output_key
   end
 
-  def read_from_s3 key
+  def read_from_s3(key)
     Rails.cache.fetch(key, expires_in: 1.day) do
-      $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: key).body.read
+      $s3.get_object(bucket: "#{Rails.configuration.testcase_bucket_prefix}testcases", key: key).body.read
     end
-
   rescue StandardError
     nil
   end
-
 
   private
 
@@ -32,7 +32,6 @@ class Testcase < ApplicationRecord
   def input_key
     "#{challenge_id}/input/#{input_path}"
   end
-
 
   def output_key
     "#{challenge_id}/output/#{output_path}"

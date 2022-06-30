@@ -10,14 +10,12 @@ class AlgoSubmission < ApplicationRecord
 
   scope :accessible, -> { where.not(status: "Stale") }
 
-  def self.add_submission(source_code, lang, test_case, challenge_id, mode, submission_id = nil)
+  def self.add_submission(source_code, lang, test_case, mode, submission_id = nil)
     if mode != 'run'
       inpf = test_case.input_case
       outf = test_case.output_case
 
-      if inpf.nil? || outf.nil?
-        return { 'error' => 'Something went wrong!' }
-      end
+      return { 'error' => 'Something went wrong!' } if inpf.nil? || outf.nil?
     end
 
     stdin = Base64.encode64(inpf || '')
@@ -51,7 +49,7 @@ class AlgoSubmission < ApplicationRecord
     expected_output_batch = []
     stdins = []
     test_cases.each do |test_case|
-      loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, 'submit', submission_id)
+      loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, 'submit', submission_id)
       next if loader.key?('error')
 
       batch << loader
@@ -73,7 +71,7 @@ class AlgoSubmission < ApplicationRecord
       mode = 'run_sample'
     end
     total_test_cases = 1
-    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, mode, submission_id)
+    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, mode, submission_id)
     batch << loader
     expected_output_batch << expected_output
     stdins << stdin
