@@ -25,7 +25,7 @@ module Api
       end
 
       def self.updatable_fields(context)
-        super - %i[score group_id group_name discord_id password college_name]
+        super - %i[score group_id group_name discord_id password college_name coins]
       end
 
       def group_id
