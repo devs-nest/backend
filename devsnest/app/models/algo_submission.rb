@@ -157,6 +157,7 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def execution_completed
+    byebug
     ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
   end
 

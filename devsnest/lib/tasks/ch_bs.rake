@@ -3,8 +3,10 @@
 namespace :mark_selected_submissions do
   desc 'mark best submissions'
   task data: :environment do
-    User.in_batches.update_all(score: 0)
-    AlgoSubmission.in_batches.update_all(is_best_submission: false)
+    User.update_column(score: 0)
+    p "user score resetted"
+    AlgoSubmission.update_column(is_best_submission: false)
+    p "best sub resetted"
     ch_ids = Challenge.where(is_active: true).pluck(:id)
 
     ch_ids.each do |ch_id|
