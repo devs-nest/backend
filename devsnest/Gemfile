@@ -41,7 +41,18 @@ group :development do
   gem 'awesome_print', '~> 1.9', '>= 1.9.2'
   gem 'spring', '2.1.1'
   gem 'spring-watcher-listen', '~> 2.0.0'
+
+  gem 'capistrano',         require: false
+  gem 'capistrano-rvm',     require: false
+  gem 'capistrano-rails',   require: false
+  gem 'capistrano-bundler', require: false
+  gem 'capistrano3-puma',   require: false
+
+  gem 'ed25519'
+  gem 'bcrypt_pbkdf'
 end
+
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors', '~> 1.1.1'
 gem 'sentry-rails', '4.2.1'
