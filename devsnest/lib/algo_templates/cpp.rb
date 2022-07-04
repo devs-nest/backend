@@ -74,7 +74,7 @@ module Templates
           'float' => ['vector<int> mat_dims(2);', 'for(int i = 0; i < 2; i++){', 'cin >> mat_dims[i];', '}', "#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'float temp;', 'cin >> temp;',
                       "#{name}[r].push_back(temp);", '}', '}'],
           'string' => ['vector<int> mat_dims(2);', 'for(int i = 0; i < 2; i++){', 'cin >> mat_dims[i];', '}', "#{name}.resize(#{dependent&.first});", "for (int r = 0; r < #{dependent&.first}; r++){", "for (int c = 0; c < #{dependent&.second}; c++){", 'string temp;',
-                       'getline(cin, temp);', "#{name}[r].push_back(temp);", '}', '}']
+                        'cin >> temp;', "#{name}[r].push_back(temp);", '}', '}']
         },
         'linked_list' => {
           'int' => ['vector<int> raw_array;', "for (int i = 0; i < #{dependent&.first}; i++){", 'int temp;', 'cin >> temp;', 'raw_array.push_back(temp);', '}', "#{name} = convertToLL(raw_array);"]
