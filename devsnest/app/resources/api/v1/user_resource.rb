@@ -15,6 +15,7 @@ module Api
       attributes :frontend_activity
       attributes :markdown, :bio
       attributes :type, :user_group_slug
+      attributes :batch_leader_details
 
       def markdown
         @model.markdown.dup.encode('ISO-8859-1').force_encoding('utf-8') unless @model.markdown.blank?
@@ -74,6 +75,11 @@ module Api
         return nil if user_group_id.nil?
 
         Group.find_by(id: user_group_id).try(:slug)
+      end
+
+      def batch_leader_details
+        group_details = GroupMember.where(user_id: @model.id)
+        group_details.present? ? group_details.pluck(:name, :slug) : []
       end
     end
   end

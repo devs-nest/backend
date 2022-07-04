@@ -281,6 +281,10 @@ class User < ApplicationRecord
     user_type == 'admin'
   end
 
+  def is_batchleader?
+    Group.where(batch_leader_id: id).present?
+  end
+
   def self.get_by_cache(id)
     Rails.cache.fetch("user_#{id}", expires_in: 1.day) do
       User.find_by(id: id)

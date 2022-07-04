@@ -64,9 +64,8 @@ module Api
         elsif options[:context][:user]&.is_admin?
           super(options).v2
         else
-          user_private_group = GroupMember.where(user_id: options[:context][:user]&.id).first
-          private_group = Group.find_by(id: user_private_group.group_id) if user_private_group.present?
-          super(options).v2.visible.under_limited_members.or(super(options).where(id: private_group&.id, group_type: 'private'))
+          user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
+          user_group.present? ? user_group : super(options).v2.visible.under_limited_members
         end
       end
     end
