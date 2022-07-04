@@ -114,7 +114,6 @@ class AlgoSubmission < ApplicationRecord
 
     tokens.each do |token, expected_output, stdin|
       tstring = token['token'].to_s
-      JudgeZWorker.perform_in(10.seconds, tstring, id)
       JudgeZWorker.perform_in(1.minutes, tstring, id)
     end
   end
