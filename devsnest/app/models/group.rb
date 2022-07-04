@@ -10,7 +10,7 @@ class Group < ApplicationRecord
   belongs_to :server
   after_create :parameterize
   before_create :assign_server
-  after_commit :expire_cache, on: %i[create update destroy]
+  after_commit :expire_cache
   validates :members_count, numericality: { less_than_or_equal_to: 20, message: 'The group is full' }
   validates :members_count, numericality: { greater_than_or_equal_to: 0, message: 'The group members count can\'t be negetive' }
   validates :name, length: { minimum: 4, maximum: 33, message: 'The group name must be between 4 and 25 characters' }
