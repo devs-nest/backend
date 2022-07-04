@@ -78,8 +78,8 @@ module Api
       end
 
       def batch_leader_details
-        group_details = GroupMember.where(user_id: @model.id)
-        group_details.present? ? group_details.pluck(:name, :slug) : []
+        group_details = Group.where(batch_leader_id: @model.id)
+        group_details.present? ? group_details : nil
       end
     end
   end

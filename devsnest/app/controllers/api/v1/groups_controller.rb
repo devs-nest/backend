@@ -214,7 +214,7 @@ module Api
         group_members = User.where(id: member_list).pluck(:name, :discord_id)
         data = { team_leader: team_leader.present? ? [team_leader&.name, team_leader&.discord_id] : nil,
                  vice_team_leader: vice_team_leader.present? ? [vice_team_leader&.name, vice_team_leader&.discord_id] : nil,
-                 batch_leader: batch_leader.present? ? [batch_leader&.name, batch_leader_leader&.discord_id] : nil,
+                 batch_leader: batch_leader.present? ? [batch_leader&.name, batch_leader&.discord_id] : nil,
                  members: group_members }
         render_success(data)
       end
