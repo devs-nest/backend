@@ -27,11 +27,10 @@ module UtilConcern
   def assign_role_to_batchleader(user, groups)
     groups.each do |g|
       old_batch_leader = User.find_by(id: g.batch_leader_id)
-      RoleModifierWorker.perform_async('delete_role', old_batch_leader.discord_id, g.name, g.server&.guild_id) if old_batch_leader.present?
-      RoleModifierWorker.perform_async('delete_role', user.discord_id, 'Batch Leader', g.server&.guild_id)
-      g.update(batch_leader_id: user.id)
       RoleModifierWorker.perform_async('add_role', user.discord_id, 'Batch Leader', g.server&.guild_id)
       RoleModifierWorker.perform_async('add_role', user.discord_id, g.name, g.server&.guild_id)
+      RoleModifierWorker.perform_async('delete_role', old_batch_leader.discord_id, g.name, g.server&.guild_id) if old_batch_leader.present?
+      g.update(batch_leader_id: user.id)
     end
   end
 
