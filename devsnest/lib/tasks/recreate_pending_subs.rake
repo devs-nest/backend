@@ -7,6 +7,7 @@ namespace :run_pendings do
     err = []
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'], 'x-rapidapi-key': ENV['JZ_RAPID_KEY'] }
     pending_submissions = AlgoSubmission.where(status: "Pending").first(100)
+    p "subs fetched"
     done = 0
     err = []
     begin
