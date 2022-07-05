@@ -45,10 +45,6 @@ module Api
         
         submission = AlgoSubmission.get_by_cache(submission_id)
 
-        sleep(1) if submission.test_cases.key?(params[:token]).blank? # token not set
-        submission.reload
-
-        return render_error("test case not found in submission") if submission.test_cases.key?(params[:token]).blank?
         return render_success if submission.test_cases.dig(params[:token], "status_description").present?
         # return render_unauthorized if submission.created_at > Time.now - 1.day
 
@@ -60,6 +56,7 @@ module Api
           submission.status = res_hash['status_description'] if AlgoSubmission.order_status(submission.status) <= AlgoSubmission.order_status(res_hash['status_description'])
           submission.total_runtime = submission.total_runtime.to_f + res_hash['time'].to_f
           submission.total_memory = submission.total_memory.to_i + res_hash['memory'].to_i
+          submission.test_cases[params[:token]] ||= {}
           submission.test_cases[params[:token]] = submission.test_cases[params[:token]].merge(res_hash)
           submission.passed_test_cases =submission.passed_test_cases_count
           submission.status = 'Pending' if submission.status == 'Accepted' && submission.total_test_cases > submission.passed_test_cases

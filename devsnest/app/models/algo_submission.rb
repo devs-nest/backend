@@ -105,13 +105,16 @@ class AlgoSubmission < ApplicationRecord
       tstring = token['token'].to_s
       Judgeztoken.create(submission_id: id, token: tstring)
 
-      submission.test_cases[tstring] = { 'expected_output' => expected_output, 'stdin' => stdin }
-      submission.save!
+      submission.with_lock do
+        submission.test_cases[tstring] ||= {}
+        submission.test_cases[tstring] = submission.test_cases[tstring].merge({ 'expected_output' => expected_output, 'stdin' => stdin })
+        submission.save!
+      end
     end
 
     tokens.each do |token, expected_output, stdin|
       tstring = token['token'].to_s
-      JudgeZWorker.perform_in(3.minutes, tstring, id)
+      JudgeZWorker.perform_in(1.minutes, tstring, id)
     end
   end
 
@@ -137,41 +140,40 @@ class AlgoSubmission < ApplicationRecord
   def assign_score_to_user
     user = User.get_by_cache(user_id)
     challenge = Challenge.find(challenge_id)
-    return unless challenge.is_active
+    return unless challenge.is_active || is_submitted
+
+    score_will_change = false
+
+    user_submissions = user.algo_submissions.where(challenge_id: challenge.id, is_submitted: true)
     
-    best_submission = user.algo_submissions.find_by(challenge_id: challenge.id, is_best_submission: true)
-    previous_max_score = if best_submission.nil?
-                           0
-                         else
-                           (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score
-                         end
-    new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
-    if previous_max_score < new_score
+    previous_best_submission = user_submissions.find_by(is_best_submission: true)
+    best_submission = user_submissions.max { |a, b| a[:passed_test_cases] <=> b[:passed_test_cases] }
+
+    score_will_change = true if previous_best_submission.nil? || previous_best_submission != best_submission
+
+    if score_will_change
+      previous_max_score = if previous_best_submission.nil? || best_submission.id == id
+        0
+      else
+        (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score
+      end
+      new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
       ch_lb = challenge.generate_leaderboard
       recalculated_score_of_user = user.score - previous_max_score + new_score
       user.update!(score: recalculated_score_of_user)
       ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
+      AlgoSubmission.update_best_submission(best_submission, previous_best_submission)
     end
 
-    update_best_submission
   end
 
   def execution_completed
     ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
   end
 
-  def update_best_submission
-    user = User.get_by_cache(user_id)
-    submissions = user.algo_submissions.where(challenge_id: challenge_id)
-    best_submission = submissions.find_by(is_best_submission: true)
-    return if is_best_submission
-
-    return update_column(:is_best_submission, true) if best_submission.nil?
-
-    if passed_test_cases > best_submission.passed_test_cases
-      best_submission.update_column(:is_best_submission, false)
-      update_column(:is_best_submission, true)
-    end
+  def self.update_best_submission(best_submission, previous_best_submission)
+    previous_best_submission.update_column(:is_best_submission, false) if previous_best_submission.present? 
+    best_submission.update_column(:is_best_submission, true)
   end
 
   def self.get_by_cache(id)
