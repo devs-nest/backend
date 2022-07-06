@@ -4,7 +4,7 @@ module Api
   module V1
     # Scrum Resourses
     class GroupResource < JSONAPI::Resource
-      caching
+      # caching
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
                  :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time
       has_many :group_members
