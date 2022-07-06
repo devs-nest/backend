@@ -163,7 +163,7 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def self.update_best_submission(best_submission, _previous_best_submission, current_submission_id, score)
-    entry = UserChallengeScore.find_or_initialize_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
+    entry = UserChallengeScore.find_or_create_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
     entry.assign_attributes({
                               score: score,
                               algo_submission_id: current_submission_id,
