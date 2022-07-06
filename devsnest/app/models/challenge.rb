@@ -16,7 +16,8 @@ class Challenge < ApplicationRecord
   after_create :create_slug
   validates_uniqueness_of :name, :slug, case_sensitive: true
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
-  before_update :re_evaluate_user_scores, if: :will_save_change_to_score?
+  # before_update :re_evaluate_user_scores, if: :will_save_change_to_score?
+  before_update :recalculate_user_scores, if: :will_save_change_to_is_active?
   after_save :remove_saved_templates
   Language.all.each do |language|
     require "algo_templates/#{language.name}"
@@ -133,15 +134,17 @@ class Challenge < ApplicationRecord
     best_submissions = UserChallengeScore.where(challenge_id: id)
 
     best_submissions.each do |submission|
-      leaderboard.rank_member(submission.user.username, score * (submission.passed_test_cases / submission.total_test_cases.to_f))
+      calc_score = score * (submission.passed_test_cases / submission.total_test_cases.to_f)
+      submission.update(score: calc_score)
+      leaderboard.rank_member(submission.user.username, calc_score)
     end
   end
 
   def self.rerank_member(user, new_username)
     previous_username = user.username
 
-    best_submissions = user.algo_submissions.where(is_best_submission: true)
-
+    best_submissions = user.user_challenge_scores
+   
     best_submissions.each do |submission|
       leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{submission.challenge.slug}-lb").call
       leaderboard.remove_member(previous_username)
@@ -149,13 +152,36 @@ class Challenge < ApplicationRecord
     end
   end
 
-  def re_evaluate_user_scores
-    return if id.nil?
+  def recalculate_user_scores
+    UserChallengeScore.where(challenge_id: self.id).update_all(challenge_active: self.is_active)
+  end  
+  # this is not required, as score update in UCS, leads to users score update which leads to regeneration of leaderboard
 
-    UserScoreUpdate.perform_async([score_was, score, id])
-  end
+  # def re_evaluate_user_scores
+  #   return if id.nil?
+
+  #   UserScoreUpdate.perform_async([score_was, score, id])
+  # end
 
   def remove_saved_templates
     AlgoTemplate.where(challenge_id: id).destroy_all
   end
 end
+
+# Fill in ahallenge active field, which should be effective to generate correct user leaderboard
+
+# Challenge.where(is_active: true).each do |ch|
+#   UserChallengeScore.where(challenge_id: ch.id).update_all(challenge_active: true)
+# end
+
+
+
+# Regenerate Leaderboard
+
+# User.each do |u|
+#   all_user_subs_score = UserChallengeScore.where(user: u.id, challenge_active: true).sum {|a| a.score || 0} 
+#   u.update(score: all_user_subs_score)
+
+#   main_lb = LeaderboardDevsnest::Initializer::LB
+#   main_lb.rank_member(u.username, u.score || 0)
+# end

@@ -5,8 +5,6 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
-  # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
-  # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
 
   scope :accessible, -> { where.not(status: 'Stale') }
 
@@ -164,6 +162,7 @@ class AlgoSubmission < ApplicationRecord
     entry = UserChallengeScore.find_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
     if entry.present?
       entry.assign_attributes({
+                                challenge_active: best_submission.challenge.is_active,
                                 score: score,
                                 algo_submission_id: current_submission_id,
                                 passed_test_cases: best_submission.passed_test_cases,
@@ -174,6 +173,7 @@ class AlgoSubmission < ApplicationRecord
       entry = UserChallengeScore.create(
         user_id: best_submission.user_id, 
         challenge_id: best_submission.challenge_id,
+        challenge_active: best_submission.challenge.is_active,
         score: score,
         algo_submission_id: current_submission_id,
         passed_test_cases: best_submission.passed_test_cases,

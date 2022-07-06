@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_06_144024) do
+ActiveRecord::Schema.define(version: 2022_07_06_200628) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "aqODC2g5TJ8"
+    t.string "cuid", default: "T2G1A9f9kiM"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -442,7 +442,6 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-
   create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "group_id"
@@ -523,6 +522,7 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.integer "score", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "challenge_active", default: false
     t.index ["user_id", "challenge_id"], name: "index_user_challenge_scores_on_user_id_and_challenge_id", unique: true
   end
 
