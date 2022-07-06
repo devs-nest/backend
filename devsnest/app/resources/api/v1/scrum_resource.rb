@@ -39,35 +39,21 @@ module Api
       end
 
       def total_assignments_solved
-        current_course = Course.last
-        course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
-        current_module = 'dsa'
-        case current_module
-        when 'dsa'
-          total_assignments = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
-          solved_assignments = AlgoSubmission.where(user_id: @model.user_id, challenge_id: total_assignments.pluck(:question_id), is_submitted: true, status: 'Accepted').uniq(&:challenge_id)
-          {
-            solved_assignments: solved_assignments.count,
-            total_assignments: total_assignments.count
-          }
-        end
+        @model.update_solved_assignments if @model.total_assignments_solved.nil?
+
+        @model.total_assignments_solved || {
+          solved_assignments: 0,
+          total_assignments: 0
+        }
       end
 
       def recent_assignments_solved
-        current_course = Course.last
-        course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
-        current_module = 'dsa'
-        case current_module
-        when 'dsa'
-          total_assignments = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge',
-                                                       created_at: (Date.today - 15.days).beginning_of_day..Date.today.end_of_day)
-          solved_assignments = AlgoSubmission.where(user_id: @model.user_id, challenge_id: total_assignments.pluck(:question_id), is_submitted: true, status: 'Accepted',
-                                                    created_at: (Date.today - 15.days).beginning_of_day..Date.today.end_of_day).uniq(&:challenge_id)
-          {
-            solved_assignments: solved_assignments.count,
-            total_assignments: total_assignments.count
-          }
-        end
+        @model.update_solved_assignments if @model.recent_assignments_solved.nil?
+
+        @model.recent_assignments_solved || {
+          solved_assignments: 0,
+          total_assignments: 0
+        }
       end
     end
   end

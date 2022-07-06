@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_29_072625) do
+ActiveRecord::Schema.define(version: 2022_07_06_100711) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_06_29_072625) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "ugTxj0Rzuuo"
+    t.string "cuid", default: "e5eEcwJ8Vio"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -455,6 +455,8 @@ ActiveRecord::Schema.define(version: 2022_06_29_072625) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "last_tha_link"
+    t.json "total_assignments_solved"
+    t.json "recent_assignments_solved"
     t.index ["user_id", "creation_date"], name: "index_scrums_on_user_id_and_creation_date", unique: true
   end
 
@@ -575,6 +577,16 @@ ActiveRecord::Schema.define(version: 2022_06_29_072625) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
+  create_table "versions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
+    t.string "item_type", limit: 191, null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", size: :long
+    t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   create_table "weekly_todos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
