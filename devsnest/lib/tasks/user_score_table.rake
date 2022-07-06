@@ -5,30 +5,23 @@ namespace :new_best_sub_table do
   task data: :environment do
     User.in_batches.update_all(score: 0)
     p 'user scores resetted'
-    AlgoSubmission.in_batches.update_all(is_best_submission: false)
-    p 'best sub resetted'
+
     ch_ids = Challenge.where(is_active: true).pluck(:id)
+    p "running for ch:#{ch_id}"
+    submissions = AlgoSubmission.where(is_best_submission: true, challenge_id: ch_ids)
 
-    ch_ids.each do |ch_id|
-      p "running for ch:#{ch_id}"
-      submissions = AlgoSubmission.where(is_submitted: true, challenge_id: ch_id)
-      groups = submissions.group_by { |e| [e.user_id] }
-      p 'grouped'
-      groups.each do |k, v|
-        submitted_sols = v
-        user = User.find_by(id: k)
-        next if submitted_sols.empty? || user.nil?
+    p 'grouped'
+    submissions.each do |best_submission|
+      next if best_submission.empty?
 
-        begin
-          best_submission = submitted_sols.max { |a, b| a[:passed_test_cases] <=> b[:passed_test_cases] }
-          req_params = best_submission.attributes.slice('user_id', 'challenge_id', 'id', 'total_test_cases', 'passed_test_cases')
-          req_params['algo_submission_id'] = req_params.delete('id')
-          req_params['score'] = (best_submission.challenge.score * (best_submission.passed_test_cases.to_f / best_submission.total_test_cases))
+      begin
+        req_params = best_submission.attributes.slice('user_id', 'challenge_id', 'id', 'total_test_cases', 'passed_test_cases')
+        req_params['algo_submission_id'] = req_params.delete('id')
+        req_params['score'] = (best_submission.challenge.score * (best_submission.passed_test_cases.to_f / best_submission.total_test_cases))
 
-          UserChallengeScore.create(req_params)
-        rescue StandardError => e
-          p "failed for #{user.username} reason: #{e}"
-        end
+        UserChallengeScore.create(req_params)
+      rescue StandardError => e
+        p "duplicate for #{best_submission.user_id} ch_id: #{best_submission.challenge_id} reason: #{e}"
       end
     end
   end

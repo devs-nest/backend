@@ -7,7 +7,7 @@ class UserChallengeScore < ApplicationRecord
   after_commit :evaluate_scores
 
   def evaluate_scores
-    all_user_subs = UserChallengeScore.where(user: user)
-    user.update_column(:score, all_user_subs.map { |sub| sub[:score] }.inject(:+))
+    all_user_subs_score = UserChallengeScore.where(user: user).sum {|a| a.score}
+    user.update_column(:score, all_user_subs_score)
   end
 end
