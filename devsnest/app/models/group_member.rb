@@ -7,7 +7,7 @@ class GroupMember < ApplicationRecord
   after_create :set_prevoiusly_joined_a_group
   after_create :send_scrum_message_in_group
   after_save :update_previous_scrum
-  after_commit :cache_expire
+  # after_commit :cache_expire
 
   def send_all_steps_completed_mail
     user = User.find_by(id: user_id)
