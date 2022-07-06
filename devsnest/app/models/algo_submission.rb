@@ -142,16 +142,14 @@ class AlgoSubmission < ApplicationRecord
     score_will_change = false
 
     previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
-    current_submission = self
 
-
-    # do nothing if previous best submission is still best
-    best_submission = [previous_best_submission, current_submission].compact.max { |a, b| a[:passed_test_cases] <=> b[:passed_test_cases] }
-
-    score_will_change = true if previous_best_submission.nil? || previous_best_submission != best_submission
+    if previous_best_submission.nil? || previous_best_submission.passed_test_cases < self.passed_test_cases
+      score_will_change = true
+      best_submission = self
+    end
 
     if score_will_change
-      new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
+      new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score || 0
       ch_lb = challenge.generate_leaderboard
       ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
       AlgoSubmission.update_best_submission(best_submission, previous_best_submission, id, new_score)
