@@ -5,20 +5,17 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
-  after_update :expire_cache
   # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
   # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
 
   scope :accessible, -> { where.not(status: "Stale") }
 
-  def self.add_submission(source_code, lang, test_case, challenge_id, mode, submission_id = nil)
+  def self.add_submission(source_code, lang, test_case, mode, submission_id = nil)
     if mode != 'run'
-      begin
-        inpf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/input/#{test_case[:input_path]}").body.read
-        outf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/output/#{test_case[:output_path]}").body.read
-      rescue StandardError
-        return { 'error' => 'Something went wrong!' }
-      end
+      inpf = test_case.input_case
+      outf = test_case.output_case
+
+      return { 'error' => 'Something went wrong!' } if inpf.nil? || outf.nil?
     end
 
     stdin = Base64.encode64(inpf || '')
@@ -52,7 +49,7 @@ class AlgoSubmission < ApplicationRecord
     expected_output_batch = []
     stdins = []
     test_cases.each do |test_case|
-      loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, 'submit', submission_id)
+      loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, 'submit', submission_id)
       next if loader.key?('error')
 
       batch << loader
@@ -74,7 +71,7 @@ class AlgoSubmission < ApplicationRecord
       mode = 'run_sample'
     end
     total_test_cases = 1
-    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, mode, submission_id)
+    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, mode, submission_id)
     batch << loader
     expected_output_batch << expected_output
     stdins << stdin
@@ -174,16 +171,6 @@ class AlgoSubmission < ApplicationRecord
   def self.update_best_submission(best_submission, previous_best_submission)
     previous_best_submission.update_column(:is_best_submission, false) if previous_best_submission.present? 
     best_submission.update_column(:is_best_submission, true)
-  end
-
-  def self.get_by_cache(id)
-    Rails.cache.fetch("algo_submission_#{id}", expires_in: 1.hour) do
-      AlgoSubmission.find(id)
-    end
-  end
-
-  def expire_cache
-    Rails.cache.delete("algo_submission_#{id}")
   end
 
   def passed_test_cases_count
