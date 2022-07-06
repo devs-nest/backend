@@ -141,11 +141,11 @@ class AlgoSubmission < ApplicationRecord
 
     score_will_change = false
 
-    # user_submissions = user.algo_submissions.where(challenge_id: challenge.id, is_submitted: true)
-
     previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
     current_submission = self
 
+
+    # do nothing if previous best submission is still best
     best_submission = [previous_best_submission, current_submission].compact.max { |a, b| a[:passed_test_cases] <=> b[:passed_test_cases] }
 
     score_will_change = true if previous_best_submission.nil? || previous_best_submission != best_submission

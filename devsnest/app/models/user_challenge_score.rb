@@ -8,6 +8,6 @@ class UserChallengeScore < ApplicationRecord
 
   def evaluate_scores
     all_user_subs_score = UserChallengeScore.where(user: user).sum {|a| a.score}
-    user.update_column(:score, all_user_subs_score)
+    user.update(score: all_user_subs_score)
   end
 end
