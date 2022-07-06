@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_06_100711) do
+ActiveRecord::Schema.define(version: 2022_07_06_144024) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_07_06_100711) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "e5eEcwJ8Vio"
+    t.string "cuid", default: "aqODC2g5TJ8"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -442,6 +442,22 @@ ActiveRecord::Schema.define(version: 2022_07_06_100711) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "run_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "challenge_id"
+    t.text "source_code"
+    t.string "language"
+    t.json "test_cases"
+    t.integer "total_test_cases", default: 0
+    t.integer "passed_test_cases", default: 0
+    t.string "total_runtime"
+    t.string "total_memory"
+    t.string "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "challenge_id"], name: "index_run_submissions_on_user_id_and_challenge_id"
+  end
+
   create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "group_id"
@@ -519,7 +535,7 @@ ActiveRecord::Schema.define(version: 2022_07_06_100711) do
     t.integer "algo_submission_id"
     t.integer "total_test_cases"
     t.integer "passed_test_cases"
-    t.integer "score"
+    t.integer "score", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "challenge_id"], name: "index_user_challenge_scores_on_user_id_and_challenge_id", unique: true
@@ -589,16 +605,6 @@ ActiveRecord::Schema.define(version: 2022_07_06_100711) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
-  end
-
-  create_table "versions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
-    t.string "item_type", limit: 191, null: false
-    t.bigint "item_id", null: false
-    t.string "event", null: false
-    t.string "whodunnit"
-    t.text "object", size: :long
-    t.datetime "created_at"
-    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   create_table "weekly_todos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
