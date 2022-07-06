@@ -19,6 +19,8 @@ class Group < ApplicationRecord
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
 
+  has_paper_trail on: %i[merge_two_groups promote]
+
   scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
   scope :visible, -> { where(group_type: 'public') }

@@ -6,6 +6,8 @@ class ApplicationController < ActionController::API
   before_action :set_current_user
   before_action :validate_bot_user
   before_action :initialize_redis_lb
+  before_action :set_paper_trail_whodunnit
+
   def render_resource(resource)
     if resource.errors.empty?
       render json: resource
