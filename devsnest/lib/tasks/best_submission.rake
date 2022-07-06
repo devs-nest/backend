@@ -3,7 +3,7 @@
 namespace :mark_submissions do
   desc 'mark best submissions'
   task data: :environment do
-    AlgoSubmission.update_all(is_best_submission: false)
+    # AlgoSubmission.update_all(is_best_submission: false)
     p "fetched sub"
     ch_ids = Challenge.where(is_active: true).pluck(:id)
 
@@ -16,9 +16,13 @@ namespace :mark_submissions do
       next if submitted_sols.empty? || user.nil?
 
       begin
-
         best_submission = submitted_sols.max { |a, b| a[:passed_test_cases] <=> b[:passed_test_cases] }
-        best_submission.update_column(:is_best_submission, true)
+        
+        unless best_submission.is_best_submission
+          submitted_sols.update_all(is_best_submission: false)
+          best_submission.update_column(:is_best_submission, true)
+        end
+
         done += 1
         p "updated for #{user.username} count : #{done}"
       rescue => e
