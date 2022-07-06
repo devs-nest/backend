@@ -10,6 +10,7 @@ class Challenge < ApplicationRecord
   has_many :testcases
   has_many :company_challenge_mappings
   has_many :companies, through: :company_challenge_mappings
+  has_many :user_challenge_scores
   belongs_to :user
   has_many :assingment_questions
   after_create :create_slug
@@ -129,8 +130,9 @@ class Challenge < ApplicationRecord
   def regenerate_challenge_leaderboard
     LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call.delete_leaderboard
     leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call
+    best_submissions = UserChallengeScore.where(challenge_id: id)
 
-    algo_submissions.where(is_best_submission: true).each do |submission|
+    best_submissions.each do |submission|
       leaderboard.rank_member(submission.user.username, score * (submission.passed_test_cases / submission.total_test_cases.to_f))
     end
   end

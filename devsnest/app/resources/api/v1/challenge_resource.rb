@@ -27,10 +27,10 @@ module Api
         user = context[:user]
         return 'signin to check submissions' if user.nil?
 
-        algo_submissions = user.algo_submissions.where(challenge_id: @model.id, is_submitted: true)
-        return 'unsolved' if algo_submissions.empty?
+        algo_submission = user.user_challenge_scores.find_by(challenge_id: @model.id)
+        return 'unsolved' if algo_submission.empty?
 
-        algo_submissions.where(status: 'Accepted', is_submitted: true).present? ? 'solved' : 'attempted'
+        algo_submission.passed_test_cases == algo_submission.total_test_cases ? 'solved' : 'attempted'
       end
     end
   end
