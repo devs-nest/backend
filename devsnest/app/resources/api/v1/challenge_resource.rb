@@ -28,7 +28,7 @@ module Api
         return 'signin to check submissions' if user.nil?
 
         algo_submission = user.user_challenge_scores.find_by(challenge_id: @model.id)
-        return 'unsolved' if algo_submission.empty?
+        return 'unsolved' if algo_submission.blank?
 
         algo_submission.passed_test_cases == algo_submission.total_test_cases ? 'solved' : 'attempted'
       end
