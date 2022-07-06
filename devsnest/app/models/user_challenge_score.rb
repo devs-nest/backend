@@ -7,7 +7,8 @@ class UserChallengeScore < ApplicationRecord
   after_commit :evaluate_scores
 
   def evaluate_scores
-    all_user_subs_score = UserChallengeScore.where(user: user).sum {|a| a.score}
+
+    all_user_subs_score = UserChallengeScore.where(user: user_id).sum {|a| a.score || 0}
     user.update(score: all_user_subs_score)
   end
 end
