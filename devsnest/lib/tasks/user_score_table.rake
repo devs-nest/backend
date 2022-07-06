@@ -5,7 +5,6 @@ namespace :new_best_sub_table do
   task data: :environment do
     User.in_batches.update_all(score: 0)
     p 'user scores resetted'
-
     ch_ids = Challenge.where(is_active: true).pluck(:id)
     submissions = AlgoSubmission.where(is_best_submission: true, challenge_id: ch_ids)
 
