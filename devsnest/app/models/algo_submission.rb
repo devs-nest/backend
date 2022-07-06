@@ -161,14 +161,25 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def self.update_best_submission(best_submission, _previous_best_submission, current_submission_id, score)
-    entry = UserChallengeScore.find_or_create_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
-    entry.assign_attributes({
-                              score: score,
-                              algo_submission_id: current_submission_id,
-                              passed_test_cases: best_submission.passed_test_cases,
-                              total_test_cases: best_submission.total_test_cases
-                            })
-    entry.save!
+    entry = UserChallengeScore.find_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
+    if entry.present?
+      entry.assign_attributes({
+                                score: score,
+                                algo_submission_id: current_submission_id,
+                                passed_test_cases: best_submission.passed_test_cases,
+                                total_test_cases: best_submission.total_test_cases
+                              })
+      entry.save!
+    else
+      entry = UserChallengeScore.create(
+        user_id: best_submission.user_id, 
+        challenge_id: best_submission.challenge_id,
+        score: score,
+        algo_submission_id: current_submission_id,
+        passed_test_cases: best_submission.passed_test_cases,
+        total_test_cases: best_submission.total_test_cases
+      )
+    end
   end
 
   def passed_test_cases_count
