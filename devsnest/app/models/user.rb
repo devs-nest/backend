@@ -20,6 +20,7 @@ class User < ApplicationRecord
   has_many :minibootcamp_submissions
   has_many :certifications, dependent: :delete_all
   has_many :manual_login_changelog
+  has_many :user_challenge_scores
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
   after_create :send_registration_email

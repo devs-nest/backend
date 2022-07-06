@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :user_challenge_score do
+    
+  end
+
   factory :algo_template do
   end
 
