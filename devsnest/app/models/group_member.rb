@@ -38,6 +38,6 @@ class GroupMember < ApplicationRecord
   end
 
   def cache_expire
-    group.touch
+    group.touch if group.persisted?
   end
 end
