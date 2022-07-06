@@ -120,7 +120,7 @@ class Challenge < ApplicationRecord
   end
 
   def self.count_solved(user_id)
-    challenge_ids = AlgoSubmission.where(user_id: user_id, is_submitted: true, status: 'Accepted').pluck(:challenge_id)
+    challenge_ids = UserChallengeScore.where(user_id: user_id).pluck(:challenge_id)
     Challenge.where(id: challenge_ids).group(:difficulty).count
   end
 
@@ -170,6 +170,7 @@ end
 
 # Fill in ahallenge active field, which should be effective to generate correct user leaderboard
 
+# User.update_all(score: 0)
 # Challenge.where(is_active: true).each do |ch|
 #   UserChallengeScore.where(challenge_id: ch.id).update_all(challenge_active: true)
 # end
