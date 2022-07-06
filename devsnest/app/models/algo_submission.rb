@@ -151,16 +151,9 @@ class AlgoSubmission < ApplicationRecord
     score_will_change = true if previous_best_submission.nil? || previous_best_submission != best_submission
 
     if score_will_change
-      # previous_max_score = if previous_best_submission.nil? || best_submission.id == id
-      #   0
-      # else
-      #   (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score # previous submission
-      # end
       new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
-      # ch_lb = challenge.generate_leaderboard
-      # recalculated_score_of_user = user.score - previous_max_score + new_score
-      # user.update!(score: recalculated_score_of_user)
-      # ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
+      ch_lb = challenge.generate_leaderboard
+      ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
       AlgoSubmission.update_best_submission(best_submission, previous_best_submission, id, new_score)
     end
   end
