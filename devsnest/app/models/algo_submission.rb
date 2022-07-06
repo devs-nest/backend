@@ -141,40 +141,19 @@ class AlgoSubmission < ApplicationRecord
 
     score_will_change = false
 
-<<<<<<< HEAD
     previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
     current_submission = self
 
 
     # do nothing if previous best submission is still best
-=======
-    # user_submissions = user.algo_submissions.where(challenge_id: challenge.id, is_submitted: true)
-    
-    previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
-    current_submission = self
-
->>>>>>> implement new table
     best_submission = [previous_best_submission, current_submission].compact.max { |a, b| a[:passed_test_cases] <=> b[:passed_test_cases] }
 
     score_will_change = true if previous_best_submission.nil? || previous_best_submission != best_submission
 
     if score_will_change
-<<<<<<< HEAD
       new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
       ch_lb = challenge.generate_leaderboard
       ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
-=======
-      # previous_max_score = if previous_best_submission.nil? || best_submission.id == id
-      #   0
-      # else
-      #   (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score # previous submission
-      # end
-      new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
-      # ch_lb = challenge.generate_leaderboard
-      # recalculated_score_of_user = user.score - previous_max_score + new_score
-      # user.update!(score: recalculated_score_of_user)
-      # ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
->>>>>>> implement new table
       AlgoSubmission.update_best_submission(best_submission, previous_best_submission, id, new_score)
     end
   end
@@ -183,7 +162,6 @@ class AlgoSubmission < ApplicationRecord
     ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
   end
 
-<<<<<<< HEAD
   def self.update_best_submission(best_submission, _previous_best_submission, current_submission_id, score)
     entry = UserChallengeScore.find_or_initialize_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
     entry.assign_attributes({
@@ -192,16 +170,6 @@ class AlgoSubmission < ApplicationRecord
                               passed_test_cases: best_submission.passed_test_cases,
                               total_test_cases: best_submission.total_test_cases
                             })
-=======
-  def self.update_best_submission(best_submission, previous_best_submission, current_submission_id, score)
-    entry = UserChallengeScore.find_or_initialize_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
-    entry.assign_attributes({
-      score: score,
-      algo_submission_id: current_submission_id,
-      passed_test_cases: best_submission.passed_test_cases,
-      total_test_cases: best_submission.total_test_cases
-    })
->>>>>>> implement new table
     entry.save!
   end
 
