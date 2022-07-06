@@ -8,7 +8,7 @@ class AlgoSubmission < ApplicationRecord
   # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
   # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
 
-  scope :accessible, -> { where.not(status: "Stale") }
+  scope :accessible, -> { where.not(status: 'Stale') }
 
   def self.add_submission(source_code, lang, test_case, mode, submission_id = nil)
     if mode != 'run'
@@ -36,7 +36,7 @@ class AlgoSubmission < ApplicationRecord
       "enable_per_process_and_thread_time_limit": false,
       "enable_per_process_and_thread_memory_limit": false,
       "max_file_size": '4096',
-      "callback_url": ENV['JUDGEZERO_CALLBACK'] + "?submission_id=#{submission_id.to_s}"
+      "callback_url": ENV['JUDGEZERO_CALLBACK'] + "?submission_id=#{submission_id}"
     }
 
     [payload, expected_out, stdin]
@@ -109,7 +109,7 @@ class AlgoSubmission < ApplicationRecord
       end
     end
 
-    tokens.each do |token, expected_output, stdin|
+    tokens.each do |token, _expected_output, _stdin|
       tstring = token['token'].to_s
       JudgeZWorker.perform_in(1.minutes, tstring, id)
     end
@@ -142,7 +142,7 @@ class AlgoSubmission < ApplicationRecord
     score_will_change = false
 
     # user_submissions = user.algo_submissions.where(challenge_id: challenge.id, is_submitted: true)
-    
+
     previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
     current_submission = self
 
@@ -162,19 +162,19 @@ class AlgoSubmission < ApplicationRecord
     ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
   end
 
-  def self.update_best_submission(best_submission, previous_best_submission, current_submission_id, score)
+  def self.update_best_submission(best_submission, _previous_best_submission, current_submission_id, score)
     entry = UserChallengeScore.find_or_initialize_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
     entry.assign_attributes({
-      score: score,
-      algo_submission_id: current_submission_id,
-      passed_test_cases: best_submission.passed_test_cases,
-      total_test_cases: best_submission.total_test_cases
-    })
+                              score: score,
+                              algo_submission_id: current_submission_id,
+                              passed_test_cases: best_submission.passed_test_cases,
+                              total_test_cases: best_submission.total_test_cases
+                            })
     entry.save!
   end
 
   def passed_test_cases_count
-    a = [test_cases.select {|k, h| h["status_id"] == 3}.count, passed_test_cases]
+    a = [test_cases.select { |_k, h| h['status_id'] == 3 }.count, passed_test_cases]
     a.max
   end
 end

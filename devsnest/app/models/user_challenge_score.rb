@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserChallengeScore < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
@@ -6,6 +8,6 @@ class UserChallengeScore < ApplicationRecord
 
   def evaluate_scores
     all_user_subs = UserChallengeScore.where(user: user)
-    user.update_column(:score, all_user_subs.map{|sub| sub[:score]}.inject(:+))
+    user.update_column(:score, all_user_subs.map { |sub| sub[:score] }.inject(:+))
   end
 end
