@@ -66,7 +66,7 @@ module Templates
           'int' => ["#{name} = new int[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();"],
           'float' => ["#{name} = new float[#{dependent&.first}];",
                       "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToFloat(#{create_class('float', '::')}).toArray();"],
-          'string' => ["#{name} = new String[#{dependent&.first}];", "#{name} = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();"]
+          'string' => ["#{name} = new String[#{dependent&.first}];", "#{name} = bufferedReader.readLine().trim().split(\"\\\\s\");"]
         },
         'matrix' => {
           'int' => ['int mat_dims[] = new int[2];', "mat_dims = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = new int[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
