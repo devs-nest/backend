@@ -7,8 +7,6 @@ class UserChallengeScore < ApplicationRecord
   after_commit :evaluate_scores
 
   def evaluate_scores
-    challenge_ids = Challenge.where(id: challenge_ids, is_active: true)
-    all_user_subs_score = UserChallengeScore.where(user: user_id, challenge_id: challenge_ids).sum {|a| a.score || 0}
-    user.update(score: all_user_subs_score)
+    UcsEvaluateScoreWorker.perform_async(user_id)
   end
 end

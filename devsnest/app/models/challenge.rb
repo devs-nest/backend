@@ -153,7 +153,7 @@ class Challenge < ApplicationRecord
   end
 
   def recalculate_user_scores
-    UserScoreUpdate.perform(id)
+    UserScoreUpdate.perform_async(id)
   end
 
   def remove_saved_templates
