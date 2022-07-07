@@ -144,7 +144,7 @@ class Challenge < ApplicationRecord
     previous_username = user.username
 
     best_submissions = user.user_challenge_scores
-   
+
     best_submissions.each do |submission|
       leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{submission.challenge.slug}-lb").call
       leaderboard.remove_member(previous_username)
@@ -154,20 +154,19 @@ class Challenge < ApplicationRecord
 
   def recalculate_user_scores
     UserScoreUpdate.perform(id)
-  end  
+  end
 
   def remove_saved_templates
     AlgoTemplate.where(challenge_id: id).destroy_all
   end
 end
 
-
 # Regenerate Leaderboard
-# 
+#
 # User.update_all(score: 0)
 # challenge_ids = Challenge.where(id: challenge_ids, is_active: true)
 # User.each do |u|
-#   all_user_subs_score = UserChallengeScore.where(user: u.id, challenge_id: challenge_ids).sum {|a| a.score || 0} 
+#   all_user_subs_score = UserChallengeScore.where(user: u.id, challenge_id: challenge_ids).sum {|a| a.score || 0}
 #   u.update(score: all_user_subs_score)
 #   main_lb = LeaderboardDevsnest::Initializer::LB
 #   main_lb.rank_member(u.username, u.score || 0)
