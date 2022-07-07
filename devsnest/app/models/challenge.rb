@@ -121,7 +121,7 @@ class Challenge < ApplicationRecord
 
   def self.count_solved(user_id)
     challenge_ids = UserChallengeScore.where(user_id: user_id).pluck(:challenge_id)
-    Challenge.where(id: challenge_ids).group(:difficulty).count
+    Challenge.where(id: challenge_ids, is_active: true).group(:difficulty).count
   end
 
   def generate_leaderboard
@@ -153,36 +153,22 @@ class Challenge < ApplicationRecord
   end
 
   def recalculate_user_scores
-    UserChallengeScore.where(challenge_id: self.id).update_all(challenge_active: self.is_active)
+    UserScoreUpdate.perform(id)
   end  
-  # this is not required, as score update in UCS, leads to users score update which leads to regeneration of leaderboard
-
-  # def re_evaluate_user_scores
-  #   return if id.nil?
-
-  #   UserScoreUpdate.perform_async([score_was, score, id])
-  # end
 
   def remove_saved_templates
     AlgoTemplate.where(challenge_id: id).destroy_all
   end
 end
 
-# Fill in ahallenge active field, which should be effective to generate correct user leaderboard
-
-# User.update_all(score: 0)
-# Challenge.where(is_active: true).each do |ch|
-#   UserChallengeScore.where(challenge_id: ch.id).update_all(challenge_active: true)
-# end
-
-
 
 # Regenerate Leaderboard
-
+# 
+# User.update_all(score: 0)
+# challenge_ids = Challenge.where(id: challenge_ids, is_active: true)
 # User.each do |u|
-#   all_user_subs_score = UserChallengeScore.where(user: u.id, challenge_active: true).sum {|a| a.score || 0} 
+#   all_user_subs_score = UserChallengeScore.where(user: u.id, challenge_id: challenge_ids).sum {|a| a.score || 0} 
 #   u.update(score: all_user_subs_score)
-
 #   main_lb = LeaderboardDevsnest::Initializer::LB
 #   main_lb.rank_member(u.username, u.score || 0)
 # end

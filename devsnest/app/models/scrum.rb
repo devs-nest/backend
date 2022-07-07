@@ -32,7 +32,7 @@ class Scrum < ApplicationRecord
       update!(total_assignments_solved: { solved_assignments: solved_assignments_count, total_assignments: total_assignments_challenge_ids.size })
 
       recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').where('created_at >?',  (Date.today - 15.days).beginning_of_day)).pluck(:question_id)
-      recent_solved_assignments_count = UserChallengeScore.where(user_id: user_id, challenge_id: recent_total_assignments_ch_ids)
+      recent_solved_assignments_count = UserChallengeScore.where(user_id: user_id, challenge_id: recent_total_assignments_ch_ids).count
 
       update!(recent_assignments_solved: { solved_assignments: recent_solved_assignments_count, total_assignments: recent_total_assignments_ch_ids.size })
     end

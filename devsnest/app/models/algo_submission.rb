@@ -163,7 +163,6 @@ class AlgoSubmission < ApplicationRecord
     
     if entry.present?
       entry.assign_attributes({
-                                challenge_active: best_submission.challenge.is_active,
                                 score: score,
                                 algo_submission_id: current_submission_id,
                                 passed_test_cases: best_submission.passed_test_cases,
@@ -174,7 +173,6 @@ class AlgoSubmission < ApplicationRecord
       entry = UserChallengeScore.create(
         user_id: best_submission.user_id, 
         challenge_id: best_submission.challenge_id,
-        challenge_active: best_submission.challenge.is_active,
         score: score,
         algo_submission_id: current_submission_id,
         passed_test_cases: best_submission.passed_test_cases,

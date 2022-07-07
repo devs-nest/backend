@@ -4,7 +4,8 @@ RSpec.describe UserScoreUpdate, type: :worker do
   let!(:user) { create(:user, user_type: 1, discord_active: true) }
   let!(:u_s1) { create(:algo_submission, user_id: user.id, challenge_id: question.id, passed_test_cases: 7, total_test_cases: 10, is_best_submission: true, is_submitted: true) }
   let!(:u_s2) { create(:algo_submission, user_id: user.id, challenge_id: question.id, passed_test_cases: 10, total_test_cases: 10, is_best_submission: false, is_submitted: false) }
+  
   it 'Should run worker' do
-    UserScoreUpdate.new.perform([10, 100, question.id])
+    UserScoreUpdate.new.perform(question.id)
   end
 end
