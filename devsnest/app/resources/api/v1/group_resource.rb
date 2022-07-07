@@ -37,6 +37,13 @@ module Api
         scopeuser.name
       end
 
+      def batch_leader_name
+        scopeuser = User.find_by(id: batch_leader_id)
+        return nil if scopeuser.nil?
+
+        scopeuser.name
+      end
+
       def user_group
         if context[:user].present?
           member_entity = GroupMember.find_by(user_id: context[:user].id)&.group_id
@@ -65,8 +72,8 @@ module Api
         elsif options[:context][:user]&.is_admin?
           super(options).v2
         else
-          user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
-          user_group.present? ? user_group : super(options).v2.visible.under_limited_members
+          private_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
+          super(options).v2.visible.under_limited_members.or(super(options).where(id: private_group&.id, group_type: 'private'))
         end
       end
     end
