@@ -4,7 +4,7 @@ class JudgeZWorker
   def perform(token, submission_id)
     return if token.empty? || token.nil? || submission_id.nil?
 
-    submission = AlgoSubmission.find(submission_id)
+    submission = AlgoSubmission.get_by_cache(submission_id)
     return if submission.nil? || submission.test_cases.key?(token.to_s).blank? || submission.test_cases.dig(token.to_s, "status_id").present?
 
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'] }

@@ -20,7 +20,7 @@ module Api
           return data if context[:user].blank?
 
           question_ids = AssignmentQuestion.where(course_curriculum: @model).pluck(:question_id)
-          algo_submissions_succeded = AlgoSubmission.where(user: context[:user], challenge_id: question_ids, is_submitted: true, status: 'Accepted').distinct.pluck(:challenge_id)
+          algo_submissions_succeded = UserChallengeScore.where(user: context[:user], challenge_id: question_ids).pluck(:challenge_id)
           algo_submissions_failed = AlgoSubmission.where(user: context[:user], challenge_id: question_ids, is_submitted: true).where.not(status: 'Accepted').distinct.pluck(:challenge_id)
           assignment_questions_data = Challenge.where(id: question_ids)
           assignment_questions_data.each do |assignment_question|
