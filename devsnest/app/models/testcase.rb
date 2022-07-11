@@ -4,7 +4,7 @@
 # testcase class - stores and fetches testcases for a challenge from s3
 class Testcase < ApplicationRecord
   belongs_to :challenge
-  after_update :expire_cache
+  after_commit :expire_cache
 
   def input_case
     read_from_s3 input_key
