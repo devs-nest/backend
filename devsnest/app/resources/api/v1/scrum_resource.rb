@@ -4,6 +4,7 @@ module Api
   module V1
     # Resource for Scrum
     class ScrumResource < JSONAPI::Resource
+      caching
       attributes :user_id, :group_id, :attendance, :saw_last_lecture,
                  :tha_progress, :topics_to_cover, :backlog_reasons, :class_rating, :creation_date, :last_tha_link,
                  :total_assignments_solved, :recent_assignments_solved
