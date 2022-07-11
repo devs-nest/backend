@@ -5,10 +5,11 @@ module Api
     # Scrum Controller
     class ScrumsController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :user_auth
+      before_action :user_auth, only: %i[index update create]
       before_action :authorize_get, only: %i[index]
       before_action :authorize_update, only: %i[update]
       before_action :authorize_create, only: %i[create]
+      before_action :bot_auth, only: %i[weekly_leaderboard]
 
       def context
         {
@@ -40,7 +41,7 @@ module Api
 
         if (@current_user.id == user_id && group.group_members.where(user_id: user_id).present?) || group.admin_rights_auth(@current_user)
           scrum = Scrum.find_by(user_id: user_id, group_id: group.id, creation_date: Date.current)
-          if scrum.present? 
+          if scrum.present?
             scrum.handle_manual_update(params, group, @current_user) ? render_success(scrum: scrum.as_json) : render_error('message': 'Something Went Wrong')
           else
             true
@@ -48,6 +49,25 @@ module Api
         else
           render_error('message': 'Permission Denied')
         end
+      end
+
+      def weekly_leaderboard
+        data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, attendance: true)&.group(:group_id).count
+
+        sorted_data = Hash[data.sort_by { |_, v| -v }]
+        result = []
+        sorted_data.each do |group_id, scrums|
+          group = Group.find_by(id: group_id)
+          next unless group.present? && group.group_type == 'public'
+
+          result << {
+            group_slug: group.slug,
+            group_name: group.name,
+            members_count: group.members_count,
+            scrums: scrums
+          }
+        end
+        render_success(result: result.as_json)
       end
     end
   end
