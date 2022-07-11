@@ -74,7 +74,7 @@ module Templates
           'float' => ['int mat_dims[] = new int[2];', "mat_dims = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = new float[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
                       "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToFloat(#{create_class('float', '::')}).toArray();", '}'],
           'string' => ['int mat_dims[] = new int[2];', "mat_dims = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = new String[#{dependent&.first}][#{dependent&.second}];", "for(int i=0;i<#{dependent&.first};i++){",
-                       "#{name}[i] = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).toArray();", '}']
+                       "#{name}[i] = bufferedReader.readLine().trim().split(\"\\\\s\");", '}']
         },
         'linked_list' => {
           'int' => ['int[] raw_array;', "raw_array = new int[#{dependent&.first}];",
