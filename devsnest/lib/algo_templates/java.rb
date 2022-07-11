@@ -77,7 +77,7 @@ module Templates
                        "#{name}[i] = bufferedReader.readLine().trim().split(\"\\\\s\");", '}']
         },
         'linked_list' => {
-          'int' => ["int[] raw_array = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = convertToLL(raw_array);"]
+          'int' => ["int[] #{name}_raw_array = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = convertToLL(#{name}_raw_array);"]
         }
       }
       meta[datastructure][dtype]
