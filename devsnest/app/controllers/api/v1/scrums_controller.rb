@@ -52,7 +52,7 @@ module Api
       end
 
       def weekly_leaderboard
-        data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, attendance: true)&.group(:group_id).count
+        data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, attendance: true).group(:group_id).count
 
         sorted_data = Hash[data.sort_by { |_, v| -v }]
         result = []
