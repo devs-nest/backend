@@ -77,7 +77,7 @@ module Templates
                         'cin >> temp;', "#{name}[r].push_back(temp);", '}', '}']
         },
         'linked_list' => {
-          'int' => ['vector<int> raw_array;', "for (int i = 0; i < #{dependent&.first}; i++){", 'int temp;', 'cin >> temp;', 'raw_array.push_back(temp);', '}', "#{name} = convertToLL(raw_array);"]
+          'int' => ["string #{name}_raw_str;", "getline(cin, #{name}_raw_str);", "stringstream #{name}_raw_str_stream(#{name}_raw_str);", "vector<int> #{name}_raw_array;", "while(#{name}_raw_str_stream >> #{name}_raw_str){", "#{name}_raw_array.push_back(stoi(#{name}_raw_str));" ,"}","#{name} = convertToLL(#{name}_raw_array);"]
         }
       }
       meta[datastructure][dtype]
