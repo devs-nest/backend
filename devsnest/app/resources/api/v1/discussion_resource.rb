@@ -4,7 +4,7 @@ module Api
   module V1
     # Discussion Resource
     class DiscussionResource < JSONAPI::Resource
-      attributes :parent_id, :user_id, :challenge_id, :title, :body, :created_at, :updated_at
+      attributes :parent_id, :user_id, :challenge_id, :title, :body, :slug, :created_at, :updated_at
       attributes :upvote_count, :comments_count
       attributes :username, :user_image_url, :upvoted, :upvote_id
 
