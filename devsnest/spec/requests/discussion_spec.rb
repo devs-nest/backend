@@ -13,11 +13,6 @@ RSpec.describe Discussion, type: :request do
         get '/api/v1/discussion'
         expect(response).to have_http_status(200)
       end
-
-      it 'should not return discussions if user is not logged in' do
-        get '/api/v1/discussion'
-        expect(response).to have_http_status(401)
-      end
     end
 
     context 'delete checks for Discussion' do
@@ -55,21 +50,21 @@ RSpec.describe Discussion, type: :request do
 
       it 'should check the number of Comments for a discussion' do
         sign_in(user)
-        get "/api/v1/discussion/#{discussion1.id}"
+        get "/api/v1/discussion/#{discussion1.slug}"
         expect(response).to have_http_status(200)
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:upvote_count]).to eq(1)
       end
 
       it 'should return true as user upvoted' do
         sign_in(user)
-        get "/api/v1/discussion/#{discussion1.id}"
+        get "/api/v1/discussion/#{discussion1.slug}"
         expect(response).to have_http_status(200)
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:upvoted]).to eq(true)
       end
 
       it 'should return false as user have not upvoted' do
         sign_in(user)
-        get "/api/v1/discussion/#{discussion2.id}"
+        get "/api/v1/discussion/#{discussion2.slug}"
         expect(response).to have_http_status(200)
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:upvoted]).to eq(false)
       end
