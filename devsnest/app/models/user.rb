@@ -248,7 +248,7 @@ class User < ApplicationRecord
       ServerUser.where(user_id: id, active: true).each do |server_user|
         server = Server.find_by(id: server_user.server_id)
         RoleModifierWorker.perform_async('add_role', discord_id, 'Verified', server.guild_id)
-        RoleModifierWorker.perform_async('add_role', discord_id, 'DN JUNE BATCH', server.guild_id)
+        RoleModifierWorker.perform_async('add_role', discord_id, 'DN JUNE BATCH', server.guild_id) if accepted_in_course
       end
       template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected')&.template_id
       EmailSenderWorker.perform_async(email, {
