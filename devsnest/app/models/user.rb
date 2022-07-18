@@ -233,7 +233,7 @@ class User < ApplicationRecord
       template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token,
-                                        'username': user.username
+                                        'username': username
                                       }, template_id)
     end
   end
@@ -253,7 +253,7 @@ class User < ApplicationRecord
       end
       template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected')&.template_id
       EmailSenderWorker.perform_async(email, {
-                                        'unsubscribe_token': unsubscribe_token, 'user_accepted': true, username: username
+                                        'unsubscribe_token': unsubscribe_token, 'user_accepted': true, 'username': username
                                       }, template_id)
     end
   end
@@ -264,7 +264,7 @@ class User < ApplicationRecord
       template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected')&.template_id
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token,
-                                        username: username
+                                        'username': username
                                       }, template_id)
     end
   end
