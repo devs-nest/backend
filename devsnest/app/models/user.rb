@@ -232,7 +232,8 @@ class User < ApplicationRecord
     if web_active == true
       template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
       EmailSenderWorker.perform_async(email, {
-                                        'unsubscribe_token': unsubscribe_token
+                                        'unsubscribe_token': unsubscribe_token,
+                                        'username': user.username
                                       }, template_id)
     end
   end
@@ -242,7 +243,7 @@ class User < ApplicationRecord
     if discord_active == false && saved_change_to_attribute?(:is_fullstack_course_22_form_filled) && is_fullstack_course_22_form_filled
       template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_not_connected')&.template_id
       EmailSenderWorker.perform_async(email, {
-                                        'unsubscribe_token': unsubscribe_token, 'user_accepted': true
+                                        'unsubscribe_token': unsubscribe_token, 'user_accepted': true, username: username
                                       }, template_id)
     elsif discord_active == true && saved_change_to_attribute?(:is_fullstack_course_22_form_filled) && is_fullstack_course_22_form_filled
       ServerUser.where(user_id: id, active: true).each do |server_user|
@@ -252,7 +253,7 @@ class User < ApplicationRecord
       end
       template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected')&.template_id
       EmailSenderWorker.perform_async(email, {
-                                        'unsubscribe_token': unsubscribe_token, 'user_accepted': true
+                                        'unsubscribe_token': unsubscribe_token, 'user_accepted': true, username: username
                                       }, template_id)
     end
   end
@@ -260,9 +261,10 @@ class User < ApplicationRecord
   # sending 2st step of the 3 steps
   def send_step_two_mail_if_discord_active_false
     if web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
-      template_id = EmailTemplate.find_by(name: 'step_two_mail')&.template_id
+      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected')&.template_id
       EmailSenderWorker.perform_async(email, {
-                                        'unsubscribe_token': unsubscribe_token
+                                        'unsubscribe_token': unsubscribe_token,
+                                        username: username
                                       }, template_id)
     end
   end
