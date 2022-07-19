@@ -49,11 +49,11 @@ class Challenge < ApplicationRecord
 
   def put_testcase_in_s3(input_file, output_file, testcase)
     if testcase.present?
-      input_filename = "Q#{id}_#{name.parameterize.underscore}_#{testcase.id}_hidden_in"
-      output_filename = "Q#{id}_#{name.parameterize.underscore}_#{testcase.id}_hidden_out"
+      input_filename = testcase.input_path
+      output_filename = testcase.output_path
     else
-      input_filename = "Q#{id}_#{name.parameterize.underscore}_#{testcases.last.id + 1}_hidden_in"
-      output_filename = "Q#{id}_#{name.parameterize.underscore}_#{testcases.last.id + 1}_hidden_out"
+      input_filename = "Q#{id}_#{name.parameterize.underscore}_#{(testcases&.last&.id || 0) + 1}_hidden_in"
+      output_filename = "Q#{id}_#{name.parameterize.underscore}_#{(testcases&.last&.id || 0) + 1}_hidden_out"
     end
     input_path = "#{id}/input/#{input_filename}.txt"
     output_path = "#{id}/output/#{output_filename}.txt"
