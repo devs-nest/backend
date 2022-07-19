@@ -18,7 +18,7 @@ module Templates
         head_code += linked_list_node_class
         head_code += linked_list_convert_function
         head_code += linked_list_print_function
-      if @topic == 'tree'
+      elsif @topic == 'tree'
         head_code += tree_driver_code
       end
       head_code.join("\n")
@@ -85,10 +85,8 @@ module Templates
         'linked_list' => {
           'int' => ["string #{name}_raw_str;", "getline(cin, #{name}_raw_str);", "stringstream #{name}_raw_str_stream(#{name}_raw_str);", "vector<int> #{name}_raw_array;", "while(#{name}_raw_str_stream >> #{name}_raw_str){", "#{name}_raw_array.push_back(stoi(#{name}_raw_str));" ,"}","#{name} = convertToLL(#{name}_raw_array);"]
         },
-        {
-          'binary_tree' => {
-            'int' => ["string #{name}_raw_str;", "getline(cin, #{name}_raw_str);", "stringstream #{name}_raw_str_stream(#{name}_raw_str);", "vector<int> #{name}_raw_array;", "while(#{name}_raw_str_stream >> #{name}_raw_str){", "#{name}_raw_array.push_back(stoi(#{name}_raw_str));" ,"}", "TreeNode *#{name} = NULL;", "#{name} = #{name}->createBinaryTree(#{name}_raw_array);"]
-          }
+        'binary_tree' => {
+          'int' => ["string #{name}_raw_str;", "getline(cin, #{name}_raw_str);", "stringstream #{name}_raw_str_stream(#{name}_raw_str);", "vector<int> #{name}_raw_array;", "while(#{name}_raw_str_stream >> #{name}_raw_str){", "#{name}_raw_array.push_back(stoi(#{name}_raw_str));" ,"}", "TreeNode *#{name} = NULL;", "#{name} = #{name}->createBinaryTree(#{name}_raw_array);"]
         }
       }
       meta[datastructure][dtype]
