@@ -113,7 +113,7 @@ module Templates
           'int' => ["printLL(#{name});"]
         },
         'binary_tree' => {
-          'int' => ["vector<string> #{name}_arr = #{name}->parseTree(#{name});", "for(string &x: #{name}_arr){", "cout << x << endl;", "}"]
+          'int' => ["vector<string> #{name}_arr = #{name}->parseTree(#{name});", "for(string &x: #{name}_arr){", "cout << x << \" \";", "}"]
         }
       }
       meta[datastructure][dtype]
