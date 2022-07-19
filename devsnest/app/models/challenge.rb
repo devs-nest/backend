@@ -88,7 +88,6 @@ class Challenge < ApplicationRecord
   def create_template(language)
     not_implemented = {
       'tree': {
-        'cpp': true,
         'java': true
       }
     }
