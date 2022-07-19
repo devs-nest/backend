@@ -20,6 +20,7 @@ module Templates
                      "type_#{value[:variable][:datastructure]}"
                    end
         dtype = language[sig_type.to_s].to_s.gsub(/_/, value[:variable][:dtype])
+        # byebug
         value.merge!(signature: "#{dtype} #{value[:name]}".strip)
       end
       var_data

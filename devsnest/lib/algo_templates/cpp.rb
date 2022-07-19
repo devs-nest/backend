@@ -18,6 +18,8 @@ module Templates
         head_code += linked_list_node_class
         head_code += linked_list_convert_function
         head_code += linked_list_print_function
+      elsif @topic == 'tree'
+        head_code += tree_driver_code
       end
       head_code.join("\n")
     end
@@ -56,6 +58,10 @@ module Templates
        "\t\tv.push_back(x);", "\treturn v;", '}']
     end
 
+    def tree_driver_code
+      ["class TreeNode {", "\tpublic:", "\t\tint val;", "\t\tTreeNode *left;", "\t\tTreeNode *right;", "\tpublic:", "\t\tTreeNode() {", "\t\t\tthis->val = 0;", "\t\t\tthis->left = NULL;", "\t\t\tthis->right = NULL;", "\t\t}", "\t\tTreeNode(int val) {", "\t\t\tthis->val = val;", "\t\t\tthis->left = NULL;", "\t\t\tthis->right = NULL;", "\t\t}", "\t\tTreeNode(int val, TreeNode *left, TreeNode *right) {", "\t\t\tthis->val = val;", "\t\t\tthis->left = left;", "\t\t\tthis->right = right;", "\t\t}", "\t\tTreeNode* createBinaryTree(vector<string> &v1) {", "\t\t\tif(v1.size() == 0)", "\t\t\t\treturn NULL;", "\t\t\tqueue<TreeNode*> q1;", "\t\t\tTreeNode *root = new TreeNode(stoi(v1[0]));", "\t\t\tq1.push(root);", "\t\t\tint i = 1;", "\t\t\twhile(q1.size() && i < v1.size()) {", "\t\t\t\tTreeNode *curr = q1.front();", "\t\t\t\tq1.pop();", "if(v1[i] != \"null\") {", "\t\t\t\t\tcurr->left = new TreeNode(stoi(v1[i]));", "\t\t\t\t\tq1.push(curr->left);", "\t\t\t\t}", "\t\t\t\ti += 1;", "\t\t\t\tif(i == v1.size())", "\t\t\t\t\tbreak;", "\t\t\t\tif(v1[i] != \"null\") {", "\t\t\t\t\tcurr->right = new TreeNode(stoi(v1[i]));", "\t\t\t\t\tq1.push(curr->right);", "\t\t\t\t}", "\t\t\t\ti += 1;", "\t\t\t}", "\t\t\treturn root;", "\t\t}", "\t\tvector<string> parseTree(TreeNode *root) {", "\t\t\tif(!root)", "\t\t\t\treturn {};", "\t\t\tqueue<TreeNode*> q1;", "\t\t\tvector<string> res;", "\t\t\tq1.push(root);", "\t\t\tres.push_back(to_string(root->val));", "\t\t\twhile(q1.size()) {", "\t\t\t\tTreeNode *curr = q1.front();", "\t\t\t\tq1.pop();", "\t\t\t\tif(curr->left){", "\t\t\t\t\tq1.push(curr->left);", "\t\t\t\t\tres.push_back(to_string(curr->left->val));", "\t\t\t\t} else {", "\t\t\t\t\tres.push_back(\"null\");", "\t\t\t\t}", "\t\t\t\tif(curr->right) {", "\t\t\t\t\tq1.push(curr->right);", "\t\t\t\t\tres.push_back(to_string(curr->right->val));", "\t\t\t\t} else {", "\t\t\t\t\tres.push_back(\"null\");", "\t\t\t\t}", "\t\t\t}", "\t\t\ttrimNull(res);", "\t\t}", "\tprivate:", "\t\tvoid trimNull(vector<string> &v1) {", "\t\t\tfor(int i = v1.size() - 1; i >= 0; i--) {", "\t\t\t\tif(v1[i] == \"null\")", "\t\t\t\t\tv1.pop_back();", "\t\t\t\telse", "\t\t\t\t\tbreak;:", "\t\t\t}", "\t\t}", "};"]
+    end
+
     def input_builder(name, datastructure, dtype, dependent)
       meta = {
         'primitive' => {
@@ -78,6 +84,9 @@ module Templates
         },
         'linked_list' => {
           'int' => ["string #{name}_raw_str;", "getline(cin, #{name}_raw_str);", "stringstream #{name}_raw_str_stream(#{name}_raw_str);", "vector<int> #{name}_raw_array;", "while(#{name}_raw_str_stream >> #{name}_raw_str){", "#{name}_raw_array.push_back(stoi(#{name}_raw_str));" ,"}","#{name} = convertToLL(#{name}_raw_array);"]
+        },
+        'binary_tree' => {
+          'int' => ["string #{name}_raw_str;", "getline(cin, #{name}_raw_str);", "stringstream #{name}_raw_str_stream(#{name}_raw_str);", "vector<int> #{name}_raw_array;", "while(#{name}_raw_str_stream >> #{name}_raw_str){", "#{name}_raw_array.push_back(stoi(#{name}_raw_str));" ,"}", "TreeNode *#{name} = NULL;", "#{name} = #{name}->createBinaryTree(#{name}_raw_array);"]
         }
       }
       meta[datastructure][dtype]
@@ -102,6 +111,9 @@ module Templates
         },
         'linked_list' => {
           'int' => ["printLL(#{name});"]
+        },
+        'binary_tree' => {
+          'int' => ["vector<string> #{name}_arr = #{name}->parseTree(#{name});", "for(string &x: #{name}_arr){", "cout << x << endl;", "}"]
         }
       }
       meta[datastructure][dtype]
