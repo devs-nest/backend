@@ -84,7 +84,7 @@ module Templates
           'int' => ["int[] #{name}_raw_array = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = convertToLL(#{name}_raw_array);"]
         },
         'binary_tree' => {
-          'int' => ["String #{name}_raw_str = bufferedReader.readLine().trim();", "String[] #{name}_raw_array; = #{name}_raw_str.split(" ");", "#{name} = new TreeNode();", "#{name} = #{name}.createBinaryTree(#{name}_raw_array);"]
+          'int' => ["String #{name}_raw_str = bufferedReader.readLine().trim();", "String[] #{name}_raw_array = #{name}_raw_str.split(\" \");", "#{name} = new TreeNode();", "#{name} = #{name}.createBinaryTree(#{name}_raw_array);"]
         }
       }
       meta[datastructure][dtype]
@@ -111,7 +111,7 @@ module Templates
           'int' => ["printLL(#{name});"]
         },
         'binary_tree' => {
-          'int' => ["ArrayList<String> #{name}_arr = res.parseTree(#{name});", "for(String s:#{name}_arr)    {", "System.out.print(s + " ");", "}"]
+          'int' => ["ArrayList<String> #{name}_arr = #{name}.parseTree(#{name});", "for(String s:#{name}_arr)    {", "System.out.print(s + \" \");", "}"]
         }
       }
       meta[datastructure][dtype]
@@ -140,6 +140,8 @@ module Templates
         head_code += linked_list_node_class
         head_code += linked_list_convert_function
         head_code += linked_list_print_function
+      elsif @topic == 'tree'
+        head_code += tree_driver_code
       end
       head_code.join("\n")
     end
