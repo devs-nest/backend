@@ -165,18 +165,18 @@ class Group < ApplicationRecord
                                                           .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
       recent_solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: recent_total_assignments_ch_ids).count
 
-      result << {
-        user_name: user.name,
-        total_group_scrums: total_scrums,
-        user_scrums_count: user_scrums_count,
-        scrum_attended_count: scrum_attended,
-        scrum_absent: user_scrums_count - scrum_attended,
-        class_rating_count: scrum_data.where.not(class_rating: nil).count,
-        tha_progress_count: scrum_data.where.not(tha_progress: nil).count,
-        topics_to_cover_count: scrum_data.where.not(topics_to_cover: nil).count,
-        solved_assignments_count: solved_assignments_count,
-        recent_solved_assignments_count: recent_solved_assignments_count
-      }
+      result.append({
+                      user_name: user.name,
+                      total_group_scrums: total_scrums,
+                      user_scrums_count: user_scrums_count,
+                      scrum_attended_count: scrum_attended,
+                      scrum_absent: user_scrums_count - scrum_attended,
+                      class_rating_count: scrum_data.where.not(class_rating: nil).count,
+                      tha_progress_count: scrum_data.where.not(tha_progress: nil).count,
+                      topics_to_cover_count: scrum_data.where.not(topics_to_cover: nil).count,
+                      solved_assignments_count: solved_assignments_count,
+                      recent_solved_assignments_count: recent_solved_assignments_count
+                    })
     end
     result
   end

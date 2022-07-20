@@ -46,12 +46,12 @@ class Scrum < ApplicationRecord
       group = Group.find_by(id: group_id)
       next unless group.present? && group.group_type == 'public'
 
-      result << {
-        group_slug: group.slug,
-        group_name: group.name,
-        members_count: group.members_count,
-        scrums: scrums
-      }
+      result.append({
+                      group_slug: group.slug,
+                      group_name: group.name,
+                      members_count: group.members_count,
+                      scrums: scrums
+                    })
     end
     result
   end
