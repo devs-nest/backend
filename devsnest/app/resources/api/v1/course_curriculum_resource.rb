@@ -26,7 +26,11 @@ module Api
             id: assignment_question&.id,
             name: assignment_question&.name,
             slug: assignment_question&.slug,
-            status: algo_submissions_succeded.include?(assignment_question.id) ? 2 : algo_submissions_failed.include?(assignment_question.id) ? 1 : 0
+            status: if algo_submissions_succeded.include?(assignment_question.id)
+                      2
+                    else
+                      algo_submissions_failed.include?(assignment_question.id) ? 1 : 0
+                    end
           }
           data << question_data
         end

@@ -52,7 +52,10 @@ module Api
       def submissions
         challenge_id = params[:id]
         challenge = Challenge.find(challenge_id)
-        all_submissions = @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).where.not(status: "Stale").as_json
+        all_submissions = Rails.cache.fetch("algo_submissions_#{@current_user.id}", expires_in: 12.hours) do
+          @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).where.not(status: 'Stale').as_json
+        end
+        # all_submissions = @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).where.not(status: "Stale").as_json
         all_submissions.map { |submission| submission['score_achieved'] = submission['passed_test_cases'] / submission['total_test_cases'].to_f * challenge.score }
         api_render(200, { id: challenge_id, type: 'challenge', submissions: all_submissions })
       end
@@ -81,6 +84,23 @@ module Api
         end
 
         api_render(200, { id: challenge_id, type: 'challenge', templates: templates })
+      end
+
+      def next_question
+        current_question = Challenge.find_by(id: params[:current_question_id])
+        topic = current_question.topic
+        topic_challenge_ids = Challenge.where(topic: topic, is_active: true).pluck(:id)
+        user_success_topic_challenge_ids = UserChallengeScore.where(user_id: @current_user.id, challenge_id: topic_challenge_ids).pluck(:challenge_id)
+        relevent_unsolved_submissions = topic_challenge_ids - user_success_topic_challenge_ids
+
+        if relevent_unsolved_submissions.empty?
+          all_submitted_challenges = UserChallengeScore.where(user_id: context[:user].id).pluck(:challenge_id)
+          relevent_unsolved_submissions = Challenge.where(is_active: true).pluck(:id) - all_submitted_challenges
+        end
+
+        return nil if relevent_unsolved_submissions.empty?
+
+        Challenge.find(relevent_unsolved_submissions[0]).slug
       end
     end
   end
