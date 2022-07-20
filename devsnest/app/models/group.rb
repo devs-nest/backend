@@ -151,19 +151,19 @@ class Group < ApplicationRecord
     scrum_data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, group_id: id)
     total_scrums = scrum_data.count
     result = []
-    group.group_members.each do |gm|
-      user = User.find_by(user_id: gm&.user_id)
+    group_members.each do |gm|
+      user = User.find_by(id: gm&.user_id)
       next unless user.present?
 
       user_scrums_count = scrum_data.where(user_id: user.id).count
-      scrum_attended = scrums_data.where(attended: true).count
+      scrum_attended = scrum_data.where(user_id: user.id, attendance: true).count
 
       total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
-      solved_assignments_count = UserChallengeScore.where(user_id: user_id, challenge_id: total_assignments_challenge_ids).count
+      solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: total_assignments_challenge_ids).count
 
       recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
                                                           .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
-      recent_solved_assignments_count = UserChallengeScore.where(user_id: user_id, challenge_id: recent_total_assignments_ch_ids).count
+      recent_solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: recent_total_assignments_ch_ids).count
 
       result << {
         user_name: user.name,
@@ -172,8 +172,8 @@ class Group < ApplicationRecord
         scrum_attended_count: scrum_attended,
         scrum_absent: user_scrums_count - scrum_attended,
         class_rating_count: scrum_data.where.not(class_rating: nil).count,
-        tha_progress_count: scrums_data.where.not(tha_progress: nil).count,
-        topics_to_cover_count: scrums_data.where.not(topics_to_cover: nil).count,
+        tha_progress_count: scrum_data.where.not(tha_progress: nil).count,
+        topics_to_cover_count: scrum_data.where.not(topics_to_cover: nil).count,
         solved_assignments_count: solved_assignments_count,
         recent_solved_assignments_count: recent_solved_assignments_count
       }

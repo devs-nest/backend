@@ -224,7 +224,7 @@ module Api
         return render_error(message: 'Group not found') if group.nil?
 
         data = group.weekly_data
-        render_success(data.as_json)
+        render_success(result: data.as_json)
       end
     end
   end
