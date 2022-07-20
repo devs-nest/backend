@@ -218,6 +218,14 @@ module Api
                  members: group_members }
         render_success(data)
       end
+
+      def weekly_group_data
+        group = Group.find_by(name: params.dig(:data, :attributes, 'group_name'))
+        return render_error(message: 'Group not found') if group.nil?
+
+        data = group.weekly_data
+        render_success(result: data.as_json)
+      end
     end
   end
 end

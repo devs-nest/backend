@@ -52,6 +52,7 @@ Rails.application.routes.draw do
             post :merge_two_groups
             get :fetch_group_details
             post :assign_batch_leader
+
           end
         end
       end
@@ -87,6 +88,7 @@ Rails.application.routes.draw do
           delete :delete_group
           put :update_group_name, :update_batch_leader
           post :promote, :join
+          get :weekly_group_data
         end
         member do
           post :leave
