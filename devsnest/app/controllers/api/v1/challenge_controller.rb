@@ -52,7 +52,7 @@ module Api
       def submissions
         challenge_id = params[:id]
         challenge = Challenge.find(challenge_id)
-        all_submissions = Rails.cache.fetch("algo_submissions_#{@current_user.id}", expires_in: 12.hours) do
+        all_submissions = Rails.cache.fetch("algo_submissions_#{@current_user&.id}", expires_in: 12.hours) do
           @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).where.not(status: 'Stale').as_json
         end
         # all_submissions = @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).where.not(status: "Stale").as_json

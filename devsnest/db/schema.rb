@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_07_19_070844) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "aqODC2g5TJ8"
+    t.string "cuid", default: "4kVf+ZqcCv4"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -443,22 +443,6 @@ ActiveRecord::Schema.define(version: 2022_07_19_070844) do
     t.string "referral_code"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "run_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "challenge_id"
-    t.text "source_code"
-    t.string "language"
-    t.json "test_cases"
-    t.integer "total_test_cases", default: 0
-    t.integer "passed_test_cases", default: 0
-    t.string "total_runtime"
-    t.string "total_memory"
-    t.string "status"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id", "challenge_id"], name: "index_run_submissions_on_user_id_and_challenge_id"
   end
 
   create_table "scrums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
