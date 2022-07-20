@@ -5,6 +5,7 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
+  after_commit :expire_cache
 
   scope :accessible, -> { where.not(status: 'Stale') }
 
@@ -141,7 +142,7 @@ class AlgoSubmission < ApplicationRecord
 
     previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
 
-    if previous_best_submission.nil? || previous_best_submission.passed_test_cases < self.passed_test_cases
+    if previous_best_submission.nil? || previous_best_submission.passed_test_cases < passed_test_cases
       score_will_change = true
       best_submission = self
     end
@@ -160,7 +161,7 @@ class AlgoSubmission < ApplicationRecord
 
   def self.update_best_submission(best_submission, _previous_best_submission, current_submission_id, score)
     entry = UserChallengeScore.find_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
-    
+
     if entry.present?
       entry.assign_attributes({
                                 score: score,
@@ -171,7 +172,7 @@ class AlgoSubmission < ApplicationRecord
       entry.save!
     else
       entry = UserChallengeScore.create(
-        user_id: best_submission.user_id, 
+        user_id: best_submission.user_id,
         challenge_id: best_submission.challenge_id,
         score: score,
         algo_submission_id: current_submission_id,
@@ -184,5 +185,9 @@ class AlgoSubmission < ApplicationRecord
   def passed_test_cases_count
     a = [test_cases.select { |_k, h| h['status_id'] == 3 }.count, passed_test_cases]
     a.max
+  end
+
+  def expire_cache
+    Rails.cache.delete("algo_submissions_#{@current_user.id}")
   end
 end

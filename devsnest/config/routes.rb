@@ -133,6 +133,7 @@ Rails.application.routes.draw do
           get '/:id/submissions', to: 'challenge#submissions'
           get :fetch_by_slug
           get :leaderboard
+          get :next_question
         end
         member do
           get :companies

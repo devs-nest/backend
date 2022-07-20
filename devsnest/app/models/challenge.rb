@@ -119,7 +119,7 @@ class Challenge < ApplicationRecord
   end
 
   def self.count_solved(user_id)
-    challenge_ids = UserChallengeScore.where(user_id: user_id).pluck(:challenge_id)
+    challenge_ids = UserChallengeScore.where(user_id: user_id).where('passed_test_cases = total_test_cases').pluck(:challenge_id)
     Challenge.where(id: challenge_ids, is_active: true).group(:difficulty).count
   end
 
