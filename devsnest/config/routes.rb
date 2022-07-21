@@ -52,7 +52,6 @@ Rails.application.routes.draw do
             post :merge_two_groups
             get :fetch_group_details
             post :assign_batch_leader
-
           end
         end
       end

@@ -6,6 +6,17 @@ class ApplicationController < ActionController::API
   before_action :set_current_user
   before_action :validate_bot_user
   before_action :initialize_redis_lb
+  before_action :set_paper_trail_whodunnit
+
+  def user_for_paper_trail
+    @current_user ? @current_user.id : 'Public user'
+  end
+
+  def paper_trail_enabled_for_controller
+    # Don't omit `super` without a good reason.
+    super && request.user_agent != 'Disable User-Agent' && current_api_v1_user&.user_type != 'user'
+  end
+
   def render_resource(resource)
     if resource.errors.empty?
       render json: resource

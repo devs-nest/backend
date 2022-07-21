@@ -30,6 +30,7 @@ module UtilConcern
       RoleModifierWorker.perform_async('add_role', user.discord_id, 'Batch Leader', g.server&.guild_id)
       RoleModifierWorker.perform_async('add_role', user.discord_id, g.name, g.server&.guild_id)
       RoleModifierWorker.perform_async('delete_role', old_batch_leader.discord_id, g.name, g.server&.guild_id) if old_batch_leader.present?
+      g.paper_trail_event = 'assign_batch_leader'
       g.update(batch_leader_id: user.id)
     end
   end

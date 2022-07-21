@@ -178,6 +178,9 @@ GEM
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
     orm_adapter (0.5.0)
+    paper_trail (12.3.0)
+      activerecord (>= 5.2)
+      request_store (~> 1.1)
     parallel (1.20.1)
     parser (3.0.1.1)
       ast (~> 2.4.1)
@@ -244,6 +247,8 @@ GEM
     redis-store (1.9.0)
       redis (>= 4, < 5)
     regexp_parser (2.1.1)
+    request_store (1.5.1)
+      rack (>= 1.4)
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
@@ -356,6 +361,7 @@ DEPENDENCIES
   mimemagic!
   mysql2 (~> 0.5.2)
   newrelic_rpm (~> 7.1)
+  paper_trail
   pry (= 0.14.1)
   puma (~> 4.3.10)
   rack-cors (~> 1.1.1)

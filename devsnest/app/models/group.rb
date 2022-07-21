@@ -20,6 +20,8 @@ class Group < ApplicationRecord
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
 
+  has_paper_trail
+
   scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
   scope :visible, -> { where(group_type: 'public') }
@@ -50,6 +52,8 @@ class Group < ApplicationRecord
   end
 
   def self.merge_two_groups(group_1_id, group_2_id, preserved_group_id, options = {})
+    group_1.paper_trail_event = 'merge_two_groups'
+    group_2.paper_trail_event = 'merge_two_groups'
     group_1 = Group.find(group_1_id) # used find to throw error in case of invalid group id
     group_2 = Group.find(group_2_id) # used find to throw error in case of invalid group id
     group_to_be_destroyed_id = group_1_id == preserved_group_id ? group_2_id : group_1_id
@@ -105,6 +109,7 @@ class Group < ApplicationRecord
   end
 
   def promote_to_tl(user_id)
+    self.paper_trail_event = 'promote_to_tl'
     if co_owner_id == user_id
       update(owner_id: co_owner_id, co_owner_id: owner_id)
     else
@@ -113,6 +118,7 @@ class Group < ApplicationRecord
   end
 
   def promote_to_vtl(user_id)
+    self.paper_trail_event = 'promote_to_vtl'
     if owner_id == user_id
       update(owner_id: co_owner_id, co_owner_id: owner_id)
     else

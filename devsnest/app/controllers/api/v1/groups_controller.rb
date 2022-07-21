@@ -10,7 +10,7 @@ module Api
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
       before_action :change_discord_group_name, only: %i[update]
-      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader,server_details,team_details]
+      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader server_details team_details]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
       before_action :create_validations, only: %i[create]

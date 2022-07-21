@@ -126,6 +126,7 @@ class User < ApplicationRecord
 
   def un_merge_discord_user
     new_discord_id = discord_id
+    self.paper_trail_event = 'disconnect_user'
     update(discord_id: '', discord_active: false)
 
     group = GroupMember.find_by(user_id: id)&.group
