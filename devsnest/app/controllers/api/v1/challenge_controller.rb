@@ -52,7 +52,7 @@ module Api
       def submissions
         challenge_id = params[:id]
         challenge = Challenge.find(challenge_id)
-        all_submissions = Rails.cache.fetch("algo_submissions_#{@current_user&.id}", expires_in: 12.hours) do
+        all_submissions = Rails.cache.fetch("algo_submissions_#{@current_user&.id}_#{challenge_id}", expires_in: 12.hours) do
           @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).where.not(status: 'Stale').as_json
         end
         # all_submissions = @current_user.algo_submissions.where(challenge_id: challenge_id, is_submitted: true).where.not(status: "Stale").as_json
@@ -100,7 +100,8 @@ module Api
 
         return nil if relevent_unsolved_submissions.empty?
 
-        Challenge.find(relevent_unsolved_submissions[0]).slug
+        question_slug = Challenge.find(relevent_unsolved_submissions[0]).slug
+        render_success({ slug: question_slug, type: 'challenge' })
       end
     end
   end

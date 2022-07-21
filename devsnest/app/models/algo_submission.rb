@@ -188,6 +188,6 @@ class AlgoSubmission < ApplicationRecord
   end
 
   def expire_cache
-    Rails.cache.delete("algo_submissions_#{@current_user&.id}")
+    Rails.cache.delete("algo_submissions_#{@current_user&.id}_#{challenge_id}")
   end
 end
