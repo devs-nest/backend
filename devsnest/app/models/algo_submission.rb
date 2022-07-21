@@ -5,18 +5,15 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
-  after_update :expire_cache
-  # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
-  # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
 
-  def self.add_submission(source_code, lang, test_case, challenge_id, mode)
+  scope :accessible, -> { where.not(status: 'Stale') }
+
+  def self.add_submission(source_code, lang, test_case, mode, submission_id = nil)
     if mode != 'run'
-      begin
-        inpf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/input/#{test_case[:input_path]}").body.read
-        outf = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}testcases", key: "#{challenge_id}/output/#{test_case[:output_path]}").body.read
-      rescue StandardError
-        return { 'error' => 'Something went wrong!' }
-      end
+      inpf = test_case.input_case
+      outf = test_case.output_case
+
+      return { 'error' => 'Something went wrong!' } if inpf.nil? || outf.nil?
     end
 
     stdin = Base64.encode64(inpf || '')
@@ -37,20 +34,20 @@ class AlgoSubmission < ApplicationRecord
       "enable_per_process_and_thread_time_limit": false,
       "enable_per_process_and_thread_memory_limit": false,
       "max_file_size": '4096',
-      "callback_url": ENV['JUDGEZERO_CALLBACK']
+      "callback_url": ENV['JUDGEZERO_CALLBACK'] + "?submission_id=#{submission_id}"
     }
 
     [payload, expected_out, stdin]
   end
 
-  def self.submit_code(_params, lang, challenge_id, source_code)
+  def self.submit_code(_params, lang, challenge_id, source_code, submission_id = nil)
     test_cases = Testcase.where(challenge_id: challenge_id)
     total_test_cases = 0
     batch = []
     expected_output_batch = []
     stdins = []
     test_cases.each do |test_case|
-      loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, 'submit')
+      loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, 'submit', submission_id)
       next if loader.key?('error')
 
       batch << loader
@@ -61,7 +58,7 @@ class AlgoSubmission < ApplicationRecord
     [batch, total_test_cases, expected_output_batch, stdins]
   end
 
-  def self.run_code(params, lang, challenge_id, source_code)
+  def self.run_code(params, lang, challenge_id, source_code, submission_id = nil)
     test_case = params.dig(:data, :attributes, :test_case)
     mode = 'run'
     batch = []
@@ -72,7 +69,7 @@ class AlgoSubmission < ApplicationRecord
       mode = 'run_sample'
     end
     total_test_cases = 1
-    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, mode)
+    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, mode, submission_id)
     batch << loader
     expected_output_batch << expected_output
     stdins << stdin
@@ -103,13 +100,16 @@ class AlgoSubmission < ApplicationRecord
       tstring = token['token'].to_s
       Judgeztoken.create(submission_id: id, token: tstring)
 
-      submission.test_cases[tstring] = { 'expected_output' => expected_output, 'stdin' => stdin }
-      submission.save!
+      submission.with_lock do
+        submission.test_cases[tstring] ||= {}
+        submission.test_cases[tstring] = submission.test_cases[tstring].merge({ 'expected_output' => expected_output, 'stdin' => stdin })
+        submission.save!
+      end
     end
 
-    tokens.each do |token, expected_output, stdin|
+    tokens.each do |token, _expected_output, _stdin|
       tstring = token['token'].to_s
-      JudgeZWorker.perform_in(3.minutes, tstring, id)
+      JudgeZWorker.perform_in(1.minutes, tstring, id)
     end
   end
 
@@ -135,55 +135,54 @@ class AlgoSubmission < ApplicationRecord
   def assign_score_to_user
     user = User.get_by_cache(user_id)
     challenge = Challenge.find(challenge_id)
-    return unless challenge.is_active
-    
-    best_submission = user.algo_submissions.find_by(challenge_id: challenge.id, is_best_submission: true)
-    previous_max_score = if best_submission.nil?
-                           0
-                         else
-                           (best_submission.passed_test_cases / best_submission.total_test_cases.to_f) * challenge.score
-                         end
-    new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score
-    if previous_max_score < new_score
-      ch_lb = challenge.generate_leaderboard
-      recalculated_score_of_user = user.score - previous_max_score + new_score
-      user.update!(score: recalculated_score_of_user)
-      ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
+    return unless challenge.is_active || is_submitted
+
+    score_will_change = false
+
+    previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
+
+    if previous_best_submission.nil? || previous_best_submission.passed_test_cases < self.passed_test_cases
+      score_will_change = true
+      best_submission = self
     end
 
-    update_best_submission
+    if score_will_change
+      new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score || 0
+      ch_lb = challenge.generate_leaderboard
+      ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
+      AlgoSubmission.update_best_submission(best_submission, previous_best_submission, id, new_score)
+    end
   end
 
   def execution_completed
     ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
   end
 
-  def update_best_submission
-    user = User.get_by_cache(user_id)
-    submissions = user.algo_submissions.where(challenge_id: challenge_id)
-    best_submission = submissions.find_by(is_best_submission: true)
-    return if is_best_submission
-
-    return update_column(:is_best_submission, true) if best_submission.nil?
-
-    if passed_test_cases > best_submission.passed_test_cases
-      best_submission.update_column(:is_best_submission, false)
-      update_column(:is_best_submission, true)
+  def self.update_best_submission(best_submission, _previous_best_submission, current_submission_id, score)
+    entry = UserChallengeScore.find_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id)
+    
+    if entry.present?
+      entry.assign_attributes({
+                                score: score,
+                                algo_submission_id: current_submission_id,
+                                passed_test_cases: best_submission.passed_test_cases,
+                                total_test_cases: best_submission.total_test_cases
+                              })
+      entry.save!
+    else
+      entry = UserChallengeScore.create(
+        user_id: best_submission.user_id, 
+        challenge_id: best_submission.challenge_id,
+        score: score,
+        algo_submission_id: current_submission_id,
+        passed_test_cases: best_submission.passed_test_cases,
+        total_test_cases: best_submission.total_test_cases
+      )
     end
-  end
-
-  def self.get_by_cache(id)
-    Rails.cache.fetch("algo_submission_#{id}", expires_in: 1.hour) do
-      AlgoSubmission.find(id)
-    end
-  end
-
-  def expire_cache
-    Rails.cache.delete("algo_submission_#{id}")
   end
 
   def passed_test_cases_count
-    a = [test_cases.select {|k, h| h["status_id"] == 3}.count, passed_test_cases]
+    a = [test_cases.select { |_k, h| h['status_id'] == 3 }.count, passed_test_cases]
     a.max
   end
 end

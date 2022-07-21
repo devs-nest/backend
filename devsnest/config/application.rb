@@ -52,6 +52,8 @@ module Devsnest
       end
     end
 
+    config.testcase_bucket_prefix = ENV['S3_PREFIX']
+
     # config.session_store :cookie_store, key: '_interslice_session', domain: :all, tld_length: 2, httponly: false
     # config.middleware.use ActionDispatch::Cookies # Required for all session management
     # config.middleware.use ActionDispatch::Session::CookieStore, config.session_options
@@ -71,55 +73,54 @@ module Devsnest
     }.freeze
 
     JUDGEZERO_OPTIONS = {
-      # C 
-      "c" => {
+      # C
+      'c' => {
         id: 50,
         memory_limit: '512000',
         time_limit: '2'
-       },
+      },
 
-     # C++
-      "cpp" => {
-        id: 54, 
+      # C++
+      'cpp' => {
+        id: 54,
         memory_limit: '512000',
         time_limit: '2'
-       },
+      },
 
-     # Java
-      "java" => {
+      # Java
+      'java' => {
         id: 62,
         memory_limit: '512000',
         time_limit: '4'
-       },
+      },
 
-     # Javascript
-     "javascript" => { 
+      # Javascript
+      'javascript' => {
         id: 63,
         memory_limit: '512000',
         time_limit: '10'
-       },
-     
-     # Python 2
-      "python" => { 
-       id: 70,
-       memory_limit: '512000',
-       time_limit: '10'
-       },
-     
-     # Python 3
-      "python3" => { 
+      },
+
+      # Python 2
+      'python' => {
+        id: 70,
+        memory_limit: '512000',
+        time_limit: '10'
+      },
+
+      # Python 3
+      'python3' => {
         id: 71,
         memory_limit: '512000',
         time_limit: '10'
-       },
+      },
 
-     # Typescript
-      "typescript" => { 
+      # Typescript
+      'typescript' => {
         id: 74,
         memory_limit: '512000',
         time_limit: '10'
-       }
-      }.freeze
-      
-    end
+      }
+    }.freeze
+  end
 end

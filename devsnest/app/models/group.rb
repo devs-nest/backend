@@ -6,20 +6,21 @@ class Group < ApplicationRecord
   include UtilConcern
   # belongs_to :batch
   audited
-  has_many :group_members
+  has_many :group_members, dependent: :destroy
   belongs_to :server
   after_create :parameterize
   before_create :assign_server
+  after_commit :expire_cache
   validates :members_count, numericality: { less_than_or_equal_to: 20, message: 'The group is full' }
   validates :members_count, numericality: { greater_than_or_equal_to: 0, message: 'The group members count can\'t be negetive' }
   validates :name, length: { minimum: 4, maximum: 33, message: 'The group name must be between 4 and 25 characters' }
-  validates_uniqueness_of :name
-  validates_uniqueness_of :slug
+  validates_uniqueness_of :name, case_sensitive: true
+  validates_uniqueness_of :slug, case_sensitive: true
   enum group_type: %i[public private], _prefix: :group
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
 
-  has_paper_trail on: %i[merge_two_groups promote]
+  has_paper_trail
 
   scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
@@ -51,6 +52,8 @@ class Group < ApplicationRecord
   end
 
   def self.merge_two_groups(group_1_id, group_2_id, preserved_group_id, options = {})
+    group_1.paper_trail_event = 'merge_two_groups'
+    group_2.paper_trail_event = 'merge_two_groups'
     group_1 = Group.find(group_1_id) # used find to throw error in case of invalid group id
     group_2 = Group.find(group_2_id) # used find to throw error in case of invalid group id
     group_to_be_destroyed_id = group_1_id == preserved_group_id ? group_2_id : group_1_id
@@ -106,6 +109,7 @@ class Group < ApplicationRecord
   end
 
   def promote_to_tl(user_id)
+    self.paper_trail_event = 'promote_to_tl'
     if co_owner_id == user_id
       update(owner_id: co_owner_id, co_owner_id: owner_id)
     else
@@ -114,6 +118,7 @@ class Group < ApplicationRecord
   end
 
   def promote_to_vtl(user_id)
+    self.paper_trail_event = 'promote_to_vtl'
     if owner_id == user_id
       update(owner_id: co_owner_id, co_owner_id: owner_id)
     else
@@ -140,9 +145,9 @@ class Group < ApplicationRecord
   end
 
   def invite_inactive_members
-    self.group_members.each do |member|
-      server_user = ServerUser.find_by(user_id: member.user_id, server_id: self.server_id)
-      send_group_change_message(member.user_id, self.name) unless server_user.present?
+    group_members.each do |member|
+      server_user = ServerUser.find_by(user_id: member.user_id, server_id: server_id)
+      send_group_change_message(member.user_id, name) unless server_user.present?
     end
-  end  
+  end
 end

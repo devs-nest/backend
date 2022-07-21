@@ -14,11 +14,11 @@ module Api
         topic_challenge_ids = Challenge.where(topic: topic).pluck(:id)
 
         # refactor heres
-        user_success_topic_challenge_ids = AlgoSubmission.where(user_id: context[:user].id, challenge_id: topic_challenge_ids, is_submitted: true, status: 'Accepted').distinct.pluck(:challenge_id)
+        user_success_topic_challenge_ids = UserChallengeScore.where(user_id: context[:user].id, challenge_id: topic_challenge_ids).pluck(:challenge_id)
         relevent_unsolved_submissions = topic_challenge_ids - user_success_topic_challenge_ids
 
         if relevent_unsolved_submissions.empty?
-          all_submitted_challenges = AlgoSubmission.where(user_id: context[:user].id, is_submitted: true, status: 'Accepted').distinct.pluck(:challenge_id)
+          all_submitted_challenges = UserChallengeScore.where(user_id: context[:user].id).pluck(:challenge_id)
           relevent_unsolved_submissions = Challenge.all.pluck(:id) - all_submitted_challenges
         end
 

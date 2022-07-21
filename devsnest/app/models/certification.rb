@@ -2,7 +2,7 @@
 
 # Certification Model
 class Certification < ApplicationRecord
-  validates_uniqueness_of :cuid
+  validates_uniqueness_of :cuid, case_sensitive: true
   belongs_to :user
 
   before_create do

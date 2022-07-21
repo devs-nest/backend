@@ -10,12 +10,14 @@ class Challenge < ApplicationRecord
   has_many :testcases
   has_many :company_challenge_mappings
   has_many :companies, through: :company_challenge_mappings
+  has_many :user_challenge_scores
   belongs_to :user
   has_many :assingment_questions
   after_create :create_slug
-  validates_uniqueness_of :name, :slug
+  validates_uniqueness_of :name, :slug, case_sensitive: true
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
-  before_update :re_evaluate_user_scores, if: :will_save_change_to_score?
+  # before_update :re_evaluate_user_scores, if: :will_save_change_to_score?
+  before_update :recalculate_user_scores, if: :will_save_change_to_is_active?
   after_save :remove_saved_templates
   Language.all.each do |language|
     require "algo_templates/#{language.name}"
@@ -118,8 +120,8 @@ class Challenge < ApplicationRecord
   end
 
   def self.count_solved(user_id)
-    challenge_ids = AlgoSubmission.where(user_id: user_id, is_submitted: true, status: 'Accepted').pluck(:challenge_id)
-    Challenge.where(id: challenge_ids).group(:difficulty).count
+    challenge_ids = UserChallengeScore.where(user_id: user_id).pluck(:challenge_id)
+    Challenge.where(id: challenge_ids, is_active: true).group(:difficulty).count
   end
 
   def generate_leaderboard
@@ -129,16 +131,19 @@ class Challenge < ApplicationRecord
   def regenerate_challenge_leaderboard
     LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call.delete_leaderboard
     leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call
+    best_submissions = UserChallengeScore.where(challenge_id: id)
 
-    algo_submissions.where(is_best_submission: true).each do |submission|
-      leaderboard.rank_member(submission.user.username, score * (submission.passed_test_cases / submission.total_test_cases.to_f))
+    best_submissions.each do |submission|
+      calc_score = score * (submission.passed_test_cases / submission.total_test_cases.to_f)
+      submission.update(score: calc_score)
+      leaderboard.rank_member(submission.user.username, calc_score)
     end
   end
 
   def self.rerank_member(user, new_username)
     previous_username = user.username
 
-    best_submissions = user.algo_submissions.where(is_best_submission: true)
+    best_submissions = user.user_challenge_scores
 
     best_submissions.each do |submission|
       leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{submission.challenge.slug}-lb").call
@@ -147,13 +152,22 @@ class Challenge < ApplicationRecord
     end
   end
 
-  def re_evaluate_user_scores
-    return if id.nil?
-
-    UserScoreUpdate.perform_async([score_was, score, id])
+  def recalculate_user_scores
+    UserScoreUpdate.perform_async(id)
   end
 
   def remove_saved_templates
     AlgoTemplate.where(challenge_id: id).destroy_all
   end
 end
+
+# Regenerate Leaderboard
+#
+# User.update_all(score: 0)
+# challenge_ids = Challenge.where(id: challenge_ids, is_active: true)
+# User.each do |u|
+#   all_user_subs_score = UserChallengeScore.where(user: u.id, challenge_id: challenge_ids).sum {|a| a.score || 0}
+#   u.update(score: all_user_subs_score)
+#   main_lb = LeaderboardDevsnest::Initializer::LB
+#   main_lb.rank_member(u.username, u.score || 0)
+# end

@@ -7,6 +7,8 @@ class GroupMember < ApplicationRecord
   after_create :set_prevoiusly_joined_a_group
   after_create :send_scrum_message_in_group
   after_save :update_previous_scrum
+  # after_commit :cache_expire
+  has_paper_trail on: %i[destroy]
 
   def send_all_steps_completed_mail
     user = User.find_by(id: user_id)
@@ -34,5 +36,9 @@ class GroupMember < ApplicationRecord
 
   def update_previous_scrum
     Scrum.where(user_id: user_id).update_all(group_id: group_id) if saved_change_to_attribute?(:group_id)
+  end
+
+  def cache_expire
+    group.touch if group.persisted?
   end
 end

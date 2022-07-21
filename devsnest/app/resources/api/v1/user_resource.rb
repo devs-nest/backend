@@ -15,8 +15,7 @@ module Api
       attributes :frontend_activity
       attributes :markdown, :bio
       attributes :type, :user_group_slug
-
-      attr_reader :coins
+      attributes :batch_leader_details, :user_group_details
 
       def markdown
         @model.markdown.dup.encode('ISO-8859-1').force_encoding('utf-8') unless @model.markdown.blank?
@@ -27,7 +26,7 @@ module Api
       end
 
       def self.updatable_fields(context)
-        super - %i[score group_id group_name discord_id password college_name]
+        super - %i[score group_id group_name discord_id password college_name coins]
       end
 
       def group_id
@@ -76,6 +75,15 @@ module Api
         return nil if user_group_id.nil?
 
         Group.find_by(id: user_group_id).try(:slug)
+      end
+
+      def batch_leader_details
+        group_details = Group.where(batch_leader_id: @model.id)
+        group_details.present? ? group_details.as_json : nil
+      end
+
+      def user_group_details
+        GroupMember.find_by(user_id: @model.id)&.group&.as_json
       end
     end
   end

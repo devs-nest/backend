@@ -8,8 +8,8 @@ class User < ApplicationRecord
   after_create :create_bot_token
   enum user_type: %i[user admin problem_setter]
   after_create :create_username
-  validates_uniqueness_of :username
-  validates :referral_code, uniqueness: true
+  validates_uniqueness_of :username, case_sensitive: true
+  validates_uniqueness_of :referral_code, case_sensitive: true
   validates :dob, inclusion: { in: (Date.today - 60.years..Date.today) }, allow_nil: true
   belongs_to :college, optional: true
   has_many :internal_feedbacks
@@ -20,19 +20,19 @@ class User < ApplicationRecord
   has_many :minibootcamp_submissions
   has_many :certifications, dependent: :delete_all
   has_many :manual_login_changelog
+  has_many :user_challenge_scores
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
   after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
-  after_update :expire_cache
   after_update :update_user_score_lb, if: :saved_change_to_score?
   before_validation :create_referral_code, if: :is_referall_empty?
 
   def update_user_score_lb
     main_lb = LeaderboardDevsnest::Initializer::LB
-    main_lb.rank_member(self.username, self.score || 0)
+    main_lb.rank_member(username, score || 0)
   end
 
   def create_username
@@ -126,6 +126,7 @@ class User < ApplicationRecord
 
   def un_merge_discord_user
     new_discord_id = discord_id
+    self.paper_trail_event = 'disconnect_user'
     update(discord_id: '', discord_active: false)
 
     group = GroupMember.find_by(user_id: id)&.group
@@ -279,6 +280,10 @@ class User < ApplicationRecord
 
   def is_admin?
     user_type == 'admin'
+  end
+
+  def is_batchleader?
+    Group.where(batch_leader_id: id).present?
   end
 
   def self.get_by_cache(id)

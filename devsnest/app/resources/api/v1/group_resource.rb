@@ -4,6 +4,7 @@ module Api
   module V1
     # Scrum Resourses
     class GroupResource < JSONAPI::Resource
+      # caching
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
                  :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time
       has_many :group_members
@@ -64,9 +65,8 @@ module Api
         elsif options[:context][:user]&.is_admin?
           super(options).v2
         else
-          user_private_group = GroupMember.where(user_id: options[:context][:user]&.id).first
-          private_group = Group.find_by(id: user_private_group.group_id) if user_private_group.present?
-          super(options).v2.visible.under_limited_members.or(super(options).where(id: private_group&.id, group_type: 'private'))
+          user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
+          user_group.present? ? user_group : super(options).v2.visible.under_limited_members
         end
       end
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_04_143047) do
+ActiveRecord::Schema.define(version: 2022_07_06_144024) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_07_04_143047) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "e5eEcwJ8Vio"
+    t.string "cuid", default: "7PYX6sPBi_0"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -455,6 +455,8 @@ ActiveRecord::Schema.define(version: 2022_07_04_143047) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "last_tha_link"
+    t.json "total_assignments_solved"
+    t.json "recent_assignments_solved"
     t.index ["user_id", "creation_date"], name: "index_scrums_on_user_id_and_creation_date", unique: true
   end
 
@@ -509,6 +511,18 @@ ActiveRecord::Schema.define(version: 2022_07_04_143047) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "content_id", "content_type"], name: "index_upvotes_on_user_id_and_content_id_and_content_type", unique: true
+  end
+
+  create_table "user_challenge_scores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "challenge_id"
+    t.integer "algo_submission_id"
+    t.integer "total_test_cases"
+    t.integer "passed_test_cases"
+    t.integer "score", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "challenge_id"], name: "index_user_challenge_scores_on_user_id_and_challenge_id", unique: true
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
