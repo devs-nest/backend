@@ -5,7 +5,10 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
-  after_commit :expire_cache
+  after_update :expire_cache
+  # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
+  # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
+  include AlgoHelper
 
   scope :accessible, -> { where.not(status: 'Stale') }
 
@@ -111,25 +114,6 @@ class AlgoSubmission < ApplicationRecord
     tokens.each do |token, _expected_output, _stdin|
       tstring = token['token'].to_s
       JudgeZWorker.perform_in(1.minutes, tstring, id)
-    end
-  end
-
-  def self.order_status(status)
-    orders = {
-      'Pending' => -1,
-      'Accepted' => 0,
-      'Wrong Answer' => 2,
-      'Time Limit Exceeded' => 3,
-      'Compilation Error' => 4,
-      'Runtime Error (SIGSEGV)' => 5,
-      'Runtime Error (SIGABRT)' => 6,
-      'Runtime Error (NZEC)' => 7
-    }
-
-    if orders.key?(status)
-      orders[status]
-    else
-      -2
     end
   end
 

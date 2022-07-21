@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :frontend_projects, dependent: :delete_all
   has_many :unsubscribes, dependent: :delete_all
   has_many :algo_submissions
+  has_many :run_submissions
   has_many :challenges
   has_many :minibootcamp_submissions
   has_many :certifications, dependent: :delete_all

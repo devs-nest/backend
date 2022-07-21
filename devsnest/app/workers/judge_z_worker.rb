@@ -1,5 +1,6 @@
 class JudgeZWorker
   include Sidekiq::Worker
+  include AlgoHelper
 
   def perform(token, submission_id)
     return if token.empty? || token.nil? || submission_id.nil?
@@ -11,7 +12,7 @@ class JudgeZWorker
     poll = HTTParty.get(ENV['JUDGEZERO_URL']+"/submissions/#{token.to_s}?base64_encoded=true", headers: jz_headers)
     submission.with_lock do
       res_hash = AlgoSubmission.prepare_test_case_result(JSON(poll.body))
-      if AlgoSubmission.order_status(submission.status) <= AlgoSubmission.order_status(res_hash["status_description"])
+      if order_status(submission.status) <= order_status(res_hash["status_description"])
         submission.status = res_hash["status_description"]
       end
       submission.total_runtime = submission.total_runtime.to_f + res_hash["time"].to_f

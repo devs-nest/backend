@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require 'helpers/algo_helpers.rb'
 namespace :get_pendings do
   desc 'recheck pending submission'
   task run: :environment do
@@ -17,7 +17,7 @@ namespace :get_pendings do
             res_hash = AlgoSubmission.prepare_test_case_result(JSON(poll.body))
             next if submission.test_cases[token]["status_description"].present?
             submission.with_lock do
-              if AlgoSubmission.order_status(submission.status) <= AlgoSubmission.order_status(res_hash["status_description"])
+              if order_status(submission.status) <= order_status(res_hash["status_description"])
                 submission.status = res_hash["status_description"]
               end
               submission.total_runtime = submission.total_runtime.to_f + res_hash["time"].to_f
