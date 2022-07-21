@@ -131,7 +131,7 @@ module Templates
         'import java.util.Queue;',
         'import java.util.LinkedList;',
         'import java.util.ArrayList;',
-        'import java.util.List;,'
+        'import java.util.List;',
         'import static java.util.stream.Collectors.joining;',
         'import static java.util.stream.Collectors.toList;',
         'public class Main {'
