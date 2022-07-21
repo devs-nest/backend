@@ -6,7 +6,7 @@ namespace :registration_mail do
       EmailSenderWorker.perform_async(u.email, {
                                         'unsubscribe_token': u.unsubscribe_token
                                       }, 'd-d9ebbec967cf4470857f1a91fd601b6c')
-      u.update!(accepted_in_course: true)
+      # u.update!(accepted_in_course: true)
       puts u.username
     rescue StandardError => e
       puts e, u.username

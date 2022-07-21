@@ -10,26 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_06_144024) do
-
-  create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "challenge_id"
-    t.text "source_code"
-    t.string "language"
-    t.json "test_cases"
-    t.integer "total_test_cases", default: 0
-    t.integer "passed_test_cases", default: 0
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.boolean "is_submitted"
-    t.string "status"
-    t.string "total_runtime"
-    t.string "total_memory"
-    t.boolean "is_best_submission", default: false
-    t.index ["is_submitted", "status"], name: "index_algo_submissions_on_is_submitted_and_status"
-    t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
-  end
+ActiveRecord::Schema.define(version: 2022_07_19_070844) do
 
   create_table "algo_templates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "challenge_id"
@@ -104,7 +85,7 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "7PYX6sPBi_0"
+    t.string "cuid", default: "ra4wrcUuVO8"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -124,11 +105,11 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.boolean "is_active", default: false
     t.text "tester_code"
     t.integer "user_id"
-    t.json "input_format"
-    t.json "output_format"
     t.integer "content_type"
     t.string "unique_id"
     t.string "parent_id"
+    t.json "input_format"
+    t.json "output_format"
     t.integer "course_curriculum_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
@@ -214,7 +195,9 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.text "body"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "slug"
     t.index ["challenge_id", "parent_id"], name: "index_discussions_on_challenge_id_and_parent_id"
+    t.index ["slug"], name: "index_discussions_on_slug", unique: true
     t.index ["user_id"], name: "index_discussions_on_user_id"
   end
 
@@ -279,6 +262,16 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.index ["user_id"], name: "index_group_members_on_user_id", unique: true
   end
 
+  create_table "groupcalls", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "choice"
+    t.integer "week"
+    t.integer "year"
+    t.integer "group_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "owner_id"
     t.integer "batch_id"
@@ -297,8 +290,8 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.text "description"
     t.integer "server_id", default: 1
     t.boolean "five_members_flag", default: false
-    t.time "scrum_start_time", default: "2000-01-01 14:30:00"
-    t.time "scrum_end_time", default: "2000-01-01 15:00:00"
+    t.time "scrum_start_time", default: "2000-01-01 09:00:00"
+    t.time "scrum_end_time", default: "2000-01-01 09:30:00"
     t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true
@@ -372,6 +365,7 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "language_description"
     t.string "type_linked_list"
+    t.string "type_binary_tree"
   end
 
   create_table "links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -392,6 +386,26 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
 
   create_table "markdowns", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.text "template"
+  end
+
+  create_table "mentee_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "user_id"
+    t.integer "mentee_id"
+    t.text "feedback"
+    t.integer "effort"
+    t.integer "understanding"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "mentor_feedbacks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "user_id"
+    t.integer "mentor_id"
+    t.text "feedback"
+    t.integer "timeGiven"
+    t.integer "capability"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "minibootcamp_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -417,6 +431,15 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["frontend_question_id"], name: "index_minibootcamps_on_frontend_question_id"
+  end
+
+  create_table "mmts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "mentor_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["mentor_id"], name: "index_mmts_on_mentor_id", unique: true
+    t.index ["user_id"], name: "index_mmts_on_user_id", unique: true
   end
 
   create_table "notification_bots", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -557,11 +580,11 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.string "registration_num"
     t.integer "grad_start"
     t.integer "grad_end"
+    t.string "bot_token"
+    t.string "google_id"
     t.integer "user_type", default: 0
     t.integer "update_count", default: 0
     t.integer "login_count", default: 0
-    t.string "bot_token"
-    t.string "google_id"
     t.string "discord_username"
     t.string "school"
     t.string "work_exp"
@@ -570,8 +593,8 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.integer "webd_skill", default: 0
     t.boolean "is_discord_form_filled", default: false
     t.text "markdown"
-    t.boolean "group_assigned", default: false
     t.integer "bot_id"
+    t.boolean "group_assigned", default: false
     t.boolean "is_verified", default: false
     t.string "working_status"
     t.boolean "is_fullstack_course_22_form_filled", default: false
@@ -607,12 +630,20 @@ ActiveRecord::Schema.define(version: 2022_07_06_144024) do
     t.date "creation_week"
     t.integer "batch_leader_rating"
     t.integer "group_activity_rating"
-    t.text "extra_activity"
-    t.text "comments"
+    t.string "extra_activity"
+    t.string "comments"
     t.integer "moral_status"
-    t.text "obstacles"
+    t.string "obstacles"
     t.json "todo_list"
     t.index ["group_id", "creation_week"], name: "index_weekly_todos_on_group_id_and_creation_week", unique: true
+  end
+
+  create_table "writeups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.text "description"
+    t.integer "week"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
 end

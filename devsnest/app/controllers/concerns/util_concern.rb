@@ -49,7 +49,8 @@ module UtilConcern
       batch_eligible: user.web_active && user.discord_active && user.accepted_in_course,
       verified: user.web_active && user.discord_active,
       group_name: group.present? ? group&.name : nil,
-      group_server_link: group.present? ? group&.server&.link : nil
+      group_server_link: group.present? ? group&.server&.link : nil,
+      waitlisted: user.is_fullstack_course_22_form_filled == true && user.accepted_in_course == false
     }
   end
 

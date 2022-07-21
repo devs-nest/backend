@@ -18,7 +18,7 @@ MassRoleModifierWorker.perform_async('delete_mass_role', discord_ids, 'TEAM NAME
 
 #  Group Modifier Example
 GroupModifierWorker.perform_async('create', ['V2 PHENOMENAL  CULTS Team'])
-GroupModifierWorker.perform_async('destroy', [group.name])
+GroupModifierWorker.perform_async('destroy', [group.name],group.server.guild_id)
 
 GroupNotifierWorker.perform_async('V2 Alpha Tester Team', "Hello PEEPS")
 
