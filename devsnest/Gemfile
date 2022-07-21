@@ -77,3 +77,5 @@ gem 'aws-sdk-s3', '~> 1.103'
 gem 'sendgrid-ruby', '~> 6.6'
 
 gem 'whenever'
+
+gem 'paper_trail'

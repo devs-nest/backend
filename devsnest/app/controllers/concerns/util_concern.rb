@@ -30,6 +30,7 @@ module UtilConcern
       RoleModifierWorker.perform_async('add_role', user.discord_id, 'Batch Leader', g.server&.guild_id)
       RoleModifierWorker.perform_async('add_role', user.discord_id, g.name, g.server&.guild_id)
       RoleModifierWorker.perform_async('delete_role', old_batch_leader.discord_id, g.name, g.server&.guild_id) if old_batch_leader.present?
+      g.paper_trail_event = 'assign_batch_leader'
       g.update(batch_leader_id: user.id)
     end
   end
@@ -48,7 +49,8 @@ module UtilConcern
       batch_eligible: user.web_active && user.discord_active && user.accepted_in_course,
       verified: user.web_active && user.discord_active,
       group_name: group.present? ? group&.name : nil,
-      group_server_link: group.present? ? group&.server&.link : nil
+      group_server_link: group.present? ? group&.server&.link : nil,
+      waitlisted: user.is_fullstack_course_22_form_filled == true && user.accepted_in_course == false
     }
   end
 

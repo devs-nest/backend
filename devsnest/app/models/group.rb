@@ -20,6 +20,8 @@ class Group < ApplicationRecord
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
 
+  has_paper_trail
+
   scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
   scope :visible, -> { where(group_type: 'public') }
@@ -50,6 +52,8 @@ class Group < ApplicationRecord
   end
 
   def self.merge_two_groups(group_1_id, group_2_id, preserved_group_id, options = {})
+    group_1.paper_trail_event = 'merge_two_groups'
+    group_2.paper_trail_event = 'merge_two_groups'
     group_1 = Group.find(group_1_id) # used find to throw error in case of invalid group id
     group_2 = Group.find(group_2_id) # used find to throw error in case of invalid group id
     group_to_be_destroyed_id = group_1_id == preserved_group_id ? group_2_id : group_1_id
@@ -105,6 +109,7 @@ class Group < ApplicationRecord
   end
 
   def promote_to_tl(user_id)
+    self.paper_trail_event = 'promote_to_tl'
     if co_owner_id == user_id
       update(owner_id: co_owner_id, co_owner_id: owner_id)
     else
@@ -113,6 +118,7 @@ class Group < ApplicationRecord
   end
 
   def promote_to_vtl(user_id)
+    self.paper_trail_event = 'promote_to_vtl'
     if owner_id == user_id
       update(owner_id: co_owner_id, co_owner_id: owner_id)
     else
@@ -143,5 +149,41 @@ class Group < ApplicationRecord
       server_user = ServerUser.find_by(user_id: member.user_id, server_id: server_id)
       send_group_change_message(member.user_id, name) unless server_user.present?
     end
+  end
+
+  def weekly_data
+    current_course = Course.last
+    course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
+    scrum_data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, group_id: id)
+    total_scrums = scrum_data.count
+    result = []
+    group_members.each do |gm|
+      user = User.find_by(id: gm&.user_id)
+      next unless user.present?
+
+      user_scrums_count = scrum_data.where(user_id: user.id).count
+      scrum_attended = scrum_data.where(user_id: user.id, attendance: true).count
+
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
+      solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: total_assignments_challenge_ids).count
+
+      recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
+                                                          .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
+      recent_solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: recent_total_assignments_ch_ids).count
+
+      result.append({
+                      user_name: user.name,
+                      total_group_scrums: total_scrums,
+                      user_scrums_count: user_scrums_count,
+                      scrum_attended_count: scrum_attended,
+                      scrum_absent: user_scrums_count - scrum_attended,
+                      class_rating_count: scrum_data.where.not(class_rating: nil).count,
+                      tha_progress_count: scrum_data.where.not(tha_progress: nil).count,
+                      topics_to_cover_count: scrum_data.where.not(topics_to_cover: nil).count,
+                      solved_assignments_count: solved_assignments_count,
+                      recent_solved_assignments_count: recent_solved_assignments_count
+                    })
+    end
+    result
   end
 end

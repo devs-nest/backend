@@ -10,7 +10,7 @@ module Api
       before_action :check_v2_eligible, only: %i[create join update]
       before_action :check_group_admin_auth, only: %i[update]
       before_action :change_discord_group_name, only: %i[update]
-      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader,server_details,team_details]
+      before_action :bot_auth, only: %i[delete_group update_group_name update_batch_leader server_details team_details]
       before_action :deslug, only: %i[show]
       # before_action :check_authorization, only: %i[show]
       before_action :create_validations, only: %i[create]
@@ -217,6 +217,14 @@ module Api
                  batch_leader: batch_leader.present? ? [batch_leader&.name, batch_leader&.discord_id] : nil,
                  members: group_members }
         render_success(data)
+      end
+
+      def weekly_group_data
+        group = Group.find_by(name: params.dig(:data, :attributes, 'group_name'))
+        return render_error(message: 'Group not found') if group.nil?
+
+        data = group.weekly_data
+        render_success(result: data.as_json)
       end
     end
   end
