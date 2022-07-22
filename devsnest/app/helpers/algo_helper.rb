@@ -17,4 +17,9 @@ module AlgoHelper
       -2
     end
   end
+
+  def passed_test_cases_count(submission)
+    a = [submission.test_cases.select { |_k, h| h['status_id'] == 3 }.count, submission.passed_test_cases]
+    a.max
+  end
 end

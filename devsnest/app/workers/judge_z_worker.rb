@@ -18,7 +18,7 @@ class JudgeZWorker
       submission.total_runtime = submission.total_runtime.to_f + res_hash["time"].to_f
       submission.total_memory = submission.total_memory.to_i + res_hash["memory"].to_i
       submission.test_cases[token.to_s] = submission.test_cases[token.to_s].merge(res_hash)
-      submission.passed_test_cases = submission.passed_test_cases_count
+      submission.passed_test_cases = passed_test_cases_count(submission)
       submission.status = 'Pending' if submission.status == 'Accepted' && submission.total_test_cases != submission.passed_test_cases
       submission.save!
     end

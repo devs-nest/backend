@@ -1,8 +1,8 @@
-class RunSubmission < ApplicationRecord
+class RunSubmissions < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
 
-  def self.run_code(params, lang, challenge_id, source_code)
+  def self.run_code(params, lang, challenge_id, source_code, submission_id)
     test_case = params.dig(:data, :attributes, :test_case)
     mode = 'run'
     batch = []
@@ -13,7 +13,7 @@ class RunSubmission < ApplicationRecord
       mode = 'run_sample'
     end
     total_test_cases = 1
-    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, challenge_id, mode)
+    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, mode, submission_id)
     batch << loader
     expected_output_batch << expected_output
     stdins << stdin

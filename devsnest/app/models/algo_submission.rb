@@ -13,6 +13,8 @@ class AlgoSubmission < ApplicationRecord
   scope :accessible, -> { where.not(status: 'Stale') }
 
   def self.add_submission(source_code, lang, test_case, mode, submission_id = nil)
+
+    controller = mode == "run" || mode == "run_sample" ? "run-submission" : "algo-submission"   
     if mode != 'run'
       inpf = test_case.input_case
       outf = test_case.output_case
@@ -38,7 +40,7 @@ class AlgoSubmission < ApplicationRecord
       "enable_per_process_and_thread_time_limit": false,
       "enable_per_process_and_thread_memory_limit": false,
       "max_file_size": '4096',
-      "callback_url": ENV['JUDGEZERO_CALLBACK'] + "?submission_id=#{submission_id}"
+      "callback_url": ENV['JUDGEZERO_CALLBACK'] + "/api/v1/#{controller}/callback" + "?submission_id=#{submission_id}"
     }
 
     [payload, expected_out, stdin]
@@ -164,14 +166,5 @@ class AlgoSubmission < ApplicationRecord
         total_test_cases: best_submission.total_test_cases
       )
     end
-  end
-
-  def passed_test_cases_count
-    a = [test_cases.select { |_k, h| h['status_id'] == 3 }.count, passed_test_cases]
-    a.max
-  end
-
-  def expire_cache
-    Rails.cache.delete("algo_submissions_#{user_id}_#{challenge_id}")
   end
 end

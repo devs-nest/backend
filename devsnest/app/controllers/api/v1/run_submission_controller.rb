@@ -1,29 +1,13 @@
 module Api
   module V1
     # algo submission controller
-    class AlgoSubmissionController < ApplicationController
+    class RunSubmissionController < ApplicationController
       include JSONAPI::ActsAsResourceController
       include AlgoHelper
       before_action :user_auth, only: %i[create show]
 
       def context
         { user: @current_user }
-      end
-
-      def create
-        lang = params[:data][:attributes][:language].to_s
-        challenge_id = params[:data][:attributes][:challenge_id].to_s
-        source_code = params[:data][:attributes][:source_code]
-
-        batch, total_test_cases, expected_output_batch, stdins = RunSubmission.run_code(params, lang, challenge_id, source_code)  
-        submission = RunSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, total_test_cases: total_test_cases, status: 'Pending')
-
-        
-        tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
-        zipped_tokens = tokens.zip(expected_output_batch, stdins)
-        submission.ingest_tokens(zipped_tokens, submission)
-
-        api_render(201, { id: submission[:id], type: 'run_submissions' })
       end
 
       def callback
@@ -33,7 +17,7 @@ module Api
 
         return render_error("test case not found in judgezero records") if submission_id.nil?
         
-        submission = RunSubmission.find(submission_id)
+        submission = RunSubmissions.find(submission_id)
 
         return render_error("test case not found in submission") if submission.test_cases.key?(params[:token]).blank?
 
@@ -49,7 +33,7 @@ module Api
           submission.total_runtime = submission.total_runtime.to_f + res_hash['time'].to_f
           submission.total_memory = submission.total_memory.to_i + res_hash['memory'].to_i
           submission.test_cases[params[:token]] = submission.test_cases[params[:token]].merge(res_hash)
-          submission.passed_test_cases =submission.passed_test_cases_count
+          submission.passed_test_cases = passed_test_cases_count(submission)
           submission.status = 'Pending' if submission.status == 'Accepted' && submission.total_test_cases > submission.passed_test_cases
           # submission.is_best_submission = mark_current_as_best_submission
           submission.save!

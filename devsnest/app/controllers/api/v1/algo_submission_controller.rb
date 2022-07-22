@@ -17,11 +17,17 @@ module Api
         challenge_id = params[:data][:attributes][:challenge_id].to_s
         source_code = params[:data][:attributes][:source_code]
 
-        is_submitted = true
-        batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.submit_code(params, lang, challenge_id, source_code)
-        submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, total_test_cases: total_test_cases, is_submitted: is_submitted,
-                      status: 'Pending')
+        if params[:run_code].present?
+          submission = RunSubmissions.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, status: 'Pending')
+          batch, total_test_cases, expected_output_batch, stdins = RunSubmissions.run_code(params, lang, challenge_id, source_code, submission.id)  
+        else
+          is_submitted = true
+          submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted,
+                        status: 'Pending')
+          batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.submit_code(params, lang, challenge_id, source_code, submission.id)
+        end
         
+        submission.update(total_test_cases: total_test_cases)
         tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
         zipped_tokens = tokens.zip(expected_output_batch, stdins)
         submission.ingest_tokens(zipped_tokens, submission)
@@ -34,9 +40,9 @@ module Api
 
         submission_id = params[:submission_id]
 
-        return render_error('test case not found in judgezero records') if submission_id.nil?
-
-        submission = AlgoSubmission.get_by_cache(submission_id)
+        return render_error("test case not found in judgezero records") if submission_id.nil?
+        
+        submission = AlgoSubmission.find(submission_id)
 
         return render_success if submission.test_cases.dig(params[:token], 'status_description').present?
 
@@ -47,7 +53,7 @@ module Api
           submission.total_memory = submission.total_memory.to_i + res_hash['memory'].to_i
           submission.test_cases[params[:token]] ||= {}
           submission.test_cases[params[:token]] = submission.test_cases[params[:token]].merge(res_hash)
-          submission.passed_test_cases = submission.passed_test_cases_count
+          submission.passed_test_cases = passed_test_cases_count(submission)
           submission.status = 'Pending' if submission.status == 'Accepted' && submission.total_test_cases > submission.passed_test_cases
           submission.save!
         end
