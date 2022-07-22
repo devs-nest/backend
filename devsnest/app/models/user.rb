@@ -29,6 +29,7 @@ class User < ApplicationRecord
   after_update :update_user_coins_for_signup
   after_update :update_user_score_lb, if: :saved_change_to_score?
   before_validation :create_referral_code, if: :is_referall_empty?
+  has_paper_trail
 
   def update_user_score_lb
     main_lb = LeaderboardDevsnest::Initializer::LB
