@@ -65,11 +65,11 @@ module Templates
 
     def tree_convert_function
       ['def create_tree(raw_array):', "\troot = TreeNode(raw_array[0])", "\tparent_level = [root]", "\tchild_level = []", "\tnodes_to_be_in_current_level = 2",
-       "\tnodes_to_be_in_next_level = 2 * nodes_to_be_in_current_level", "\tfor i in raw_array[1:]:", "\t\tif not i:", "\t\t\tnodes_to_be_in_next_level -= 2", "\t\t\tnode = None", "\t\telse:", "\t\t\tnode = TreeNode(i)", "\t\tchild_level.append(node)", "\t\tnodes_to_be_in_current_level -= 1", "\t\tif nodes_to_be_in_current_level == 0:", "\t\t\tcreate_tree_level(parent_level, child_level)", "\t\t\tnodes_to_be_in_current_level = nodes_to_be_in_next_level", "\t\t\tnodes_to_be_in_next_level *= 2", "\t\t\tparent_level = child_level", "\t\t\tchild_level = []", "\tif child_level:", "\t\tcreate_tree_level(parent_level, child_level)", "\treturn root"]
+       "\tnodes_to_be_in_next_level = 2 * nodes_to_be_in_current_level", "\tfor i in raw_array[1:]:", "\t\tif i is None:", "\t\t\tnodes_to_be_in_next_level -= 2", "\t\t\tnode = None", "\t\telse:", "\t\t\tnode = TreeNode(i)", "\t\tchild_level.append(node)", "\t\tnodes_to_be_in_current_level -= 1", "\t\tif nodes_to_be_in_current_level == 0:", "\t\t\tcreate_tree_level(parent_level, child_level)", "\t\t\tnodes_to_be_in_current_level = nodes_to_be_in_next_level", "\t\t\tnodes_to_be_in_next_level *= 2", "\t\t\tparent_level = child_level", "\t\t\tchild_level = []", "\tif child_level:", "\t\tcreate_tree_level(parent_level, child_level)", "\treturn root"]
     end
 
     def tree_create_level
-      ['def create_tree_level(parent, child):', "\tchild_iter = iter(child)", "\tfor p in parent:", "\t\tif not p:", "\t\t\tcontinue", "\t\tp.left = next(child_iter, None)",
+      ['def create_tree_level(parent, child):', "\tchild_iter = iter(child)", "\tfor p in parent:", "\t\tif p is None:", "\t\t\tcontinue", "\t\tp.left = next(child_iter, None)",
        "\t\tp.right = next(child_iter, None)"]
     end
 
