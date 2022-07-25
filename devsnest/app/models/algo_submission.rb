@@ -6,8 +6,6 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :challenge
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
   after_commit :expire_cache
-  # after_commit :update_best_submission, if: :execution_completed, on: %i[create update]
-  # after_commit :deduct_previous_score_from_user, if: :saved_change_to_is_best_submission?, on: %i[update]
   include AlgoHelper
 
   scope :accessible, -> { where.not(status: 'Stale') }
