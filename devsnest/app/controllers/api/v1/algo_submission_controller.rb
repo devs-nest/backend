@@ -44,7 +44,7 @@ module Api
 
         return render_error("test case not found in judgezero records") if submission_id.nil?
         
-        submission = AlgoSubmission.find(submission_id)
+        submission = AlgoSubmission.get_by_cache(submission_id)
 
         return render_success if submission.test_cases.dig(params[:token], 'status_description').present?
 
