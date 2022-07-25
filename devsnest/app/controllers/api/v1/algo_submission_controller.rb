@@ -30,7 +30,7 @@ module Api
         end
         
         submission.update(total_test_cases: total_test_cases)
-        tokens = JSON.parse(post_to_judgez({ 'submissions' => batch }))
+        tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
         zipped_tokens = tokens.zip(expected_output_batch, stdins)
         submission.ingest_tokens(zipped_tokens, submission)
 

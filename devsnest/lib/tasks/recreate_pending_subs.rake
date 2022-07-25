@@ -19,7 +19,7 @@ namespace :run_pendings do
           batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.run_code({}, submission.language, submission.challenge_id, submission.source_code, submission.id)
         end
 
-        tokens = JSON.parse(post_to_judgez({ 'submissions' => batch }))
+        tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
 
         zipped_tokens = tokens.zip(expected_output_batch, stdins)
         submission.ingest_tokens(zipped_tokens, submission)

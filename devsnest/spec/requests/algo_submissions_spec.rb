@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+include AlgoHelper
 
 RSpec.describe 'Algo submissions', type: :request do
   let(:user) { create(:user) }
@@ -52,7 +53,7 @@ RSpec.describe 'Algo submissions', type: :request do
 
   context 'submissions' do
     before do
-      allow(:post_to_judgez).to receive(:batch).and_return(token_set)
+      allow(AlgoSubmission).to receive(:post_to_judgez).and_return(token_set)
       allow(AlgoSubmission).to receive(:add_submission).and_return([payload, 'test', 'test'])
     end
     it 'should create submissions' do
@@ -63,7 +64,7 @@ RSpec.describe 'Algo submissions', type: :request do
 
   context 'run code' do
     before do
-      allow(:post_to_judgez).to receive(:batch).and_return(token_set)
+      allow(AlgoSubmission).to receive(:post_to_judgez).and_return(token_set)
       allow(AlgoSubmission).to receive(:add_submission).and_return([payload, 'test', 'test'])
     end
     it 'should create submissions' do
