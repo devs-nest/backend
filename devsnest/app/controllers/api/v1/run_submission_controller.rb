@@ -17,7 +17,7 @@ module Api
 
         return render_error("test case not found in judgezero records") if submission_id.nil?
         
-        submission = RunSubmissions.find(submission_id)
+        submission = RunSubmission.find(submission_id)
 
         return render_error("test case not found in submission") if submission.test_cases.key?(params[:token]).blank?
 
@@ -28,7 +28,7 @@ module Api
         # previous_best_submission.update(is_best_submission: false) if previous_best_submission.present? && mark_current_as_best_submission
 
         submission.with_lock do
-          res_hash = AlgoSubmission.prepare_test_case_result(params)
+          res_hash = prepare_test_case_result(params)
           submission.status = res_hash['status_description'] if order_status(submission.status) <= order_status(res_hash['status_description'])
           submission.total_runtime = submission.total_runtime.to_f + res_hash['time'].to_f
           submission.total_memory = submission.total_memory.to_i + res_hash['memory'].to_i

@@ -1,4 +1,4 @@
-class RunSubmissions < ApplicationRecord
+class RunSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
 

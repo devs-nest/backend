@@ -4,7 +4,7 @@ module Api
   module V1
     # api for testing the population submissions
     class RunSubmissionResource < JSONAPI::Resource
-      attributes :user_id, :challenge_id, :source_code, :language, :test_cases, :total_test_cases, :passed_test_cases, :is_submitted, :status, :total_runtime, :total_memory
+      attributes :user_id, :challenge_id, :source_code, :language, :test_cases, :total_test_cases, :passed_test_cases, :status, :total_runtime, :total_memory
       attributes :score_achieved
 
       def score_achieved

@@ -11,7 +11,7 @@ class JudgeZWorker
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'] }
     poll = HTTParty.get(ENV['JUDGEZERO_URL']+"/submissions/#{token.to_s}?base64_encoded=true", headers: jz_headers)
     submission.with_lock do
-      res_hash = AlgoSubmission.prepare_test_case_result(JSON(poll.body))
+      res_hash = prepare_test_case_result(JSON(poll.body))
       if order_status(submission.status) <= order_status(res_hash["status_description"])
         submission.status = res_hash["status_description"]
       end

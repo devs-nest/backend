@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'helpers/algo_helpers.rb'
 namespace :get_pendings do
   desc 'recheck pending submission'
   task run: :environment do
@@ -14,7 +13,7 @@ namespace :get_pendings do
         submission[:test_cases].each do |token, stats|
           poll = HTTParty.get(ENV['JUDGEZERO_URL']+"/submissions/#{token.to_s}?base64_encoded=true", headers: jz_headers)
           begin
-            res_hash = AlgoSubmission.prepare_test_case_result(JSON(poll.body))
+            res_hash = prepare_test_case_result(JSON(poll.body))
             next if submission.test_cases[token]["status_description"].present?
             submission.with_lock do
               if order_status(submission.status) <= order_status(res_hash["status_description"])

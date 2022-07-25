@@ -18,21 +18,23 @@ module Api
         source_code = params[:data][:attributes][:source_code]
 
         if params[:run_code].present?
-          submission = RunSubmissions.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, status: 'Pending')
-          batch, total_test_cases, expected_output_batch, stdins = RunSubmissions.run_code(params, lang, challenge_id, source_code, submission.id)  
+          record_type = 'run_submissions'
+          submission = RunSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, status: 'Pending')
+          batch, total_test_cases, expected_output_batch, stdins = RunSubmission.run_code(params, lang, challenge_id, source_code, submission.id)  
         else
           is_submitted = true
+          record_type = 'algo_submissions'
           submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted,
                         status: 'Pending')
           batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.submit_code(params, lang, challenge_id, source_code, submission.id)
         end
         
         submission.update(total_test_cases: total_test_cases)
-        tokens = JSON.parse(AlgoSubmission.post_to_judgez({ 'submissions' => batch }))
+        tokens = JSON.parse(post_to_judgez({ 'submissions' => batch }))
         zipped_tokens = tokens.zip(expected_output_batch, stdins)
         submission.ingest_tokens(zipped_tokens, submission)
 
-        api_render(201, { id: submission[:id], type: 'algo_submissions' })
+        api_render(201, { id: submission[:id], type: record_type })
       end
 
       def callback
@@ -47,7 +49,7 @@ module Api
         return render_success if submission.test_cases.dig(params[:token], 'status_description').present?
 
         submission.with_lock do
-          res_hash = AlgoSubmission.prepare_test_case_result(params)
+          res_hash = prepare_test_case_result(params)
           submission.status = res_hash['status_description'] if order_status(submission.status) <= order_status(res_hash['status_description'])
           submission.total_runtime = submission.total_runtime.to_f + res_hash['time'].to_f
           submission.total_memory = submission.total_memory.to_i + res_hash['memory'].to_i

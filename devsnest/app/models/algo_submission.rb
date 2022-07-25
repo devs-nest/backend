@@ -64,43 +64,6 @@ class AlgoSubmission < ApplicationRecord
     [batch, total_test_cases, expected_output_batch, stdins]
   end
 
-  def self.run_code(params, lang, challenge_id, source_code, submission_id = nil)
-    test_case = params.dig(:data, :attributes, :test_case)
-    mode = 'run'
-    batch = []
-    expected_output_batch = []
-    stdins = []
-    if test_case.nil?
-      test_case = Testcase.where(challenge_id: challenge_id, is_sample: true).first
-      mode = 'run_sample'
-    end
-    total_test_cases = 1
-    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, mode, submission_id)
-    batch << loader
-    expected_output_batch << expected_output
-    stdins << stdin
-    [batch, total_test_cases, expected_output_batch, stdins]
-  end
-
-  def self.post_to_judgez(batch)
-    jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'], 'x-rapidapi-host': ENV['JZ_RAPID_HOST'], 'x-rapidapi-key': ENV['JZ_RAPID_KEY'] }
-    response = HTTParty.post("#{ENV['JUDGEZERO_URL']}/submissions/batch?base64_encoded=true", body: batch.to_json, headers: jz_headers)
-    response.read_body
-    # response.code == 201 ? JSON(response.read_body) : nil
-  end
-
-  def self.prepare_test_case_result(data)
-    {
-      'stdout' => data['stdout'],
-      'stderr' => data['stderr'],
-      'compile_output' => data['compile_output'],
-      'time' => data['time'],
-      'memory' => data['memory'],
-      'status_id' => data['status']['id'],
-      'status_description' => data['status']['description']
-    }
-  end
-
   def ingest_tokens(tokens, submission)
     tokens.each do |token, expected_output, stdin|
       tstring = token['token'].to_s
