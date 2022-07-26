@@ -298,4 +298,31 @@ class User < ApplicationRecord
   def expire_cache
     Rails.cache.delete("user_#{id}")
   end
+
+  def leaderboard_details
+    main_lb = LeaderboardDevsnest::Initializer::LB
+    rank = main_lb.rank_for(@model.username)
+
+    nil unless rank.present?
+    { rank: rank, score: main_lb&.score_for(@model&.username) } # Can add other leaderboard details in future
+  end
+
+  def tha_details
+    course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
+
+    total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
+    solved_assignments_count = UserChallengeScore.where(user_id: user_id, challenge_id: total_assignments_challenge_ids).count
+    {
+      total_assignments_count: total_assignments_challenge_ids&.count,
+      solved_assignments_count: solved_assignments_count&.count
+    }
+  end
+
+  def group_details
+    group = GroupUser.where(user_id: id)
+    {
+      group_slug: group&.slug,
+      group_name: group&.name
+    }
+  end
 end

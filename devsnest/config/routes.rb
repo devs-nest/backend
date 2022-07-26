@@ -72,6 +72,7 @@ Rails.application.routes.draw do
           get :unsubscribe
           get :check_group_name
           get :check_user_details
+          get :dashboard_details
         end
       end
 

@@ -338,6 +338,20 @@ module Api
         render_success(data)
       end
 
+      def dashboard_details
+        user = @current_user
+        {
+          accepted_in_course: user&.accepted_in_course, # To distinguish from old user vs new user
+          discord_active: user&.discord_active, # To distinguish from connedted vs not connected user
+          is_fullstack_course_22_form_filled: user&.is_fullstack_course_22_form_filled, # To distinguish from users filled up the form or not
+          group_details: User.group_details, # To get the group details
+          total_by_difficulty: Challenge.split_by_difficulty, # Algo Challenges Details
+          solved: Challenge.count_solved(user&.id), # Algo Challenges Details
+          tha_details: User.tha_details, # Bootcamp Progress
+          leaderboard_details: User.leaderboard_details # Leaderboard Details
+        }.as_json
+      end
+
       private
 
       def sign_up_params
