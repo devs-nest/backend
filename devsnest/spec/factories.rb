@@ -2,7 +2,6 @@
 
 FactoryBot.define do
   factory :user_challenge_score do
-    
   end
 
   factory :algo_template do
@@ -158,5 +157,14 @@ FactoryBot.define do
     sequence(:name) { |n| "test#{n}" }
     sequence(:guild_id) { |n| "test#{n}" }
     sequence(:link) { |n| "test#{n}" }
+  end
+
+  factory :course do
+  end
+
+  factory :course_curriculum do
+  end
+
+  factory :assignment_question do
   end
 end
