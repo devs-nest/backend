@@ -301,28 +301,32 @@ class User < ApplicationRecord
 
   def leaderboard_details
     main_lb = LeaderboardDevsnest::Initializer::LB
-    rank = main_lb.rank_for(@model.username)
+    rank = main_lb&.rank_for(username)
 
     nil unless rank.present?
-    { rank: rank, score: main_lb&.score_for(@model&.username) } # Can add other leaderboard details in future
+    { rank: rank, score: main_lb&.score_for(username) } # Can add other leaderboard details in future
   end
 
   def tha_details
+    current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
+    question_ids = AssignmentQuestion.where(course_curriculum: course_curriculum_ids).pluck(:question_id)
+    total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')&.pluck(:question_id)
+    solved_assignments_count = UserChallengeScore.where(user_id: id, challenge_id: question_ids).where('passed_test_cases = total_test_cases').count
 
-    total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
-    solved_assignments_count = UserChallengeScore.where(user_id: user_id, challenge_id: total_assignments_challenge_ids).count
     {
-      total_assignments_count: total_assignments_challenge_ids&.count,
-      solved_assignments_count: solved_assignments_count&.count
+      total_assignments_count: total_assignments_challenge_ids&.count || 0,
+      solved_assignments_count: solved_assignments_count || 0
     }
   end
 
   def group_details
-    group = GroupUser.where(user_id: id)
+    group = GroupMember.where(user_id: id)&.first&.group
+    return {} unless group.present?
+
     {
-      group_slug: group&.slug,
-      group_name: group&.name
+      group_slug: group.slug,
+      group_name: group.name
     }
   end
 end
