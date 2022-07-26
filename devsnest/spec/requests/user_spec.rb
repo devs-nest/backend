@@ -128,16 +128,16 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
     end
 
-    # it 'retrun data of logged in users when user is bot ' do
-    #   get '/api/v1/users/leaderboard', params: { "data": { "attributes": { "discord_id": user.discord_id } } }, headers: {
-    #     'ACCEPT' => 'application/vnd.api+json',
-    #     'CONTENT-TYPE' => 'application/vnd.api+json',
-    #     'Token' => ENV['DISCORD_TOKEN'],
-    #     'User-Type' => 'Bot'
-    #   }
-    #   expect(response.status).to eq(200)
-    #   expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
-    # end
+    it 'retrun data of logged in users when user is bot ' do
+      get '/api/v1/users/leaderboard', params: { "data": { "attributes": { "discord_id": user.discord_id } } }, headers: {
+        'ACCEPT' => 'application/vnd.api+json',
+        'CONTENT-TYPE' => 'application/vnd.api+json',
+        'Token' => ENV['DISCORD_TOKEN'],
+        'User-Type' => 'Bot'
+      }
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+    end
   end
 
   context 'Report' do
