@@ -110,7 +110,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Leaderboard' do
-    let(:spec_leaderboard) {  LeaderboardDevsnest::Initializer::LB }
+    let(:spec_leaderboard) { LeaderboardDevsnest::Initializer::LB }
     let!(:user) { create(:user, discord_active: true, username: 'username') }
     before :each do
       User.initialize_leaderboard(spec_leaderboard)
@@ -654,7 +654,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
     let!(:ucs) { create(:user_challenge_score, user_id: user.id, challenge_id: question.id, passed_test_cases: 10, total_test_cases: 10) }
 
     before do
-      spec_leaderboard.rank_member(user.username, 10000)
+      spec_leaderboard.rank_member(user.username, 10_000)
     end
     it 'User logged in' do
       sign_in(user)
@@ -669,7 +669,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:solved][:medium]).to eq(1)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:tha_details][:total_assignments_count]).to eq(1)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:tha_details][:solved_assignments_count]).to eq(1)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:leaderboard_details][:score]).to eq(10000.0)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:leaderboard_details][:score]).to eq(10_000.0)
     end
 
     it 'User not logged in' do
