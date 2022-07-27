@@ -315,8 +315,8 @@ class User < ApplicationRecord
     solved_assignments_count = UserChallengeScore.where(user_id: id, challenge_id: question_ids).where('passed_test_cases = total_test_cases').count
 
     {
-      total_assignments_count: total_assignments_challenge_ids&.count || 0,
-      solved_assignments_count: solved_assignments_count || 0
+      total_assignments_count: total_assignments_challenge_ids&.count,
+      solved_assignments_count: solved_assignments_count
     }
   end
 
