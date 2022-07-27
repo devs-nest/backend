@@ -321,7 +321,7 @@ class User < ApplicationRecord
   end
 
   def group_details
-    group = GroupMember.find_by(user_id: id)&.(:group)
+    group = GroupMember.find_by(user_id: id)&.group
     return {} unless group.present?
 
     {
