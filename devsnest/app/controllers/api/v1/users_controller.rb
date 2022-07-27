@@ -340,7 +340,7 @@ module Api
 
       def dashboard_details
         user = @current_user
-        render_not_found({ message: 'User not found' }) if user.blank?
+        return render_not_found({ message: 'User not found' }) if user.blank?
 
         data = {
           accepted_in_course: user.accepted_in_course, # To distinguish from old user vs new user
