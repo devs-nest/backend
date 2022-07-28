@@ -109,6 +109,25 @@ module Api
         render_success(@current_user.as_json.merge({ "type": 'users' }))
       end
 
+      def connect_github
+        permitted_params = params.permit(%i[code]).to_h
+        return render_error({ message: 'Github Access Code not found' }) unless permitted_params['code'].present?
+
+        res = User.fetch_github_access_token(permitted_params['code'])
+        if res.key?(:access_token)
+          data_to_encode = {
+            user_id: @current_user.id,
+            access_token: res[:access_token],
+            initiated_at: Time.now
+          }
+          encrypted_access_token = $cryptor.encrypt_and_sign(data_to_encode)
+          @current_user.update!(github_token: encrypted_access_token)
+          render_success({ message: 'Github connected successfully!' })
+        else
+          render_error({ error: res['error'] })
+        end
+      end
+
       def login
         code = params['code']
         googleId = params['googleId']

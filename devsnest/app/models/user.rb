@@ -158,6 +158,25 @@ class User < ApplicationRecord
     response.code == '200' ? JSON(response.read_body)['access_token'] : nil
   end
 
+  def self.fetch_github_access_token(code)
+    url = URI('https://github.com/login/oauth/access_token')
+
+    https = Net::HTTP.new(url.host, url.port)
+    https.use_ssl = true
+    request = Net::HTTP::Post.new(url)
+
+    request.body = "code=#{code}&client_id=#{ENV['GITHUB_CLIENT_ID']}&client_secret=#{ENV['GITHUB_CLIENT_SECRET']}"
+    response = https.request(request)
+    json_response_body = Rack::Utils.parse_nested_query(response.body)
+    if response.code == '200'
+      if json_response_body.key?('access_token')
+        { 'access_token': json_response_body['access_token'] }
+      else
+        { 'error': json_response_body['error'] }
+      end
+    end
+  end
+
   def self.fetch_discord_user_details(token)
     url = 'http://discordapp.com/api/users/@me'
     headers = {
