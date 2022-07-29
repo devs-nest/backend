@@ -308,6 +308,37 @@ class User < ApplicationRecord
     Group.where(batch_leader_id: id).present?
   end
 
+  def create_github_commit(commited_files, repo, commit_message = "Added All Files")
+    ref = 'heads/main'
+    decoded_access_token = $cryptor.decrypt_and_verify(self.github_token)[:access_token]
+    client = Octokit::Client.new( :access_token => decoded_access_token )
+
+    # SHA of the latest commit on branch
+    sha_latest_commit = client.ref(repo, ref).object.sha
+    # Find and store the SHA for the tree object that the heads/master commit points to.
+    sha_base_tree = client.commit(repo, sha_latest_commit).commit.tree.sha
+
+    blobs = []
+    # Create Blobs of all the files
+    commited_files.each do |commited_file|
+      commited_file = commited_file.as_json
+      content = commited_file['content']
+      file_name = commited_file['file_name']
+
+      blob_sha = client.create_blob(repo, content, "base64")
+      blobs << { :path => file_name, :mode => "100644", :type => "blob", :sha => blob_sha }
+    end
+
+    # Make a new tree over the base tree
+    sha_new_tree = client.create_tree(repo, blobs, {:base_tree => sha_base_tree }).sha
+    # Create the commit over the new tree
+    sha_new_commit = client.create_commit(repo, commit_message, sha_new_tree, sha_latest_commit).sha
+    # Update the branch on github
+    client.update_ref(repo, ref, sha_new_commit)
+
+    true
+  end
+
   def self.get_by_cache(id)
     Rails.cache.fetch("user_#{id}", expires_in: 1.day) do
       User.find_by(id: id)
