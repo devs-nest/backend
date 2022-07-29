@@ -23,7 +23,7 @@ class Scrum < ApplicationRecord
   def update_solved_assignments
     current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
-    current_module = 'dsa'
+    current_module = current_course.current_module
     case current_module
     when 'dsa'
       total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
@@ -32,6 +32,15 @@ class Scrum < ApplicationRecord
       recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
                                                           .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
       recent_solved_assignments_count = UserChallengeScore.where(user_id: user_id, challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
+
+      update!(recent_assignments_solved: { solved_assignments: recent_solved_assignments_count, total_assignments: recent_total_assignments_ch_ids.size }, total_assignments_solved: { solved_assignments: solved_assignments_count, total_assignments: total_assignments_challenge_ids.size })
+    when 'frontend'
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id)
+      solved_assignments_count = FrontendChallengeScore.where(user_id: user_id, frontend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+
+      recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge')
+                                                          .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
+      recent_solved_assignments_count = FrontendChallengeScore.where(user_id: user_id, frontend_challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
 
       update!(recent_assignments_solved: { solved_assignments: recent_solved_assignments_count, total_assignments: recent_total_assignments_ch_ids.size }, total_assignments_solved: { solved_assignments: solved_assignments_count, total_assignments: total_assignments_challenge_ids.size })
     end

@@ -157,6 +157,7 @@ class Group < ApplicationRecord
     scrum_data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, group_id: id)
     total_scrums = scrum_data.count
     result = []
+    current_module = current_course.current_module
     group_members.each do |gm|
       user = User.find_by(id: gm&.user_id)
       next unless user.present?
@@ -164,12 +165,22 @@ class Group < ApplicationRecord
       user_scrums_count = scrum_data.where(user_id: user.id).count
       scrum_attended = scrum_data.where(user_id: user.id, attendance: true).count
 
-      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
-      solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+      case current_module
+      when 'dsa'
+        total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
+        solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
 
-      recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
-                                                          .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
-      recent_solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
+        recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
+                                                            .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
+        recent_solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
+      when 'frontend'
+        total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id)
+        solved_assignments_count = FrontendChallengeScore.where(user_id: user.id, frontend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+
+        recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge')
+                                                            .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
+        recent_solved_assignments_count = FrontendChallengeScore.where(user_id: user.id, frontend_challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
+      end
 
       result.append({
                       user_name: user.name,

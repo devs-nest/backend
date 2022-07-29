@@ -178,6 +178,25 @@ class User < ApplicationRecord
     end
   end
 
+  def self.fetch_github_access_token(code)
+    url = URI('https://github.com/login/oauth/access_token')
+
+    https = Net::HTTP.new(url.host, url.port)
+    https.use_ssl = true
+    request = Net::HTTP::Post.new(url)
+
+    request.body = "code=#{code}&client_id=#{ENV['GITHUB_CLIENT_ID']}&client_secret=#{ENV['GITHUB_CLIENT_SECRET']}"
+    response = https.request(request)
+    json_response_body = Rack::Utils.parse_nested_query(response.body)
+    if response.code == '200'
+      if json_response_body.key?('access_token')
+        { 'access_token': json_response_body['access_token'] }
+      else
+        { 'error': json_response_body['error'] }
+      end
+    end
+  end
+
   def self.fetch_discord_user_details(token)
     url = 'http://discordapp.com/api/users/@me'
     headers = {
@@ -384,12 +403,18 @@ class User < ApplicationRecord
   def tha_details
     current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
-    question_ids = AssignmentQuestion.where(course_curriculum: course_curriculum_ids).pluck(:question_id)
-    total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')&.pluck(:question_id)
-    solved_assignments_count = UserChallengeScore.where(user_id: id, challenge_id: question_ids).where('passed_test_cases = total_test_cases').count
+    current_module = current_course.current_module
+    case current_module
+    when 'dsa'
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
+      solved_assignments_count = UserChallengeScore.where(user_id: id, challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+    when 'frontend'
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id)
+      solved_assignments_count = FrontendChallengeScore.where(user_id: id, frontend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+    end
 
     {
-      total_assignments_count: total_assignments_challenge_ids&.count,
+      total_assignments_count: total_assignments_challenge_ids.count,
       solved_assignments_count: solved_assignments_count
     }
   end

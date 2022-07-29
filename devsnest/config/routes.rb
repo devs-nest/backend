@@ -18,6 +18,12 @@ Rails.application.routes.draw do
           end
         end
         jsonapi_resources :certification, only: %i[index create update]
+        jsonapi_resources :frontend_challenge, only: %i[create index show update destroy] do
+          collection do
+            get :self_created_challenges
+            get :add_testcase
+          end
+        end
         jsonapi_resources :challenge, only: %i[show index create update] do
           collection do
             get :self_created_challenges
@@ -131,7 +137,7 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :notification, only: %i[create index]
       jsonapi_resources :event, only: %i[create index]
-      jsonapi_resources :challenge, only: %i[create index show update] do
+      jsonapi_resources :challenge, only: %i[index show] do
         collection do
           get '/:id/submissions', to: 'challenge#submissions'
           get :fetch_by_slug
@@ -164,6 +170,13 @@ Rails.application.routes.draw do
       jsonapi_resources :course_curriculum, only: %i[index]
       jsonapi_resources :referral, only: %i[index]
       jsonapi_resources :server_users, only: %i[create]
+      jsonapi_resources :frontend_challenge, only: %i[index show] do
+        collection do
+          get :fetch_by_slug
+          get :fetch_frontend_testcases
+        end
+      end
+      jsonapi_resources :fe_submissions, only: %i[create show index]
     end
   end
 end
