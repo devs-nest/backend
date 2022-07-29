@@ -19,7 +19,7 @@ module Api
 
         if params[:run_code].present?
           record_type = 'run_submissions'
-          submission = RunSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, status: 'Pending')
+          submission = RunSubmission.create!(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, status: 'Pending')
           batch, total_test_cases, expected_output_batch, stdins = RunSubmission.run_code(params, lang, challenge_id, source_code, submission.id)  
         else
           is_submitted = true

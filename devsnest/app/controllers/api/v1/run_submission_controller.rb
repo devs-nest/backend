@@ -17,15 +17,11 @@ module Api
 
         return render_error("test case not found in judgezero records") if submission_id.nil?
         
-        submission = RunSubmission.find(submission_id)
+        submission = RunSubmission.find_by_id(submission_id)
 
         return render_error("test case not found in submission") if submission.test_cases.key?(params[:token]).blank?
 
         return render_success if submission.test_cases.dig(params[:token], "status_description").present?
-        # return render_unauthorized if submission.created_at > Time.now - 1.day
-
-        # previous_best_submission, mark_current_as_best_submission = submission.check_for_best_submission
-        # previous_best_submission.update(is_best_submission: false) if previous_best_submission.present? && mark_current_as_best_submission
 
         submission.with_lock do
           res_hash = prepare_test_case_result(params)

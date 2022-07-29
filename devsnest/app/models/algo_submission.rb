@@ -12,7 +12,7 @@ class AlgoSubmission < ApplicationRecord
 
   def self.add_submission(source_code, lang, test_case, mode, submission_id = nil)
 
-    controller = mode == "run" || mode == "run_sample" ? "run-submission" : "algo-submission"   
+    controller = ['run', 'run_sample'].include?(mode) ? "run-submission" : "algo-submission"
     if mode != 'run'
       inpf = test_case.input_case
       outf = test_case.output_case
