@@ -21,7 +21,6 @@ class AlgoSubmission < ApplicationRecord
 
     stdin = Base64.encode64(inpf || '')
     expected_out = Base64.encode64(outf || '')
-    # jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': '4p2j-8mgt-ek0g-sh7m-k9kp' }
     payload = {
       "source_code": source_code,
       "language_id": Devsnest::Application::JUDGEZERO_OPTIONS[lang][:id],
@@ -39,7 +38,6 @@ class AlgoSubmission < ApplicationRecord
       "max_file_size": '4096',
       "callback_url": ENV['JUDGEZERO_CALLBACK'] + "/api/v1/#{controller}/callback" + "?submission_id=#{submission_id}"
     }
-
     [payload, expected_out, stdin]
   end
 
@@ -124,7 +122,7 @@ class AlgoSubmission < ApplicationRecord
                               })
       entry.save!
     else
-      entry = UserChallengeScore.create(
+      UserChallengeScore.create(
         user_id: best_submission.user_id,
         challenge_id: best_submission.challenge_id,
         score: score,
