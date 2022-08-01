@@ -149,6 +149,11 @@ Rails.application.routes.draw do
           put :callback
         end
       end
+      jsonapi_resources :run_submission, only: %i[show update] do
+        collection do
+          put :callback
+        end
+      end
       jsonapi_resources :certification, only: %i[show]
       jsonapi_resources :frontend_project, only: %i[show index create update destroy]
       jsonapi_resources :company, only: %i[index create]

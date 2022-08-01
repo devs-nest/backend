@@ -8,6 +8,8 @@ FactoryBot.define do
   end
 
   factory :judgeztoken do
+    sequence(:submission_id) { |n| n }
+    sequence(:token) { |n| n }
   end
 
   factory :discussion do
@@ -29,6 +31,11 @@ FactoryBot.define do
     sequence(:challenge_id) { |n| n }
     sequence(:is_best_submission) { |_n| false }
     sequence(:is_submitted) { |_n| true }
+  end
+
+  factory :run_submission do
+    sequence(:user_id) { |n| n }
+    sequence(:challenge_id) { |n| n }
   end
 
   factory :frontend_question do
