@@ -6,7 +6,7 @@ include AlgoHelper
 RSpec.describe 'Run submissions', type: :request do
   let(:user) { create(:user) }
   let(:question) { create(:challenge, user_id: user.id, name: 'two sum') }
-  let!(:run_submission) { create(:run_submission, user_id: user.id, challenge_id: question.id, test_cases: {"8531f293-1585-4d36-a34c-73726792e6c9": {}}) }
+  let!(:run_submission) { create(:run_submission, user_id: user.id, challenge_id: question.id, test_cases: { "8531f293-1585-4d36-a34c-73726792e6c9": {} }) }
   let!(:test) { create(:testcase, challenge_id: question.id, input_path: 'example/ipath', output_path: 'example/opath') }
   before :each do
     sign_in(user)
@@ -29,15 +29,15 @@ RSpec.describe 'Run submissions', type: :request do
   let(:jz_callback_payload) do
     {
       "stdout": "hello, Judge0\n",
-      "time": "0.001",
+      "time": '0.001',
       "memory": 376,
       "stderr": nil,
-      "token": "8531f293-1585-4d36-a34c-73726792e6c9",
+      "token": '8531f293-1585-4d36-a34c-73726792e6c9',
       "compile_output": nil,
       "message": nil,
       "status": {
         "id": 3,
-        "description": "Accepted"
+        "description": 'Accepted'
       }
     }
   end
@@ -79,14 +79,13 @@ RSpec.describe 'Run submissions', type: :request do
   end
 
   context 'run sub callback' do
-    let!(:judgeztoken1) { create(:judgeztoken, submission_id: run_submission.id, token: "8531f293-1585-4d36-a34c-73726792e6c9") }
-    
+    let!(:judgeztoken1) { create(:judgeztoken, submission_id: run_submission.id, token: '8531f293-1585-4d36-a34c-73726792e6c9') }
+
     before do
       allow(AlgoSubmission).to receive(:post_to_judgez).and_return(token_set)
       allow(AlgoSubmission).to receive(:add_submission).and_return([payload, 'test', 'test'])
     end
     it 'should update submissions' do
-
       put "/api/v1/run-submission/callback?submission_id=#{run_submission.id}", params: jz_callback_payload
       expect(response).to have_http_status(204)
     end

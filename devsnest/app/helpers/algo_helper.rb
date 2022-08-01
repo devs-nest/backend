@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AlgoHelper
   def order_status(status)
     orders = {

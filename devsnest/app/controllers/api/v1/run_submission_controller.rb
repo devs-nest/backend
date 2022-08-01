@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     # algo submission controller
@@ -15,13 +17,13 @@ module Api
 
         submission_id = Judgeztoken.find_by(token: params[:token]).try(:submission_id)
 
-        return render_error("test case not found in judgezero records") if submission_id.nil?
-        
+        return render_error('test case not found in judgezero records') if submission_id.nil?
+
         submission = RunSubmission.find_by_id(submission_id)
 
-        return render_error("test case not found in submission") if submission.test_cases.key?(params[:token]).blank?
+        return render_error('test case not found in submission') if submission.test_cases.key?(params[:token]).blank?
 
-        return render_success if submission.test_cases.dig(params[:token], "status_description").present?
+        return render_success if submission.test_cases.dig(params[:token], 'status_description').present?
 
         submission.with_lock do
           res_hash = prepare_test_case_result(params)
