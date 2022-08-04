@@ -233,6 +233,8 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
+    rbnacl (7.1.1)
+      ffi
     redis (4.2.5)
     redis-actionpack (5.2.0)
       actionpack (>= 5, < 7)
@@ -376,6 +378,7 @@ DEPENDENCIES
   puma (~> 4.3.10)
   rack-cors (~> 1.1.1)
   rails (~> 6.0.4, >= 6.0.4)
+  rbnacl
   redis (= 4.2.5)
   redis-namespace (= 1.8.0)
   redis-rails (= 5.0.2)

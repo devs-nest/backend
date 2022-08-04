@@ -308,10 +308,14 @@ class User < ApplicationRecord
     Group.where(batch_leader_id: id).present?
   end
 
+  def github_client
+    decoded_access_token = $cryptor.decrypt_and_verify(self.github_token)[:access_token]
+    Octokit::Client.new( :access_token => decoded_access_token )
+  end
+
   def create_github_commit(commited_files, repo, commit_message = "Added All Files")
     ref = 'heads/main'
-    decoded_access_token = $cryptor.decrypt_and_verify(self.github_token)[:access_token]
-    client = Octokit::Client.new( :access_token => decoded_access_token )
+    client = self.github_client
 
     # SHA of the latest commit on branch
     sha_latest_commit = client.ref(repo, ref).object.sha
@@ -335,6 +339,28 @@ class User < ApplicationRecord
     sha_new_commit = client.create_commit(repo, commit_message, sha_new_tree, sha_latest_commit).sha
     # Update the branch on github
     client.update_ref(repo, ref, sha_new_commit)
+
+    true
+  end
+
+  def update_github_secret(repo, secret_name, secret_value)
+    client = self.github_client
+
+    # Get the public key of repository to encrypt secrets
+    key_info = client.get("https://api.github.com/repos/#{client.user.login}/#{repo}/actions/secrets/public-key")
+    repo_public_key = Base64.decode64(key_info[:key]) # Key comes in Base64 encoded
+    repo_public_key_id = key_info[:key_id]
+
+    # Making a new public key from repo public key to encrypt the secret
+    public_key = RbNaCl::PublicKey.new(repo_public_key)
+    box = RbNaCl::Boxes::Sealed.from_public_key(public_key)
+    encrypted_secret = box.encrypt(secret_value)
+
+    # Creating/Updating the github secret in the repo
+    client.put("/repos/#{client.user.login}/#{repo}/actions/secrets/#{secret_name}", {
+      encrypted_value: Base64.strict_encode64(encrypted_secret),
+      key_id: repo_public_key_id
+    })
 
     true
   end
