@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :coin_log do
+    
+  end
+
   factory :user_challenge_score do
   end
 
