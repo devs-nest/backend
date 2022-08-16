@@ -316,6 +316,7 @@ class User < ApplicationRecord
   def create_github_commit(commited_files, repo, commit_message = "Added All Files")
     ref = 'heads/main'
     client = self.github_client
+    repo = "#{client.user.login}/#{repo}"
 
     # SHA of the latest commit on branch
     sha_latest_commit = client.ref(repo, ref).object.sha
@@ -324,13 +325,9 @@ class User < ApplicationRecord
 
     blobs = []
     # Create Blobs of all the files
-    commited_files.each do |commited_file|
-      commited_file = commited_file.as_json
-      content = commited_file['content']
-      file_name = commited_file['file_name']
-
+    commited_files.each do |file_path, content|
       blob_sha = client.create_blob(repo, content, "base64")
-      blobs << { :path => file_name, :mode => "100644", :type => "blob", :sha => blob_sha }
+      blobs << { :path => file_path, :mode => "100644", :type => "blob", :sha => blob_sha }
     end
 
     # Make a new tree over the base tree

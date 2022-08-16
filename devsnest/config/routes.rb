@@ -59,6 +59,7 @@ Rails.application.routes.draw do
         member do
           get :get_by_username, constraints: { id: %r{[^/]+} }
           get :certifications
+          post :create_github_commit
         end
         collection do
           post :register
