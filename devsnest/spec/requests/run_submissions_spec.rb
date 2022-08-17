@@ -3,10 +3,10 @@
 require 'rails_helper'
 include AlgoHelper
 
-RSpec.describe 'Algo submissions', type: :request do
+RSpec.describe 'Run submissions', type: :request do
   let(:user) { create(:user) }
   let(:question) { create(:challenge, user_id: user.id, name: 'two sum') }
-  let(:algo_submission) { create(:algo_submission, user_id: user.id, challenge_id: question.id) }
+  let!(:run_submission) { create(:run_submission, user_id: user.id, challenge_id: question.id, test_cases: { "8531f293-1585-4d36-a34c-73726792e6c9": {} }) }
   let!(:test) { create(:testcase, challenge_id: question.id, input_path: 'example/ipath', output_path: 'example/opath') }
   before :each do
     sign_in(user)
@@ -22,6 +22,22 @@ RSpec.describe 'Algo submissions', type: :request do
           "user_id": user.id
         },
         "type": 'frontend_submissions'
+      }
+    }
+  end
+
+  let(:jz_callback_payload) do
+    {
+      "stdout": "hello, Judge0\n",
+      "time": '0.001',
+      "memory": 376,
+      "stderr": nil,
+      "token": '8531f293-1585-4d36-a34c-73726792e6c9',
+      "compile_output": nil,
+      "message": nil,
+      "status": {
+        "id": 3,
+        "description": 'Accepted'
       }
     }
   end
@@ -51,17 +67,6 @@ RSpec.describe 'Algo submissions', type: :request do
     \"ecc52a9b-ea80-4a00-ad50-4ab6cc3bb2a1\"\r\n  },\r\n  {\r\n    \"token\": \"1b35ec3b-5776-48ef-b646-d5522bdeb2cc\"\r\n  }\r\n]"
   end
 
-  context 'submissions' do
-    before do
-      allow(AlgoSubmission).to receive(:post_to_judgez).and_return(token_set)
-      allow(AlgoSubmission).to receive(:add_submission).and_return([payload, 'test', 'test'])
-    end
-    it 'should create submissions' do
-      post '/api/v1/algo-submission', params: params
-      expect(response).to have_http_status(201)
-    end
-  end
-
   context 'run code' do
     before do
       allow(AlgoSubmission).to receive(:post_to_judgez).and_return(token_set)
@@ -70,6 +75,19 @@ RSpec.describe 'Algo submissions', type: :request do
     it 'should create submissions' do
       post '/api/v1/algo-submission?run_code=true', params: params
       expect(response).to have_http_status(201)
+    end
+  end
+
+  context 'run sub callback' do
+    let!(:judgeztoken1) { create(:judgeztoken, submission_id: run_submission.id, token: '8531f293-1585-4d36-a34c-73726792e6c9') }
+
+    before do
+      allow(AlgoSubmission).to receive(:post_to_judgez).and_return(token_set)
+      allow(AlgoSubmission).to receive(:add_submission).and_return([payload, 'test', 'test'])
+    end
+    it 'should update submissions' do
+      put "/api/v1/run-submission/callback?submission_id=#{run_submission.id}", params: jz_callback_payload
+      expect(response).to have_http_status(204)
     end
   end
 end

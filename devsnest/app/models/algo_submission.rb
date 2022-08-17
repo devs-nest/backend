@@ -6,10 +6,12 @@ class AlgoSubmission < ApplicationRecord
   belongs_to :challenge
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
   after_commit :expire_cache
+  include AlgoHelper
 
   scope :accessible, -> { where.not(status: 'Stale') }
 
   def self.add_submission(source_code, lang, test_case, mode, submission_id = nil)
+    controller = %w[run run_sample].include?(mode) ? 'run-submission' : 'algo-submission'
     if mode != 'run'
       inpf = test_case.input_case
       outf = test_case.output_case
@@ -19,7 +21,6 @@ class AlgoSubmission < ApplicationRecord
 
     stdin = Base64.encode64(inpf || '')
     expected_out = Base64.encode64(outf || '')
-    # jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': '4p2j-8mgt-ek0g-sh7m-k9kp' }
     payload = {
       "source_code": source_code,
       "language_id": Devsnest::Application::JUDGEZERO_OPTIONS[lang][:id],
@@ -35,9 +36,8 @@ class AlgoSubmission < ApplicationRecord
       "enable_per_process_and_thread_time_limit": false,
       "enable_per_process_and_thread_memory_limit": false,
       "max_file_size": '4096',
-      "callback_url": ENV['JUDGEZERO_CALLBACK'] + "?submission_id=#{submission_id}"
+      "callback_url": ENV['JUDGEZERO_CALLBACK'] + "/api/v1/#{controller}/callback" + "?submission_id=#{submission_id}"
     }
-
     [payload, expected_out, stdin]
   end
 
@@ -59,41 +59,11 @@ class AlgoSubmission < ApplicationRecord
     [batch, total_test_cases, expected_output_batch, stdins]
   end
 
-  def self.run_code(params, lang, challenge_id, source_code, submission_id = nil)
-    test_case = params.dig(:data, :attributes, :test_case)
-    mode = 'run'
-    batch = []
-    expected_output_batch = []
-    stdins = []
-    if test_case.nil?
-      test_case = Testcase.where(challenge_id: challenge_id, is_sample: true).first
-      mode = 'run_sample'
-    end
-    total_test_cases = 1
-    loader, expected_output, stdin = AlgoSubmission.add_submission(source_code, lang, test_case, mode, submission_id)
-    batch << loader
-    expected_output_batch << expected_output
-    stdins << stdin
-    [batch, total_test_cases, expected_output_batch, stdins]
-  end
-
   def self.post_to_judgez(batch)
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'], 'x-rapidapi-host': ENV['JZ_RAPID_HOST'], 'x-rapidapi-key': ENV['JZ_RAPID_KEY'] }
     response = HTTParty.post("#{ENV['JUDGEZERO_URL']}/submissions/batch?base64_encoded=true", body: batch.to_json, headers: jz_headers)
     response.read_body
     # response.code == 201 ? JSON(response.read_body) : nil
-  end
-
-  def self.prepare_test_case_result(data)
-    {
-      'stdout' => data['stdout'],
-      'stderr' => data['stderr'],
-      'compile_output' => data['compile_output'],
-      'time' => data['time'],
-      'memory' => data['memory'],
-      'status_id' => data['status']['id'],
-      'status_description' => data['status']['description']
-    }
   end
 
   def ingest_tokens(tokens, submission)
@@ -111,25 +81,6 @@ class AlgoSubmission < ApplicationRecord
     tokens.each do |token, _expected_output, _stdin|
       tstring = token['token'].to_s
       JudgeZWorker.perform_in(1.minutes, tstring, id)
-    end
-  end
-
-  def self.order_status(status)
-    orders = {
-      'Pending' => -1,
-      'Accepted' => 0,
-      'Wrong Answer' => 2,
-      'Time Limit Exceeded' => 3,
-      'Compilation Error' => 4,
-      'Runtime Error (SIGSEGV)' => 5,
-      'Runtime Error (SIGABRT)' => 6,
-      'Runtime Error (NZEC)' => 7
-    }
-
-    if orders.key?(status)
-      orders[status]
-    else
-      -2
     end
   end
 
@@ -171,7 +122,7 @@ class AlgoSubmission < ApplicationRecord
                               })
       entry.save!
     else
-      entry = UserChallengeScore.create(
+      UserChallengeScore.create(
         user_id: best_submission.user_id,
         challenge_id: best_submission.challenge_id,
         score: score,
@@ -180,11 +131,6 @@ class AlgoSubmission < ApplicationRecord
         total_test_cases: best_submission.total_test_cases
       )
     end
-  end
-
-  def passed_test_cases_count
-    a = [test_cases.select { |_k, h| h['status_id'] == 3 }.count, passed_test_cases]
-    a.max
   end
 
   def expire_cache
