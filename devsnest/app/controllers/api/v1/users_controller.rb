@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator create_github_commit connect_github]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator create_github_commit connect_github create_github_repo]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -126,6 +126,17 @@ module Api
         else
           render_error({ error: res['error'] })
         end
+      end
+
+      def create_github_repo
+        permitted_params = params.permit(%i[repo_name]).to_h
+        repo_name = permitted_params[:repo_name]
+        client = @current_user.github_client
+        return render_error({ message: "Github Not connected!" }) if client.blank?
+
+        client.create_repository(repo_name, private: true) rescue return render_error({ message: "Something went wrong" })
+
+        render_success({ message: "Repo created Successfully!" })
       end
 
       def login
