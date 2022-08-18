@@ -134,7 +134,7 @@ module Api
         client = @current_user.github_client
         return render_error({ message: "Github Not connected!" }) if client.blank?
 
-        client.create_repository(repo_name, private: true) rescue return render_error({ message: "Something went wrong" })
+        client.create_repository(repo_name, private: true, auto_init: true) rescue return render_error({ message: "Something went wrong" })
 
         render_success({ message: "Repo created Successfully!" })
       end
