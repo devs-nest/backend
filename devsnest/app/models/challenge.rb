@@ -6,6 +6,7 @@ class Challenge < ApplicationRecord
   enum content_type: %i[topic sub_topic]
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queues heaps dynamicprogramming backtracking greedy maths]
   has_many :algo_submissions
+  has_many :run_submissions
   has_many :algo_templates
   has_many :testcases
   has_many :company_challenge_mappings

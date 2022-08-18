@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator create_github_commit connect_github create_github_repo]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github create_github_repo]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -376,6 +376,23 @@ module Api
         GithubCommitWorker.perform_async(@current_user.id, repo, secrets.to_json, commited_files.to_json, commit_message)
 
         render_success({ message: "Committed :D" })
+      end
+ 
+      def dashboard_details
+        user = @current_user
+        return render_not_found({ message: 'User not found' }) if user.blank?
+
+        data = {
+          accepted_in_course: user.accepted_in_course, # To distinguish from old user vs new user
+          discord_active: user.discord_active, # To distinguish from connedted vs not connected user
+          is_fullstack_course_22_form_filled: user.is_fullstack_course_22_form_filled, # To distinguish from users filled up the form or not
+          group_details: user.group_details, # To get the group details
+          total_by_difficulty: Challenge.split_by_difficulty, # Algo Challenges Details
+          solved: Challenge.count_solved(user.id), # Algo Challenges Details
+          tha_details: user.tha_details, # Bootcamp Progress
+          leaderboard_details: user.leaderboard_details # Leaderboard Details
+        }
+        render_success(data.as_json)
       end
 
       private

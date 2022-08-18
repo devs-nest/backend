@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :frontend_projects, dependent: :delete_all
   has_many :unsubscribes, dependent: :delete_all
   has_many :algo_submissions
+  has_many :run_submissions
   has_many :challenges
   has_many :minibootcamp_submissions
   has_many :certifications, dependent: :delete_all
@@ -370,5 +371,36 @@ class User < ApplicationRecord
 
   def expire_cache
     Rails.cache.delete("user_#{id}")
+  end
+
+  def leaderboard_details
+    main_lb = LeaderboardDevsnest::Initializer::LB
+    rank = main_lb&.rank_for(username)
+
+    nil unless rank.present?
+    { rank: rank, score: main_lb&.score_for(username) } # Can add other leaderboard details in future
+  end
+
+  def tha_details
+    current_course = Course.last
+    course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
+    question_ids = AssignmentQuestion.where(course_curriculum: course_curriculum_ids).pluck(:question_id)
+    total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')&.pluck(:question_id)
+    solved_assignments_count = UserChallengeScore.where(user_id: id, challenge_id: question_ids).where('passed_test_cases = total_test_cases').count
+
+    {
+      total_assignments_count: total_assignments_challenge_ids&.count,
+      solved_assignments_count: solved_assignments_count
+    }
+  end
+
+  def group_details
+    group = GroupMember.find_by(user_id: id)&.group
+    return {} unless group.present?
+
+    {
+      group_slug: group.slug,
+      group_name: group.name
+    }
   end
 end

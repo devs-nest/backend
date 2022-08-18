@@ -165,11 +165,11 @@ class Group < ApplicationRecord
       scrum_attended = scrum_data.where(user_id: user.id, attendance: true).count
 
       total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
-      solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: total_assignments_challenge_ids).count
+      solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
 
       recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
                                                           .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
-      recent_solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: recent_total_assignments_ch_ids).count
+      recent_solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
 
       result.append({
                       user_name: user.name,

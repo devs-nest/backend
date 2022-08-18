@@ -73,6 +73,7 @@ Rails.application.routes.draw do
           get :unsubscribe
           get :check_group_name
           get :check_user_details
+          get :dashboard_details
         end
       end
 
@@ -145,6 +146,11 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :language, only: %i[index]
       jsonapi_resources :algo_submission, only: %i[create show update] do
+        collection do
+          put :callback
+        end
+      end
+      jsonapi_resources :run_submission, only: %i[show update] do
         collection do
           put :callback
         end
