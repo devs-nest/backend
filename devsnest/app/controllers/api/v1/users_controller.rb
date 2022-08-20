@@ -168,6 +168,8 @@ module Api
 
         return render_error({ message: 'User already in a group' }) if GroupMember.find_by(user_id: @current_user.id)
 
+        @current_user.update!(accepted_in_course: true)
+        
         @current_user.update!(updatable_params[:attributes])
         render_success({ message: 'Form filled' })
       end
