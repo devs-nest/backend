@@ -30,7 +30,7 @@ module Api
 
         return true if @current_user.is_admin?
 
-        render_unauthorized unless @current_user.discord_active && @current_user.accepted_in_course
+        render_unauthorized unless @current_user.discord_active
       end
 
       # def check_authorization
