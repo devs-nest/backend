@@ -104,7 +104,6 @@ module Api
         return render_error(message: 'Group not found') if group.nil?
 
         ActiveRecord::Base.transaction do
-          user.update!(accepted_in_course: true) unless user.accepted_in_course
           group.group_members.create!(user_id: user.id)
           user.update(group_assigned: true)
           raise StandardError, 'Group is already full!' if group.group_members.count > 16
