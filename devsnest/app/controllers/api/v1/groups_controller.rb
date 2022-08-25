@@ -15,6 +15,7 @@ module Api
       # before_action :check_authorization, only: %i[show]
       before_action :create_validations, only: %i[create]
       after_action :assign_leader, only: %i[create]
+      before_action :description_emoji_parse, only: %i[create update]
 
       def context
         {
@@ -225,6 +226,10 @@ module Api
 
         data = group.weekly_data
         render_success(result: data.as_json)
+      end
+
+      def description_emoji_parse
+        params[:data][:attributes][:description] = params[:data][:attributes][:description].dup.force_encoding('ISO-8859-1').encode('UTF-8') if params[:data][:attributes][:description].present?
       end
     end
   end
