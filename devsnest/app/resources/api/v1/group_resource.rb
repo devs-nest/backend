@@ -15,6 +15,10 @@ module Api
         records.where('members_count >= ? AND members_count <= ?', value[0], value[1])
       }
 
+      def description
+        @model.description.dup.encode('ISO-8859-1').force_encoding('utf-8') rescue nil
+      end
+
       def scrum_start_time
         @model&.scrum_start_time&.to_formatted_s(:time)
       end
