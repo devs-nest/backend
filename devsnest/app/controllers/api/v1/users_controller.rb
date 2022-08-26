@@ -124,7 +124,7 @@ module Api
           @current_user.update!(github_token: encrypted_access_token)
           render_success({ message: 'Github connected successfully!' })
         else
-          render_error({ error: res['error'] })
+          render_error({ error: res[:error] })
         end
       end
 
