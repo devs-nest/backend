@@ -5,7 +5,8 @@ RUN apk add \
     bash \
     mariadb-dev \
     tzdata \
-    git
+    git \
+    libsodium
 
 RUN gem install bundler
 COPY ./Gemfile  ./
