@@ -159,6 +159,25 @@ class User < ApplicationRecord
     response.code == '200' ? JSON(response.read_body)['access_token'] : nil
   end
 
+  def self.fetch_github_access_token(code)
+    url = URI('https://github.com/login/oauth/access_token')
+
+    https = Net::HTTP.new(url.host, url.port)
+    https.use_ssl = true
+    request = Net::HTTP::Post.new(url)
+
+    request.body = "code=#{code}&client_id=#{ENV['GITHUB_CLIENT_ID']}&client_secret=#{ENV['GITHUB_CLIENT_SECRET']}"
+    response = https.request(request)
+    json_response_body = Rack::Utils.parse_nested_query(response.body)
+    if response.code == '200'
+      if json_response_body.key?('access_token')
+        { 'access_token': json_response_body['access_token'] }
+      else
+        { 'error': json_response_body['error'] }
+      end
+    end
+  end
+
   def self.fetch_discord_user_details(token)
     url = 'http://discordapp.com/api/users/@me'
     headers = {
@@ -288,6 +307,60 @@ class User < ApplicationRecord
 
   def is_batchleader?
     Group.where(batch_leader_id: id).present?
+  end
+
+  def github_client
+    decoded_access_token = $cryptor.decrypt_and_verify(self.github_token)[:access_token]
+    Octokit::Client.new( :access_token => decoded_access_token )
+  end
+
+  def create_github_commit(commited_files, repo, commit_message = "Added All Files")
+    ref = 'heads/main'
+    client = self.github_client
+    repo = "#{client.user.login}/#{repo}"
+
+    # SHA of the latest commit on branch
+    sha_latest_commit = client.ref(repo, ref).object.sha
+    # Find and store the SHA for the tree object that the heads/master commit points to.
+    sha_base_tree = client.commit(repo, sha_latest_commit).commit.tree.sha
+
+    blobs = []
+    # Create Blobs of all the files
+    commited_files.each do |file_path, content|
+      blob_sha = client.create_blob(repo, content, "base64")
+      blobs << { :path => file_path, :mode => "100644", :type => "blob", :sha => blob_sha }
+    end
+
+    # Make a new tree over the base tree
+    sha_new_tree = client.create_tree(repo, blobs, {:base_tree => sha_base_tree }).sha
+    # Create the commit over the new tree
+    sha_new_commit = client.create_commit(repo, commit_message, sha_new_tree, sha_latest_commit).sha
+    # Update the branch on github
+    client.update_ref(repo, ref, sha_new_commit)
+
+    true
+  end
+
+  def update_github_secret(repo, secret_name, secret_value)
+    client = self.github_client
+
+    # Get the public key of repository to encrypt secrets
+    key_info = client.get("https://api.github.com/repos/#{client.user.login}/#{repo}/actions/secrets/public-key")
+    repo_public_key = Base64.decode64(key_info[:key]) # Key comes in Base64 encoded
+    repo_public_key_id = key_info[:key_id]
+
+    # Making a new public key from repo public key to encrypt the secret
+    public_key = RbNaCl::PublicKey.new(repo_public_key)
+    box = RbNaCl::Boxes::Sealed.from_public_key(public_key)
+    encrypted_secret = box.encrypt(secret_value)
+
+    # Creating/Updating the github secret in the repo
+    client.put("/repos/#{client.user.login}/#{repo}/actions/secrets/#{secret_name}", {
+      encrypted_value: Base64.strict_encode64(encrypted_secret),
+      key_id: repo_public_key_id
+    })
+
+    true
   end
 
   def self.get_by_cache(id)

@@ -59,6 +59,7 @@ Rails.application.routes.draw do
         member do
           get :get_by_username, constraints: { id: %r{[^/]+} }
           get :certifications
+          post :create_github_commit
         end
         collection do
           post :register
@@ -67,7 +68,7 @@ Rails.application.routes.draw do
           get :report, :leaderboard, :me, :get_token
           post :upload_i_have_enrolled_for_course_image
           put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username, :upload_files
-          post :login, :connect_discord
+          post :login, :connect_discord, :connect_github, :create_github_repo
           delete :logout
           get :unsubscribe
           get :check_group_name

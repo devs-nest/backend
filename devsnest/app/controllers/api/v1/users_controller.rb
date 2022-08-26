@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details]
+      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github create_github_repo]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -107,6 +107,36 @@ module Api
 
         @current_user.merge_discord_user(temp_user.discord_id, temp_user)
         render_success(@current_user.as_json.merge({ "type": 'users' }))
+      end
+
+      def connect_github
+        permitted_params = params.permit(%i[code]).to_h
+        return render_error({ message: 'Github Access Code not found' }) unless permitted_params['code'].present?
+
+        res = User.fetch_github_access_token(permitted_params['code'])
+        if res.key?(:access_token)
+          data_to_encode = {
+            user_id: @current_user.id,
+            access_token: res[:access_token],
+            initiated_at: Time.now
+          }
+          encrypted_access_token = $cryptor.encrypt_and_sign(data_to_encode)
+          @current_user.update!(github_token: encrypted_access_token)
+          render_success({ message: 'Github connected successfully!' })
+        else
+          render_error({ error: res[:error] })
+        end
+      end
+
+      def create_github_repo
+        permitted_params = params.permit(%i[repo_name]).to_h
+        repo_name = permitted_params[:repo_name]
+        client = @current_user.github_client
+        return render_error({ message: "Github Not connected!" }) if client.blank?
+
+        client.create_repository(repo_name, private: true, auto_init: true) rescue return render_error({ message: "Something went wrong" })
+
+        render_success({ message: "Repo created Successfully!" })
       end
 
       def login
@@ -338,6 +368,16 @@ module Api
         render_success(data)
       end
 
+      def create_github_commit
+        repo = params.dig(:data, :attributes, 'repo')
+        secrets = params.dig(:data, :attributes, 'secrets')
+        commited_files = params.dig(:data, :attributes, 'commited_files')
+        commit_message = params.dig(:data, :attributes, 'commit_message')
+        GithubCommitWorker.perform_async(@current_user.id, repo, secrets.to_json, commited_files.to_json, commit_message)
+
+        render_success({ message: "Committed :D" })
+      end
+ 
       def dashboard_details
         user = @current_user
         return render_not_found({ message: 'User not found' }) if user.blank?
