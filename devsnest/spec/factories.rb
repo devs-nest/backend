@@ -167,6 +167,7 @@ FactoryBot.define do
   end
 
   factory :course do
+    sequence(:current_module) { |n| "dsa" }
   end
 
   factory :course_curriculum do

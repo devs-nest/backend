@@ -9,6 +9,7 @@ RSpec.describe Scrum, type: :request do
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum) }
     let(:date) { Date.current }
+    let!(:course) { create(:course) }
 
     before :each do
       sign_in(user)
@@ -37,6 +38,7 @@ RSpec.describe Scrum, type: :request do
     let(:scrum) { create(:scrum) }
     let(:group_member) { create(:group_member) }
     let(:date) { Date.current }
+    let!(:course) { create(:course) }
 
     before :each do
       sign_in(user)
@@ -68,6 +70,7 @@ RSpec.describe Scrum, type: :request do
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum) }
     let(:date) { Date.current }
+    let!(:course) { create(:course) }
 
     before :each do
       sign_in(user)
@@ -99,6 +102,7 @@ RSpec.describe Scrum, type: :request do
     let(:user) { create(:user) }
     let(:scrum) { create(:scrum) }
     let(:date) { Date.current }
+    let!(:course) { create(:course) }
 
     before :each do
       sign_in(user)
@@ -131,6 +135,7 @@ RSpec.describe Scrum, type: :request do
     let(:scrum) { create(:scrum) }
     let(:group_member) { create(:group_member) }
     let(:date) { Date.current }
+    let!(:course) { create(:course) }
 
     before :each do
       sign_in(user)
@@ -194,6 +199,7 @@ RSpec.describe Scrum, type: :request do
     let(:scrum) { create(:scrum, user_id: user.id, group_id: group.id) }
     let(:group_member) { create(:group_member) }
     let(:date) { Date.current }
+    let!(:course) { create(:course) }
 
     before :each do
       sign_in(user)

@@ -10,7 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 2022_07_28_081615) do
+
+  create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "challenge_id"
+    t.text "source_code"
+    t.string "language"
+    t.json "test_cases"
+    t.integer "total_test_cases", default: 0
+    t.integer "passed_test_cases", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_submitted"
+    t.string "status"
+    t.string "total_runtime"
+    t.string "total_memory"
+    t.boolean "is_best_submission", default: false
+    t.index ["is_submitted", "status"], name: "index_algo_submissions_on_is_submitted_and_status"
+    t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
+  end
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -203,6 +223,7 @@ ActiveRecord::Schema.define(version: 2022_07_28_081615) do
     t.boolean "archived", default: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "current_module"
     t.index ["name"], name: "index_courses_on_name"
   end
 
@@ -233,6 +254,55 @@ ActiveRecord::Schema.define(version: 2022_07_28_081615) do
     t.string "bot_details"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "fe_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "frontend_challenge_id"
+    t.integer "total_test_cases", default: 0
+    t.integer "passed_test_cases", default: 0
+    t.integer "score"
+    t.text "result"
+    t.string "question_type"
+    t.boolean "is_submitted", default: false
+    t.text "source_code"
+  end
+
+  create_table "frontend_challenge_scores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "frontend_challenge_id"
+    t.integer "fe_submission_id"
+    t.integer "total_test_cases", default: 0
+    t.integer "passed_test_cases", default: 0
+    t.integer "score"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "frontend_challenge_id"], name: "frontend_challenge_score_index", unique: true
+  end
+
+  create_table "frontend_challenges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.integer "day_no"
+    t.string "folder_name"
+    t.integer "topic"
+    t.integer "difficulty"
+    t.string "slug"
+    t.text "question_body"
+    t.integer "score", default: 0
+    t.boolean "is_active", default: false
+    t.integer "user_id"
+    t.integer "course_curriculum_id"
+    t.string "testcases_path"
+    t.text "hidden_files"
+    t.text "protected_paths"
+    t.text "open_paths"
+    t.string "template"
+    t.string "active_path"
+    t.string "challenge_type"
+    t.text "files"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["slug"], name: "index_frontend_challenges_on_slug", unique: true
   end
 
   create_table "frontend_projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

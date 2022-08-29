@@ -384,12 +384,18 @@ class User < ApplicationRecord
   def tha_details
     current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
-    question_ids = AssignmentQuestion.where(course_curriculum: course_curriculum_ids).pluck(:question_id)
-    total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')&.pluck(:question_id)
-    solved_assignments_count = UserChallengeScore.where(user_id: id, challenge_id: question_ids).where('passed_test_cases = total_test_cases').count
+    current_module = current_course.current_module
+    case current_module
+    when 'dsa'
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
+      solved_assignments_count = UserChallengeScore.where(user_id: id, challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+    when 'frontend'
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id)
+      solved_assignments_count = FrontendChallengeScore.where(user_id: id, frontend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+    end
 
     {
-      total_assignments_count: total_assignments_challenge_ids&.count,
+      total_assignments_count: total_assignments_challenge_ids.count,
       solved_assignments_count: solved_assignments_count
     }
   end
