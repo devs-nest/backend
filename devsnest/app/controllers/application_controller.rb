@@ -49,7 +49,7 @@ class ApplicationController < ActionController::API
     render_unauthorized
   end
 
-  def github_auth
+  def callback_auth
     user = User.find_by_id(request.params.dig('data', 'attributes', 'user_id'))
     return render_not_found if user.nil?
     return true if request.headers['Token'] == user.bot_token

@@ -5,7 +5,7 @@ module Api
     # FE submission controller
     class FeSubmissionsController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :github_auth, only: %i[create]
+      before_action :callback_auth, only: %i[create]
       before_action :user_auth, only: %i[show index]
     end
   end
