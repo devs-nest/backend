@@ -396,7 +396,7 @@ module Api
       end
 
       def github_ping
-        github_connected = @current_user.github_client rescue false
+        github_connected = @current_user.github_client.login rescue false
         github_connected.present? ? render_success() : render_error({ message: "Github not connected." })
       end
 
