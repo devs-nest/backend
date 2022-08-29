@@ -6,6 +6,7 @@ module Api
     class FrontendChallengeController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth, only: %i[fetch_by_slug index show]
+      before_action :callback_auth, only: %i[fetch_frontend_testcases]
 
       def context
         { user: @current_user }
