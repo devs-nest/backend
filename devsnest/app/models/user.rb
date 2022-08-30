@@ -387,10 +387,10 @@ class User < ApplicationRecord
     current_module = current_course.current_module
     case current_module
     when 'dsa'
-      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id).uniq
       solved_assignments_count = UserChallengeScore.where(user_id: id, challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
     when 'frontend'
-      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id)
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id).uniq
       solved_assignments_count = FrontendChallengeScore.where(user_id: id, frontend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
     end
 

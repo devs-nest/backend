@@ -167,18 +167,18 @@ class Group < ApplicationRecord
 
       case current_module
       when 'dsa'
-        total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id)
+        total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge').pluck(:question_id).uniq
         solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
 
         recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'Challenge')
-                                                            .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
+                                                            .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id).uniq
         recent_solved_assignments_count = UserChallengeScore.where(user_id: user.id, challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
       when 'frontend'
-        total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id)
+        total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id).uniq
         solved_assignments_count = FrontendChallengeScore.where(user_id: user.id, frontend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
 
         recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge')
-                                                            .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id)
+                                                            .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id).uniq
         recent_solved_assignments_count = FrontendChallengeScore.where(user_id: user.id, frontend_challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
       end
 
