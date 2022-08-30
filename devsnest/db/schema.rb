@@ -10,27 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2022_07_28_081615) do
-
-  create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "challenge_id"
-    t.text "source_code"
-    t.string "language"
-    t.json "test_cases"
-    t.integer "total_test_cases", default: 0
-    t.integer "passed_test_cases", default: 0
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.boolean "is_submitted"
-    t.string "status"
-    t.string "total_runtime"
-    t.string "total_memory"
-    t.boolean "is_best_submission", default: false
-    t.index ["is_submitted", "status"], name: "index_algo_submissions_on_is_submitted_and_status"
-    t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
-  end
+ActiveRecord::Schema.define(version: 2022_08_23_062012) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -124,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_07_28_081615) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "7PYX6sPBi_0"
+    t.string "cuid", default: "QNDro4xAr_w"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
