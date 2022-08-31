@@ -66,8 +66,12 @@ Rails.application.routes.draw do
       jsonapi_resources :users, only: %i[index show update create] do
         member do
           get :get_by_username, constraints: { id: %r{[^/]+} }
+<<<<<<< Updated upstream
           get :certifications
           post :create_github_commit
+=======
+          get :certifications, :point_log
+>>>>>>> Stashed changes
         end
         collection do
           post :register
