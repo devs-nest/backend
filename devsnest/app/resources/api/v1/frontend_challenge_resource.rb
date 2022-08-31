@@ -4,7 +4,7 @@ module Api
   module V1
     # api for challenge test controller
     class FrontendChallengeResource < JSONAPI::Resource
-      attributes :topic, :difficulty, :name, :question_body, :score, :slug, :hidden_files, :protected_paths, :open_paths, :template, :active_path, :challenge_type, :testcases_path, :active_path,
+      attributes :topic, :difficulty, :name, :question_body, :score, :slug, :hidden_files, :protected_paths, :open_paths, :template, :challenge_type, :testcases_path, :active_path,
                  :day_no, :is_active, :user_id, :course_curriculum_id
       attributes :submission_status
       filter :difficulty
@@ -27,7 +27,7 @@ module Api
         user = context[:user]
         return 'signin to check submissions' if user.nil?
 
-        submission = user.frontend_challenge_score.find_by(frontend_challenge_id: @model.id)
+        submission = user.frontend_challenge_scores.find_by(frontend_challenge_id: @model.id)
         return 'unsolved' if submission.blank?
 
         submission.passed_test_cases == submission.total_test_cases ? 'solved' : 'attempted'
