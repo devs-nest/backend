@@ -4,11 +4,12 @@ module Api
   module V1
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
+      include ApplicationHelper
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
-                             create_github_repo repo_details]
+                             create_github_repo repo_details sourcecode_io]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -384,6 +385,19 @@ module Api
         render_success({ message: 'Committed :D' })
       end
 
+      def sourcecode_io
+        challenge = FrontendChallenge.find_by(id: params.dig(:data, :attributes, 'challenge_id'))
+        return render_not_found('challenge') if challenge.nil?
+
+        bucket = 'user-fe-submission'
+        files = params.dig(:data, :attributes, 'files')
+        action = params.dig(:data, :attributes, 'action')
+        base_path = "#{@current_user.id}/#{challenge.id}"
+        io_boilerplate(files, base_path, bucket, action)
+        render_success({ message: 'Updated Last submission' })
+      end
+
+      # Ex:- :default =>''
       def dashboard_details
         user = @current_user
         return render_not_found({ message: 'User not found' }) if user.blank?
