@@ -15,14 +15,6 @@ class FrontendChallenge < ApplicationRecord
     update(slug: name.parameterize)
   end
 
-  def put_test_cases(file, key)
-    $s3&.put_object(bucket: "#{ENV['S3_PREFIX']}frontend-testcases", key: key, body: file)
-  end
-
-  def remove_test_cases(key)
-    $s3&.delete_object(bucket: "#{ENV['S3_PREFIX']}frontend-testcases", key: key)
-  end
-
   def input_case
     read_from_s3 input_key
   end

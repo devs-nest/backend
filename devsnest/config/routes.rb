@@ -21,7 +21,7 @@ Rails.application.routes.draw do
         jsonapi_resources :frontend_challenge, only: %i[create index show update destroy] do
           collection do
             get :self_created_challenges
-            get :add_testcase
+            post :files_io
           end
         end
         jsonapi_resources :challenge, only: %i[show index create update] do
@@ -80,6 +80,7 @@ Rails.application.routes.draw do
           get :check_group_name
           get :check_user_details
           get :dashboard_details, :github_ping
+          post :sourcecode_io
         end
       end
 
