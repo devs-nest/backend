@@ -142,11 +142,12 @@ ActiveRecord::Schema.define(version: 2022_08_31_100938) do
   end
 
   create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
     t.string "pointable_type"
     t.integer "pointable_id"
     t.integer "coins", default: 0
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "college_forms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -508,6 +509,13 @@ ActiveRecord::Schema.define(version: 2022_08_31_100938) do
   create_table "referrals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "referred_user_id"
     t.string "referral_code"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "rewards", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
