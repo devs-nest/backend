@@ -6,7 +6,9 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
-      before_action :user_auth, only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github create_github_repo repo_details]
+      before_action :user_auth,
+                    only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
+                             create_github_repo repo_details]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -132,11 +134,15 @@ module Api
         permitted_params = params.permit(%i[repo_name]).to_h
         repo_name = permitted_params[:repo_name]
         client = @current_user.github_client
-        return render_error({ message: "Github Not connected!" }) if client.blank?
+        return render_error({ message: 'Github Not connected!' }) if client.blank?
 
-        client.create_repository(repo_name, private: true, auto_init: true) rescue return render_error({ message: "Something went wrong" })
+        begin
+          client.create_repository(repo_name, private: true, auto_init: true)
+        rescue StandardError
+          return render_error({ message: 'Something went wrong' })
+        end
 
-        render_success({ message: "Repo created Successfully!" })
+        render_success({ message: 'Repo created Successfully!' })
       end
 
       def login
@@ -375,9 +381,9 @@ module Api
         commit_message = params.dig(:data, :attributes, 'commit_message')
         GithubCommitWorker.perform_async(@current_user.id, repo, secrets.to_json, commited_files.to_json, commit_message)
 
-        render_success({ message: "Committed :D" })
+        render_success({ message: 'Committed :D' })
       end
- 
+
       def dashboard_details
         user = @current_user
         return render_not_found({ message: 'User not found' }) if user.blank?
@@ -396,8 +402,12 @@ module Api
       end
 
       def github_ping
-        github_connected = @current_user.github_client.login rescue false
-        github_connected.present? ? render_success() : render_error({ message: "Github not connected." })
+        github_connected = begin
+          @current_user.github_client.login
+        rescue StandardError
+          false
+        end
+        github_connected.present? ? render_success : render_error({ message: 'Github not connected.' })
       end
 
       private
