@@ -24,6 +24,7 @@ class User < ApplicationRecord
   has_many :manual_login_changelog
   has_many :user_challenge_scores
   has_many :frontend_challenge_scores
+  has_many :coin_logs
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
   after_create :send_registration_email
