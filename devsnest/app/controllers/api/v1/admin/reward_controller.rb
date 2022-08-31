@@ -13,11 +13,11 @@ module Api
           coins = data[:coins].to_i
           reward_fields = data.slice(:title, :description).permit(:title, :description)
           user = User.find_by(id: data[:user_id])
- 
-          return render_error(message: "Invalid user") if user.blank?
-          return render_error(message: "Coin value should be between 0 and 30 inclusively") if coins.negative? || coins > 30 
-        
-          return render_error(message: "Can only reward user once in a 24 hrs") if CoinLog.where(user_id: data[:user_id]).where("created_at > ?", Date.today - 1.day).present?
+
+          return render_error(message: 'Invalid user') if user.blank?
+          return render_error(message: 'Coin value should be between 0 and 30 inclusively') if coins.negative? || coins > 30
+
+          return render_error(message: 'Can only reward user once in a 24 hrs') if CoinLog.where(user_id: data[:user_id]).where('created_at > ?', Date.today - 1.day).present?
 
           CoinLog.create(coins: coins || 0, user_id: data[:user_id], pointable: Reward.create(reward_fields))
           user.update(coins: user.coins + coins)
