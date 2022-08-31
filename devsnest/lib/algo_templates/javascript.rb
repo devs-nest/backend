@@ -58,7 +58,7 @@ module Templates
     def build_tail
       tail_code = []
       tail_code += input_code
-      tail_code += ['function main(inputs){', "let #{get_output_signature.join(', ')} = solve(...inputs)"]
+      tail_code += ['function main(inputs){', "let {#{build_parameter_list.join(', ')}} = inputs", "let #{get_output_signature.join(', ')} = solve(#{build_parameter_list.join(', ')})"]
       tail_code += output_code
       tail_code += ['}']
 
