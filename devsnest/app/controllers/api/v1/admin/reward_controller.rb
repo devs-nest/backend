@@ -15,7 +15,7 @@ module Api
           user = User.find_by(id: data[:user_id])
  
           return render_error(message: "Invalid user") if user.blank?
-          return render_error(message: "Can't assign more than 30 points") if coins > 30
+          return render_error(message: "Coin value should be between 0 and 30 inclusively") if coins.negative? || coins > 30 
         
           return render_error(message: "Can only reward user once in a 24 hrs") if CoinLog.where(user_id: data[:user_id]).where("created_at > ?", Date.today - 1.day).present?
 

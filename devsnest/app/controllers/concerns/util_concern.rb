@@ -44,6 +44,7 @@ module UtilConcern
       discord_id: user.discord_id,
       email: user.web_active ? user.email : nil,
       mergeable: user.discord_active && user.web_active,
+      coins: user.coins,
       server_details: server_details,
       batch_leader_details: Group.where(batch_leader_id: user.id)&.pluck(:name),
       batch_eligible: user.web_active && user.discord_active && user.accepted_in_course,
