@@ -5,7 +5,7 @@ module Api
     # api for challenge test controller
     module Admin
       class FrontendChallengeResource < JSONAPI::Resource
-        attributes :topic, :difficulty, :name, :question_body, :score, :slug, :hidden_files, :protected_paths, :open_paths, :template, :active_path, :challenge_type, :testcases_path, :active_path,
+        attributes :topic, :difficulty, :name, :question_body, :score, :slug, :hidden_files, :protected_paths, :open_paths, :template, :challenge_type, :testcases_path, :active_path,
                    :day_no, :is_active, :user_id, :course_curriculum_id
 
         filter :difficulty

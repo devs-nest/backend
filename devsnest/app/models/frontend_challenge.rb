@@ -3,7 +3,7 @@
 # FrontendChallenge class
 class FrontendChallenge < ApplicationRecord
   enum difficulty: %i[easy medium hard]
-  enum topic: %i[html css js]
+  enum topic: %i[html css javascript react]
   has_many :frontend_challenge_scores
   has_many :assingment_questions
   belongs_to :user
