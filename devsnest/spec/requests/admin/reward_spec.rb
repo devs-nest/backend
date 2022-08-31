@@ -41,7 +41,6 @@ RSpec.describe 'Minibootcamp spec', type: :request do
     it 'gives reward' do
       post '/api/v1/admin/reward', params: params
       expect(response.status).to eq(200)
-
       sign_in(user)
       post '/api/v1/admin/reward', params: params
       expect(response.status).to eq(400)
