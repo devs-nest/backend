@@ -16,14 +16,14 @@ module Api
       def assignment_questions
         data = []
         return data if context[:user].blank?
-        question_ids = AssignmentQuestion.where(course_curriculum: @model).pluck(:question_id).uniq
 
+        question_ids = AssignmentQuestion.where(course_curriculum: @model).pluck(:question_id).uniq
         case @model.course_type
-        when "dsa"
+        when 'dsa'
           submissions_succeded = UserChallengeScore.where(user: context[:user], challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:challenge_id)
           submissions_failed = AlgoSubmission.where(user: context[:user], challenge_id: question_ids, is_submitted: true).where.not(status: 'Accepted').distinct.pluck(:challenge_id)
           assignment_questions_data = Challenge.where(id: question_ids)
-        when "frontend"
+        when 'frontend'
           submissions_succeded = FrontendChallengeScore.where(user: context[:user], frontend_challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:frontend_challenge_id)
           submissions_failed = FeSubmission.where(user: context[:user], frontend_challenge_id: question_ids, is_submitted: true).where.not(status: 'Accepted').distinct.pluck(:frontend_challenge_id)
           assignment_questions_data = FrontendChallenge.where(id: question_ids)
