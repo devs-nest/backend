@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_23_062012) do
+ActiveRecord::Schema.define(version: 2022_08_31_100938) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_08_23_062012) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "QNDro4xAr_w"
+    t.string "cuid", default: "m2TlopS2fF0"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -246,6 +246,7 @@ ActiveRecord::Schema.define(version: 2022_08_23_062012) do
     t.string "question_type"
     t.boolean "is_submitted", default: false
     t.text "source_code"
+    t.string "status"
   end
 
   create_table "frontend_challenge_scores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
