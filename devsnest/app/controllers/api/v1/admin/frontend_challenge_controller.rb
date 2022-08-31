@@ -7,7 +7,7 @@ module Api
       class FrontendChallengeController < ApplicationController
         include JSONAPI::ActsAsResourceController
         before_action :problem_setter_auth
-        before_action :admin_auth, only: %i[index update show destroy]
+        before_action :admin_auth, only: %i[index]
         before_action :add_files, only: %i[update]
         before_action :remove_files, only: %i[destroy]
         def context
