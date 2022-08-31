@@ -47,7 +47,7 @@ Rails.application.routes.draw do
         jsonapi_resources :college_form, only: %i[index]
         jsonapi_resources :link, only: %i[index update create destroy]
         jsonapi_resources :course, only: %i[index update create destroy]
-        jsonapi_resources :course_curriculum, only: %i[index update create destroy]
+        jsonapi_resources :course_curriculum, only: %i[show index update create destroy]
         jsonapi_resources :assignment_question, only: %i[index update create destroy] do
           collection do
             post :add_assignment_questions
@@ -167,7 +167,7 @@ Rails.application.routes.draw do
       jsonapi_resources :discussion, only: %i[show index create destroy]
       jsonapi_resources :upvote, only: %i[create destroy]
       jsonapi_resources :college_form, only: %i[create]
-      jsonapi_resources :course_curriculum, only: %i[index]
+      jsonapi_resources :course_curriculum, only: %i[show index]
       jsonapi_resources :referral, only: %i[index]
       jsonapi_resources :server_users, only: %i[create]
       jsonapi_resources :frontend_challenge, only: %i[index show] do

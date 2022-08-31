@@ -18,18 +18,25 @@ module Api
         return data if context[:user].blank?
 
         question_ids = AssignmentQuestion.where(course_curriculum: @model).pluck(:question_id).uniq
-        algo_submissions_succeded = UserChallengeScore.where(user: context[:user], challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:challenge_id)
-        algo_submissions_failed = AlgoSubmission.where(user: context[:user], challenge_id: question_ids, is_submitted: true).where.not(status: 'Accepted').distinct.pluck(:challenge_id)
-        assignment_questions_data = Challenge.where(id: question_ids)
+        case @model.course_type
+        when 'dsa'
+          submissions_succeded = UserChallengeScore.where(user: context[:user], challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:challenge_id)
+          submissions_failed = AlgoSubmission.where(user: context[:user], challenge_id: question_ids, is_submitted: true).where.not(status: 'Accepted').distinct.pluck(:challenge_id)
+          assignment_questions_data = Challenge.where(id: question_ids)
+        when 'frontend'
+          submissions_succeded = FrontendChallengeScore.where(user: context[:user], frontend_challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:frontend_challenge_id)
+          submissions_failed = FeSubmission.where(user: context[:user], frontend_challenge_id: question_ids, is_submitted: true).where.not(status: 'Accepted').distinct.pluck(:frontend_challenge_id)
+          assignment_questions_data = FrontendChallenge.where(id: question_ids)
+        end
         assignment_questions_data.each do |assignment_question|
           question_data = {
             id: assignment_question&.id,
             name: assignment_question&.name,
             slug: assignment_question&.slug,
-            status: if algo_submissions_succeded.include?(assignment_question.id)
+            status: if submissions_succeded.include?(assignment_question.id)
                       2
                     else
-                      algo_submissions_failed.include?(assignment_question.id) ? 1 : 0
+                      submissions_failed.include?(assignment_question.id) ? 1 : 0
                     end
           }
           data << question_data
