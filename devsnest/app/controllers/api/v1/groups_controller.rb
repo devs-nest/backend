@@ -31,7 +31,7 @@ module Api
 
         return true if @current_user.is_admin?
 
-        render_unauthorized unless @current_user.discord_active && @current_user.accepted_in_course
+        render_unauthorized unless @current_user.discord_active
       end
 
       # def check_authorization
@@ -95,6 +95,7 @@ module Api
         user = @current_user
         return render_error(message: 'User not found') if user.nil?
 
+        user.update!(accepted_in_course: true)
         # can user join a v2 group?
         group = if params[:data][:attributes][:group_id].present?
                   Group.find(params[:data][:attributes][:group_id])

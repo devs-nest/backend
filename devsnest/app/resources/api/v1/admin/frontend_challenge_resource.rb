@@ -38,16 +38,7 @@ module Api
         end
 
         def files
-          data = {}
-          files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}frontend-testcases", prefix: "#{id}/")
-          files.contents.each do |file|
-            next if challenge_type == 'github' && file.key.to_s.include?('test')
-
-            path = file.key.to_s.sub(id.to_s, '')
-            content = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}frontend-testcases", key: file.key).body.read.to_s
-            data[path.to_s] = content.to_s
-          end
-          data.as_json
+          FrontendChallenge.fetch_files('frontend-testcases', id.to_s)
         end
 
         def created_by

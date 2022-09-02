@@ -27,6 +27,8 @@ module Api
 
           bucket = 'frontend-testcases'
           files = params.dig(:data, :attributes, 'files')
+          return if files.nil?
+
           io_boilerplate(files, challenge.id.to_s, bucket)
           params['data']['attributes'].delete('files')
         end
@@ -46,6 +48,8 @@ module Api
 
           bucket = 'frontend-testcases'
           files = params.dig(:data, :attributes, 'files')
+          return if files.nil?
+
           action = params.dig(:data, :attributes, 'action')
           io_boilerplate(files, challenge.id.to_s, bucket, action)
           render_success({ message: 'Updated Files' })
