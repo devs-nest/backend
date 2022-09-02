@@ -19,6 +19,19 @@ class FrontendChallenge < ApplicationRecord
     read_from_s3 input_key
   end
 
+  def self.fetch_files(bucket, prefix)
+    data = {}
+    files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{prefix}/")
+    files.contents.each do |file|
+      next if challenge_type == 'github' && file.key.to_s == testcases_path
+
+      path = file.key.to_s.sub(id.to_s, '')
+      content = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}#{bucket}", key: file.key).body.read.to_s
+      data[path.to_s] = content.to_s
+    end
+    data.as_json
+  end
+
   def read_from_s3(key)
     Rails.cache.fetch(key, expires_in: 1.day) do
       $s3.get_object(bucket: "#{Rails.configuration.testcase_bucket_prefix}frontend-testcases", key: key).body.read
