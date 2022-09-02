@@ -6,9 +6,9 @@ module Api
     class LanguageResource < JSONAPI::Resource
       attributes :name, :judge_zero_id, :language_description
 
-      def self.records(options = {})
-        super(options).where.not(name: "javascript")
-      end
+      # def self.records(options = {})
+      #   super(options).where.not(name: "javascript")
+      # end
     end
   end
 end
