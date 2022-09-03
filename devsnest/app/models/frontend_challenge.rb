@@ -19,13 +19,17 @@ class FrontendChallenge < ApplicationRecord
     read_from_s3 input_key
   end
 
-  def self.fetch_files(bucket, prefix)
+  def self.fetch_files(challenge_id, bucket, prefix)
     data = {}
-    files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{prefix}/")
-    files.contents.each do |file|
-      next if challenge_type == 'github' && file.key.to_s == testcases_path
+    fronted_challenge = FrontendChallenge.find_by(id: challenge_id)
+    return data if fronted_challenge.nil?
 
-      path = file.key.to_s.sub(id.to_s, '')
+    files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{prefix}/")
+
+    files.contents.each do |file|
+      next if fronted_challenge.challenge_type == 'github' && file.key.to_s == fronted_challenge.testcases_path
+
+      path = file.key.to_s.sub(fronted_challenge.id.to_s, '')
       content = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}#{bucket}", key: file.key).body.read.to_s
       data[path.to_s] = content.to_s
     end

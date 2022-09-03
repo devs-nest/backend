@@ -38,7 +38,7 @@ module Api
         end
 
         def files
-          FrontendChallenge.fetch_files('frontend-testcases', id.to_s)
+          FrontendChallenge.fetch_files(id, 'frontend-testcases', id.to_s)
         end
 
         def created_by
