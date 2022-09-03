@@ -37,7 +37,7 @@ module Api
       end
 
       def files
-        FrontendChallenge.fetch_files('frontend-testcases', id.to_s)
+        FrontendChallenge.fetch_files(id, 'frontend-testcases', id.to_s)
       end
 
       def submission_status
@@ -51,7 +51,7 @@ module Api
       end
 
       def previous_data
-        FrontendChallenge.fetch_files('user-fe-submission', "#{context[:user].id}/#{id}")
+        FrontendChallenge.fetch_files(id, 'user-fe-submission', "#{context[:user].id}/#{id}")
       end
     end
   end
