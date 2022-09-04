@@ -16,4 +16,9 @@ module LeaderboardDevsnest
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
+
+  class WeeklyLeaderboard
+    REDIS_CONNECTION = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB']) }
+    WLB = Leaderboard.new('weekly_lb', Devsnest::Application::REDIS_OPTIONS, REDIS_CONNECTION)
+  end
 end

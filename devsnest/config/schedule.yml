@@ -3,3 +3,7 @@ mentor_job:
   cron: "30 04 * * sun"
   class: "MentorWorker"
   queue: mentor_worker
+
+weekly_leaderboard_set:
+  cron: "59 23 * * sun" # every sunday at 23:59
+  class: "WeeklyLeaderboardWorker"

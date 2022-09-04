@@ -98,5 +98,6 @@ class ApplicationController < ActionController::API
 
   def initialize_redis_lb
     @leaderboard ||= LeaderboardDevsnest::Initializer::LB
+    @weekly_leaderboard ||= LeaderboardDevsnest::WeeklyLeaderboard::WLB
   end
 end

@@ -5,7 +5,7 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       include ApplicationHelper
-      before_action :simple_auth, only: %i[leaderboard report]
+      before_action :simple_auth, only: %i[leaderboard report weekly_dsa_leaderboard]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
@@ -65,6 +65,22 @@ module Api
         end
 
         render_success({ id: page, type: 'leaderboard', scoreboard: scoreboard, count: pages_count })
+      end
+
+      def weekly_dsa_leaderboard
+        @leaderboard.page_size = params[:size].to_i || 10
+        page = params[:page].to_i
+        scoreboard = @weekly_leaderboard.leaders(page)
+        pages_count = @weekly_leaderboard.total_pages
+
+        if @current_user
+          @weekly_leaderboard.rank_member(@current_user.username, @current_user.score) unless @weekly_leaderboard.rank_for(@current_user.username)
+          rank = @weekly_leaderboard.rank_for(@current_user.username)
+          user = @weekly_leaderboard.member_at(rank)
+          return render_success({ id: page, type: 'weekly_leaderboard', user: user, scoreboard: scoreboard, count: pages_count })
+        end
+
+        render_success({ id: page, type: 'weekly_leaderboard', scoreboard: scoreboard, count: pages_count })
       end
 
       def create
