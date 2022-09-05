@@ -14,7 +14,7 @@ module Api
         def context
           {
             user: @current_user,
-            params: params
+            action: params[:action]
           }
         end
 

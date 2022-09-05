@@ -10,7 +10,7 @@ module Api
 
       def context
         { user: @current_user,
-          params: params }
+          action: params[:action] }
       end
 
       def fetch_by_slug
