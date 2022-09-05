@@ -9,7 +9,8 @@ module Api
       before_action :callback_auth, only: %i[fetch_frontend_testcases]
 
       def context
-        { user: @current_user }
+        { user: @current_user,
+          action: params[:action] }
       end
 
       def fetch_by_slug

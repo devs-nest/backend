@@ -14,31 +14,31 @@ module Api
         attributes :files
 
         def hidden_files
-          return JSON.parse(@model.hidden_files) if @model.hidden_files.present?
+          return JSON.parse(@model.hidden_files) if @model.hidden_files.present? && context[:action] == 'show'
 
           []
         end
 
         def protected_paths
-          return JSON.parse(@model.protected_paths) if @model.protected_paths.present?
+          return JSON.parse(@model.protected_paths) if @model.protected_paths.present? && context[:action] == 'show'
 
           []
         end
 
         def open_paths
-          return JSON.parse(@model.open_paths) if @model.open_paths.present?
+          return JSON.parse(@model.open_paths) if @model.open_paths.present? && context[:action] == 'show'
 
           []
         end
 
         def testcases_path
-          return @model.testcases_path.sub(id.to_s, '') if @model.testcases_path.present?
+          return @model.testcases_path.sub(id.to_s, '') if @model.testcases_path.present? && context[:action] == 'show'
 
           ''
         end
 
         def files
-          FrontendChallenge.fetch_files(id, 'frontend-testcases', id.to_s)
+          context[:action] == 'show' ? FrontendChallenge.fetch_files(id, 'frontend-testcases', id.to_s) : []
         end
 
         def created_by
