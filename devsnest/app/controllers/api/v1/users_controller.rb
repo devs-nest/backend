@@ -68,7 +68,7 @@ module Api
       end
 
       def weekly_dsa_leaderboard
-        @leaderboard.page_size = params[:size].to_i || 10
+        @weekly_leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
         scoreboard = @weekly_leaderboard.leaders(page)
         pages_count = @weekly_leaderboard.total_pages

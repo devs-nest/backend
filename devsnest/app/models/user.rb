@@ -412,4 +412,10 @@ class User < ApplicationRecord
       group_name: group.name
     }
   end
+
+  def self.initialize_weekly_dsa_leaderboard(daily_lb, weekly_lb)
+    daily_lb.all_leaders.each do |lb_data|
+      weekly_lb.rank_member(lb_data['name'.to_sym], lb_data['score'.to_sym])
+    end
+  end
 end
