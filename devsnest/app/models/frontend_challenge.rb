@@ -29,7 +29,7 @@ class FrontendChallenge < ApplicationRecord
     files.contents.each do |file|
       next if fronted_challenge.challenge_type == 'github' && file.key.to_s == fronted_challenge.testcases_path
 
-      path = file.key.to_s.sub(fronted_challenge.id.to_s, '')
+      path = file.key.to_s.sub(prefix, '')
       content = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}#{bucket}", key: file.key).body.read.to_s
       data[path.to_s] = content.to_s
     end
