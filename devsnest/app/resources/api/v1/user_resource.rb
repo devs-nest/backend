@@ -15,7 +15,7 @@ module Api
       attributes :frontend_activity
       attributes :markdown, :bio
       attributes :type, :user_group_slug
-      attributes :batch_leader_details, :user_group_details, :referred_by_code
+      attributes :batch_leader_details, :user_group_details, :referred_by_code, :current_module
 
       def markdown
         @model.markdown.dup.encode('ISO-8859-1').force_encoding('utf-8') unless @model.markdown.blank?
@@ -88,6 +88,11 @@ module Api
 
       def referred_by_code
         Referral.find_by(referred_user_id: @model.id).try(:referral_code)
+      end
+
+      def current_module
+        course = Course.last
+        course.try(:current_module)
       end
     end
   end
