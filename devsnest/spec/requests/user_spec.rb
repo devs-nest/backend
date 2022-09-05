@@ -110,7 +110,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Leaderboard' do
-    let(:spec_leaderboard) { LeaderboardDevsnest::Initializer::LB }
+    let(:spec_leaderboard) { LeaderboardDevsnest::LB.new(course_type, 'daily').call }
     let!(:user) { create(:user, discord_active: true, username: 'username') }
     before :each do
       User.initialize_leaderboard(spec_leaderboard)
@@ -647,7 +647,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
     let(:group) { create(:group, owner_id: user.id, server_id: server.id, name: 'Test Team') }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: user.id) }
     let!(:question) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test', is_active: true, score: 100, difficulty: 'medium') }
-    let!(:spec_leaderboard) { LeaderboardDevsnest::Initializer::LB }
+    let!(:spec_leaderboard) { LeaderboardDevsnest::LB.new(course_type, 'daily').call }
     let!(:course) { create(:course, name: 'Test Course') }
     let!(:course_curriculum) { create(:course_curriculum, course_id: course.id) }
     let!(:aq) { create(:assignment_question, course_curriculum_id: course_curriculum.id, question_id: question.id, question_type: 'Challenge') }

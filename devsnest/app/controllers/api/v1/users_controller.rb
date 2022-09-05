@@ -5,11 +5,11 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       include ApplicationHelper
-      before_action :simple_auth, only: %i[leaderboard report weekly_dsa_leaderboard]
+      before_action :simple_auth, only: %i[leaderboard report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
-                             create_github_repo repo_details sourcecode_io]
+                             create_github_repo repo_details sourcecode_io new_leaderboard]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -67,20 +67,30 @@ module Api
         render_success({ id: page, type: 'leaderboard', scoreboard: scoreboard, count: pages_count })
       end
 
-      def weekly_dsa_leaderboard
-        @weekly_leaderboard.page_size = params[:size].to_i || 10
-        page = params[:page].to_i
-        scoreboard = @weekly_leaderboard.leaders(page)
-        pages_count = @weekly_leaderboard.total_pages
-
-        if @current_user
-          @weekly_leaderboard.rank_member(@current_user.username, @current_user.score) unless @weekly_leaderboard.rank_for(@current_user.username)
-          rank = @weekly_leaderboard.rank_for(@current_user.username)
-          user = @weekly_leaderboard.member_at(rank)
-          return render_success({ id: page, type: 'weekly_leaderboard', user: user, scoreboard: scoreboard, count: pages_count })
+      def new_leaderboard
+        return render_error({ message: 'Course type must be dsa or frontend' }) unless params[:course_type] == 'dsa' || params[:course_type] == 'frontend'
+        unless params[:course_timeline] == 'daily' || params[:course_timeline] == 'weekly' || params[:course_timeline] == 'monthly'
+          return render_error({ message: 'Course timeline must be daily, weekly or monthly' })
         end
 
-        render_success({ id: page, type: 'weekly_leaderboard', scoreboard: scoreboard, count: pages_count })
+        leaderboard = LeaderboardDevsnest::LB.new(params[:course_type], params[:course_timeline]).call
+        leaderboard.page_size = params[:size].to_i || 10
+        page = params[:page].to_i
+
+        unless leaderboard.check_member?(@current_user.username)
+          leaderboard.rank_member(@current_user.username, @current_user.score,
+                                  params[:course_timeline] != 'daily' ? { 'rank_change' => 0 }.to_json : nil)
+        end
+        data = {
+          id: page,
+          type: "#{params[:course_type]}_#{params[:course_timeline]}_leaderboard",
+          user: leaderboard.score_and_rank_for(@current_user.username),
+          scoreboard: leaderboard.leaders(page, with_member_data: true),
+          count: leaderboard.total_pages
+        }
+
+        data[:user] = data[:user].merge(JSON.parse(leaderboard.member_data_for(@current_user.username))) unless params[:course_timeline] == 'daily'
+        render_success(data)
       end
 
       def create

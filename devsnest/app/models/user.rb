@@ -36,7 +36,7 @@ class User < ApplicationRecord
   has_paper_trail
 
   def update_user_score_lb
-    main_lb = LeaderboardDevsnest::Initializer::LB
+    main_lb = LeaderboardDevsnest::LB.new(course_type, 'daily').call
     main_lb.rank_member(username, score || 0)
   end
 
@@ -217,9 +217,12 @@ class User < ApplicationRecord
   end
 
   # Use this to create or reload the redis sorted set
-  def self.initialize_leaderboard(leaderboard)
-    find_each do |user|
-      leaderboard.rank_member(user.username, user.score || 0)
+  def self.initialize_leaderboard(course_type, timelines = %w[daily weekly monthly])
+    timelines.each do |timeline|
+      leaderboard = LeaderboardDevsnest::LB.new(course_type, timeline).call
+      find_each do |user|
+        leaderboard.rank_member(user.username, user.score || 0, timeline != 'daily' ? { 'rank_change' => 0 }.to_json : nil)
+      end
     end
   end
 
@@ -377,7 +380,7 @@ class User < ApplicationRecord
   end
 
   def leaderboard_details
-    main_lb = LeaderboardDevsnest::Initializer::LB
+    main_lb = LeaderboardDevsnest::LB.new(course_type, 'daily').call
     rank = main_lb&.rank_for(username)
 
     nil unless rank.present?
@@ -411,11 +414,5 @@ class User < ApplicationRecord
       group_slug: group.slug,
       group_name: group.name
     }
-  end
-
-  def self.initialize_weekly_dsa_leaderboard(daily_lb, weekly_lb)
-    daily_lb.all_leaders.each do |lb_data|
-      weekly_lb.rank_member(lb_data['name'.to_sym], lb_data['score'.to_sym])
-    end
   end
 end

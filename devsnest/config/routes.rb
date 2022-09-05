@@ -82,7 +82,7 @@ Rails.application.routes.draw do
           get :check_user_details
           get :dashboard_details, :github_ping
           post :sourcecode_io
-          get :weekly_dsa_leaderboard
+          get :new_leaderboard
         end
       end
 
