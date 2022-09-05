@@ -13,7 +13,8 @@ module Api
         before_action :remove_files, only: %i[destroy]
         def context
           {
-            user: @current_user
+            user: @current_user,
+            params: params
           }
         end
 
