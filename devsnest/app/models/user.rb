@@ -36,7 +36,7 @@ class User < ApplicationRecord
   has_paper_trail
 
   def update_user_score_lb
-    main_lb = LeaderboardDevsnest::LB.new(course_type, 'daily').call
+    main_lb = LeaderboardDevsnest::LB.new('dsa', 'daily').call
     main_lb.rank_member(username, score || 0)
   end
 
@@ -380,7 +380,7 @@ class User < ApplicationRecord
   end
 
   def leaderboard_details
-    main_lb = LeaderboardDevsnest::LB.new(course_type, 'daily').call
+    main_lb = LeaderboardDevsnest::LB.new('dsa', 'daily').call
     rank = main_lb&.rank_for(username)
 
     nil unless rank.present?
