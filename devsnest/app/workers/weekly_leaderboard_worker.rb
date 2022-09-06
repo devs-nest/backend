@@ -3,7 +3,6 @@ class WeeklyLeaderboardWorker
 
   def perform
     ['dsa', 'frontend'].each do |course_type|
-      p course_type
       daily_lb = LeaderboardDevsnest::LB.new(course_type, 'daily').call
       weekly_lb = LeaderboardDevsnest::LB.new(course_type, 'weekly').call
       prev_week_leaders = {}

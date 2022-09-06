@@ -113,7 +113,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
     let(:spec_leaderboard) { LeaderboardDevsnest::LB.new('dsa', 'daily').call }
     let!(:user) { create(:user, discord_active: true, username: 'username') }
     before :each do
-      User.initialize_leaderboard(spec_leaderboard)
+      User.initialize_leaderboard('dsa')
     end
 
     it ' return unauthorized if user is not logged in or not a known bot' do

@@ -5,6 +5,7 @@ class ApplicationController < ActionController::API
   include UtilConcern
   before_action :set_current_user
   before_action :validate_bot_user
+  before_action :initialize_redis_lb
   before_action :set_paper_trail_whodunnit
 
   def user_for_paper_trail
@@ -93,5 +94,9 @@ class ApplicationController < ActionController::API
     return true if @current_user.present? && (@current_user.user_type == 'admin' || @current_user.user_type == 'problem_setter')
 
     render_unauthorized
+  end
+
+  def initialize_redis_lb
+    @leaderboard ||= LeaderboardDevsnest::LB.new('dsa', 'daily').call
   end
 end
