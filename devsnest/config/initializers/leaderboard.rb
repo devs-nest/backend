@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'competition_ranking_leaderboard'
+require 'tie_ranking_leaderboard'
 module LeaderboardDevsnest
   # Initialize leaderboard with redis
 
@@ -15,10 +16,10 @@ module LeaderboardDevsnest
     end
     def call
       redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB']) }
-      Leaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
+      TieRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
-  
+
   class AlgoLeaderboard
     def initialize(name)
       @name = name

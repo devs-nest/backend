@@ -2,7 +2,7 @@ class WeeklyLeaderboardWorker
   include Sidekiq::Worker
 
   def perform
-    ['dsa', 'frontend'].each do |course_type|
+    %w[dsa frontend].each do |course_type|
       daily_lb = LeaderboardDevsnest::LB.new(course_type, 'daily').call
       weekly_lb = LeaderboardDevsnest::LB.new(course_type, 'weekly').call
       prev_week_leaders = {}
@@ -15,7 +15,7 @@ class WeeklyLeaderboardWorker
 
       daily_lb.all_leaders.each do |data|
         rank_change = prev_week_leaders.key?(data[:name]) ? prev_week_leaders[data[:name]][0] - data[:rank] : 0
-        weekly_lb.rank_member(data[:name], data[:score], {'rank_change' => rank_change}.to_json)
+        weekly_lb.rank_member(data[:name], data[:score], { 'rank_change' => rank_change }.to_json) if rank_change != 0
       end
     end
   end
