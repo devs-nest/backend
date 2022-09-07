@@ -299,7 +299,10 @@ class User < ApplicationRecord
       referred_user = Referral.find_by(referred_user_id: id)
       if referred_user.present?
         refered_by = User.find_by(referral_code: referred_user.referral_code)
-        refered_by.update(coins: refered_by.coins + 10) if refered_by.present?
+        if refered_by.present?
+          refered_by.update(coins: refered_by.coins + 10)
+          CoinLog.create(coins: 10, user_id: refered_by.id, pointable: referred_user)
+        end
       end
     end
   end

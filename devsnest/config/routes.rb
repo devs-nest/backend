@@ -179,7 +179,11 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :fe_submissions, only: %i[create show index]
-      jsonapi_resources :coin_logs, only: %i[index]
+      jsonapi_resources :coin_logs, only: %i[index] do
+        collection do
+          post :redeem_for_session
+        end
+      end
     end
   end
 end
