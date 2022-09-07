@@ -15,7 +15,8 @@ class WeeklyLeaderboardWorker
 
       daily_lb.all_leaders.each do |data|
         rank_change = prev_week_leaders.key?(data[:name]) ? prev_week_leaders[data[:name]][0] - data[:rank] : 0
-        weekly_lb.rank_member(data[:name], data[:score], { 'rank_change' => rank_change }.to_json) if rank_change != 0
+        does_score_change = prev_week_leaders.key?(data[:name]) ? prev_week_leaders[data[:name]][0] != data[:score] : false
+        weekly_lb.rank_member(data[:name], data[:score], { 'rank_change' => rank_change }.to_json) if does_score_change
       end
     end
   end

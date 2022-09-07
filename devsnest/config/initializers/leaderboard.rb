@@ -15,7 +15,7 @@ module LeaderboardDevsnest
       @name = "#{type}_#{timeline}_leaderboard"
     end
     def call
-      redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB']) }
+      redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
       TieRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
@@ -26,7 +26,7 @@ module LeaderboardDevsnest
     end
 
     def call
-      redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB']) }
+      redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
