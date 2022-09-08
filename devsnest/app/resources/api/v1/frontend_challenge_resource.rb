@@ -37,7 +37,7 @@ module Api
       end
 
       def files
-        context[:action] == 'show' ? FrontendChallenge.fetch_files(id, 'frontend-testcases', id.to_s) : []
+        context[:action] == 'show' ? @model.read_from_s3 : []
       end
 
       def submission_status
@@ -51,7 +51,7 @@ module Api
       end
 
       def previous_data
-        context[:action] == 'show' ? FrontendChallenge.fetch_files(id, 'user-fe-submission', "#{context[:user].id}/#{id}") : []
+        context[:action] == 'show' ? @model.fetch_files_s3('user-fe-submission', "#{context[:user].id}/#{id}") : []
       end
     end
   end

@@ -49,6 +49,13 @@ class ApplicationController < ActionController::API
     render_unauthorized
   end
 
+  def current_user_auth
+    user_id = request.params.dig('data', 'attributes', 'user_id')
+    return true if @current_user.present? && @current_user.id == user_id
+
+    render_unauthorized
+  end
+
   def callback_auth
     user = User.find_by_id(request.params.dig('data', 'attributes', 'user_id'))
     return render_not_found if user.nil?
