@@ -2,6 +2,7 @@
 
 # FrontendChallenge class
 class FrontendChallenge < ApplicationRecord
+  include ApplicationHelper
   enum difficulty: %i[easy medium hard]
   enum topic: %i[html css javascript react]
   has_many :frontend_challenge_scores
@@ -9,17 +10,13 @@ class FrontendChallenge < ApplicationRecord
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug, case_sensitive: true
-  before_save :expire_cache, if: :will_save_change_to_testcases_path?
+  before_save :expire_cache
 
   def create_slug
     update(slug: name.parameterize)
   end
 
-  def input_case
-    read_from_s3 input_key
-  end
-
-  def self.fetch_files(challenge_id, bucket, prefix)
+  def fetch_files_s3(challenge_id, bucket, prefix)
     data = {}
     fronted_challenge = FrontendChallenge.find_by(id: challenge_id)
     return data if fronted_challenge.nil?
@@ -36,21 +33,13 @@ class FrontendChallenge < ApplicationRecord
     data.as_json
   end
 
-  def read_from_s3(key)
-    Rails.cache.fetch(key, expires_in: 1.day) do
-      $s3.get_object(bucket: "#{Rails.configuration.testcase_bucket_prefix}frontend-testcases", key: key).body.read
-    end
-  rescue StandardError
-    nil
+  def read_from_s3
+    Rails.cache.fetch("frontend_challenge_" + id.to_s) { fetch_files_s3(id, 'frontend-testcases', id.to_s) }
   end
 
   private
 
   def expire_cache
-    Rails.cache.delete(input_key)
-  end
-
-  def input_key
-    testcases_path.to_s
+    Rails.cache.delete("frontend_challenge_" + id.to_s)
   end
 end

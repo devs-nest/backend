@@ -38,7 +38,7 @@ module Api
         end
 
         def files
-          context[:action] == 'show' ? FrontendChallenge.fetch_files(id, 'frontend-testcases', id.to_s) : []
+          context[:action] == 'show' ? @model.read_from_s3 : []
         end
 
         def created_by
