@@ -129,4 +129,8 @@ Rails.application.configure do
   config.hosts << 'api.ron.devsnest.in'
   config.hosts << 'api.hermione.devsnest.in'
   config.hosts << 'old.devsnest.in'
+
+  # az settings
+  config.hosts << "20.235.76.219"
+  config.hosts << "40.81.249.219"
 end
