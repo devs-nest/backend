@@ -16,15 +16,13 @@ class FrontendChallenge < ApplicationRecord
     update(slug: name.parameterize)
   end
 
-  def fetch_files_s3(challenge_id, bucket, prefix)
+  def fetch_files_s3(bucket, prefix)
     data = {}
-    fronted_challenge = FrontendChallenge.find_by(id: challenge_id)
-    return data if fronted_challenge.nil?
 
     files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{prefix}/")
 
     files.contents.each do |file|
-      next if fronted_challenge.challenge_type == 'github' && file.key.to_s == fronted_challenge.testcases_path
+      next if challenge_type == 'github' && file.key.to_s == testcases_path
 
       path = file.key.to_s.sub(prefix, '')
       content = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}#{bucket}", key: file.key).body.read.to_s
@@ -34,12 +32,12 @@ class FrontendChallenge < ApplicationRecord
   end
 
   def read_from_s3
-    Rails.cache.fetch("frontend_challenge_" + id.to_s) { fetch_files_s3(id, 'frontend-testcases', id.to_s) }
+    Rails.cache.fetch('frontend_challenge_' + id.to_s) { fetch_files_s3('frontend-testcases', id.to_s) }
   end
 
   private
 
   def expire_cache
-    Rails.cache.delete("frontend_challenge_" + id.to_s)
+    Rails.cache.delete('frontend_challenge_' + id.to_s)
   end
 end

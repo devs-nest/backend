@@ -51,7 +51,7 @@ module Api
       end
 
       def previous_data
-        context[:action] == 'show' ? FrontendChallenge.fetch_files_s3(id, 'user-fe-submission', "#{context[:user].id}/#{id}") : []
+        context[:action] == 'show' ? @model.fetch_files_s3('user-fe-submission', "#{context[:user].id}/#{id}") : []
       end
     end
   end
