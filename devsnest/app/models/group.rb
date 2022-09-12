@@ -32,7 +32,7 @@ class Group < ApplicationRecord
   end
 
   def assign_server
-    server = Server.last
+    server = Server.second || Server.last # TODO: Make this dynamic
     self.server_id = server&.id
   end
 
