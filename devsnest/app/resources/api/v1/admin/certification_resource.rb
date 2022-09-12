@@ -5,7 +5,7 @@ module Api
     module Admin
       # Resource
       class CertificationResource < JSONAPI::Resource
-        attributes :id, :user_id, :certificate_type
+        attributes :user_id, :certificate_type
 
         attributes :user_details, :title
         paginator :paged

@@ -5,7 +5,7 @@ module Api
     module Admin
       # Company Resource
       class CompanyResource < JSONAPI::Resource
-        attributes :id, :name, :image_url
+        attributes :name, :image_url
       end
     end
   end

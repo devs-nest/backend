@@ -4,7 +4,7 @@ module Api
   module V1
     # Group Member Resource
     class GroupMemberResource < JSONAPI::Resource
-      attributes :user_id, :group_id, :owner, :student_mentor, :scrum_master, :student_mentor, :batch_id
+      attributes :user_id, :group_id, :owner, :student_mentor, :scrum_master, :batch_id
       attributes :user_details
       has_one :group
       def user_details

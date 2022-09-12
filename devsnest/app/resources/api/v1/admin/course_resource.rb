@@ -5,7 +5,7 @@ module Api
     module Admin
       # Course Resource
       class CourseResource < JSONAPI::Resource
-        attributes :id, :name, :archived
+        attributes :name, :archived
       end
     end
   end
