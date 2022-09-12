@@ -12,6 +12,22 @@ module Api
       filter :is_active
       attributes :files, :previous_data
 
+      def self.records(options = {})
+        if options[:context][:action] == 'index'
+          super(options).where(is_active: true)
+        else
+          super(options)
+        end
+      end
+
+      def fetchable_fields(options = {})
+        if context[:action] == 'index'
+          %i[id name topic difficulty slug score challenge_type submission_status]
+        else
+          super
+        end
+      end
+
       def hidden_files
         return JSON.parse(@model.hidden_files) if @model.hidden_files.present? && context[:action] == 'show'
 

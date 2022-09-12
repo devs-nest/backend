@@ -7,6 +7,6 @@ class UserChallengeScore < ApplicationRecord
   after_commit :evaluate_scores
 
   def evaluate_scores
-    UcsEvaluateScoreWorker.perform_async(user_id)
+    EvaluateScoreWorker.perform_async(user_id, 'dsa')
   end
 end

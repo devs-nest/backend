@@ -11,6 +11,25 @@ class FrontendChallenge < ApplicationRecord
   after_create :create_slug
   validates_uniqueness_of :name, :slug, case_sensitive: true
   before_save :expire_cache
+  before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
+  before_update :recalculate_user_scores, if: :will_save_change_to_is_active?
+
+  def recalculate_user_scores
+    UserScoreUpdate.perform_async(id, 'frontend')
+  end
+
+  def regenerate_challenge_leaderboard
+    # TODO
+    LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call.delete_leaderboard
+    leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call
+    best_submissions = FrontendChallengeScore.where(challenge_id: id)
+
+    best_submissions.each do |submission|
+      calc_score = score * (submission.passed_test_cases / submission.total_test_cases.to_f)
+      submission.update(score: calc_score)
+      leaderboard.rank_member(submission.user.username, calc_score)
+    end
+  end
 
   def create_slug
     update(slug: name.parameterize)
