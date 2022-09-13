@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# worker to update dsa and frontend leaderboard every week
 class WeeklyLeaderboardWorker
   include Sidekiq::Worker
 
