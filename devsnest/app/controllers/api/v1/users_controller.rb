@@ -68,28 +68,30 @@ module Api
       end
 
       def new_leaderboard
-        return render_error({ message: 'Course type must be dsa or frontend' }) unless params[:course_type] == 'dsa' || params[:course_type] == 'frontend'
-        unless params[:course_timeline] == 'daily' || params[:course_timeline] == 'weekly' || params[:course_timeline] == 'monthly'
-          return render_error({ message: 'Course timeline must be daily, weekly or monthly' })
-        end
+        course_type = params[:course_type]
+        course_timeline = params[:course_timeline]
+        return render_error({ message: 'Course type must be dsa or frontend' }) if %w[dsa frontend].exclude?(course_type)
 
-        leaderboard = LeaderboardDevsnest::LB.new(params[:course_type], params[:course_timeline]).call
+        return render_error({ message: 'Course timeline must be daily, weekly or monthly' }) if %w[daily weekly monthly].exclude?(course_timeline)
+
+        leaderboard = LeaderboardDevsnest::LB.new(course_type, course_timeline).call
         leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
 
-        unless leaderboard.check_member?(@current_user.username)
+        if leaderboard.check_member?(@current_user.username).blank?
           leaderboard.rank_member(@current_user.username, @current_user.score,
-                                  params[:course_timeline] != 'daily' ? { 'rank_change' => 0 }.to_json : nil)
+                                  course_timeline != 'daily' ? { 'rank_change' => 0 }.to_json : nil)
         end
+
         data = {
           id: page,
-          type: "#{params[:course_type]}_#{params[:course_timeline]}_leaderboard",
+          type: "#{course_type}_#{course_timeline}_leaderboard",
           user: leaderboard.score_and_rank_for(@current_user.username),
           scoreboard: leaderboard.leaders(page, with_member_data: true),
           count: leaderboard.total_pages
         }
 
-        data[:user] = data[:user].merge(JSON.parse(leaderboard.member_data_for(@current_user.username))) unless params[:course_timeline] == 'daily'
+        data[:user] = data[:user].merge(JSON.parse(leaderboard.member_data_for(@current_user.username))) if course_timeline != 'daily'
         render_success(data)
       end
 
