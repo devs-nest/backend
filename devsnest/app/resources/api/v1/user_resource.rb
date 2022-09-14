@@ -9,7 +9,7 @@ module Api
                  :enrolled_for_course_image_url, :referral_code, :coins, :github_token
       attributes :group_id, :group_name, :group_version
       attributes :college_name
-      attributes :solved, :total_by_difficulty
+      attributes :solved, :total_by_difficulty, :fe_solved, :fe_total_by_topic
       attributes :activity
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
       attributes :frontend_activity
@@ -50,6 +50,14 @@ module Api
 
       def solved
         Challenge.count_solved(@model.id)
+      end
+
+      def fe_solved
+        FrontendChallenge.count_solved(@model.id)
+      end
+
+      def fe_total_by_topic
+        FrontendChallenge.split_by_topic
       end
 
       def total_by_difficulty

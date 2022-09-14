@@ -54,6 +54,15 @@ class FrontendChallenge < ApplicationRecord
     Rails.cache.fetch('frontend_challenge_' + id.to_s) { fetch_files_s3('frontend-testcases', id.to_s) }
   end
 
+  def self.count_solved(user_id)
+    challenge_ids = FrontendChallengeScore.where(user_id: user_id).where('passed_test_cases = total_test_cases').pluck(:frontend_challenge_id)
+    FrontendChallenge.where(id: challenge_ids, is_active: true).group(:topic).count
+  end
+
+  def self.split_by_topic
+    where(is_active: true).group(:topic).count
+  end
+
   private
 
   def expire_cache
