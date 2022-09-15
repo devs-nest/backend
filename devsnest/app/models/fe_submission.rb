@@ -4,7 +4,7 @@
 class FeSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :frontend_challenge
-  after_save :assign_score, if: :saved_change_to_passed_test_cases?
+  after_save :assign_score
 
   def assign_score
     passed_test_cases = [passed_test_cases.to_i, total_test_cases.to_i].min
