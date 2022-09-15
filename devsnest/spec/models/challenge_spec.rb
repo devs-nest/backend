@@ -153,9 +153,9 @@ RSpec.describe Challenge, type: :model do
       end
 
       it 'should re eval' do
-        UserScoreUpdate.perform_async(question.id)
+        UserScoreUpdate.perform_async(question.id, 'dsa')
         expect do
-          UserScoreUpdate.perform_async(question.id)
+          UserScoreUpdate.perform_async(question.id, 'dsa')
         end.to change(UserScoreUpdate.jobs, :size).by(1)
       end
     end

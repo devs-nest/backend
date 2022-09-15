@@ -5,12 +5,28 @@ module Api
     # api for challenge test controller
     class FrontendChallengeResource < JSONAPI::Resource
       attributes :name, :day_no, :folder_name, :topic, :difficulty, :slug, :question_body, :score, :is_active, :user_id, :course_curriculum_id, :testcases_path, :hidden_files, :protected_paths, :open_paths,
-                 :template, :active_path, :challenge_type, :files
+                 :template, :active_path, :challenge_type
       attributes :submission_status
       filter :difficulty
       filter :topic
       filter :is_active
       attributes :files, :previous_data
+
+      def self.records(options = {})
+        if options[:context][:action] == 'index'
+          super(options).where(is_active: true)
+        else
+          super(options)
+        end
+      end
+
+      def fetchable_fields(options = {})
+        if context[:action] == 'index'
+          %i[id name topic difficulty slug score challenge_type submission_status]
+        else
+          super
+        end
+      end
 
       def hidden_files
         return JSON.parse(@model.hidden_files) if @model.hidden_files.present? && context[:action] == 'show'

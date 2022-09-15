@@ -5,7 +5,7 @@ module Api
     module Admin
       # Course Curriculum Resource
       class CourseCurriculumResource < JSONAPI::Resource
-        attributes :id, :topic, :course_id, :course_type, :day, :video_link, :resources, :locked
+        attributes :topic, :course_id, :course_type, :day, :video_link, :resources, :locked
         attributes :assignment_questions
 
         filter :course_name, apply: lambda { |records, value, _options|

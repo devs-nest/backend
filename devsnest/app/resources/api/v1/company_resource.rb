@@ -5,7 +5,7 @@ module Api
     # Company Resource
     class CompanyResource < JSONAPI::Resource
       caching
-      attributes :id, :name, :image_url
+      attributes :name, :image_url
       attributes :challenge_count
 
       def challenge_count

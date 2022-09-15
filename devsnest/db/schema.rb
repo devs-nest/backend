@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_31_100938) do
+ActiveRecord::Schema.define(version: 2022_09_13_163012) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -256,6 +256,9 @@ ActiveRecord::Schema.define(version: 2022_08_31_100938) do
     t.boolean "is_submitted", default: false
     t.text "source_code"
     t.string "status"
+    t.datetime "created_at", precision: 6
+    t.datetime "updated_at", precision: 6
+    t.index ["user_id", "frontend_challenge_id"], name: "frontend_submission_user_index"
   end
 
   create_table "frontend_challenge_scores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -673,6 +676,7 @@ ActiveRecord::Schema.define(version: 2022_08_31_100938) do
     t.string "referral_code"
     t.integer "coins", default: 0
     t.text "github_token"
+    t.integer "fe_score", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

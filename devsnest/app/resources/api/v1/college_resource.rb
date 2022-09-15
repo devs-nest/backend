@@ -3,7 +3,7 @@
 module Api
   module V1
     class CollegeResource < JSONAPI::Resource
-      attributes :id, :name
+      attributes :name
     end
   end
 end

@@ -5,7 +5,7 @@ module Api
     module Admin
       # Resource
       class UserResource < JSONAPI::Resource
-        attributes :id, :discord_username, :discord_id, :name, :grad_year, :school, :work_exp, :known_from, :dsa_skill, :webd_skill,
+        attributes :discord_username, :discord_id, :name, :grad_year, :school, :work_exp, :known_from, :dsa_skill, :webd_skill,
                    :group_assigned
         paginator :paged
 

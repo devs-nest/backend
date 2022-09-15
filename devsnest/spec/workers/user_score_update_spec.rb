@@ -6,6 +6,6 @@ RSpec.describe UserScoreUpdate, type: :worker do
   let!(:u_s2) { create(:algo_submission, user_id: user.id, challenge_id: question.id, passed_test_cases: 10, total_test_cases: 10, is_best_submission: false, is_submitted: false) }
 
   it 'Should run worker' do
-    UserScoreUpdate.new.perform(question.id)
+    UserScoreUpdate.new.perform(question.id, 'dsa')
   end
 end
