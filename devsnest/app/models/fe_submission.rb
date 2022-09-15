@@ -7,7 +7,8 @@ class FeSubmission < ApplicationRecord
   after_save :assign_score, if: :saved_change_to_passed_test_cases?
 
   def assign_score
-    passed_test_cases = [passed_test_cases, total_test_cases].min
+    passed_test_cases = [passed_test_cases.to_i, total_test_cases.to_i].min
+    total_test_cases = total_test_cases.to_i
     final_score = frontend_challenge.score * (passed_test_cases / total_test_cases.to_f)
     update!(score: final_score)
     frontend_challenge_score = FrontendChallengeScore.find_by(user_id: user_id, frontend_challenge_id: frontend_challenge_id)

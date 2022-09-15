@@ -20,7 +20,7 @@ module Api
         end
       end
 
-      def fetchable_fields(options = {})
+      def fetchable_fields
         if context[:action] == 'index'
           %i[id name topic difficulty slug score challenge_type submission_status]
         else
