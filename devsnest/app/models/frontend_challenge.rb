@@ -14,6 +14,8 @@ class FrontendChallenge < ApplicationRecord
   # before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
   before_update :recalculate_user_scores, if: :will_save_change_to_is_active?
 
+  has_paper_trail
+
   def recalculate_user_scores
     UserScoreUpdate.perform_async(id, 'frontend')
   end
