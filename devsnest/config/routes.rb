@@ -3,6 +3,14 @@
 Rails.application.routes.draw do
   get '/health_check', to: 'health_check#index'
 
+  # Sidekiq Web UI, only for admins.
+  Sidekiq::Web.use ActionDispatch::Cookies
+  Sidekiq::Web.use ActionDispatch::Session::CookieStore, key: '_interslice_session'
+
+  Devsnest::Application.routes.draw do
+    mount Sidekiq::Web => '/sidekiq'
+  end
+
   namespace :api do
     namespace :v1 do
       # devise_for :users, :path_names => { :sign_out => 'logout', :password => 'secret', :confirmation => 'verification' } do
