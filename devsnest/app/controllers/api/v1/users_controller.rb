@@ -51,16 +51,16 @@ module Api
       end
 
       def leaderboard
-        @leaderboard.page_size = params[:size].to_i || 10
+        @dsa_leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
-        @leaderboard.rank_member(@current_user.username, @current_user.score || 0) if @current_user.present?
+        @dsa_leaderboard.rank_member(@current_user.username, @current_user.score || 0) if @current_user.present?
 
-        scoreboard = @leaderboard.leaders(page)
-        pages_count = @leaderboard.total_pages
+        scoreboard = @dsa_leaderboard.leaders(page)
+        pages_count = @dsa_leaderboard.total_pages
 
         if @current_user
-          rank = @leaderboard.rank_for(@current_user.username)
-          user = @leaderboard.member_at(rank)
+          rank = @dsa_leaderboard.rank_for(@current_user.username)
+          user = @dsa_leaderboard.member_at(rank)
           return render_success({ id: page, type: 'leaderboard', user: user, scoreboard: scoreboard, count: pages_count })
         end
 
@@ -70,28 +70,27 @@ module Api
       def new_leaderboard
         course_type = params[:course_type]
         course_timeline = params[:course_timeline]
-        return render_error({ message: 'Course type must be dsa or frontend' }) if %w[dsa frontend].exclude?(course_type)
+        return render_error({ message: 'Course type must be dsa or frontend' }) if LeaderboardDevsnest::COURSE_TYPE.values.exclude?(course_type)
 
-        return render_error({ message: 'Course timeline must be daily, weekly or monthly' }) if %w[daily weekly monthly].exclude?(course_timeline)
+        return render_error({ message: 'Course timeline must be weekly or monthly' }) if LeaderboardDevsnest::COURSE_TIMELINE.values.exclude?(course_timeline)
 
-        leaderboard = LeaderboardDevsnest::LB.new(course_type, course_timeline).call
-        leaderboard.page_size = params[:size].to_i || 10
+        @dsa_leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
+        leaderboard_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
+        scoreboard = []
 
-        if leaderboard.check_member?(@current_user.username).blank?
-          leaderboard.rank_member(@current_user.username, @current_user.score,
-                                  course_timeline != 'daily' ? { 'rank_change' => 0 }.to_json : nil)
+        @dsa_leaderboard.leaders(page).each do |data|
+          prev_rank = leaderboard_copy.rank_for(data[:name])
+          rank_change = prev_rank - data[:rank]
+          scoreboard.push(data.merge(rank_change: rank_change))
         end
 
         data = {
           id: page,
           type: "#{course_type}_#{course_timeline}_leaderboard",
-          user: leaderboard.score_and_rank_for(@current_user.username),
-          scoreboard: leaderboard.leaders(page, with_member_data: true),
-          count: leaderboard.total_pages
+          scoreboard: scoreboard,
+          count: @dsa_leaderboard.total_pages
         }
-
-        data[:user] = data[:user].merge(JSON.parse(leaderboard.member_data_for(@current_user.username))) if course_timeline != 'daily'
         render_success(data)
       end
 
@@ -216,7 +215,7 @@ module Api
         if context[:user].update_count >= 4
           render_error({ message: 'Update count Exceeded for username' })
         else
-          @leaderboard.remove_member(context[:user].username)
+          @dsa_leaderboard.remove_member(context[:user].username)
           Challenge.rerank_member(context[:user], params['data']['attributes']['username'])
           params['data']['attributes']['update_count'] = context[:user].update_count + 1
         end

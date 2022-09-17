@@ -97,6 +97,6 @@ class ApplicationController < ActionController::API
   end
 
   def initialize_redis_lb
-    @leaderboard ||= LeaderboardDevsnest::LB.new('dsa', 'daily').call
+    @dsa_leaderboard ||= LeaderboardDevsnest::DSAInitializer::LB
   end
 end

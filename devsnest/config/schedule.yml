@@ -1,9 +1,11 @@
-mentor_job:
-  # cron: "*/1 * * * *"
-  cron: "30 04 * * sun"
-  class: "MentorWorker"
-  queue: mentor_worker
-
-weekly_leaderboard_set:
+copy_weekly_leaderboard_job:
   cron: "59 23 * * sun" # every sunday at 23:59
-  class: "WeeklyLeaderboardWorker"
+  class: "CopyLeaderboardWorker"
+  args:
+    timeline: "weekly"
+
+copy_monthly_leaderboard_job:
+  cron: "01 0 1 * *" # first day of every month at 00:01
+  class: "CopyLeaderboardWorker"
+  args:
+    timeline: "monthly"

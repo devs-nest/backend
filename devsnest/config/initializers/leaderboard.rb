@@ -5,14 +5,24 @@ require 'tie_ranking_leaderboard'
 module LeaderboardDevsnest
   # Initialize leaderboard with redis
 
-  # class Initializer
-  #   RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB']) }
-  #   LB = Leaderboard.new('dn_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
-  # end
+  COURSE_TYPE = {
+    'DSA': 'dsa',
+    'FRONTEND': 'frontend'
+  }.freeze
 
-  class LB
+  COURSE_TIMELINE = {
+    'WEEKLY': 'weekly',
+    'MONTHLY': 'monthly'
+  }.freeze
+
+  class DSAInitializer
+    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
+    LB = TieRankingLeaderboard.new('dn_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
+  end
+
+  class CopyLeaderboard
     def initialize(type, timeline)
-      @name = "#{type}_#{timeline}_leaderboard"
+      @name = "#{type}_#{timeline}_leaderboard_copy"
     end
     def call
       redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
