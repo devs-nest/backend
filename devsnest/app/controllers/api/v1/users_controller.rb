@@ -9,7 +9,7 @@ module Api
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
-                             create_github_repo repo_details sourcecode_io]
+                             create_github_repo repo_details sourcecode_io new_leaderboard]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -51,36 +51,47 @@ module Api
       end
 
       def leaderboard
-        @leaderboard.page_size = params[:size].to_i || 10
+        @dsa_leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
-        @leaderboard.rank_member(@current_user.username, @current_user.score || 0) if @current_user.present?
+        @dsa_leaderboard.rank_member(@current_user.username, @current_user.score || 0) if @current_user.present?
 
-        scoreboard = @leaderboard.leaders(page)
-        pages_count = @leaderboard.total_pages
+        scoreboard = @dsa_leaderboard.leaders(page)
+        pages_count = @dsa_leaderboard.total_pages
 
         if @current_user
-          rank = @leaderboard.rank_for(@current_user.username)
-          user = @leaderboard.member_at(rank)
+          rank = @dsa_leaderboard.rank_for(@current_user.username)
+          user = @dsa_leaderboard.member_at(rank)
           return render_success({ id: page, type: 'leaderboard', user: user, scoreboard: scoreboard, count: pages_count })
         end
 
         render_success({ id: page, type: 'leaderboard', scoreboard: scoreboard, count: pages_count })
       end
 
-      def weekly_dsa_leaderboard
-        @weekly_leaderboard.page_size = params[:size].to_i || 10
-        page = params[:page].to_i
-        scoreboard = @weekly_leaderboard.leaders(page)
-        pages_count = @weekly_leaderboard.total_pages
+      def new_leaderboard
+        course_type = params[:course_type]
+        course_timeline = params[:course_timeline]
+        return render_error({ message: 'Course type must be dsa or frontend' }) if LeaderboardDevsnest::COURSE_TYPE.values.exclude?(course_type)
 
-        if @current_user
-          @weekly_leaderboard.rank_member(@current_user.username, @current_user.score) unless @weekly_leaderboard.rank_for(@current_user.username)
-          rank = @weekly_leaderboard.rank_for(@current_user.username)
-          user = @weekly_leaderboard.member_at(rank)
-          return render_success({ id: page, type: 'weekly_leaderboard', user: user, scoreboard: scoreboard, count: pages_count })
+        return render_error({ message: 'Course timeline must be weekly or monthly' }) if LeaderboardDevsnest::COURSE_TIMELINE.values.exclude?(course_timeline)
+
+        @dsa_leaderboard.page_size = params[:size].to_i || 10
+        page = params[:page].to_i
+        leaderboard_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
+        scoreboard = []
+
+        @dsa_leaderboard.leaders(page).each do |data|
+          prev_rank = leaderboard_copy.rank_for(data[:name])
+          rank_change = prev_rank - data[:rank]
+          scoreboard.push(data.merge(rank_change: rank_change))
         end
 
-        render_success({ id: page, type: 'weekly_leaderboard', scoreboard: scoreboard, count: pages_count })
+        data = {
+          id: page,
+          type: "#{course_type}_#{course_timeline}_leaderboard",
+          scoreboard: scoreboard,
+          count: @dsa_leaderboard.total_pages
+        }
+        render_success(data)
       end
 
       def create
@@ -204,7 +215,7 @@ module Api
         if context[:user].update_count >= 4
           render_error({ message: 'Update count Exceeded for username' })
         else
-          @leaderboard.remove_member(context[:user].username)
+          @dsa_leaderboard.remove_member(context[:user].username)
           Challenge.rerank_member(context[:user], params['data']['attributes']['username'])
           params['data']['attributes']['update_count'] = context[:user].update_count + 1
         end
