@@ -4,7 +4,7 @@ module Api
   module V1
     # Resource for Certification
     class CertificationResource < JSONAPI::Resource
-      attributes :id, :user_id, :cuid, :created_at, :certificate_type
+      attributes :user_id, :cuid, :created_at, :certificate_type
 
       attributes :user_details, :description, :title
 

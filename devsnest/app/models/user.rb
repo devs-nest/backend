@@ -246,7 +246,10 @@ class User < ApplicationRecord
   end
 
   def activity
-    algo_submissions.where(is_submitted: true).group('Date(created_at)').count
+    algo_submissions = AlgoSubmission.where(user_id: id, is_submitted: true).group('Date(created_at)').count
+    fe_submissions = FeSubmission.where(user_id: id, is_submitted: true).group('Date(created_at)').count
+
+    algo_submissions.merge(fe_submissions) { |_k, a_value, b_value| a_value + b_value }
   end
 
   def unsubscribe_token

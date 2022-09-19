@@ -451,6 +451,12 @@ module Api
         github_connected.present? ? render_success : render_error({ message: 'Github not connected.' })
       end
 
+      def repo_files
+        client = @current_user.github_client
+
+        render_success({ file_names: client.contents("#{client.login}/#{params[:repo_name]}").pluck(:name) })
+      end
+
       private
 
       def sign_up_params

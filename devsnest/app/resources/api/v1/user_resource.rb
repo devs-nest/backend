@@ -5,11 +5,11 @@ module Api
     class UserResource < JSONAPI::Resource
       attributes :email, :name, :password, :web_active, :username, :score, :discord_active, :batch, :grad_status, :grad_specialization, :grad_year, :grad_start, :grad_end,
                  :github_url, :linkedin_url, :resume_url, :dob, :registration_num, :college_id, :image_url, :google_id, :bot_token, :update_count, :login_count, :discord_id, :is_verified,
-                 :working_status, :is_fullstack_course_22_form_filled, :phone_number, :working_role, :company_name, :college_name, :college_year, :is_college_form_filled, :accepted_in_course,
+                 :working_status, :is_fullstack_course_22_form_filled, :phone_number, :working_role, :company_name, :college_year, :is_college_form_filled, :accepted_in_course,
                  :enrolled_for_course_image_url, :referral_code, :coins, :github_token
       attributes :group_id, :group_name, :group_version
       attributes :college_name
-      attributes :solved, :total_by_difficulty
+      attributes :solved, :total_by_difficulty, :fe_solved, :fe_total_by_topic
       attributes :activity
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
       attributes :frontend_activity
@@ -50,6 +50,14 @@ module Api
 
       def solved
         Challenge.count_solved(@model.id)
+      end
+
+      def fe_solved
+        FrontendChallenge.count_solved(@model.id)
+      end
+
+      def fe_total_by_topic
+        FrontendChallenge.split_by_topic
       end
 
       def total_by_difficulty
