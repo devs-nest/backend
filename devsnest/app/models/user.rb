@@ -32,8 +32,14 @@ class User < ApplicationRecord
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
   after_update :update_user_score_lb, if: :saved_change_to_score?
+  after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
   before_validation :create_referral_code, if: :is_referall_empty?
   has_paper_trail
+
+  def update_user_fe_score_lb
+    fe_lb = LeaderboardDevsnest::FEInitializer::LB
+    fe_lb.rank_member(username, fe_score)
+  end
 
   def update_user_score_lb
     main_lb = LeaderboardDevsnest::DSAInitializer::LB
@@ -217,15 +223,24 @@ class User < ApplicationRecord
   end
 
   # Use this to create or reload the redis sorted set
-  def self.initialize_leaderboard(course_type)
-    leaderboard = LeaderboardDevsnest::DSAInitializer::LB
-    lb_weekly_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, 'weekly').call
-    lb_monthly_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, 'monthly').call
+  def self.initialize_leaderboard
+    dsa_lb = LeaderboardDevsnest::DSAInitializer::LB
+    fe_lb = LeaderboardDevsnest::FEInitializer::LB
 
     find_each do |user|
-      leaderboard.rank_member(user.username, user.score || 0)
-      lb_weekly_copy.rank_member(user.username, user.score || 0)
-      lb_monthly_copy.rank_member(user.username, user.score || 0)
+      dsa_lb.rank_member(user.username, user.score)
+      fe_lb.rank_member(user.username, user.fe_score)
+    end
+
+    LeaderboardDevsnest::COURSE_TYPE.values.each do |course_type|
+      LeaderboardDevsnest::COURSE_TIMELINE.values.each do |course_timeline|
+        lb_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
+        lb = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? dsa_lb : fe_lb
+
+        lb.all_leaders.each do |data|
+          lb_copy.rank_member(data[:name], data[:score])
+        end
+      end
     end
   end
 
@@ -420,11 +435,5 @@ class User < ApplicationRecord
       group_slug: group.slug,
       group_name: group.name
     }
-  end
-
-  def self.initialize_weekly_dsa_leaderboard(daily_lb, weekly_lb)
-    daily_lb.all_leaders.each do |lb_data|
-      weekly_lb.rank_member(lb_data['name'.to_sym], lb_data['score'.to_sym])
-    end
   end
 end

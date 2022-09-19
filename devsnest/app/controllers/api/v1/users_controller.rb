@@ -5,11 +5,11 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       include ApplicationHelper
-      before_action :simple_auth, only: %i[leaderboard report weekly_dsa_leaderboard]
+      before_action :simple_auth, only: %i[report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
-                             create_github_repo repo_details sourcecode_io new_leaderboard]
+                             create_github_repo repo_details sourcecode_io new_leaderboard leaderboard]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -51,20 +51,17 @@ module Api
       end
 
       def leaderboard
-        @dsa_leaderboard.page_size = params[:size].to_i || 10
+        @fe_leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
-        @dsa_leaderboard.rank_member(@current_user.username, @current_user.score || 0) if @current_user.present?
-
-        scoreboard = @dsa_leaderboard.leaders(page)
-        pages_count = @dsa_leaderboard.total_pages
-
-        if @current_user
-          rank = @dsa_leaderboard.rank_for(@current_user.username)
-          user = @dsa_leaderboard.member_at(rank)
-          return render_success({ id: page, type: 'leaderboard', user: user, scoreboard: scoreboard, count: pages_count })
-        end
-
-        render_success({ id: page, type: 'leaderboard', scoreboard: scoreboard, count: pages_count })
+        @fe_leaderboard.rank_member(@current_user.username, @current_user.fe_score) if @fe_leaderboard.check_member?(@current_user.username).blank?
+        data = {
+          id: page,
+          type: 'leaderboard',
+          user: @fe_leaderboard.score_and_rank_for(@current_user.username),
+          scoreboard: @fe_leaderboard.leaders(page),
+          pages_count: @fe_leaderboard.total_pages
+        }
+        render_success(data)
       end
 
       def new_leaderboard
@@ -74,12 +71,13 @@ module Api
 
         return render_error({ message: 'Course timeline must be weekly or monthly' }) if LeaderboardDevsnest::COURSE_TIMELINE.values.exclude?(course_timeline)
 
-        @dsa_leaderboard.page_size = params[:size].to_i || 10
+        leaderboard = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @dsa_leaderboard : @fe_leaderboard
+        leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
         leaderboard_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
         scoreboard = []
 
-        @dsa_leaderboard.leaders(page).each do |data|
+        leaderboard.leaders(page).each do |data|
           prev_rank = leaderboard_copy.rank_for(data[:name])
           rank_change = prev_rank - data[:rank]
           scoreboard.push(data.merge(rank_change: rank_change))
@@ -89,7 +87,7 @@ module Api
           id: page,
           type: "#{course_type}_#{course_timeline}_leaderboard",
           scoreboard: scoreboard,
-          count: @dsa_leaderboard.total_pages
+          count: leaderboard.total_pages
         }
         render_success(data)
       end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'competition_ranking_leaderboard'
-require 'tie_ranking_leaderboard'
 module LeaderboardDevsnest
   # Initialize leaderboard with redis
 
@@ -16,8 +15,13 @@ module LeaderboardDevsnest
   }.freeze
 
   class DSAInitializer
-    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
-    LB = TieRankingLeaderboard.new('dn_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
+    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 3600) }
+    LB = CompetitionRankingLeaderboard.new('dn_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
+  end
+
+  class FEInitializer
+    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 3600) }
+    LB = CompetitionRankingLeaderboard.new('fe_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
   end
 
   class CopyLeaderboard
@@ -26,7 +30,7 @@ module LeaderboardDevsnest
     end
     def call
       redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
-      TieRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
+      CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
 
@@ -39,10 +43,5 @@ module LeaderboardDevsnest
       redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
-  end
-
-  class WeeklyLeaderboard
-    REDIS_CONNECTION = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB']) }
-    WLB = Leaderboard.new('weekly_lb', Devsnest::Application::REDIS_OPTIONS, REDIS_CONNECTION)
   end
 end
