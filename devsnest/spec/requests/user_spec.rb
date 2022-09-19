@@ -110,10 +110,10 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Leaderboard' do
-    let(:spec_leaderboard) { LeaderboardDevsnest::DSAInitializer::LB }
+    let(:spec_leaderboard) { LeaderboardDevsnest::FEInitializer::LB }
     let!(:user) { create(:user, discord_active: true, username: 'username') }
     before :each do
-      User.initialize_leaderboard('dsa')
+      User.initialize_leaderboard
     end
 
     it ' return unauthorized if user is not logged in or not a known bot' do
@@ -124,17 +124,6 @@ RSpec.describe Api::V1::UsersController, type: :request do
     it 'returns data of logged in users when user is logged in ' do
       sign_in(user)
       get '/api/v1/users/leaderboard', headers: HEADERS
-      expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
-    end
-
-    it 'retrun data of logged in users when user is bot ' do
-      get '/api/v1/users/leaderboard', params: { "data": { "attributes": { "discord_id": user.discord_id } } }, headers: {
-        'ACCEPT' => 'application/vnd.api+json',
-        'CONTENT-TYPE' => 'application/vnd.api+json',
-        'Token' => ENV['DISCORD_TOKEN'],
-        'User-Type' => 'Bot'
-      }
       expect(response.status).to eq(200)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
     end
