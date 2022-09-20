@@ -232,8 +232,8 @@ class User < ApplicationRecord
       fe_lb.rank_member(user.username, user.fe_score)
     end
 
-    LeaderboardDevsnest::COURSE_TYPE.values.each do |course_type|
-      LeaderboardDevsnest::COURSE_TIMELINE.values.each do |course_timeline|
+    LeaderboardDevsnest::COURSE_TYPE.each_value do |course_type|
+      LeaderboardDevsnest::COURSE_TIMELINE.each_value do |course_timeline|
         lb_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
         lb = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? dsa_lb : fe_lb
 

@@ -58,7 +58,7 @@ module Api
         return render_error({ message: 'Course timeline must be weekly or monthly' }) if LeaderboardDevsnest::COURSE_TIMELINE.values.exclude?(course_timeline)
 
         leaderboard = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @dsa_leaderboard : @fe_leaderboard
-        leaderboard.rank_member(@current_user.username, @current_user.fe_score) if @fe_leaderboard.check_member?(@current_user.username).blank?
+        leaderboard.rank_member(@current_user.username, LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @current_user.score : @current_user.fe_score) if @fe_leaderboard.check_member?(@current_user.username).blank?
         leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
         leaderboard_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
