@@ -128,9 +128,8 @@ class Challenge < ApplicationRecord
   end
 
   def regenerate_challenge_leaderboard
-    # LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call.delete_leaderboard
+    LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call.delete_leaderboard
     leaderboard = LeaderboardDevsnest::AlgoLeaderboard.new("#{slug}-lb").call
-    leaderboard.delete_leaderboard
     best_submissions = UserChallengeScore.where(challenge_id: id)
 
     best_submissions.each do |submission|

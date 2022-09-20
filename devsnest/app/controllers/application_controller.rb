@@ -104,7 +104,6 @@ class ApplicationController < ActionController::API
   end
 
   def initialize_redis_lb
-    @dsa_leaderboard ||= LeaderboardDevsnest::DSAInitializer::LB
-    @fe_leaderboard ||= LeaderboardDevsnest::FEInitializer::LB
+    @leaderboard ||= LeaderboardDevsnest::Initializer::LB
   end
 end
