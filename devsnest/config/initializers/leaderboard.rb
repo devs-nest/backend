@@ -15,12 +15,12 @@ module LeaderboardDevsnest
   }.freeze
 
   class DSAInitializer
-    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 3600) }.freeze
+    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 3600) }
     LB = CompetitionRankingLeaderboard.new('dn_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
   end
 
   class FEInitializer
-    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 3600) }.freeze
+    RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 3600) }
     LB = CompetitionRankingLeaderboard.new('fe_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
   end
 
