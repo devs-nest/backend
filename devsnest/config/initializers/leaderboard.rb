@@ -44,4 +44,15 @@ module LeaderboardDevsnest
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
+
+  class FeLeaderboard
+    def initialize(name)
+      @name = "#{name}_fe"
+    end
+
+    def call
+      redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
+      CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
+    end
+  end
 end
