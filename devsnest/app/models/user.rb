@@ -228,7 +228,7 @@ class User < ApplicationRecord
     fe_lb = LeaderboardDevsnest::FEInitializer::LB
 
     find_each do |user|
-      dsa_lb.rank_member(user.username, user.score)
+      dsa_lb.rank_member(uleser.username, user.score)
       fe_lb.rank_member(user.username, user.fe_score)
     end
 

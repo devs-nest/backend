@@ -126,14 +126,14 @@ RSpec.describe Api::V1::UsersController, type: :request do
       sign_in(user)
       get '/api/v1/users/leaderboard?course_timeline=weekly'
       expect(response.status).to eq(400)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq("Course type must be dsa or frontend")
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Course type must be dsa or frontend')
     end
 
     it 'returns error when course_timeline is not provided as params' do
       sign_in(user)
       get '/api/v1/users/leaderboard?course_type=dsa'
       expect(response.status).to eq(400)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq("Course timeline must be weekly or monthly")
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Course timeline must be weekly or monthly')
     end
 
     it 'returns dsa weekly data of logged in users when user is logged in ' do
