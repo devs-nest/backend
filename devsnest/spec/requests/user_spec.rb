@@ -110,7 +110,8 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Leaderboard' do
-    let(:spec_leaderboard) { LeaderboardDevsnest::FEInitializer::LB }
+    let(:spec_dsa_leaderboard) { LeaderboardDevsnest::DSAInitializer::LB }
+    let(:spec_fe_leaderboard) { LeaderboardDevsnest::FEInitializer::LB }
     let!(:user) { create(:user, discord_active: true, username: 'username') }
     before :each do
       User.initialize_leaderboard
@@ -139,28 +140,28 @@ RSpec.describe Api::V1::UsersController, type: :request do
       sign_in(user)
       get '/api/v1/users/leaderboard?course_type=dsa&course_timeline=weekly', headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_dsa_leaderboard.leaders(1).count)
     end
 
     it 'returns dsa monthly data of logged in users when user is logged in ' do
       sign_in(user)
       get '/api/v1/users/leaderboard?course_type=dsa&course_timeline=monthly', headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_dsa_leaderboard.leaders(1).count)
     end
 
     it 'returns frontend weekly data of logged in users when user is logged in ' do
       sign_in(user)
       get '/api/v1/users/leaderboard?course_type=frontend&course_timeline=weekly', headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_fe_leaderboard.leaders(1).count)
     end
 
     it 'returns frontend monthly data of logged in users when user is logged in ' do
       sign_in(user)
       get '/api/v1/users/leaderboard?course_type=frontend&course_timeline=monthly', headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_fe_leaderboard.leaders(1).count)
     end
   end
 
