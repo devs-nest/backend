@@ -12,8 +12,9 @@ class GroupMember < ApplicationRecord
   has_paper_trail on: %i[destroy]
 
   def update_group_member_count
-    curr_group = group
-    curr_group.update(members_count: curr_group.group_members.count)
+    return if group.group_members.count.zero?
+
+    group.update(members_count: group.group_members.count)
   end
 
   def send_all_steps_completed_mail
