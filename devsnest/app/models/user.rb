@@ -228,7 +228,7 @@ class User < ApplicationRecord
     fe_lb = LeaderboardDevsnest::FEInitializer::LB
 
     find_each do |user|
-      dsa_lb.rank_member(uleser.username, user.score)
+      dsa_lb.rank_member(user.username, user.score)
       fe_lb.rank_member(user.username, user.fe_score)
     end
 
@@ -337,13 +337,13 @@ class User < ApplicationRecord
   end
 
   def github_client
-    decoded_access_token = $cryptor.decrypt_and_verify(self.github_token)[:access_token]
-    Octokit::Client.new( :access_token => decoded_access_token )
+    decoded_access_token = $cryptor.decrypt_and_verify(github_token)[:access_token]
+    Octokit::Client.new(access_token: decoded_access_token)
   end
 
-  def create_github_commit(commited_files, repo, commit_message = "Added All Files")
+  def create_github_commit(commited_files, repo, commit_message = 'Added All Files')
     ref = 'heads/main'
-    client = self.github_client
+    client = github_client
     repo = "#{client.user.login}/#{repo}"
 
     # SHA of the latest commit on branch
@@ -354,12 +354,12 @@ class User < ApplicationRecord
     blobs = []
     # Create Blobs of all the files
     commited_files.each do |file_path, content|
-      blob_sha = client.create_blob(repo, content, "base64")
-      blobs << { :path => file_path, :mode => "100644", :type => "blob", :sha => blob_sha }
+      blob_sha = client.create_blob(repo, content, 'base64')
+      blobs << { path: file_path, mode: '100644', type: 'blob', sha: blob_sha }
     end
 
     # Make a new tree over the base tree
-    sha_new_tree = client.create_tree(repo, blobs, {:base_tree => sha_base_tree }).sha
+    sha_new_tree = client.create_tree(repo, blobs, { base_tree: sha_base_tree }).sha
     # Create the commit over the new tree
     sha_new_commit = client.create_commit(repo, commit_message, sha_new_tree, sha_latest_commit).sha
     # Update the branch on github
@@ -369,7 +369,7 @@ class User < ApplicationRecord
   end
 
   def update_github_secret(repo, secret_name, secret_value)
-    client = self.github_client
+    client = github_client
 
     # Get the public key of repository to encrypt secrets
     key_info = client.get("https://api.github.com/repos/#{client.user.login}/#{repo}/actions/secrets/public-key")
@@ -383,9 +383,9 @@ class User < ApplicationRecord
 
     # Creating/Updating the github secret in the repo
     client.put("/repos/#{client.user.login}/#{repo}/actions/secrets/#{secret_name}", {
-      encrypted_value: Base64.strict_encode64(encrypted_secret),
-      key_id: repo_public_key_id
-    })
+                 encrypted_value: Base64.strict_encode64(encrypted_secret),
+                 key_id: repo_public_key_id
+               })
 
     true
   end
