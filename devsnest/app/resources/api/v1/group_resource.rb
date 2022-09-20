@@ -77,7 +77,9 @@ module Api
           super(options).v2
         else
           user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
-          super(options).v2.visible.under_limited_members.or(super(options).where(id: user_group&.id))
+          return super(options).where(id: user_group.id) if user_group.present?
+
+          super(options).eligible_groups.order('members_count desc')
         end
       end
     end

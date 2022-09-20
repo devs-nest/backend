@@ -197,4 +197,8 @@ class Group < ApplicationRecord
     end
     result
   end
+
+  def self.eligible_groups
+    where('version = ? AND group_type = ? AND members_count < 16', 2, 'public')
+  end
 end
