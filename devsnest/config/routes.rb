@@ -90,7 +90,6 @@ Rails.application.routes.draw do
           get :check_user_details
           get :dashboard_details, :github_ping, :repo_files
           post :sourcecode_io
-          get :new_leaderboard
         end
       end
 

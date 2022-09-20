@@ -9,7 +9,7 @@ module Api
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
-                             create_github_repo repo_details sourcecode_io new_leaderboard leaderboard]
+                             create_github_repo repo_details sourcecode_io leaderboard]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -51,20 +51,6 @@ module Api
       end
 
       def leaderboard
-        @fe_leaderboard.page_size = params[:size].to_i || 10
-        page = params[:page].to_i
-        @fe_leaderboard.rank_member(@current_user.username, @current_user.fe_score) if @fe_leaderboard.check_member?(@current_user.username).blank?
-        data = {
-          id: page,
-          type: 'leaderboard',
-          user: @fe_leaderboard.score_and_rank_for(@current_user.username),
-          scoreboard: @fe_leaderboard.leaders(page),
-          pages_count: @fe_leaderboard.total_pages
-        }
-        render_success(data)
-      end
-
-      def new_leaderboard
         course_type = params[:course_type]
         course_timeline = params[:course_timeline]
         return render_error({ message: 'Course type must be dsa or frontend' }) if LeaderboardDevsnest::COURSE_TYPE.values.exclude?(course_type)
@@ -72,6 +58,7 @@ module Api
         return render_error({ message: 'Course timeline must be weekly or monthly' }) if LeaderboardDevsnest::COURSE_TIMELINE.values.exclude?(course_timeline)
 
         leaderboard = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @dsa_leaderboard : @fe_leaderboard
+        leaderboard.rank_member(@current_user.username, @current_user.fe_score) if @fe_leaderboard.check_member?(@current_user.username).blank?
         leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
         leaderboard_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
