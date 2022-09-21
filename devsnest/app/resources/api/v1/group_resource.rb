@@ -77,7 +77,10 @@ module Api
           super(options).v2
         else
           user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
-          super(options).v2.visible.under_limited_members.or(super(options).where(id: user_group&.id))
+          return super(options).where(id: user_group.id) if user_group.present?
+
+          ids = Group.eligible_groups.sort_by { |f| [f.members_count / 10, -f.members_count] }.reverse.pluck(:id)
+          super(options).where(id: ids)
         end
       end
     end

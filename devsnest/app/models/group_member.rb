@@ -8,7 +8,14 @@ class GroupMember < ApplicationRecord
   after_create :send_scrum_message_in_group
   after_save :update_previous_scrum
   # after_commit :cache_expire
+  after_commit :update_group_member_count, only: %i[create destroy]
   has_paper_trail on: %i[destroy]
+
+  def update_group_member_count
+    return if group.group_members.count.zero?
+
+    group.update(members_count: group.group_members.count)
+  end
 
   def send_all_steps_completed_mail
     user = User.find_by(id: user_id)
