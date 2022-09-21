@@ -11,8 +11,10 @@ class CopyLeaderboardWorker
       lb = LeaderboardDevsnest::DSAInitializer::LB
       lb_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
 
-      lb.all_leaders.each do |data|
-        lb_copy.rank_member(data[:name], data[:score])
+      (1..lb.total_pages).each do |n|
+        lb.leaders(n).each do |data|
+          lb_copy.rank_member(data[:name], data[:score])
+        end
       end
     end
   end

@@ -227,9 +227,9 @@ class User < ApplicationRecord
     dsa_lb = LeaderboardDevsnest::DSAInitializer::LB
     fe_lb = LeaderboardDevsnest::FEInitializer::LB
 
-    find_each do |user|
-      dsa_lb.rank_member(user.username, user.score)
-      fe_lb.rank_member(user.username, user.fe_score)
+    User.where(accepted_in_course: true).find_each.pluck(:name, :score, :fe_score) do |user|
+      dsa_lb.rank_member(user[0], user[1])
+      fe_lb.rank_member(user[0], user[2])
     end
 
     LeaderboardDevsnest::COURSE_TYPE.each_value do |course_type|
@@ -237,8 +237,10 @@ class User < ApplicationRecord
         lb_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
         lb = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? dsa_lb : fe_lb
 
-        lb.all_leaders.each do |data|
-          lb_copy.rank_member(data[:name], data[:score])
+        (1..lb.total_pages).each do |n|
+          lb.leaders(n).each do |data|
+            lb_copy.rank_member(data[:name], data[:score])
+          end
         end
       end
     end

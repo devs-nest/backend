@@ -66,7 +66,7 @@ module Api
 
         leaderboard.leaders(page).each do |data|
           prev_rank = leaderboard_copy.rank_for(data[:name])
-          rank_change = prev_rank - data[:rank]
+          rank_change = prev_rank != 0 ? prev_rank - data[:rank] : prev_rank
           scoreboard.push(data.merge(rank_change: rank_change))
         end
 
