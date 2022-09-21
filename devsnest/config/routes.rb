@@ -69,6 +69,8 @@ Rails.application.routes.draw do
           end
         end
         jsonapi_resources :reward, only: %i[create]
+        jsonapi_resources :jobs, only: %i[index create update show]
+        jsonapi_resources :organization, only: %i[index create update show]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -188,6 +190,9 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :fe_submissions, only: %i[create show index]
       jsonapi_resources :coin_logs, only: %i[index]
+      jsonapi_resources :jobs, only: %i[index show]
+      jsonapi_resources :job_application, only: %i[create show index]
+      jsonapi_resources :skills, only: %i[index]
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_13_163012) do
+ActiveRecord::Schema.define(version: 2022_09_20_205850) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_09_13_163012) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "+NrNiErXMVA"
+    t.string "cuid", default: "xQPtCZ0OSvk"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -134,12 +134,11 @@ ActiveRecord::Schema.define(version: 2022_09_13_163012) do
   end
 
   create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
     t.string "pointable_type"
     t.integer "pointable_id"
     t.integer "coins", default: 0
-    t.integer "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "college_forms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -410,6 +409,42 @@ ActiveRecord::Schema.define(version: 2022_09_13_163012) do
     t.index ["user_id"], name: "index_internal_feedbacks_on_user_id"
   end
 
+  create_table "job_applications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "job_id"
+    t.integer "status"
+    t.string "email"
+    t.string "phone_number"
+    t.string "note_for_the_recruiter"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "job_skill_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.bigint "job_id", null: false
+    t.bigint "skill_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["job_id"], name: "index_job_skill_mappings_on_job_id"
+    t.index ["skill_id"], name: "index_job_skill_mappings_on_skill_id"
+  end
+
+  create_table "jobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "organization_id"
+    t.integer "user_id"
+    t.string "title"
+    t.text "description"
+    t.string "salary"
+    t.integer "job_type"
+    t.integer "job_category"
+    t.string "location"
+    t.string "experience"
+    t.boolean "archived", default: false
+    t.json "additional"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "judgeztokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "submission_id"
     t.string "token"
@@ -501,16 +536,22 @@ ActiveRecord::Schema.define(version: 2022_09_13_163012) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "referrals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.integer "referred_user_id"
-    t.string "referral_code"
+  create_table "organizations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.string "slug"
+    t.text "description"
+    t.string "website"
+    t.string "logo_banner"
+    t.string "logo"
+    t.string "heading"
+    t.json "additional"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "rewards", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
+  create_table "referrals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "referred_user_id"
+    t.string "referral_code"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -562,6 +603,12 @@ ActiveRecord::Schema.define(version: 2022_09_13_163012) do
     t.string "name"
     t.string "guild_id"
     t.string "link"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "skills", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -706,4 +753,6 @@ ActiveRecord::Schema.define(version: 2022_09_13_163012) do
     t.index ["group_id", "creation_week"], name: "index_weekly_todos_on_group_id_and_creation_week", unique: true
   end
 
+  add_foreign_key "job_skill_mappings", "jobs"
+  add_foreign_key "job_skill_mappings", "skills"
 end
