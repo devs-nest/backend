@@ -32,11 +32,17 @@ class User < ApplicationRecord
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
   after_update :update_user_score_lb, if: :saved_change_to_score?
+  after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
   before_validation :create_referral_code, if: :is_referall_empty?
   has_paper_trail
 
+  def update_user_fe_score_lb
+    fe_lb = LeaderboardDevsnest::FEInitializer::LB
+    fe_lb.rank_member(username, fe_score)
+  end
+
   def update_user_score_lb
-    main_lb = LeaderboardDevsnest::Initializer::LB
+    main_lb = LeaderboardDevsnest::DSAInitializer::LB
     main_lb.rank_member(username, score || 0)
   end
 
@@ -217,9 +223,26 @@ class User < ApplicationRecord
   end
 
   # Use this to create or reload the redis sorted set
-  def self.initialize_leaderboard(leaderboard)
-    find_each do |user|
-      leaderboard.rank_member(user.username, user.score || 0)
+  def self.initialize_leaderboard
+    dsa_lb = LeaderboardDevsnest::DSAInitializer::LB
+    fe_lb = LeaderboardDevsnest::FEInitializer::LB
+
+    User.where(accepted_in_course: true).find_each.pluck(:name, :score, :fe_score) do |user|
+      dsa_lb.rank_member(user[0], user[1])
+      fe_lb.rank_member(user[0], user[2])
+    end
+
+    LeaderboardDevsnest::COURSE_TYPE.each_value do |course_type|
+      LeaderboardDevsnest::COURSE_TIMELINE.each_value do |course_timeline|
+        lb_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
+        lb = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? dsa_lb : fe_lb
+
+        (1..lb.total_pages).each do |n|
+          lb.leaders(n).each do |data|
+            lb_copy.rank_member(data[:name], data[:score])
+          end
+        end
+      end
     end
   end
 
@@ -316,13 +339,13 @@ class User < ApplicationRecord
   end
 
   def github_client
-    decoded_access_token = $cryptor.decrypt_and_verify(self.github_token)[:access_token]
-    Octokit::Client.new( :access_token => decoded_access_token )
+    decoded_access_token = $cryptor.decrypt_and_verify(github_token)[:access_token]
+    Octokit::Client.new(access_token: decoded_access_token)
   end
 
-  def create_github_commit(commited_files, repo, commit_message = "Added All Files")
+  def create_github_commit(commited_files, repo, commit_message = 'Added All Files')
     ref = 'heads/main'
-    client = self.github_client
+    client = github_client
     repo = "#{client.user.login}/#{repo}"
 
     # SHA of the latest commit on branch
@@ -333,12 +356,12 @@ class User < ApplicationRecord
     blobs = []
     # Create Blobs of all the files
     commited_files.each do |file_path, content|
-      blob_sha = client.create_blob(repo, content, "base64")
-      blobs << { :path => file_path, :mode => "100644", :type => "blob", :sha => blob_sha }
+      blob_sha = client.create_blob(repo, content, 'base64')
+      blobs << { path: file_path, mode: '100644', type: 'blob', sha: blob_sha }
     end
 
     # Make a new tree over the base tree
-    sha_new_tree = client.create_tree(repo, blobs, {:base_tree => sha_base_tree }).sha
+    sha_new_tree = client.create_tree(repo, blobs, { base_tree: sha_base_tree }).sha
     # Create the commit over the new tree
     sha_new_commit = client.create_commit(repo, commit_message, sha_new_tree, sha_latest_commit).sha
     # Update the branch on github
@@ -348,7 +371,7 @@ class User < ApplicationRecord
   end
 
   def update_github_secret(repo, secret_name, secret_value)
-    client = self.github_client
+    client = github_client
 
     # Get the public key of repository to encrypt secrets
     key_info = client.get("https://api.github.com/repos/#{client.user.login}/#{repo}/actions/secrets/public-key")
@@ -362,9 +385,9 @@ class User < ApplicationRecord
 
     # Creating/Updating the github secret in the repo
     client.put("/repos/#{client.user.login}/#{repo}/actions/secrets/#{secret_name}", {
-      encrypted_value: Base64.strict_encode64(encrypted_secret),
-      key_id: repo_public_key_id
-    })
+                 encrypted_value: Base64.strict_encode64(encrypted_secret),
+                 key_id: repo_public_key_id
+               })
 
     true
   end
@@ -380,7 +403,7 @@ class User < ApplicationRecord
   end
 
   def leaderboard_details
-    main_lb = LeaderboardDevsnest::Initializer::LB
+    main_lb = LeaderboardDevsnest::DSAInitializer::LB
     rank = main_lb&.rank_for(username)
 
     nil unless rank.present?
