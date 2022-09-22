@@ -58,7 +58,10 @@ module Api
         return render_error({ message: 'Course timeline must be weekly or monthly' }) if LeaderboardDevsnest::COURSE_TIMELINE.values.exclude?(course_timeline)
 
         leaderboard = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @dsa_leaderboard : @fe_leaderboard
-        leaderboard.rank_member(@current_user.username, LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @current_user.score : @current_user.fe_score) if @fe_leaderboard.check_member?(@current_user.username).blank?
+        if @fe_leaderboard.check_member?(@current_user.username).blank?
+          leaderboard.rank_member(@current_user.username,
+                                  LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @current_user.score : @current_user.fe_score)
+        end
         leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
         leaderboard_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
@@ -70,9 +73,14 @@ module Api
           scoreboard.push(data.merge(rank_change: rank_change))
         end
 
+        user = leaderboard.score_and_rank_for(@current_user.username)
+        current_user_prev_rank = leaderboard_copy.rank_for(@current_user.username)
+        user = user.merge(rank_change: current_user_prev_rank.zero? ? current_user_prev_rank : current_user_prev_rank - user[:rank])
+
         data = {
           id: page,
           type: "#{course_type}_#{course_timeline}_leaderboard",
+          user: user,
           scoreboard: scoreboard,
           count: leaderboard.total_pages
         }
