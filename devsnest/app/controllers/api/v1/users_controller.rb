@@ -73,14 +73,10 @@ module Api
           scoreboard.push(data.merge(rank_change: rank_change))
         end
 
-        user = leaderboard.score_and_rank_for(@current_user.username)
-        current_user_prev_rank = leaderboard_copy.rank_for(@current_user.username)
-        user = user.merge(rank_change: current_user_prev_rank.zero? ? current_user_prev_rank : current_user_prev_rank - user[:rank])
-
         data = {
           id: page,
           type: "#{course_type}_#{course_timeline}_leaderboard",
-          user: user,
+          current_user: @current_user.lb_data(leaderboard, leaderboard_copy),
           scoreboard: scoreboard,
           count: leaderboard.total_pages
         }

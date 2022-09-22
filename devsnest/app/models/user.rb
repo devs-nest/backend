@@ -438,4 +438,10 @@ class User < ApplicationRecord
       group_name: group.name
     }
   end
+
+  def lb_data(lb_main, lb_copy)
+    user = lb_main.score_and_rank_for(username)
+    user_prev_rank = lb_copy.rank_for(username)
+    user.merge(rank_change: user_prev_rank.zero? ? user_prev_rank : user_prev_rank - user[:rank])
+  end
 end
