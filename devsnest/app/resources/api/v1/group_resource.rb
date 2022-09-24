@@ -79,8 +79,7 @@ module Api
           user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
           return super(options).where(id: user_group.id) if user_group.present?
 
-          ids = Group.eligible_groups.sort_by { |f| [f.members_count / 10, -f.members_count] }.reverse.pluck(:id)
-          super(options).where(id: ids)
+          super(options).eligible_groups.order('((members_count%15) - (members_count)%5)/10 desc , (members_count%15)%5')
         end
       end
     end
