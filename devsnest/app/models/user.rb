@@ -101,6 +101,7 @@ class User < ApplicationRecord
   has_many :job_applications
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
+  after_create :add_to_listmonk
   after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
