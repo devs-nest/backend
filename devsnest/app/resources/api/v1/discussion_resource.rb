@@ -4,11 +4,12 @@ module Api
   module V1
     # Discussion Resource
     class DiscussionResource < JSONAPI::Resource
-      attributes :parent_id, :user_id, :challenge_id, :title, :body, :slug, :created_at, :updated_at
+      attributes :parent_id, :user_id, :question_id, :question_type, :title, :body, :slug, :created_at, :updated_at
       attributes :upvote_count, :comments_count
       attributes :username, :user_image_url, :upvoted, :upvote_id
 
-      filter :challenge_id
+      filter :question_id
+      filter :question_type
       filter :parent_id
       filter :user_id
 
@@ -17,7 +18,7 @@ module Api
       end
 
       def comments_count
-        Discussion.where(challenge_id: @model&.challenge_id, parent_id: @model&.id)&.count || 0
+        Discussion.where(question_id: @model.question_id, question_type: @model.question_type, parent_id: @model.id).count
       end
 
       def username

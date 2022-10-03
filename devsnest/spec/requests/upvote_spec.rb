@@ -8,7 +8,7 @@ RSpec.describe Upvote, type: :request do
       let(:user) { create(:user) }
       let(:user2) { create(:user) }
       let(:question) { create(:challenge, user_id: user.id, name: 'two sum') }
-      let!(:discussion1) { create(:discussion, user_id: user.id, challenge_id: question.id) }
+      let!(:discussion1) { create(:discussion, user_id: user.id, question_id: question.id, question_type: question.class.name) }
 
       it 'should upvote a discussion that is done by user' do
         sign_in(user)

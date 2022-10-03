@@ -19,7 +19,7 @@ RSpec.describe Discussion, type: :request do
       let(:user) { create(:user) }
       let(:user2) { create(:user) }
       let(:question) { create(:challenge, user_id: user.id, name: 'two sum') }
-      let!(:discussion1) { create(:discussion, user_id: user.id, challenge_id: question.id) }
+      let!(:discussion1) { create(:discussion, user_id: user.id, question_id: question.id, question_type: question.class.name) }
 
       it 'should delete the discussion a user have created' do
         sign_in(user)
@@ -44,8 +44,8 @@ RSpec.describe Discussion, type: :request do
     context 'Upvotes and Comments checks' do
       let(:user) { create(:user) }
       let(:question) { create(:challenge, user_id: user.id, name: 'two sum') }
-      let!(:discussion1) { create(:discussion, user_id: user.id, challenge_id: question.id) }
-      let!(:discussion2) { create(:discussion, user_id: user.id, challenge_id: question.id, parent_id: discussion1.id) }
+      let!(:discussion1) { create(:discussion, user_id: user.id, question_id: question.id, question_type: question.class.name) }
+      let!(:discussion2) { create(:discussion, user_id: user.id, question_id: question.id, question_type: question.class.name, parent_id: discussion1.id) }
       let!(:upvote) { create(:upvote, user_id: user.id, content_id: discussion1.id, content_type: 'Discussion') }
 
       it 'should check the number of Comments for a discussion' do
