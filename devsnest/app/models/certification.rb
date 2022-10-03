@@ -1,6 +1,21 @@
 # frozen_string_literal: true
 
-# Certification Model
+# == Schema Information
+#
+# Table name: certifications
+#
+#  id               :bigint           not null, primary key
+#  certificate_type :string(255)
+#  cuid             :string(255)      default("zca0JH7Cs5g")
+#  title            :string(255)      default("")
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  user_id          :integer
+#
+# Indexes
+#
+#  index_certificates_on_user_id_and_certificate_type  (user_id,certificate_type) UNIQUE
+#
 class Certification < ApplicationRecord
   validates_uniqueness_of :cuid, case_sensitive: true
   belongs_to :user

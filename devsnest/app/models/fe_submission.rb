@@ -1,6 +1,27 @@
 # frozen_string_literal: true
 
-# Fe submissions model
+# == Schema Information
+#
+# Table name: fe_submissions
+#
+#  id                    :bigint           not null, primary key
+#  is_submitted          :boolean          default(FALSE)
+#  passed_test_cases     :integer          default(0)
+#  question_type         :string(255)
+#  result                :text(65535)
+#  score                 :integer
+#  source_code           :text(65535)
+#  status                :string(255)
+#  total_test_cases      :integer          default(0)
+#  created_at            :datetime
+#  updated_at            :datetime
+#  frontend_challenge_id :integer
+#  user_id               :integer
+#
+# Indexes
+#
+#  frontend_submission_user_index  (user_id,frontend_challenge_id)
+#
 class FeSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :frontend_challenge

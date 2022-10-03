@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
-# frontend submission model
+# == Schema Information
+#
+# Table name: frontend_questions
+#
+#  id                :bigint           not null, primary key
+#  active_path       :string(255)
+#  hidden_files      :text(65535)
+#  name              :string(255)
+#  open_paths        :text(65535)
+#  protected_paths   :text(65535)
+#  question_markdown :text(65535)
+#  show_explorer     :boolean
+#  template          :integer
+#
 class FrontendQuestion < ApplicationRecord
   include MinibootcampHelper
   has_one :minibootcamp

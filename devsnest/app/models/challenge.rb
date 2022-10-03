@@ -1,6 +1,33 @@
 # frozen_string_literal: true
 
-# algo challenge class
+# == Schema Information
+#
+# Table name: challenges
+#
+#  id                   :bigint           not null, primary key
+#  content_type         :integer
+#  difficulty           :integer
+#  input_format         :json
+#  is_active            :boolean          default(FALSE)
+#  name                 :string(255)
+#  output_format        :json
+#  priority             :integer
+#  question_body        :text(65535)
+#  score                :integer          default(0)
+#  slug                 :string(255)
+#  tester_code          :text(65535)
+#  topic                :integer
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  course_curriculum_id :integer
+#  parent_id            :string(255)
+#  unique_id            :string(255)
+#  user_id              :integer
+#
+# Indexes
+#
+#  index_challenges_on_slug  (slug) UNIQUE
+#
 class Challenge < ApplicationRecord
   enum difficulty: %i[easy medium hard]
   enum content_type: %i[topic sub_topic]

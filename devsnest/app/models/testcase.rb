@@ -1,7 +1,21 @@
 # frozen_string_literal: true
 
-
-# testcase class - stores and fetches testcases for a challenge from s3
+# == Schema Information
+#
+# Table name: testcases
+#
+#  id           :bigint           not null, primary key
+#  input_path   :string(255)
+#  is_sample    :boolean
+#  output_path  :string(255)
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  challenge_id :integer
+#
+# Indexes
+#
+#  index_testcases_on_challenge_id_and_is_sample  (challenge_id,is_sample)
+#
 class Testcase < ApplicationRecord
   belongs_to :challenge
   after_commit :expire_cache

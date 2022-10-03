@@ -1,6 +1,36 @@
 # frozen_string_literal: true
 
-# FrontendChallenge class
+# == Schema Information
+#
+# Table name: frontend_challenges
+#
+#  id                   :bigint           not null, primary key
+#  active_path          :string(255)
+#  challenge_type       :string(255)
+#  day_no               :integer
+#  difficulty           :integer
+#  files                :text(65535)
+#  folder_name          :string(255)
+#  hidden_files         :text(65535)
+#  is_active            :boolean          default(FALSE)
+#  name                 :string(255)
+#  open_paths           :text(65535)
+#  protected_paths      :text(65535)
+#  question_body        :text(65535)
+#  score                :integer          default(0)
+#  slug                 :string(255)
+#  template             :string(255)
+#  testcases_path       :string(255)
+#  topic                :integer
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  course_curriculum_id :integer
+#  user_id              :integer
+#
+# Indexes
+#
+#  index_frontend_challenges_on_slug  (slug) UNIQUE
+#
 class FrontendChallenge < ApplicationRecord
   include ApplicationHelper
   enum difficulty: %i[easy medium hard]

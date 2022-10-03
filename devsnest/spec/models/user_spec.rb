@@ -1,5 +1,79 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: users
+#
+#  id                                 :bigint           not null, primary key
+#  accepted_in_course                 :boolean          default(FALSE)
+#  batch                              :string(255)
+#  bio                                :string(255)      default("")
+#  bot_token                          :string(255)
+#  buddy                              :integer          default(0)
+#  coins                              :integer          default(0)
+#  college_name                       :string(255)
+#  college_year                       :integer
+#  company_name                       :string(255)
+#  discord_active                     :boolean          default(FALSE)
+#  discord_username                   :string(255)
+#  dob                                :date
+#  dsa_skill                          :integer          default(0)
+#  email                              :string(255)      default(""), not null
+#  encrypted_password                 :string(255)      default(""), not null
+#  enrolled_for_course_image_url      :string(255)
+#  fe_score                           :integer          default(0)
+#  github_token                       :text(65535)
+#  github_url                         :string(255)
+#  grad_end                           :integer
+#  grad_specialization                :string(255)
+#  grad_start                         :integer
+#  grad_status                        :string(255)
+#  grad_year                          :integer
+#  group_assigned                     :boolean          default(FALSE)
+#  image_url                          :string(255)      default("")
+#  is_college_form_filled             :boolean          default(FALSE)
+#  is_discord_form_filled             :boolean          default(FALSE)
+#  is_fullstack_course_22_form_filled :boolean          default(FALSE)
+#  is_verified                        :boolean          default(FALSE)
+#  kind                               :integer          default(0)
+#  known_from                         :string(255)
+#  linkedin_url                       :string(255)
+#  login_count                        :integer          default(0)
+#  markdown                           :text(65535)
+#  name                               :string(255)      default("")
+#  phone_number                       :string(255)
+#  previously_joined_a_group          :boolean          default(FALSE)
+#  provider                           :string(255)
+#  referral_code                      :string(255)
+#  registration_num                   :string(255)
+#  remember_created_at                :datetime
+#  reset_password_sent_at             :datetime
+#  reset_password_token               :string(255)
+#  resume_url                         :string(255)
+#  role                               :integer
+#  school                             :string(255)
+#  score                              :float(24)        default(0.0)
+#  update_count                       :integer          default(0)
+#  user_type                          :integer          default("user")
+#  username                           :string(255)      default(""), not null
+#  web_active                         :boolean          default(FALSE)
+#  webd_skill                         :integer          default(0)
+#  work_exp                           :string(255)
+#  working_role                       :string(255)
+#  working_status                     :string(255)
+#  created_at                         :datetime         not null
+#  updated_at                         :datetime         not null
+#  bot_id                             :integer
+#  college_id                         :integer
+#  discord_id                         :string(255)      default(""), not null
+#  google_id                          :string(255)
+#
+# Indexes
+#
+#  index_users_on_email                 (email) UNIQUE
+#  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#  index_users_on_username              (username) UNIQUE
+#
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
