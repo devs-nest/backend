@@ -3,14 +3,23 @@
 module Api
   module V1
     module Admin
-      class JobController < ApplicationController
+      class JobsController < ApplicationController
         include JSONAPI::ActsAsResourceController
         before_action :admin_auth
 
+        def show
+          job = Job.find(params[:id])
+          return render_not_found if job.nil?
+
+          skills = job.skills.map(&:name)
+          job = (job.as_json).merge(skills: skills)
+          render_success(job)
+        end
+
         def create
           job_params = params[:data][:attributes].except(:skill_ids)
-          skill_ids = job_params[:skill_ids]
-          Job.create!(job_params)
+          skill_ids = params[:data][:attributes][:skill_ids]
+          Job.create!(job_params.merge(slug: "#{job_params[:title].parameterize}-#{SecureRandom.hex(2)}").permit!)
           job_id = Job.last.id
           skill_ids.each do |skill_id|
             JobSkillMapping.create!(job_id: job_id, skill_id: skill_id)
@@ -20,8 +29,8 @@ module Api
 
         def update
           job_params = params[:data][:attributes].except(:skill_ids)
-          skill_ids = job_params[:skill_ids]
-          Job.find_by(id: params[:id]).update!(job_params)
+          skill_ids = params[:data][:attributes][:skill_ids]
+          Job.find_by(id: params[:id]).update!(job_params.merge(slug: "#{job_params[:title].parameterize}-#{SecureRandom.hex(2)}").permit!)
           JobSkillMapping.where(job_id: params[:id]).destroy_all
           skill_ids.each do |skill_id|
             JobSkillMapping.create!(job_id: params[:id], skill_id: skill_id)

@@ -12,6 +12,7 @@ class CreateJobs < ActiveRecord::Migration[6.0]
       t.string :experience
       t.boolean :archived, default: false
       t.json :additional
+      t.string :slug
 
       t.timestamps
     end

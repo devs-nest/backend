@@ -190,7 +190,11 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :fe_submissions, only: %i[create show index]
       jsonapi_resources :coin_logs, only: %i[index]
-      jsonapi_resources :jobs, only: %i[index show]
+      jsonapi_resources :jobs, only: %i[index show] do
+        collection do
+          get :fetch_by_slug
+        end
+      end
       jsonapi_resources :job_application, only: %i[create show index]
       jsonapi_resources :skills, only: %i[index]
     end
