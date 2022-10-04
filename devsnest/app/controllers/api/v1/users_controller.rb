@@ -339,9 +339,10 @@ module Api
         return render_error({ message: 'You must wait 24hr before submitting another request' }) if last_query.present? && last_query.within_a_day?
 
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
-        ManualLoginChangelog.create(user_id: @current_user.id, uid: encrypted_code, query_type: 'verification')
+        # ManualLoginChangelog.create(user_id: @current_user.id, uid: encrypted_code, query_type: 'verification')
 
-        UserMailer.verification(@current_user, encrypted_code).deliver_later
+        # UserMailer.verification(@current_user, encrypted_code).deliver_later
+        $listmonk.tx(@current_user, 5, { uid: encrypted_code })
         render_success({ message: 'An email has been sent to you, Check your Inbox!' })
       end
 
