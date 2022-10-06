@@ -121,6 +121,11 @@ class User < ApplicationRecord
     main_lb.rank_member(username, score || 0)
   end
 
+  def manage_list
+    changes = saved_changes
+    $listmonk.list_control(changes, self)
+  end
+
   def create_username
     username = ''
     count = 0
