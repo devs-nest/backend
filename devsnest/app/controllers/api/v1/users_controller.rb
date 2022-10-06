@@ -58,7 +58,7 @@ module Api
         return render_error({ message: 'Course timeline must be weekly or monthly' }) if LeaderboardDevsnest::COURSE_TIMELINE.values.exclude?(course_timeline)
 
         leaderboard = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @dsa_leaderboard : @fe_leaderboard
-        if @fe_leaderboard.check_member?(@current_user.username).blank?
+        if leaderboard.check_member?(@current_user.username).blank?
           leaderboard.rank_member(@current_user.username,
                                   LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @current_user.score : @current_user.fe_score)
         end
@@ -205,6 +205,15 @@ module Api
           render_error({ message: 'Update count Exceeded for username' })
         else
           @dsa_leaderboard.remove_member(context[:user].username)
+          @fe_leaderboard.remove_member(context[:user].username)
+          LeaderboardDevsnest::COURSE_TYPE.each_value do |course_type|
+            LeaderboardDevsnest::COURSE_TIMELINE.each_value do |course_timeline|
+              lb = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
+              prev_score = lb.score_for(context[:user].username)
+              lb.remove_member(context[:user].username)
+              lb.rank_member(params['data']['attributes']['username'], prev_score)
+            end
+          end
           Challenge.rerank_member(context[:user], params['data']['attributes']['username'])
           params['data']['attributes']['update_count'] = context[:user].update_count + 1
         end

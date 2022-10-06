@@ -10,6 +10,7 @@ class CopyLeaderboardWorker
     LeaderboardDevsnest::COURSE_TYPE.each_value do |course_type|
       lb = course_type == 'dsa' ? LeaderboardDevsnest::DSAInitializer::LB : LeaderboardDevsnest::FEInitializer::LB
       lb_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
+      lb_copy.delete_leaderboard
 
       (1..lb.total_pages).each do |n|
         lb.leaders(n).each do |data|
