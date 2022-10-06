@@ -112,7 +112,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
   context 'Leaderboard' do
     let(:spec_dsa_leaderboard) { LeaderboardDevsnest::DSAInitializer::LB }
     let(:spec_fe_leaderboard) { LeaderboardDevsnest::FEInitializer::LB }
-    let!(:user) { create(:user, discord_active: true, username: 'username') }
+    let!(:user) { create(:user, discord_active: true, accepted_in_course: true, username: 'username') }
     before :each do
       User.initialize_leaderboard
     end
@@ -264,7 +264,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Update Username basic username checks' do
-    let!(:user) { create(:user, username: 'adhikrammaitra') }
+    let!(:user) { create(:user, accepted_in_course: true, username: 'adhikrammaitra') }
     let!(:user2) { create(:user, username: 'adhikrammm') }
     let(:user_params) do
       {
@@ -287,6 +287,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Update count Exceeded for username')
     end
     it 'It changes the update count if all autherization passed and update the username' do
+      User.initialize_leaderboard
       sign_in(user)
       put "/api/v1/users/#{user.id}", params: user_params.to_json, headers: HEADERS
       expect(response.status).to eq(200)

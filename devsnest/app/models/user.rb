@@ -230,7 +230,7 @@ class User < ApplicationRecord
     dsa_lb.delete_leaderboard
     fe_lb.delete_leaderboard
 
-    User.where(accepted_in_course: true).find_each.pluck(:name, :score, :fe_score).each do |user|
+    User.where(accepted_in_course: true).find_each.pluck(:username, :score, :fe_score).each do |user|
       dsa_lb.rank_member(user[0], user[1])
       fe_lb.rank_member(user[0], user[2])
     end
