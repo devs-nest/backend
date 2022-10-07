@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_20_205850) do
+ActiveRecord::Schema.define(version: 2022_10_07_070429) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -418,6 +418,7 @@ ActiveRecord::Schema.define(version: 2022_09_20_205850) do
     t.string "note_for_the_recruiter"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "job_id"], name: "index_job_applications_on_user_id_and_job_id", unique: true
   end
 
   create_table "job_skill_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -425,6 +426,7 @@ ActiveRecord::Schema.define(version: 2022_09_20_205850) do
     t.bigint "skill_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["job_id", "skill_id"], name: "index_job_skill_mappings_on_job_id_and_skill_id", unique: true
     t.index ["job_id"], name: "index_job_skill_mappings_on_job_id"
     t.index ["skill_id"], name: "index_job_skill_mappings_on_skill_id"
   end
@@ -444,6 +446,8 @@ ActiveRecord::Schema.define(version: 2022_09_20_205850) do
     t.string "slug"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["organization_id"], name: "index_jobs_on_organization_id"
+    t.index ["slug"], name: "index_jobs_on_slug", unique: true
   end
 
   create_table "judgeztokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -548,6 +552,7 @@ ActiveRecord::Schema.define(version: 2022_09_20_205850) do
     t.json "additional"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["slug"], name: "index_organizations_on_slug", unique: true
   end
 
   create_table "referrals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

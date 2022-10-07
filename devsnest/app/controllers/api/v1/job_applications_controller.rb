@@ -8,7 +8,7 @@ module Api
 
       def index
         job_applications = JobApplication.all.where(user_id: @current_user.id).order(updated_at: :desc)
-        return render_error('No job applications found', 404) if job_applications.empty?
+        return render_error('No job applications found') if job_applications.empty?
 
         render_success(job_applications)
       end
