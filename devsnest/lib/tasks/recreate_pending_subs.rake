@@ -3,11 +3,10 @@
 namespace :run_pendings do
   desc 'rerun pending submission'
   task run: :environment do
-
     err = []
     jz_headers = { 'Content-Type': 'application/json', 'X-Auth-Token': ENV['JUDGEZERO_AUTH'], 'x-rapidapi-key': ENV['JZ_RAPID_KEY'] }
-    pending_submissions = AlgoSubmission.where(status: "Pending").first(100)
-    p "subs fetched"
+    pending_submissions = AlgoSubmission.where(status: 'Pending').first(100)
+    p 'subs fetched'
     done = 0
     err = []
     begin
@@ -27,7 +26,7 @@ namespace :run_pendings do
         submission.update(total_test_cases: total_test_cases)
         p "Initiated for #{submission.id}"
       end
-    rescue => e
+    rescue StandardError => e
       p "Error: #{e}"
       err << e
     end

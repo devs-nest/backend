@@ -16,7 +16,7 @@ module Api
           all_questions = params[:data][:questions_data]
           all_questions.each do |question|
             AssignmentQuestion.create!(course_curriculum_id: course_curriculum_id, question_id: question[:id], question_type: question[:type])
-          rescue
+          rescue StandardError
             return render_error('Some Error occurred')
           end
           render_success({ message: 'Questions Added Succesfully!' })

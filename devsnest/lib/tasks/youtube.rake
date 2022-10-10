@@ -13,7 +13,7 @@ namespace :youtube_link do
       if link_id.present?
         t = Content.create(unique_id: link_id, parent_id: row[1], name: row[2], data_type: 1, link: row[3])
         t.priority = t.id
-        t.video_questions = row[4].split('/').map { |s| s.to_i } if row[4].present?
+        t.video_questions = row[4].split('/').map(&:to_i) if row[4].present?
         t.reference_data = JSON.parse(row[9]) if row[9].present?
         t.save
       else
@@ -27,7 +27,7 @@ namespace :youtube_link do
         c.difficulty = row[6].downcase
         c.priority = c.id
         c.question_type = 'class'
-        t.video_questions.push(c.id) unless t.video_questions.nil?
+        t.video_questions&.push(c.id)
         t.save
         c.save
       end
@@ -40,7 +40,7 @@ namespace :youtube_link do
         w.difficulty = row[8].downcase
         w.priority = w.id
         w.question_type = 'assignment'
-        t.video_questions.push(w.id) unless t.video_questions.nil?
+        t.video_questions&.push(w.id)
         t.save
         w.save
       end

@@ -56,7 +56,8 @@ class Scrum < ApplicationRecord
                                                           .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id).uniq
       recent_solved_assignments_count = UserChallengeScore.where(user_id: user_id, challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
 
-      update!(recent_assignments_solved: { solved_assignments: recent_solved_assignments_count, total_assignments: recent_total_assignments_ch_ids.size }, total_assignments_solved: { solved_assignments: solved_assignments_count, total_assignments: total_assignments_challenge_ids.size })
+      update!(recent_assignments_solved: { solved_assignments: recent_solved_assignments_count, total_assignments: recent_total_assignments_ch_ids.size },
+              total_assignments_solved: { solved_assignments: solved_assignments_count, total_assignments: total_assignments_challenge_ids.size })
     when 'frontend'
       total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id).uniq
       solved_assignments_count = FrontendChallengeScore.where(user_id: user_id, frontend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
@@ -65,7 +66,8 @@ class Scrum < ApplicationRecord
                                                           .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id).uniq
       recent_solved_assignments_count = FrontendChallengeScore.where(user_id: user_id, frontend_challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
 
-      update!(recent_assignments_solved: { solved_assignments: recent_solved_assignments_count, total_assignments: recent_total_assignments_ch_ids.size }, total_assignments_solved: { solved_assignments: solved_assignments_count, total_assignments: total_assignments_challenge_ids.size })
+      update!(recent_assignments_solved: { solved_assignments: recent_solved_assignments_count, total_assignments: recent_total_assignments_ch_ids.size },
+              total_assignments_solved: { solved_assignments: solved_assignments_count, total_assignments: total_assignments_challenge_ids.size })
     end
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: algo_submissions
@@ -30,6 +32,5 @@ RSpec.describe AlgoSubmission, type: :model do
   let(:challenge) { create(:challenge) }
 
   it 'Should call assign score to user function' do
-
   end
 end

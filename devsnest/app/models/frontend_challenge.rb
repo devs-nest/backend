@@ -82,7 +82,7 @@ class FrontendChallenge < ApplicationRecord
   end
 
   def read_from_s3
-    Rails.cache.fetch('frontend_challenge_' + id.to_s) { fetch_files_s3('frontend-testcases', id.to_s) }
+    Rails.cache.fetch("frontend_challenge_#{id}") { fetch_files_s3('frontend-testcases', id.to_s) }
   end
 
   def self.count_solved(user_id)
@@ -97,6 +97,6 @@ class FrontendChallenge < ApplicationRecord
   private
 
   def expire_cache
-    Rails.cache.delete('frontend_challenge_' + id.to_s)
+    Rails.cache.delete("frontend_challenge_#{id}")
   end
 end

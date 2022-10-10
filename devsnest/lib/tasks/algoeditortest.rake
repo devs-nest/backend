@@ -1,40 +1,41 @@
+# frozen_string_literal: true
+
 namespace :algoeditor do
-    desc "runs ping to algo staging"
-    task ping: :environment do
-    
-        body = {
-            "data":{
-                "attributes":{
-                    "user_id": 1,
-                    "challenge_id": 1,
-                    "source_code": "a = int(input())\nb = int(input())\n\nprint(a*b)",
-                    "language": "python3"
-                },
-                "type": "algo_submissions"
-            }   
-        
-        }.to_json
+  desc 'runs ping to algo staging'
+  task ping: :environment do
+    body = {
+      "data": {
+        "attributes": {
+          "user_id": 1,
+          "challenge_id": 1,
+          "source_code": "a = int(input())\nb = int(input())\n\nprint(a*b)",
+          "language": 'python3'
+        },
+        "type": 'algo_submissions'
+      }
 
-        header = { "Content-Type": "application/vnd.api+json" }
-        s_ids = []
+    }.to_json
 
-        for i in 1..50 do
-            obj = HTTParty.post("https://api.harry.devsnest.in/api/v1/algo-submission/", body: body, headers: header)
-            obj_parsed = JSON.parse(obj.body)
-            puts "recieved #{obj_parsed["data"]["id"]}"
-            s_ids << obj_parsed["data"]["id"]
-        end
+    header = { "Content-Type": 'application/vnd.api+json' }
+    s_ids = []
 
-        puts "Sleeping for 5 seconds..."
-        sleep 5
-
-        s_ids.each do |a|
-            res = HTTParty.get("https://api.harry.devsnest.in/api/v1/algo-submission/#{a}")
-            if res["data"]["attributes"]["test_cases"].count == res["data"]["attributes"]["total_test_cases"]
-                puts "#{a} OK"
-            else
-                puts "#{a} failed"
-            end
-        end
+    (1..50).each do |_i|
+      obj = HTTParty.post('https://api.harry.devsnest.in/api/v1/algo-submission/', body: body, headers: header)
+      obj_parsed = JSON.parse(obj.body)
+      puts "recieved #{obj_parsed['data']['id']}"
+      s_ids << obj_parsed['data']['id']
     end
+
+    puts 'Sleeping for 5 seconds...'
+    sleep 5
+
+    s_ids.each do |a|
+      res = HTTParty.get("https://api.harry.devsnest.in/api/v1/algo-submission/#{a}")
+      if res['data']['attributes']['test_cases'].count == res['data']['attributes']['total_test_cases']
+        puts "#{a} OK"
+      else
+        puts "#{a} failed"
+      end
+    end
+  end
 end

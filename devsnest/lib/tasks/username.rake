@@ -9,8 +9,8 @@ namespace :upgrade do
       count = 0
 
       if u.web_active == false && u.discord_active == true
-        suffix = (count += 1).to_s while User.find_by(username: 'testuser' + suffix)
-        u.username = 'testuser' + suffix
+        suffix = (count += 1).to_s while User.find_by(username: "testuser#{suffix}")
+        u.username = "testuser#{suffix}"
       else
         suffix = (count += 1).to_s while User.find_by(username: u.email.split('@')[0] + suffix)
         u.username = u.email.split('@')[0] + suffix

@@ -22,7 +22,7 @@ namespace :frontend do
         t.reference_data = JSON.parse(row[6]) if row[6].present?
         t.video_questions = []
         t.save
-        puts('creating youtube link' + t.name)
+        puts("creating youtube link#{t.name}")
         puts
       else
         t = Content.where(data_type: 1).last
@@ -38,7 +38,7 @@ namespace :frontend do
         w.question_type = 'assignment'
         w.save
         t.save
-        puts('creating question' + w.name)
+        puts("creating question#{w.name}")
         puts
       end
     end

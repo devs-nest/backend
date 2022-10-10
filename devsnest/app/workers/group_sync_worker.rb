@@ -9,9 +9,7 @@ class GroupSyncWorker
     return if server_id.empty?
 
     if group_name.empty?
-      Group.where(server_id: server_id).each do |group|
-        group.invite_inactive_members
-      end
+      Group.where(server_id: server_id).each(&:invite_inactive_members)
     else
       group = Group.find_by(name: group_name)
       group.invite_inactive_members if group.present?

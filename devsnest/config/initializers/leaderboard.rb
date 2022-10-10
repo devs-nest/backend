@@ -28,6 +28,7 @@ module LeaderboardDevsnest
     def initialize(type, timeline)
       @name = "#{type}_#{timeline}_leaderboard_copy"
     end
+
     def call
       redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)

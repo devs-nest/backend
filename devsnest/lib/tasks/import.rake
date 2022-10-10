@@ -16,7 +16,7 @@ namespace :import_content do
         t = Content.find_by(unique_id: topic_slug)
         t = Content.create(unique_id: topic_slug, parent_id: 'algo', name: topic, data_type: 4, link: nil) unless t.present?
       else
-        t = Content.where(parent_id: 'algo',data_type: 4).last
+        t = Content.where(parent_id: 'algo', data_type: 4).last
       end
 
       quest_link = row[2]
@@ -26,7 +26,7 @@ namespace :import_content do
         c.unique_id = "Q#{c.id}"
         c.difficulty = row[3].downcase
         c.priority = c.id
-        c.question_type = "class"
+        c.question_type = 'class'
         c.save
       end
 
@@ -37,20 +37,15 @@ namespace :import_content do
         w.unique_id = "Q#{w.id}"
         w.difficulty = row[5].downcase
         w.priority = w.id
-        w.question_type = "assignment"
+        w.question_type = 'assignment'
         w.save
       end
     end
   end
 
-  def create_name link
-    name = link.split("https://leetcode.com/problems/")[1]
-    return name.gsub('/', '').gsub('-', ' ').titleize
+  def create_name(link)
+    name = link.split('https://leetcode.com/problems/')[1]
+    name.gsub('/', '').gsub('-', ' ').titleize
   end
 end
 # command to task  =>  rake import:data
-
-
-
-
-

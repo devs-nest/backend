@@ -2,7 +2,6 @@
 
 FactoryBot.define do
   factory :coin_log do
-    
   end
 
   factory :user_challenge_score do
@@ -170,7 +169,7 @@ FactoryBot.define do
   end
 
   factory :course do
-    sequence(:current_module) { |n| "dsa" }
+    sequence(:current_module) { |_n| 'dsa' }
   end
 
   factory :course_curriculum do

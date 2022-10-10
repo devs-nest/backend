@@ -56,7 +56,8 @@ module Templates
     end
 
     def tree_driver_code
-      ["static class TreeNode {", "\t\tint val;", "\t\tTreeNode left;", "\t\tTreeNode right;", "\t\tTreeNode() {", "\t\t\tthis.val = 0;", "\t\t\tthis.left = null;", "\t\t\tthis.right = null;", "\t\t}", "\t\t", "\t\tTreeNode(int val) {", "\t\t\tthis.val = val;", "\t\t\tthis.left = null;", "\t\t\tthis.right = null;", "\t\t}", "\t\t", "\t\tTreeNode(int val, TreeNode left, TreeNode right) {", "\t\t\tthis.val = val;", "\t\t\tthis.left = left;", "\t\t\tthis.right = right;", "\t\t}", "\t\t", "\t\tTreeNode createBinaryTree(String[] arr) {", "\t\t\tif(arr.length == 0)", "\t\t\t\treturn null;", "\t\t\t", "\t\t\tQueue<TreeNode> q= new LinkedList<>();", "\t\t\tTreeNode root = new TreeNode(Integer.parseInt(arr[0]));", "\t\t\tq.add(root);", "\t\t\t", "\t\t\tint i = 1;", "\t\t\t", "\t\t\twhile(!q.isEmpty() && i < arr.length) {", "\t\t\t\tTreeNode curr = q.remove();", "\t\t", "\t\t\t\tif(!arr[i].equals(\"null\")) {", "\t\t\t\t\tcurr.left = new TreeNode(Integer.parseInt(arr[i]));", "\t\t\t\t\tq.add(curr.left);", "\t\t\t\t}", "\t\t\t\t", "\t\t\t\ti += 1;", "\t\t\t\t", "\t\t\t\tif(i == arr.length)", "\t\t\t\t\tbreak;", "\t\t\t\t", "\t\t\t\tif(!arr[i].equals(\"null\")) {", "\t\t\t\t\tcurr.right = new TreeNode(Integer.parseInt(arr[i]));", "\t\t\t\t\tq.add(curr.right);", "\t\t\t\t}", "\t\t\t\t", "\t\t\t\ti += 1;", "\t\t\t}", "\t\t", "\t\t\treturn root;", "\t\t}", "\t\t", "\t\tvoid trimNull(ArrayList<String> res) {", "\t\t\tint i=res.size()-1;", "\t\t\twhile(i>=0 && res.get(i).equals(\"null\"))\t{", "\t\t\t\tres.remove(i);", "\t\t\t\ti--;", "\t\t\t}", "\t\t}", "\t\t\t", "\t\tArrayList<String> parseTree(TreeNode root)   {", "\t\t\tArrayList<String> res = new ArrayList<String>();", "\t\t\tif(root == null)\treturn res;", "\t\t\t", "\t\t\tQueue<TreeNode> q = new LinkedList<>();", "\t\t\tq.add(root);", "\t\t\tres.add(Integer.toString(root.val));", "\t\t\twhile(!q.isEmpty())  {", "\t\t\t\tTreeNode curr = q.remove();", "\t\t\t\tif(curr.left != null)   {", "\t\t\t\t\tq.add(curr.left);", "\t\t\t\t\tres.add(Integer.toString(curr.left.val));", "\t\t\t\t}else   {", "\t\t\t\t\tres.add(\"null\");", "\t\t\t\t}", "\t\t\t\t", "\t\t\t\tif(curr.right != null)  {", "\t\t\t\t\tq.add(curr.right);", "\t\t\t\t\tres.add(Integer.toString(curr.right.val));", "\t\t\t\t}else   {", "\t\t\t\t\tres.add(\"null\");", "\t\t\t\t}", "\t\t\t}", "\t\t\t", "\t\t\ttrimNull(res);", "\t\t\treturn res;", "\t\t}", "\t\t", "\t}"]
+      ['static class TreeNode {', "\t\tint val;", "\t\tTreeNode left;", "\t\tTreeNode right;", "\t\tTreeNode() {", "\t\t\tthis.val = 0;", "\t\t\tthis.left = null;", "\t\t\tthis.right = null;",
+       "\t\t}", "\t\t", "\t\tTreeNode(int val) {", "\t\t\tthis.val = val;", "\t\t\tthis.left = null;", "\t\t\tthis.right = null;", "\t\t}", "\t\t", "\t\tTreeNode(int val, TreeNode left, TreeNode right) {", "\t\t\tthis.val = val;", "\t\t\tthis.left = left;", "\t\t\tthis.right = right;", "\t\t}", "\t\t", "\t\tTreeNode createBinaryTree(String[] arr) {", "\t\t\tif(arr.length == 0)", "\t\t\t\treturn null;", "\t\t\t", "\t\t\tQueue<TreeNode> q= new LinkedList<>();", "\t\t\tTreeNode root = new TreeNode(Integer.parseInt(arr[0]));", "\t\t\tq.add(root);", "\t\t\t", "\t\t\tint i = 1;", "\t\t\t", "\t\t\twhile(!q.isEmpty() && i < arr.length) {", "\t\t\t\tTreeNode curr = q.remove();", "\t\t", "\t\t\t\tif(!arr[i].equals(\"null\")) {", "\t\t\t\t\tcurr.left = new TreeNode(Integer.parseInt(arr[i]));", "\t\t\t\t\tq.add(curr.left);", "\t\t\t\t}", "\t\t\t\t", "\t\t\t\ti += 1;", "\t\t\t\t", "\t\t\t\tif(i == arr.length)", "\t\t\t\t\tbreak;", "\t\t\t\t", "\t\t\t\tif(!arr[i].equals(\"null\")) {", "\t\t\t\t\tcurr.right = new TreeNode(Integer.parseInt(arr[i]));", "\t\t\t\t\tq.add(curr.right);", "\t\t\t\t}", "\t\t\t\t", "\t\t\t\ti += 1;", "\t\t\t}", "\t\t", "\t\t\treturn root;", "\t\t}", "\t\t", "\t\tvoid trimNull(ArrayList<String> res) {", "\t\t\tint i=res.size()-1;", "\t\t\twhile(i>=0 && res.get(i).equals(\"null\"))\t{", "\t\t\t\tres.remove(i);", "\t\t\t\ti--;", "\t\t\t}", "\t\t}", "\t\t\t", "\t\tArrayList<String> parseTree(TreeNode root)   {", "\t\t\tArrayList<String> res = new ArrayList<String>();", "\t\t\tif(root == null)\treturn res;", "\t\t\t", "\t\t\tQueue<TreeNode> q = new LinkedList<>();", "\t\t\tq.add(root);", "\t\t\tres.add(Integer.toString(root.val));", "\t\t\twhile(!q.isEmpty())  {", "\t\t\t\tTreeNode curr = q.remove();", "\t\t\t\tif(curr.left != null)   {", "\t\t\t\t\tq.add(curr.left);", "\t\t\t\t\tres.add(Integer.toString(curr.left.val));", "\t\t\t\t}else   {", "\t\t\t\t\tres.add(\"null\");", "\t\t\t\t}", "\t\t\t\t", "\t\t\t\tif(curr.right != null)  {", "\t\t\t\t\tq.add(curr.right);", "\t\t\t\t\tres.add(Integer.toString(curr.right.val));", "\t\t\t\t}else   {", "\t\t\t\t\tres.add(\"null\");", "\t\t\t\t}", "\t\t\t}", "\t\t\t", "\t\t\ttrimNull(res);", "\t\t\treturn res;", "\t\t}", "\t\t", "\t}"]
     end
 
     def input_builder(name, datastructure, dtype, dependent)
@@ -81,10 +82,12 @@ module Templates
                        "#{name}[i] = bufferedReader.readLine().trim().split(\"\\\\s\");", '}']
         },
         'linked_list' => {
-          'int' => ["int[] #{name}_raw_array = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();", "#{name} = convertToLL(#{name}_raw_array);"]
+          'int' => ["int[] #{name}_raw_array = Arrays.stream(bufferedReader.readLine().trim().split(\"\\\\s\")).mapToInt(#{create_class('int', '::')}).toArray();",
+                    "#{name} = convertToLL(#{name}_raw_array);"]
         },
         'binary_tree' => {
-          'int' => ["String #{name}_raw_str = bufferedReader.readLine().trim();", "String[] #{name}_raw_array = #{name}_raw_str.split(\" \");", "#{name} = new TreeNode();", "#{name} = #{name}.createBinaryTree(#{name}_raw_array);"]
+          'int' => ["String #{name}_raw_str = bufferedReader.readLine().trim();", "String[] #{name}_raw_array = #{name}_raw_str.split(\" \");", "#{name} = new TreeNode();",
+                    "#{name} = #{name}.createBinaryTree(#{name}_raw_array);"]
         }
       }
       meta[datastructure][dtype]
@@ -111,7 +114,7 @@ module Templates
           'int' => ["printLL(#{name});"]
         },
         'binary_tree' => {
-          'int' => ["ArrayList<String> #{name}_arr = #{name}.parseTree(#{name});", "for(String s:#{name}_arr)    {", "System.out.print(s + \" \");", "}"]
+          'int' => ["ArrayList<String> #{name}_arr = #{name}.parseTree(#{name});", "for(String s:#{name}_arr)    {", 'System.out.print(s + " ");', '}']
         }
       }
       meta[datastructure][dtype]
@@ -137,11 +140,12 @@ module Templates
         'public class Main {'
       ]
 
-      if @topic == 'linkedlist'
+      case @topic
+      when 'linkedlist'
         head_code += linked_list_node_class
         head_code += linked_list_convert_function
         head_code += linked_list_print_function
-      elsif @topic == 'tree'
+      when 'tree'
         head_code += tree_driver_code
       end
       head_code.join("\n")

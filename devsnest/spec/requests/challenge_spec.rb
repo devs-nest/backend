@@ -55,14 +55,14 @@ RSpec.describe Challenge, type: :request do
       before :each do
         question.regenerate_challenge_leaderboard
       end
-  
+
       it 'returns data of logged in users when user is logged in ' do
         sign_in(user)
         get "/api/v1/challenge/leaderboard?id=#{question.id}", headers: HEADERS
         expect(response.status).to eq(200)
         expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(ch_leaderboard.leaders(1).count)
       end
-  
+
       it 'retrun data of logged in users when user is bot ' do
         get "/api/v1/challenge/leaderboard?id=#{question.id}", params: { "data": { "attributes": { "discord_id": user.discord_id } } }, headers: {
           'ACCEPT' => 'application/vnd.api+json',

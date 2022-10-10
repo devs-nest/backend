@@ -2,7 +2,7 @@
 
 namespace :assign_certificate_to_user do
   begin
-    file = File.open(Rails.root + 'storage/invalid_discord_id_certificates.txt', 'w')
+    file = File.open("#{Rails.root}storage/invalid_discord_id_certificates.txt", 'w')
   rescue IOError => e
     # some error occur, dir not writable etc.
   end

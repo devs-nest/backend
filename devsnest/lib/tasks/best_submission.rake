@@ -13,14 +13,13 @@ namespace :mark_submissions do
       next if submitted_sols.empty? || user.nil?
 
       begin
-
         best_submission = submitted_sols.max { |a, b| a[:passed_test_cases] <=> b[:passed_test_cases] }
         best_submission.update_attribute(:is_best_submission, true)
         user_current_score = user.score
         user_updated_score = user_current_score + (best_submission.challenge.score * (best_submission.passed_test_cases.to_f / best_submission.total_test_cases))
         user.update_attribute(:score, user_updated_score)
         p "updated for #{user.username} : #{user_updated_score}"
-      rescue => e
+      rescue StandardError => e
         p "failed for #{user.username} reason: #{e}"
       end
     end
