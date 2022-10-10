@@ -196,7 +196,7 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :job_applications, only: %i[create show index]
-      jsonapi_resources :skill, only: %i[index]
+      jsonapi_resources :skill, only: %i[index create update]
       jsonapi_resources :organization, only: %i[index show] do
         collection do
           get :fetch_by_slug
