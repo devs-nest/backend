@@ -89,7 +89,7 @@ Rails.application.routes.draw do
           get :check_group_name
           get :check_user_details
           get :dashboard_details, :github_ping, :repo_files
-          post :sourcecode_io
+          post :sourcecode_io, :disconnect_user
         end
       end
 
