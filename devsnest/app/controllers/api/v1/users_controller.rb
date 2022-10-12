@@ -5,7 +5,6 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       include ApplicationHelper
-      include UtilConcern
       before_action :simple_auth, only: %i[report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
