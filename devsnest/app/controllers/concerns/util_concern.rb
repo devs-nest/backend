@@ -70,14 +70,4 @@ module UtilConcern
                                       'server_link': link
                                     }, template_id)
   end
-
-  def disconnect_discord_user(user_id)
-    user = User.find_by(id: user_id)
-
-    return render_error(message: 'No Data Found') unless user.present?
-    return render_error(message: 'Can\'t decouple the user') unless user.discord_active && user.web_active
-
-    user.un_merge_discord_user
-    render_success({ message: 'User is decoupled!' })
-  end
 end
