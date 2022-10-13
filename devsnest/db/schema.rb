@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_13_080218) do
+ActiveRecord::Schema.define(version: 2022_09_22_150207) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_10_13_080218) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "EyDlVPAAylA"
+    t.string "cuid", default: "m+fCbQ1eWR4"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -365,7 +365,6 @@ ActiveRecord::Schema.define(version: 2022_10_13_080218) do
     t.boolean "five_members_flag", default: false
     t.time "scrum_start_time", default: "2000-01-01 14:30:00"
     t.time "scrum_end_time", default: "2000-01-01 15:00:00"
-    t.integer "activity_point", default: 0
     t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true

@@ -6,7 +6,7 @@ module Api
     class GroupResource < JSONAPI::Resource
       # caching
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
-                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time, :activity_point
+                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time
       has_many :group_members
       filter :classification
       filter :language
@@ -64,12 +64,9 @@ module Api
         @model.server.link
       end
 
-      def activity_point
-        @model.activity_point
-      end
-
       def self.records(options = {})
         if !options[:context][:user]&.is_admin? && options[:context][:is_get]
+
           user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
           return super(options).where(id: user_group.id) if user_group.present?
 
