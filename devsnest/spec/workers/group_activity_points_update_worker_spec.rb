@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 RSpec.describe GroupActivityPointsUpdateWorker, type: :worker do
   context 'When group activity points update worker is called' do
