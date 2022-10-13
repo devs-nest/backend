@@ -6,7 +6,7 @@ module Api
     class GroupResource < JSONAPI::Resource
       # caching
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
-                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time, :activity_points
+                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time, :activity_point
       has_many :group_members
       filter :classification
       filter :language
@@ -64,8 +64,8 @@ module Api
         @model.server.link
       end
 
-      def activity_points
-        @model.activity_points
+      def activity_point
+        @model.activity_point
       end
 
       def self.records(options = {})

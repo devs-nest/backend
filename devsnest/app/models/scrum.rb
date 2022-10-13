@@ -31,11 +31,11 @@ class Scrum < ApplicationRecord
     self.creation_date = Date.current
   end
   after_create :update_solved_assignments
-  after_commit :update_activity_point, only: %i[create update]
+  after_commit :update_activity_points, only: %i[create update]
 
   def update_activity_points
-    group = Group.find_by(id: scrum.group_id)
-    group.update(activity_point: group.count_activity_point)
+    group = Group.find_by(id: group_id)
+    group.update(activity_point: group.count_activity_point) if group.present?
   end
 
   def handle_manual_update(params, group, user)
