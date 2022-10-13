@@ -229,6 +229,10 @@ class Group < ApplicationRecord
     result
   end
 
+  def count_activity_point
+    Scrum.where('group_id = ? and created_at > ?', id, (Date.today - 14.days).beginning_of_day).group(:creation_date).having('count(attendance) >= ?', members_count / 2).count.count
+  end
+
   def self.eligible_groups
     where("version = 2 AND group_type = 'public' AND members_count < 16")
   end

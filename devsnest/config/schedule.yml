@@ -9,3 +9,7 @@ copy_monthly_leaderboard_job:
   class: "CopyLeaderboardWorker"
   args:
     timeline: "monthly"
+
+update_group_activity_point:
+  cron: "00 02 * * mon" # every Monday at 02:00
+  class: "GroupActivityPointsUpdateWorker"
