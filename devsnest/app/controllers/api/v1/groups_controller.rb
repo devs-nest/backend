@@ -22,7 +22,7 @@ module Api
           user: @current_user, is_create: request.post?,
           slug: params[:id], fetch_v1: params[:v1].present?,
           fetch_all: params[:all_groups].present?,
-          group_id: params[:group_id]
+          group_id: params[:group_id], is_get: request.get?
         }
       end
 

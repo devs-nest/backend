@@ -16,7 +16,9 @@ module Api
       }
 
       def description
-        @model.description.dup.encode('ISO-8859-1').force_encoding('utf-8') rescue nil
+        @model.description.dup.encode('ISO-8859-1').force_encoding('utf-8')
+      rescue StandardError
+        nil
       end
 
       def scrum_start_time
@@ -63,23 +65,15 @@ module Api
       end
 
       def self.records(options = {})
-        if options[:context][:is_create]
-          super(options)
-        elsif options[:context][:slug].present? || options[:context][:group_id].present?
-          super(options)
-        elsif options[:context][:fetch_all].present?
-          super(options)
-        elsif options[:context][:fetch_v1]
-          user = options[:context][:user]
-          group_ids = user.fetch_group_ids
-          super(options).where(id: group_ids)
-        elsif options[:context][:user]&.is_admin?
-          super(options).v2
-        else
+        if !options[:context][:user]&.is_admin? && options[:context][:is_get]
+
           user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
           return super(options).where(id: user_group.id) if user_group.present?
 
           Group.eligible_groups.order('((members_count%15) - (members_count)%5)/10 desc , (members_count%15)%5')
+
+        else
+          super(options)
         end
       end
     end
