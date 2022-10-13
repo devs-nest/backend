@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
-# Markdown resourses
+# == Schema Information
+#
+# Table name: markdowns
+#
+#  id       :bigint           not null, primary key
+#  template :text(65535)
+#
 class Markdown < ApplicationRecord
   before_save :template_encode
   def template_encode

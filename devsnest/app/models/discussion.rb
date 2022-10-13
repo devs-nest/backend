@@ -1,6 +1,25 @@
 # frozen_string_literal: true
 
-# Model for Discussion
+# == Schema Information
+#
+# Table name: discussions
+#
+#  id           :bigint           not null, primary key
+#  body         :text(65535)
+#  slug         :string(255)
+#  title        :string(255)
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  challenge_id :integer
+#  parent_id    :integer
+#  user_id      :integer
+#
+# Indexes
+#
+#  index_discussions_on_challenge_id_and_parent_id  (challenge_id,parent_id)
+#  index_discussions_on_slug                        (slug) UNIQUE
+#  index_discussions_on_user_id                     (user_id)
+#
 class Discussion < ApplicationRecord
   has_many :upvotes, as: :content
   belongs_to :user

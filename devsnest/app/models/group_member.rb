@@ -1,5 +1,26 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: group_members
+#
+#  id                :bigint           not null, primary key
+#  members_count     :integer
+#  owner             :boolean
+#  scrum_master      :boolean
+#  student_mentor    :boolean
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  batch_id          :integer
+#  group_id          :integer
+#  student_mentor_id :integer
+#  user_id           :integer
+#
+# Indexes
+#
+#  index_group_members_on_user_id               (user_id) UNIQUE
+#  index_group_members_on_user_id_and_group_id  (user_id,group_id) UNIQUE
+#
 class GroupMember < ApplicationRecord
   audited
   belongs_to :group
