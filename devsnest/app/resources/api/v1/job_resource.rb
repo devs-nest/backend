@@ -8,6 +8,10 @@ module Api
       def organization_name
         Organization.find(@model&.organization_id)&.name
       end
+
+      def skills
+        @model.skills.as_json
+      end
     end
   end
 end

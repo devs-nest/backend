@@ -4,6 +4,7 @@ module Api
   module V1
     class JobsController < ApplicationController
       include JSONAPI::ActsAsResourceController
+      before_action :user_auth
 
       def fetch_by_slug
         job = Job.find_by(slug: params[:slug])

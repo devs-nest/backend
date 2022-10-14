@@ -7,15 +7,6 @@ module Api
         include JSONAPI::ActsAsResourceController
         before_action :admin_auth
 
-        def show
-          job = Job.find(params[:id])
-          return render_not_found if job.nil?
-
-          skills = job.skills.map(&:name)
-          job = (job.as_json).merge(skills: skills)
-          render_success(job)
-        end
-
         def create
           job_params = params[:data][:attributes].except(:skill_ids)
           skill_ids = params[:data][:attributes][:skill_ids]
