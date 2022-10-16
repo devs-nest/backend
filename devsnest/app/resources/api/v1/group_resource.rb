@@ -69,14 +69,14 @@ module Api
       end
 
       def self.records(options = {})
-        if !options[:context][:user]&.is_admin? && options[:context][:is_get]
+        if options[:context][:is_create] || options[:context][:slug].present? || options[:context][:group_id].present? || options[:context][:user]&.is_admin?
+          super(options)
+        else
           user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
           return super(options).where(id: user_group.id) if user_group.present?
 
           Group.eligible_groups.order('((members_count%15) - (members_count)%5)/10 desc , (members_count%15)%5')
 
-        else
-          super(options)
         end
       end
     end
