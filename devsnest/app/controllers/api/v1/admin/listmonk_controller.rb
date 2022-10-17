@@ -12,10 +12,10 @@ module Api
           condition = params['condition'] 
           atr = params['attributes']
 
-          render_error('No condition given') if condition.blank?
+          return render_error('No condition given') if condition.blank?
 
           res = eval(condition)
-          render_unprocessable unless res.try(:sample).is_a?(User)
+          return render_unprocessable unless res.try(:sample).is_a?(User)
 
           response.headers['Content-Type'] = 'text/csv; charset=UTF-8; header=present'
           response.headers['Content-Disposition'] = 'attachment; filename=list_result.csv'
