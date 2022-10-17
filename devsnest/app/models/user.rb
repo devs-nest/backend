@@ -480,8 +480,13 @@ class User < ApplicationRecord
     Rails.cache.delete("user_#{id}")
   end
 
-  def leaderboard_details
-    main_lb = LeaderboardDevsnest::DSAInitializer::LB
+  def leaderboard_details(leaderboard_type)
+    case leaderboard_type
+    when 'dsa'
+      main_lb = LeaderboardDevsnest::FEInitializer::LB
+    when 'frontend'
+      main_lb = LeaderboardDevsnest::DSAInitializer::LB
+    end
     rank = main_lb&.rank_for(username)
 
     nil unless rank.present?

@@ -435,7 +435,10 @@ module Api
           total_by_difficulty: Challenge.split_by_difficulty, # Algo Challenges Details
           solved: Challenge.count_solved(user.id), # Algo Challenges Details
           tha_details: user.tha_details, # Bootcamp Progress
-          leaderboard_details: user.leaderboard_details # Leaderboard Details
+          leaderboard_details: user.leaderboard_details('dsa'), # Leaderboard Details
+          fe_solved: FrontendChallenge.count_solved(user.id),
+          fe_total_by_topic: FrontendChallenge.split_by_topic,
+          fe_leaderboard_details: user.leaderboard_details('frontend')
         }
         render_success(data.as_json)
       end
