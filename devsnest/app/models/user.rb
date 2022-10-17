@@ -482,9 +482,9 @@ class User < ApplicationRecord
 
   def leaderboard_details(leaderboard_type)
     case leaderboard_type
-    when 'dsa'
-      main_lb = LeaderboardDevsnest::FEInitializer::LB
     when 'frontend'
+      main_lb = LeaderboardDevsnest::FEInitializer::LB
+    when 'dsa'
       main_lb = LeaderboardDevsnest::DSAInitializer::LB
     end
     rank = main_lb&.rank_for(username)
