@@ -3,7 +3,7 @@
 module Api
   module V1
     class JobResource < JSONAPI::Resource
-      attributes :title, :description, :salary, :job_type, :job_category, :location, :experience, :archived, :additional, :created_at, :updated_at, :organization_id, :organization
+      attributes :title, :description, :salary, :job_type, :job_category, :location, :experience, :archived, :additional, :organization, :skills, :created_at, :updated_at
 
       def organization
         @model.organization.as_json
