@@ -101,13 +101,13 @@ class User < ApplicationRecord
   has_many :job_applications
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
-  # after_create :add_to_listmonk
   after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
   after_update :update_user_score_lb, if: :saved_change_to_score?
   after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
+  after_save :manage_list, if: Proc.new{ $listmonk.present? }
   before_validation :create_referral_code, if: :is_referall_empty?
   has_paper_trail
 
