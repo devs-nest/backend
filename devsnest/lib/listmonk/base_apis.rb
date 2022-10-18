@@ -50,9 +50,10 @@ module Listmonk
         # current_lists = current_sub.present? current_sub['lists'].pluck('id') : nil
         subscriber_id = user.listmonk_subscriber_id
         current_sub = get_subscriber(subscriber_id)
+        current_sub_lists = current_sub["data"]["lists"]
         
-        return if current_sub["data"]["lists"].pluck("name").include?(list.to_s)
-        
+        return if current_sub_lists.dig(list.to_s).present? && current_sub_lists.select {|l| l["name"] == list.to_s }.first["subscription_status"] != "unsubscribed"
+         
         list_id = get_list_id(list.to_s)
         
         updated_lists = current_sub["data"]["lists"].pluck("id") << list_id
