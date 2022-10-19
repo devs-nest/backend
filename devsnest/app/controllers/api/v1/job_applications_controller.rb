@@ -11,7 +11,7 @@ module Api
         job_applications = JobApplication.all.where(user_id: @current_user.id).order(updated_at: :desc)
         return render_not_found('job_applications') if job_applications.blank?
 
-        render_success(job_applications)
+        render_success({ job_applications: job_applications })
       end
 
       def current_user_auth
