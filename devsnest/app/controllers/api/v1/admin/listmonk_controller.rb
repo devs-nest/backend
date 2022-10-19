@@ -1,10 +1,9 @@
 module Api
   module V1
     module Admin
-      # link controller for urls
       class ListmonkController < ApplicationController
         include JSONAPI::ActsAsResourceController
-        # before_action :admin_auth
+        before_action :admin_auth
         require 'csv_handler/csv_helper.rb'
 
         def list
