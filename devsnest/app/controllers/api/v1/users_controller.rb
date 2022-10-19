@@ -309,11 +309,7 @@ module Api
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
         ManualLoginChangelog.create(user_id: user.id, uid: encrypted_code, query_type: 'password_reset')
         
-        if !Rails.env.test?
-          $listmonk.tx(user, 6, { uid: encrypted_code })
-        else
-          UserMailer.password_reset(user, encrypted_code).deliver_later
-        end
+        $listmonk.tx(user, 6, { uid: encrypted_code })
         render_success({ message: 'An email has been sent to you with detailed instruction, Check your Inbox!' })
       end
 
@@ -345,11 +341,7 @@ module Api
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
         ManualLoginChangelog.create(user_id: @current_user.id, uid: encrypted_code, query_type: 'verification')
 
-        if !Rails.env.test?
-          $listmonk.tx(@current_user, 5, { uid: encrypted_code })
-        else
-          UserMailer.verification(@current_user, encrypted_code).deliver_later
-        end
+        $listmonk.tx(@current_user, 5, { uid: encrypted_code })
         render_success({ message: 'An email has been sent to you, Check your Inbox!' })
       end
 
