@@ -1,5 +1,26 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: group_members
+#
+#  id                :bigint           not null, primary key
+#  members_count     :integer
+#  owner             :boolean
+#  scrum_master      :boolean
+#  student_mentor    :boolean
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  batch_id          :integer
+#  group_id          :integer
+#  student_mentor_id :integer
+#  user_id           :integer
+#
+# Indexes
+#
+#  index_group_members_on_user_id               (user_id) UNIQUE
+#  index_group_members_on_user_id_and_group_id  (user_id,group_id) UNIQUE
+#
 class GroupMember < ApplicationRecord
   audited
   belongs_to :group
@@ -8,7 +29,14 @@ class GroupMember < ApplicationRecord
   after_create :send_scrum_message_in_group
   after_save :update_previous_scrum
   # after_commit :cache_expire
+  after_commit :update_group_member_count, only: %i[create destroy]
   has_paper_trail on: %i[destroy]
+
+  def update_group_member_count
+    return if group.group_members.count.zero?
+
+    group.update(members_count: group.group_members.count)
+  end
 
   def send_all_steps_completed_mail
     user = User.find_by(id: user_id)

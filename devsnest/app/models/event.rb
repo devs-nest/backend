@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
-# triggers an event to be verified
+# == Schema Information
+#
+# Table name: events
+#
+#  id          :bigint           not null, primary key
+#  bot_details :string(255)
+#  bot_type    :integer
+#  event_type  :string(255)
+#  message     :text(65535)
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
 class Event < ApplicationRecord
   enum bot_type: %i[generic user]
   VERIFIED = 'verification'

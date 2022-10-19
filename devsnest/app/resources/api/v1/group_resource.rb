@@ -6,7 +6,7 @@ module Api
     class GroupResource < JSONAPI::Resource
       # caching
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
-                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time
+                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time, :activity_point
       has_many :group_members
       filter :classification
       filter :language
@@ -16,7 +16,9 @@ module Api
       }
 
       def description
-        @model.description.dup.encode('ISO-8859-1').force_encoding('utf-8') rescue nil
+        @model.description.dup.encode('ISO-8859-1').force_encoding('utf-8')
+      rescue StandardError
+        nil
       end
 
       def scrum_start_time
@@ -62,22 +64,19 @@ module Api
         @model.server.link
       end
 
+      def activity_point
+        @model.activity_point
+      end
+
       def self.records(options = {})
-        if options[:context][:is_create]
+        if options[:context][:is_create] || options[:context][:slug].present? || options[:context][:group_id].present? || options[:context][:user]&.is_admin?
           super(options)
-        elsif options[:context][:slug].present? || options[:context][:group_id].present?
-          super(options)
-        elsif options[:context][:fetch_all].present?
-          super(options)
-        elsif options[:context][:fetch_v1]
-          user = options[:context][:user]
-          group_ids = user.fetch_group_ids
-          super(options).where(id: group_ids)
-        elsif options[:context][:user]&.is_admin?
-          super(options).v2
         else
           user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
-          super(options).v2.visible.under_limited_members.or(super(options).where(id: user_group&.id))
+          return super(options).where(id: user_group.id) if user_group.present?
+
+          Group.eligible_groups.order('((members_count%15) - (members_count)%5)/10 desc , (members_count%15)%5')
+
         end
       end
     end

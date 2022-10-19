@@ -1,5 +1,36 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: groups
+#
+#  id                :bigint           not null, primary key
+#  classification    :integer          default("students")
+#  description       :text(65535)
+#  five_members_flag :boolean          default(FALSE)
+#  group_type        :integer          default("public")
+#  language          :integer          default("english")
+#  members_count     :integer          default(0)
+#  name              :string(255)      default(""), not null
+#  scrum_end_time    :time             default(Sat, 01 Jan 2000 15:00:00 IST +05:30)
+#  scrum_start_time  :time             default(Sat, 01 Jan 2000 14:30:00 IST +05:30)
+#  slug              :string(255)
+#  version           :integer          default(2)
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  batch_id          :integer
+#  batch_leader_id   :integer
+#  co_owner_id       :integer
+#  owner_id          :integer
+#  server_id         :integer          default(1)
+#  student_mentor_id :integer
+#
+# Indexes
+#
+#  index_groups_on_members_count  (members_count)
+#  index_groups_on_name           (name) UNIQUE
+#  index_groups_on_slug           (slug) UNIQUE
+#
 include UtilConcern
 # Model for Group
 class Group < ApplicationRecord
@@ -196,5 +227,13 @@ class Group < ApplicationRecord
                     })
     end
     result
+  end
+
+  def count_activity_point
+    Scrum.where('group_id = ? and created_at > ?', id, (Date.today - 14.days).beginning_of_day).group(:creation_date).having('count(attendance) >= ?', members_count / 2).count.count
+  end
+
+  def self.eligible_groups
+    where("version = 2 AND group_type = 'public' AND members_count < 16")
   end
 end

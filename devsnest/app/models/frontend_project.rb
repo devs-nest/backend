@@ -1,6 +1,23 @@
 # frozen_string_literal: true
 
-# Project Model
+# == Schema Information
+#
+# Table name: frontend_projects
+#
+#  id         :bigint           not null, primary key
+#  name       :string(255)
+#  public     :boolean          default(TRUE)
+#  slug       :string(255)
+#  template   :integer
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  user_id    :bigint
+#
+# Indexes
+#
+#  index_frontend_projects_on_user_id  (user_id)
+#  index_projects_on_user_id_and_name  (user_id,name) UNIQUE
+#
 class FrontendProject < ApplicationRecord
   include MinibootcampHelper
   validates_uniqueness_of :name, case_sensitive: true, scope: :user_id

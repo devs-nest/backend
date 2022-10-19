@@ -18,7 +18,6 @@ FactoryBot.define do
 
   factory :discussion do
     sequence(:user_id) { |n| n }
-    sequence(:challenge_id) { |n| n }
   end
 
   factory :upvote do

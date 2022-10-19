@@ -65,6 +65,9 @@ GEM
       zeitwerk (~> 2.2, >= 2.2.2)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
+    annotate (3.2.0)
+      activerecord (>= 3.2, < 8.0)
+      rake (>= 10.4, < 14.0)
     ast (2.4.2)
     audited (4.10.0)
       activerecord (>= 4.2, < 6.2)
@@ -356,6 +359,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  annotate
   audited (~> 4.9)
   awesome_print (~> 1.9, >= 1.9.2)
   aws-sdk-s3 (~> 1.103)

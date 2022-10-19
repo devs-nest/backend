@@ -5,11 +5,11 @@ module Api
     class UsersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       include ApplicationHelper
-      before_action :simple_auth, only: %i[leaderboard report]
+      before_action :simple_auth, only: %i[report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
-                             create_github_repo repo_details sourcecode_io]
+                             create_github_repo repo_details sourcecode_io leaderboard]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
 
@@ -51,20 +51,36 @@ module Api
       end
 
       def leaderboard
-        @leaderboard.page_size = params[:size].to_i || 10
+        course_type = params[:course_type]
+        course_timeline = params[:course_timeline]
+        return render_error({ message: 'Course type must be dsa or frontend' }) if LeaderboardDevsnest::COURSE_TYPE.values.exclude?(course_type)
+
+        return render_error({ message: 'Course timeline must be weekly or monthly' }) if LeaderboardDevsnest::COURSE_TIMELINE.values.exclude?(course_timeline)
+
+        leaderboard = course_type == LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @dsa_leaderboard : @fe_leaderboard
+        if leaderboard.check_member?(@current_user.username).blank?
+          leaderboard.rank_member(@current_user.username,
+                                  LeaderboardDevsnest::COURSE_TYPE[:DSA] ? @current_user.score : @current_user.fe_score)
+        end
+        leaderboard.page_size = params[:size].to_i || 10
         page = params[:page].to_i
-        @leaderboard.rank_member(@current_user.username, @current_user.score || 0) if @current_user.present?
+        leaderboard_copy = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
+        scoreboard = []
 
-        scoreboard = @leaderboard.leaders(page)
-        pages_count = @leaderboard.total_pages
-
-        if @current_user
-          rank = @leaderboard.rank_for(@current_user.username)
-          user = @leaderboard.member_at(rank)
-          return render_success({ id: page, type: 'leaderboard', user: user, scoreboard: scoreboard, count: pages_count })
+        leaderboard.leaders(page).each do |data|
+          prev_rank = leaderboard_copy.rank_for(data[:name])
+          rank_change = prev_rank != 0 ? prev_rank - data[:rank] : prev_rank
+          scoreboard.push(data.merge(rank_change: rank_change))
         end
 
-        render_success({ id: page, type: 'leaderboard', scoreboard: scoreboard, count: pages_count })
+        data = {
+          id: page,
+          type: "#{course_type}_#{course_timeline}_leaderboard",
+          current_user: @current_user.lb_data(leaderboard, leaderboard_copy),
+          scoreboard: scoreboard,
+          count: leaderboard.total_pages
+        }
+        render_success(data)
       end
 
       def create
@@ -188,7 +204,16 @@ module Api
         if context[:user].update_count >= 4
           render_error({ message: 'Update count Exceeded for username' })
         else
-          @leaderboard.remove_member(context[:user].username)
+          @dsa_leaderboard.remove_member(context[:user].username)
+          @fe_leaderboard.remove_member(context[:user].username)
+          LeaderboardDevsnest::COURSE_TYPE.each_value do |course_type|
+            LeaderboardDevsnest::COURSE_TIMELINE.each_value do |course_timeline|
+              lb = LeaderboardDevsnest::CopyLeaderboard.new(course_type, course_timeline).call
+              prev_score = lb.score_for(context[:user].username)
+              lb.remove_member(context[:user].username)
+              lb.rank_member(params['data']['attributes']['username'], prev_score)
+            end
+          end
           Challenge.rerank_member(context[:user], params['data']['attributes']['username'])
           params['data']['attributes']['update_count'] = context[:user].update_count + 1
         end
@@ -410,7 +435,10 @@ module Api
           total_by_difficulty: Challenge.split_by_difficulty, # Algo Challenges Details
           solved: Challenge.count_solved(user.id), # Algo Challenges Details
           tha_details: user.tha_details, # Bootcamp Progress
-          leaderboard_details: user.leaderboard_details # Leaderboard Details
+          leaderboard_details: user.leaderboard_details('dsa'), # Leaderboard Details
+          fe_solved: FrontendChallenge.count_solved(user.id),
+          fe_total_by_topic: FrontendChallenge.split_by_topic,
+          fe_leaderboard_details: user.leaderboard_details('frontend')
         }
         render_success(data.as_json)
       end
@@ -428,6 +456,16 @@ module Api
         client = @current_user.github_client
 
         render_success({ file_names: client.contents("#{client.login}/#{params[:repo_name]}").pluck(:name) })
+      end
+
+      def disconnect_user
+        user = User.find_by(id: params.dig(:data, :attributes, 'id'))
+
+        return render_unauthorized unless user.id == @current_user.id
+        return render_error(message: 'Can\'t decouple the user') unless user.discord_active && user.web_active
+
+        user.un_merge_discord_user
+        render_success({ message: 'User is decoupled!' })
       end
 
       private

@@ -31,7 +31,7 @@ module Api
 
         ActiveRecord::Base.transaction do
           group_member.destroy
-          group.update!(members_count: group.members_count - 1)
+          # group.update!(members_count: group.members_count - 1) #TODO
           group.reassign_leader(user.id)
           user.update(group_assigned: false)
         end

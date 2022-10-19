@@ -110,10 +110,11 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Leaderboard' do
-    let(:spec_leaderboard) { LeaderboardDevsnest::Initializer::LB }
-    let!(:user) { create(:user, discord_active: true, username: 'username') }
+    let(:spec_dsa_leaderboard) { LeaderboardDevsnest::DSAInitializer::LB }
+    let(:spec_fe_leaderboard) { LeaderboardDevsnest::FEInitializer::LB }
+    let!(:user) { create(:user, discord_active: true, accepted_in_course: true, username: 'username') }
     before :each do
-      User.initialize_leaderboard(spec_leaderboard)
+      User.initialize_leaderboard
     end
 
     it ' return unauthorized if user is not logged in or not a known bot' do
@@ -121,22 +122,46 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(response.status).to eq(401)
     end
 
-    it 'returns data of logged in users when user is logged in ' do
+    it 'returns error when course_type is not provided as params' do
       sign_in(user)
-      get '/api/v1/users/leaderboard', headers: HEADERS
-      expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+      get '/api/v1/users/leaderboard?course_timeline=weekly'
+      expect(response.status).to eq(400)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Course type must be dsa or frontend')
     end
 
-    it 'retrun data of logged in users when user is bot ' do
-      get '/api/v1/users/leaderboard', params: { "data": { "attributes": { "discord_id": user.discord_id } } }, headers: {
-        'ACCEPT' => 'application/vnd.api+json',
-        'CONTENT-TYPE' => 'application/vnd.api+json',
-        'Token' => ENV['DISCORD_TOKEN'],
-        'User-Type' => 'Bot'
-      }
+    it 'returns error when course_timeline is not provided as params' do
+      sign_in(user)
+      get '/api/v1/users/leaderboard?course_type=dsa'
+      expect(response.status).to eq(400)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Course timeline must be weekly or monthly')
+    end
+
+    it 'returns dsa weekly data of logged in users when user is logged in ' do
+      sign_in(user)
+      get '/api/v1/users/leaderboard?course_type=dsa&course_timeline=weekly', headers: HEADERS
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_leaderboard.leaders(1).count)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_dsa_leaderboard.leaders(1).count)
+    end
+
+    it 'returns dsa monthly data of logged in users when user is logged in ' do
+      sign_in(user)
+      get '/api/v1/users/leaderboard?course_type=dsa&course_timeline=monthly', headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_dsa_leaderboard.leaders(1).count)
+    end
+
+    it 'returns frontend weekly data of logged in users when user is logged in ' do
+      sign_in(user)
+      get '/api/v1/users/leaderboard?course_type=frontend&course_timeline=weekly', headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_fe_leaderboard.leaders(1).count)
+    end
+
+    it 'returns frontend monthly data of logged in users when user is logged in ' do
+      sign_in(user)
+      get '/api/v1/users/leaderboard?course_type=frontend&course_timeline=monthly', headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:scoreboard].count).to eq(spec_fe_leaderboard.leaders(1).count)
     end
   end
 
@@ -239,7 +264,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
   end
 
   context 'Update Username basic username checks' do
-    let!(:user) { create(:user, username: 'adhikrammaitra') }
+    let!(:user) { create(:user, accepted_in_course: true, username: 'adhikrammaitra') }
     let!(:user2) { create(:user, username: 'adhikrammm') }
     let(:user_params) do
       {
@@ -262,6 +287,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Update count Exceeded for username')
     end
     it 'It changes the update count if all autherization passed and update the username' do
+      User.initialize_leaderboard
       sign_in(user)
       put "/api/v1/users/#{user.id}", params: user_params.to_json, headers: HEADERS
       expect(response.status).to eq(200)
@@ -647,7 +673,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
     let(:group) { create(:group, owner_id: user.id, server_id: server.id, name: 'Test Team') }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: user.id) }
     let!(:question) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test', is_active: true, score: 100, difficulty: 'medium') }
-    let!(:spec_leaderboard) { LeaderboardDevsnest::Initializer::LB }
+    let!(:spec_leaderboard) { LeaderboardDevsnest::DSAInitializer::LB }
     let!(:course) { create(:course, name: 'Test Course') }
     let!(:course_curriculum) { create(:course_curriculum, course_id: course.id) }
     let!(:aq) { create(:assignment_question, course_curriculum_id: course_curriculum.id, question_id: question.id, question_type: 'Challenge') }
