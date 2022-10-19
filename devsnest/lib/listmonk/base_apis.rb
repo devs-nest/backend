@@ -48,6 +48,7 @@ module Listmonk
       META_LIST.each do |list, val|
         q = query_string(val[:conditions])
         list_id = get_list_id(list.to_s)
+        list = "#{Rails.env}_#{list}"
         
         return if list_id.nil? # list not found
 
@@ -61,7 +62,6 @@ module Listmonk
         add_subscriber(user, []) unless current_sub.present? # create sub if not present
 
         if eval(q.join(' && '))
-          # create subscriber
           payload = update_list_payload(user, current_sub['data']['lists'].pluck('id'), list_id)
           response = JSON.parse(HTTParty.put("#{@endpoint}/api/subscribers/#{subscriber_id}", body: payload.to_json, headers: @headers, basic_auth: @auth).response.body)
         elsif !val[:preserve_list] # if conditions are not met

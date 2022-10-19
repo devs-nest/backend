@@ -20,8 +20,8 @@ module ApiRenderConcern
     api_render 401, code: :unauthorized, errors: ['Unauthorized']
   end
 
-  def render_unprocessable
-    api_render 422, code: :unprocessable_entity, errors: ['Unprocessable Entity']
+  def render_unprocessable(message)
+    api_render 422, code: :unprocessable_entity, errors: ['Unprocessable Entity'], message: message
   end
 
   def render_not_found(code = nil)
