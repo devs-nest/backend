@@ -50,7 +50,8 @@ module Listmonk
         next if Rails.env.test? && !val[:run_for_test_env]
         
         q = query_string(val[:conditions])
-        list = "#{Rails.env}_#{list}"
+        # list = "#{Rails.env}_#{list}"
+        list = "#{list}"
         list_id = get_list_id(list.to_s)
         
         return if list_id.nil? # list not found
