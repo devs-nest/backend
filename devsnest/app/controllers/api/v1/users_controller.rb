@@ -308,7 +308,7 @@ module Api
 
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
         ManualLoginChangelog.create(user_id: user.id, uid: encrypted_code, query_type: 'password_reset')
-        
+
         UserMailer.password_reset(user, encrypted_code).deliver_later
         render_success({ message: 'An email has been sent to you with detailed instruction, Check your Inbox!' })
       end

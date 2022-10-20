@@ -1,5 +1,6 @@
-class CsvHelper
+# frozen_string_literal: true
 
+class CsvHelper
   def initialize(records, fields:, **options)
     @records = records
     @options = options

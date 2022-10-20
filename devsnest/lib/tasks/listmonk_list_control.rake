@@ -14,7 +14,7 @@ namespace :subscribers do
         else
           response = $listmonk.add_subscriber(user, [])
           if response.success?
-            parsed_out_id = JSON.parse(response.body)["data"]["id"]
+            parsed_out_id = JSON.parse(response.body)['data']['id']
             user.update_column(:listmonk_subscriber_id, parsed_out_id)
           else
             p JSON.parse(response.body)

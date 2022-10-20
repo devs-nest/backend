@@ -48,21 +48,21 @@ module Listmonk
       @list_cont = []
       META_LIST.each do |list, val|
         next if Rails.env.test? && !val[:run_for_test_env]
-        
+
         q = query_string(val[:conditions])
         list = "#{Rails.env}_#{list}"
         # list = "#{list}"
         list_id = get_list_id(list.to_s)
-        
+
         return if list_id.nil? # list not found
-        
+
         subscriber_id = user.listmonk_subscriber_id
         current_sub = get_subscriber(subscriber_id)
         current_sub_lists = current_sub['data']['lists']
         current_list = current_sub_lists.select { |l| l['name'] == list.to_s }
-        
+
         return if current_sub_lists.select { |l| l['name'] == list.to_s }.first&.dig('subscription_status') == 'unsubscribed'
-        
+
         add_subscriber(user, []) unless current_sub.present? # create sub if not present
 
         if eval(q.join(' && '))
@@ -96,7 +96,7 @@ module Listmonk
       response = HTTParty.post("#{@endpoint}/api/subscribers", body: payload.to_json, headers: @headers, basic_auth: @auth)
     end
 
-    def get_list_debug(name = 'Default list')
+    def get_list_debug(_name = 'Default list')
       ["#{@endpoint}/api/lists", HTTParty.get("#{@endpoint}/api/lists", headers: @headers, basic_auth: @auth)]
     end
 
@@ -119,7 +119,7 @@ module Listmonk
     end
 
     def get_list_id(name = 'Default list')
-      JSON.parse(HTTParty.get("#{@endpoint}/api/lists", headers: @headers, basic_auth: @auth).response.body)['data']['results'].select { |r| r['name'] == name }.first&.dig("id")
+      JSON.parse(HTTParty.get("#{@endpoint}/api/lists", headers: @headers, basic_auth: @auth).response.body)['data']['results'].select { |r| r['name'] == name }.first&.dig('id')
     end
 
     def query_string(conditions, qs = 'user', querries = [])

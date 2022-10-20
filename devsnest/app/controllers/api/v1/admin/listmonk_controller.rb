@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     module Admin
       class ListmonkController < ApplicationController
         include JSONAPI::ActsAsResourceController
         before_action :admin_auth
-        require 'csv_handler/csv_helper.rb'
+        require 'csv_handler/csv_helper'
 
         def list
-          headers = ['email','name']
-          condition = params['condition'] 
+          headers = %w[email name]
+          condition = params['condition']
           atr = params['attributes']
 
           return render_error('No condition given') if condition.blank?
