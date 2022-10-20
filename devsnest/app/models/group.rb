@@ -5,6 +5,7 @@
 # Table name: groups
 #
 #  id                :bigint           not null, primary key
+#  activity_point    :integer          default(0)
 #  classification    :integer          default("students")
 #  description       :text(65535)
 #  five_members_flag :boolean          default(FALSE)
@@ -115,7 +116,8 @@ class Group < ApplicationRecord
       discord_ids = discord_ids.compact.uniq
 
       destroyed_group_user_ids.each do |user_id|
-        send_group_change_message(user_id, preserved_group.name)
+        user = User.find_by(id: user_id)
+        send_group_change_message(user, preserved_group)
       end
       # Sending new_group_name as a role tag to the discord ids
       if preserved_group&.server_id != group_to_be_destroyed&.server_id
@@ -178,7 +180,7 @@ class Group < ApplicationRecord
   def invite_inactive_members
     group_members.each do |member|
       server_user = ServerUser.find_by(user_id: member.user_id, server_id: server_id)
-      send_group_change_message(member.user_id, name) unless server_user.present?
+      send_group_change_message(member, @model) unless server_user.present?
     end
   end
 
@@ -186,7 +188,7 @@ class Group < ApplicationRecord
     current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     scrum_data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, group_id: id)
-    total_scrums = scrum_data.count
+    total_scrums = scrum_data.pluck(:creation_date).uniq.count
     result = []
     current_module = current_course.current_module
     group_members.each do |gm|
