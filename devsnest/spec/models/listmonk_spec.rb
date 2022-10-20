@@ -9,7 +9,8 @@ RSpec.describe Listmonk, type: :model do
   context 'list control' do
 
     it 'adds subscriber to list' do
-      response = $listmonk.get_list_debug
+      ep, response = $listmonk.get_list_debug
+      expect(ep).to eq('http://listmonk.devsnest.in/api/lists')
       expect(response.code).to eq(200)
     end
 

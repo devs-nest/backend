@@ -97,7 +97,7 @@ module Listmonk
     end
 
     def get_list_debug(name = 'Default list')
-      HTTParty.get("#{@endpoint}/api/lists", headers: @headers, basic_auth: @auth)
+      ["#{@endpoint}/api/lists", HTTParty.get("#{@endpoint}/api/lists", headers: @headers, basic_auth: @auth)]
     end
 
     private
