@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_10_13_080218) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "aqODC2g5TJ8"
+    t.string "cuid", default: "Mp9dHpxw+98"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -131,14 +131,6 @@ ActiveRecord::Schema.define(version: 2022_10_13_080218) do
     t.string "parent_id"
     t.integer "course_curriculum_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
-  end
-
-  create_table "coin_log", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.string "pointable_type"
-    t.integer "pointable_id"
-    t.integer "coins", default: 0
   end
 
   create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
