@@ -50,8 +50,8 @@ module Listmonk
         next if Rails.env.test? && !val[:run_for_test_env]
         
         q = query_string(val[:conditions])
-        # list = "#{Rails.env}_#{list}"
-        list = "#{list}"
+        list = "#{Rails.env}_#{list}"
+        # list = "#{list}"
         list_id = get_list_id(list.to_s)
         
         return if list_id.nil? # list not found
@@ -94,6 +94,10 @@ module Listmonk
       }
 
       response = HTTParty.post("#{@endpoint}/api/subscribers", body: payload.to_json, headers: @headers, basic_auth: @auth)
+    end
+
+    def get_list_debug(name = 'Default list')
+      HTTParty.get("#{@endpoint}/api/lists", headers: @headers, basic_auth: @auth)
     end
 
     private
