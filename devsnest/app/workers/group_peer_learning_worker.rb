@@ -10,7 +10,6 @@ class GroupPeerLearningWorker
         ping(group, 'Report_Weekly_Scrum')
       when 'daily'
         ping(group, 'Ping_Attendance')
-        ping(group, 'Report_Daily_Scrum_Detailse')
       when 'class_start'
         ping(group, 'Class_Start')
       when 'scrum_start'
