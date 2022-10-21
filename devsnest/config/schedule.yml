@@ -14,26 +14,26 @@ update_group_activity_point:
   cron: "00 02 * * mon" # every Monday at 02:00
   class: "GroupActivityPointsUpdateWorker"
 
-# daily_group_ping:
-#   cron: "59 23 * * *" # every day at 23:59
-#   class: "GroupPeerLearningWorker"
-#   args:
-#     timeline: "daily"
+daily_group_ping:
+  cron: "59 23 * * *" # every day at 23:59
+  class: "GroupPeerLearningWorker"
+  args:
+    timeline: "daily"
 
-# weekly_group_ping:
-#   cron: "59 23 * * sun" # every sunday at 23:59
-#   class: "GroupPeerLearningWorker"
-#   args:
-#     timeline: "weekly"
+weekly_group_ping:
+  cron: "59 23 * * sun" # every sunday at 23:59
+  class: "GroupPeerLearningWorker"
+  args:
+    timeline: "weekly"
 
-# group_ping_for_class:
-#   cron: "0 19 * * *" # At 19:00 every day.
-#   class: "GroupPeerLearningWorker"
-#   args:
-#     timeline: "class_start"
+group_ping_for_class:
+  cron: "0 19 * * *" # At 19:00 every day.
+  class: "GroupPeerLearningWorker"
+  args:
+    timeline: "class_start"
 
-# group_ping_for_scrum:
-#   cron: "*/30 * * * *" # At every 30 minutes.
-#   class: "GroupPeerLearningWorker"
-#   args:
-#     timeline: "scrum_start"
+group_ping_for_scrum:
+  cron: "*/30 * * * *" # At every 30 minutes.
+  class: "GroupPeerLearningWorker"
+  args:
+    timeline: "scrum_start"

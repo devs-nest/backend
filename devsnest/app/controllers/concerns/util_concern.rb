@@ -132,15 +132,15 @@ module UtilConcern
       data = group.weekly_data
       return "\nHey guys! No Scrums this WEEK !!!!" if data.empty?
 
-      total_scrums = data[0][:total_scrums] || 0
+      total_scrums = data[0][:total_group_scrums] || 0
       message = "\nHey guys! Hope you're having a great week so far.\n
 
       We wanted to give you guys a quick update of last week,\n
       Total Scrums happened: #{total_scrums || 0} \n"
       if total_scrums.positive?
         message += "Leaderboard:- \n"
-        data.sort_by(&:scrum_attended_count).each do |d|
-          message += "Name:- #{d[:user_name]} =>> THA Solved #{data[:solved_assignments_count]}\n"
+        data.sort_by { |e| -e[:scrum_attended_count] }.each do |d|
+          message += "Name:- #{d[:user_name]} =>> THA Solved #{d[:solved_assignments_count]}\n"
         end
       end
       message
