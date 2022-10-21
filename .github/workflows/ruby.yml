@@ -18,7 +18,9 @@ jobs:
       REDIS_URL: redis://127.0.0.1:6379
       REDIS_HOST_LB: redis://127.0.0.1:6379
       SECRET_KEY_BASE: qC3vQNz76DAjsmOPEuLf6nGPi7WMf+zV # this string is random, don't raise issue for this
-
+      LISTMONK_HOST: ${{ secrets.LISTMONK_HOST }}
+      LISTMONK_USERNAME: ${{ secrets.LISTMONK_USERNAME }}
+      LISTMONK_PASSWORD: ${{ secrets.LISTMONK_PASSWORD }}
 
     services:
       redis:

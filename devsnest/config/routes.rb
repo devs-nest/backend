@@ -32,6 +32,11 @@ Rails.application.routes.draw do
             post :files_io
           end
         end
+        jsonapi_resources :listmonk, only: %i[] do
+          collection do
+            get :list
+          end
+        end
         jsonapi_resources :challenge, only: %i[show index create update] do
           collection do
             get :self_created_challenges
