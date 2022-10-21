@@ -107,7 +107,7 @@ class User < ApplicationRecord
   after_update :update_user_coins_for_signup
   after_update :update_user_score_lb, if: :saved_change_to_score?
   after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
-  after_save :manage_list, if: Proc.new{ !Rails.env.test? }
+  after_save :manage_list, if: Proc.new{ !Rails.env.test? && ENV['LISTMONK_LIST_CONTROL'] == 'true' }
   before_validation :create_referral_code, if: :is_referall_empty?
   has_paper_trail
 
@@ -122,6 +122,7 @@ class User < ApplicationRecord
   end
 
   def manage_list
+    byebug
     changes = saved_changes
     $listmonk.list_control(changes, self)
   end
