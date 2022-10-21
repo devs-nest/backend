@@ -7,11 +7,11 @@ class GroupPeerLearningWorker
     Group.all.each do |group|
       case worker_type
       when 'weekly'
-        ping(group, 'Report_Weekly_Scrum')
+        ping_discord(group, 'Report_Weekly_Scrum')
       when 'daily'
-        ping(group, 'Ping_Attendance')
+        ping_discord(group, 'Ping_Attendance')
       when 'class_start'
-        ping(group, 'Class_Start')
+        ping_discord(group, 'Class_Start')
       when 'scrum_start'
         if group.scrum_start_time
           scrum_time = group.scrum_start_time.change(year: DateTime.now.year, month: DateTime.now.month, day: DateTime.now.day)

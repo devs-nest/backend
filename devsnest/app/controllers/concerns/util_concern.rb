@@ -85,7 +85,10 @@ module UtilConcern
     case message_type
     when 'Group_Join'
       # TODO: Add safe operator
-      "Congrats  #{user.username}, You have joined the group #{params[0]},\nPlease join this server, if you haven't already\n#{params[1]}\nOnce you join this server, you will automatically be able to talk to your group and meet them in a voice call"
+      "Congrats  #{user.username}, You have joined the group #{params[0]},
+      \nPlease join this server, if you haven't already
+      \n#{params[1]}\n
+      Once you join this server, you will automatically be able to talk to your group and meet them in a voice call"
     end
   end
 
@@ -121,16 +124,19 @@ module UtilConcern
           user = User.find_by(id: user_id)
           message += "#{user.username} \n"
         end
+        message
       else
         "\nHello, Guys!!,\nNo one attended today's scrum."
       end
     when 'Report_Weekly_Scrum' # Report about weekly scrum
       data = group.weekly_data
+      return "\nHey guys! No Scrums this WEEK !!!!" if data.empty?
+
       total_scrums = data[0][:total_scrums] || 0
       message = "\nHey guys! Hope you're having a great week so far.\n
 
-    We wanted to give you guys a quick update of last week,\n
-    Total Scrums happened: #{total_scrums || 0} \n"
+      We wanted to give you guys a quick update of last week,\n
+      Total Scrums happened: #{total_scrums || 0} \n"
       if total_scrums.positive?
         message += "Leaderboard:- \n"
         data.sort_by(&:scrum_attended_count).each do |d|

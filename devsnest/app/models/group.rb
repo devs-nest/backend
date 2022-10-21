@@ -188,7 +188,7 @@ class Group < ApplicationRecord
     current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     scrum_data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, group_id: id)
-    total_scrums = scrum_data.pluck(:creation_date).uniq.count
+    total_scrums = scrum_data.pluck(:creation_date).uniq.compact.count
     result = []
     current_module = current_course.current_module
     group_members.each do |gm|
