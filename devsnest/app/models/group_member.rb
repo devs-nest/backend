@@ -22,6 +22,7 @@
 #  index_group_members_on_user_id_and_group_id  (user_id,group_id) UNIQUE
 #
 class GroupMember < ApplicationRecord
+  include UtilConcern
   audited
   belongs_to :group
   after_create :send_all_steps_completed_mail
@@ -56,9 +57,8 @@ class GroupMember < ApplicationRecord
   end
 
   def send_scrum_message_in_group
-    message = "Hope you are enjoying the Server! \nYou can connect with your group here, We encourage you to meet tomorrow for your first meeting and get to know each other at 7pm\nThe agenda of the meeting will be \n\n1. Get to know each other\n2 To decide a daily catchup time that works for you all \n3. Choose your goals for the course\n4. Talk to your team and  team leader and see how all you can manage responsibilities together\n5. Nominate yourself if you want to become Vice team leader, and let the team leader ping in the admins"
     group = Group.find_by(id: group_id)
-    GroupNotifierWorker.perform_async([group.name], message, group.server&.guild_id) if group.group_members.count == 5 && group.five_members_flag == false
+    ping_discord(group, 'Initialize_Group_Scrum') if group.group_members.count == 5 && group.five_members_flag == false
     group.update(five_members_flag: true) if group.members_count >= 5
   end
 
