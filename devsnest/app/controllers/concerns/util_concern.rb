@@ -58,7 +58,7 @@ module UtilConcern
   def send_group_change_message(user, group)
     group_name = group.name
     puts("Sending group change message to #{user.discord_id}")
-    link = group&.server&.link
+    link = group.server.try(:link)
     ping_discord(user, 'Group_Join', [group_name, link])
     ping_discord(group, 'User_Joined', ["#{user.name}|#|#{user.discord_id}"])
     template_id = EmailTemplate.find_by(name: 'group_join_message')&.template_id
