@@ -67,6 +67,7 @@
 #  college_id                         :integer
 #  discord_id                         :string(255)      default(""), not null
 #  google_id                          :string(255)
+#  listmonk_subscriber_id             :integer
 #
 # Indexes
 #

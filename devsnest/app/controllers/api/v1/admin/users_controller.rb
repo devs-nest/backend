@@ -38,6 +38,20 @@ module Api
           user.un_merge_discord_user
           render_success({ message: 'User is decoupled!' })
         end
+
+        def support_mail
+          filter = params.dig(:data, :attributes, 'filter')
+          template_id = params.dig(:data, :attributes, 'template_id')
+          parameters = params.dig(:data, :attributes, 'parameters') || {}
+          users  = User.where(filter).where.not(id: Unsubscribe.all.pluck(:user_id))
+          return render_error({ message: 'No Template ID Found' }) if template_id.blank?
+          return render_error({ message: 'Not a valid filter' }) if users.blank?
+
+          users.each do |user|
+            EmailSenderWorker.perform_async(user.email, parameters.as_json.merge({ 'unsubscribe_token': user.unsubscribe_token }), template_id)
+          end
+          render_success({ message: "Emails sent successfully to #{users.count} Users" })
+        end
       end
     end
   end
