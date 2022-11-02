@@ -76,6 +76,7 @@ Rails.application.routes.draw do
         jsonapi_resources :reward, only: %i[create]
         jsonapi_resources :jobs, only: %i[index create update show destroy]
         jsonapi_resources :organization, only: %i[index create update show destroy]
+        jsonapi_resources :article, only: %i[create update show destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -207,6 +208,8 @@ Rails.application.routes.draw do
           get :fetch_by_slug
         end
       end
+      jsonapi_resources :article, only: %i[index show]
+      jsonapi_resources :article_submissions, only: %i[create show]
     end
   end
 end
