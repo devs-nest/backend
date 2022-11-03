@@ -47,9 +47,7 @@ module Api
           return render_error({ message: 'No Template ID Found' }) if template_id.blank?
           return render_error({ message: 'Not a valid filter' }) if users.blank?
 
-          users.each do |user|
-            EmailSenderWorker.perform_async(user.email, parameters.as_json.merge({ 'unsubscribe_token': user.unsubscribe_token }), template_id)
-          end
+          send_mails_from_admin(@current_user, users, template_id, parameters)
           render_success({ message: "Emails sent successfully to #{users.count} Users" })
         end
       end
