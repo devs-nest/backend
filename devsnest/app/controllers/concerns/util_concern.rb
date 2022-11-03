@@ -27,6 +27,7 @@ module UtilConcern
   def send_mails_from_admin(admin, users, template_id, parameters)
     admin.paper_trail_event = 'mail_users'
     users.each do |user|
+      puts("Sending mail to #{parameters.as_json.merge({ 'unsubscribe_token': user.unsubscribe_token }.as_json)}")
       EmailSenderWorker.perform_async(user.email, parameters.as_json.merge({ 'unsubscribe_token': user.unsubscribe_token }), template_id)
     end
   end
