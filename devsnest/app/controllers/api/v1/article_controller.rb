@@ -13,8 +13,14 @@ module Api
       end
 
       def create_submission
-        article_submission = ArticleSubmission.new(article_id: params['data']['attributes']['article_id'], user_id: @current_user.id, submission_link: params['data']['attributes']['submission_link'])
-        article_submission.save!
+        article_id = params['data']['attributes']['article_id']
+        if ArticleSubmission.find_by(user_id: @current_user.id, article_id: article_id).present?
+          article_submission = ArticleSubmission.find_by(user_id: @current_user.id, article_id: article_id)
+          article_submission.update(submission_link: params['data']['attributes']['submission_link'])
+        else
+          article_submission = ArticleSubmission.new(article_id: article_id, user_id: @current_user.id, submission_link: params['data']['attributes']['submission_link'])
+          article_submission.save!
+        end
         render_success(article_submission.as_json)
       end
     end
