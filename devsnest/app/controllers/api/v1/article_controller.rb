@@ -2,7 +2,7 @@ module Api
   module V1
     class ArticleController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      # before_action :user_auth, only: %i[create_submission]
+      before_action :user_auth, only: %i[create_submission]
 
       def fetch_by_slug
         article = Article.find_by(slug: params[:slug])
