@@ -6,7 +6,7 @@ module Api
 
       def fetch_by_slug
         article = Article.find_by(slug: params[:slug])
-        user_submission = article.article_submissions.find_by(user_id: @current_user&.id)
+        user_submission = article&.article_submissions&.find_by(user_id: @current_user&.id)
         return render_not_found('article') if article.nil?
 
         render_success(article.as_json.merge(user_submission: user_submission&.slice(:submission_link)))

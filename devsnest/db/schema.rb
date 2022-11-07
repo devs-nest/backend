@@ -54,6 +54,8 @@ ActiveRecord::Schema.define(version: 2022_11_04_075034) do
     t.string "title"
     t.string "author"
     t.text "content"
+    t.string "banner"
+    t.string "category"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "slug"

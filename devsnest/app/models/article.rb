@@ -4,6 +4,8 @@
 #
 #  id         :bigint           not null, primary key
 #  author     :string(255)
+#  banner     :string(255)
+#  category   :string(255)
 #  content    :text(65535)
 #  slug       :string(255)
 #  title      :string(255)
