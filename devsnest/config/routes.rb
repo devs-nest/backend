@@ -22,6 +22,7 @@ Rails.application.routes.draw do
         jsonapi_resources :users, only: %i[index] do
           collection do
             post :disconnect_user
+            post :support_mail
             get :check_user_details
           end
         end

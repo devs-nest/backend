@@ -703,4 +703,79 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(response.status).to eq(401)
     end
   end
+
+  context 'Send mails from Admin' do
+    let!(:user) { create(:user, user_type: 1) }
+    let!(:user1) { create(:user, user_type: 1) }
+    let!(:user2) { create(:user, user_type: 1) }
+    let!(:user3) { create(:user, user_type: 1) }
+    let!(:user4) { create(:user) }
+    let!(:user4) { create(:user) }
+    it 'Calls EmailWorker honoring the filters given' do
+      sign_in(user)
+      post '/api/v1/admin/users/support_mail', params: {
+        data: {
+          attributes: {
+            'filter': 'user_type = 1',
+            'template_id': '3245363656543',
+            'parameters': { 'username': 1 }.as_json
+          }
+        }
+      }.to_json, headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('Emails sent successfully to 4 Users')
+    end
+  end
+
+  context 'Get user details' do
+    let!(:user) { create(:user, user_type: 1) }
+    let!(:user1) { create(:user, email: 'abc101@gmail.com', discord_id: '101') }
+    let!(:user2) { create(:user, email: 'abc102@gmail.com', discord_id: '102') }
+    it 'Gets user by email' do
+      sign_in(user)
+      get '/api/v1/admin/users/check_user_details', params: {
+        'identifier': 'abc101@gmail.com'
+      }.as_json, headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:discord_id]).to eq('101')
+    end
+    it 'Gets user by discord_id' do
+      sign_in(user)
+      get '/api/v1/admin/users/check_user_details', params: {
+        'identifier': '102'
+      }.as_json, headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:email]).to eq('abc102@gmail.com')
+    end
+  end
+
+  context 'Disconnect discord' do
+    let!(:user) { create(:user, user_type: 1) }
+    let!(:user1) { create(:user, email: 'abc101@gmail.com', discord_id: '101', web_active: true, discord_active: true) }
+    let!(:user2) { create(:user, email: 'abc102@gmail.com', discord_id: '102') }
+    it 'It disconnect the user' do
+      sign_in(user)
+      post '/api/v1/admin/users/disconnect_user', params: {
+        data: {
+          attributes: {
+            'id': user1.id
+          }
+        }
+      }.to_json, headers: HEADERS
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:message]).to eq('User is decoupled!')
+    end
+    it 'It renders error when user is no connected' do
+      sign_in(user)
+      post '/api/v1/admin/users/disconnect_user', params: {
+        data: {
+          attributes: {
+            'id': user2.id
+          }
+        }
+      }.to_json, headers: HEADERS
+      expect(response.status).to eq(400)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('Can\'t decouple the user')
+    end
+  end
 end
