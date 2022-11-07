@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 2022_11_04_075034) do
     t.bigint "article_id", null: false
     t.bigint "user_id", null: false
     t.string "submission_link"
+    t.index ["article_id", "user_id"], name: "index_article_submissions_on_article_id_and_user_id", unique: true
     t.index ["article_id"], name: "index_article_submissions_on_article_id"
     t.index ["user_id"], name: "index_article_submissions_on_user_id"
   end
@@ -59,6 +60,7 @@ ActiveRecord::Schema.define(version: 2022_11_04_075034) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "slug"
+    t.index ["slug"], name: "index_articles_on_slug", unique: true
   end
 
   create_table "assignment_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

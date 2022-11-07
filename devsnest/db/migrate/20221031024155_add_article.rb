@@ -14,6 +14,7 @@ class AddArticle < ActiveRecord::Migration[6.0]
       t.references :article, null: false, foreign_key: true
       t.references :user, null: false, foreign_key: true
       t.string :submission_link
+      t.index %i[article_id user_id], unique: true
     end
   end
 end

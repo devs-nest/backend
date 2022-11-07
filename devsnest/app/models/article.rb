@@ -12,6 +12,10 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+# Indexes
+#
+#  index_articles_on_slug  (slug) UNIQUE
+#
 class Article < ApplicationRecord
   has_many :article_submissions
   after_create :generate_slug
