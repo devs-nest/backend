@@ -7,6 +7,7 @@
 #  id                                 :bigint           not null, primary key
 #  accepted_in_course                 :boolean          default(FALSE)
 #  batch                              :string(255)
+#  be_score                           :integer          default(0)
 #  bio                                :string(255)      default("")
 #  bot_token                          :string(255)
 #  buddy                              :integer          default(0)
@@ -67,6 +68,7 @@
 #  college_id                         :integer
 #  discord_id                         :string(255)      default(""), not null
 #  google_id                          :string(255)
+#  listmonk_subscriber_id             :integer
 #
 # Indexes
 #

@@ -13,6 +13,10 @@ class UserScoreUpdate
       ch = FrontendChallenge.find_by(id: id)
       submissions = FrontendChallengeScore.where(frontend_challenge_id: ch.id)
       submissions.each(&:touch)
+    when 'backend'
+      ch = BackendChallenge.find_by(id: id)
+      submissions = BackendChallengeScore.where(backend_challenge_id: ch.id)
+      submissions.each(&:touch)
     end
   end
 end

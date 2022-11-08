@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Listmonk, type: :model do
+RSpec.describe 'Listmonk', type: :model do
   let(:user) { create(:user, name: 'Kshitij Dhama', email: 'kshitijdhama513@gmail.com', listmonk_subscriber_id: 43) }
   let(:user2) { create(:user) }
 
