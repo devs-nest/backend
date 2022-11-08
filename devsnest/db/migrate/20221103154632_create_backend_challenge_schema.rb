@@ -32,6 +32,7 @@ class CreateBackendChallengeSchema < ActiveRecord::Migration[6.0]
       t.integer :topic
       t.integer :difficulty
       t.string :slug
+      t.text :question_body
       t.integer :score, default: 0
       t.boolean :is_active, default: false
       t.integer :user_id

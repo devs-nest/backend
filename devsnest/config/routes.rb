@@ -26,6 +26,11 @@ Rails.application.routes.draw do
           end
         end
         jsonapi_resources :certification, only: %i[index create update]
+        jsonapi_resources :backend_challenge, only: %i[create index show update destroy] do
+          collection do
+            get :self_created_challenges
+          end
+        end
         jsonapi_resources :frontend_challenge, only: %i[create index show update destroy] do
           collection do
             get :self_created_challenges
@@ -207,6 +212,8 @@ Rails.application.routes.draw do
           get :fetch_by_slug
         end
       end
+      jsonapi_resources :be_submissions, only: %i[create show index]
+      jsonapi_resources :backend_challenge, only: %i[index show]
     end
   end
 end

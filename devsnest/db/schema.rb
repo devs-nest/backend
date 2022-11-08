@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 2022_11_03_154632) do
     t.integer "topic"
     t.integer "difficulty"
     t.string "slug"
+    t.text "question_body"
     t.integer "score", default: 0
     t.boolean "is_active", default: false
     t.integer "user_id"
