@@ -67,6 +67,7 @@
 #  college_id                         :integer
 #  discord_id                         :string(255)      default(""), not null
 #  google_id                          :string(255)
+#  listmonk_subscriber_id             :integer
 #
 # Indexes
 #
@@ -99,6 +100,7 @@ class User < ApplicationRecord
   has_many :frontend_challenge_scores
   has_many :coin_logs
   has_many :job_applications
+  has_one :college_profile
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
   after_create :send_registration_email

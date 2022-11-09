@@ -173,13 +173,26 @@ module Api
         else
           user = User.fetch_google_user(code, googleId, params[:referral_code])
         end
-
+        
         if user.present?
           sign_in(user)
           set_current_user
           return render_success(user.as_json.merge({ "type": 'users' })) if @current_user.present?
         end
         render_error({ message: 'Error occured while authenticating' })
+      end
+
+      def college_login
+        user = CollegeProfile.find_by_email(params['email'])&.user
+        return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
+        
+        if user.present?
+          sign_in(user)
+          set_current_user
+          set_current_college_user
+          return render_success(user.as_json.merge({ "type": 'college_user' })) if @current_user.present?
+        end
+        render_error({ message: 'Error occured while authenticating college user' })
       end
 
       def update_college
