@@ -20,10 +20,9 @@
 #
 class Article < ApplicationRecord
   has_many :article_submissions
-  after_create :generate_slug
+  before_save :generate_slug
 
   def generate_slug
     self.slug = self.title.parameterize
-    self.save
   end
 end
