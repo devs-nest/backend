@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Api
   module V1
+    # Article Controller
     class ArticleController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth, only: %i[create_submission]
