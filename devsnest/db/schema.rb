@@ -42,6 +42,27 @@ ActiveRecord::Schema.define(version: 2022_11_07_074407) do
     t.index ["challenge_id", "language_id"], name: "index_algo_templates_on_challenge_id_and_language_id", unique: true
   end
 
+  create_table "article_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.bigint "article_id", null: false
+    t.bigint "user_id", null: false
+    t.string "submission_link"
+    t.index ["article_id", "user_id"], name: "index_article_submissions_on_article_id_and_user_id", unique: true
+    t.index ["article_id"], name: "index_article_submissions_on_article_id"
+    t.index ["user_id"], name: "index_article_submissions_on_user_id"
+  end
+
+  create_table "articles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.string "author"
+    t.text "content"
+    t.string "banner"
+    t.string "category"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "slug"
+    t.index ["slug"], name: "index_articles_on_slug", unique: true
+  end
+
   create_table "assignment_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "course_curriculum_id"
     t.integer "question_id"
@@ -163,7 +184,8 @@ ActiveRecord::Schema.define(version: 2022_11_07_074407) do
 
   create_table "college_invites", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "college_profile_id"
-    t.string "uid"
+    t.integer "college_id"
+    t.text "uid"
     t.integer "status", default: 0
     t.integer "authority_level"
     t.datetime "created_at", precision: 6, null: false
@@ -178,10 +200,12 @@ ActiveRecord::Schema.define(version: 2022_11_07_074407) do
     t.string "email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_college_profiles_on_email", unique: true
   end
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name"
+    t.boolean "is_verified", default: false
   end
 
   create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -797,6 +821,8 @@ ActiveRecord::Schema.define(version: 2022_11_07_074407) do
     t.index ["group_id", "creation_week"], name: "index_weekly_todos_on_group_id_and_creation_week", unique: true
   end
 
+  add_foreign_key "article_submissions", "articles"
+  add_foreign_key "article_submissions", "users"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
 end

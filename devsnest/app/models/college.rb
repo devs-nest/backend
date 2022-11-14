@@ -4,8 +4,9 @@
 #
 # Table name: colleges
 #
-#  id   :bigint           not null, primary key
-#  name :string(255)
+#  id          :bigint           not null, primary key
+#  is_verified :boolean          default(FALSE)
+#  name        :string(255)
 #
 class College < ApplicationRecord
   has_many :college_profiles
@@ -15,7 +16,7 @@ class College < ApplicationRecord
     College.create(name: college_name)
   end
 
-  def self.domains_matched?(eamil1, email2)
+  def self.domains_matched?(email1, email2)
     email1.split("@")[-1] == email2.split("@")[-1]
   end
 end
