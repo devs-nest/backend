@@ -242,11 +242,16 @@ ActiveRecord::Schema.define(version: 2022_11_07_074407) do
   create_table "college_invites", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "college_profile_id"
 <<<<<<< HEAD
+<<<<<<< HEAD
     t.integer "college_id"
     t.text "uid"
 =======
     t.string "uid"
 >>>>>>> wip
+=======
+    t.integer "college_id"
+    t.text "uid"
+>>>>>>> apis
     t.integer "status", default: 0
     t.integer "authority_level"
     t.datetime "created_at", precision: 6, null: false
@@ -266,6 +271,7 @@ ActiveRecord::Schema.define(version: 2022_11_07_074407) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
 <<<<<<< HEAD
+<<<<<<< HEAD
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
   end
 
@@ -282,6 +288,9 @@ ActiveRecord::Schema.define(version: 2022_11_07_074407) do
     t.datetime "updated_at", precision: 6, null: false
 =======
 >>>>>>> wip
+=======
+    t.index ["email"], name: "index_college_profiles_on_email", unique: true
+>>>>>>> apis
   end
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
