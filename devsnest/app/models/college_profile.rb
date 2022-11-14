@@ -11,9 +11,16 @@
 #  college_id      :integer
 #  user_id         :integer
 #
+# Indexes
+#
+#  index_college_profiles_on_email  (email) UNIQUE
+#
 class CollegeProfile < ApplicationRecord
 
   belongs_to :user, optional: true
-  has_one :college_invite
+  belongs_to :college, optional: true
+  has_one :college_invites
   enum authority_level: %i[superadmin admin head]
+
+  validates_presence_of :email
 end
