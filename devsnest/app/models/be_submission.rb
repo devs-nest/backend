@@ -2,17 +2,18 @@
 #
 # Table name: be_submissions
 #
-#  id                   :bigint           not null, primary key
-#  failed_test_cases    :text(65535)
-#  passed_test_cases    :integer          default(0)
-#  score                :float(24)
-#  status               :string(255)
-#  submitted_url        :text(65535)
-#  total_test_cases     :integer          default(0)
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  backend_challenge_id :integer
-#  user_id              :integer
+#  id                     :bigint           not null, primary key
+#  failed_test_cases_desc :text(65535)
+#  passed_test_cases      :integer          default(0)
+#  passed_test_cases_desc :text(65535)
+#  score                  :float(24)
+#  status                 :string(255)
+#  submitted_url          :text(65535)
+#  total_test_cases       :integer          default(0)
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  backend_challenge_id   :integer
+#  user_id                :integer
 #
 # Indexes
 #
@@ -22,7 +23,9 @@ class BeSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :backend_challenge
   after_save :assign_score, if: :saved_change_to_passed_test_cases?
-  serialize :failed_test_cases, Array
+  after_create :run_test_cases, if: :saved_change_to_submitted_url?
+  serialize :failed_test_cases_desc, Array
+  serialize :passed_test_cases_desc, Array
 
   def assign_score
     passed_tests = [passed_test_cases.to_i, total_test_cases.to_i].min
@@ -31,5 +34,13 @@ class BeSubmission < ApplicationRecord
     backend_challenge_score = BackendChallengeScore.find_or_create_by(user_id: user_id, backend_challenge_id: backend_challenge_id)
 
     backend_challenge_score.update!(score: final_score, be_submission_id: id, passed_test_cases: passed_test_cases, total_test_cases: total_test_cases)
+  end
+
+  def run_test_cases
+    test_case_report = backend_challenge.give_test_case_report
+    update(total_test_cases: test_case_report[:total_test_cases],
+           passed_test_cases: test_case_report[:total_passed],
+           passed_test_cases_desc: test_case_report[:passed_test_cases_desc],
+           failed_test_cases_desc: test_case_report[:failed_test_cases_desc])
   end
 end

@@ -12,7 +12,6 @@ RSpec.describe Api::V1::UsersController, type: :request do
     #   # @mock_controller.stub(:current_user).and_return(User.first)
     #   sign_in(user)
     # end
-
     it 'basic first put call' do
       response = HTTParty.get('https://api.devsnest.in/api/v1/users/6712', headers: {
         accept: 'application/vnd.api+json'

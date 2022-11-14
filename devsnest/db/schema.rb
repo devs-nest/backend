@@ -135,7 +135,8 @@ ActiveRecord::Schema.define(version: 2022_11_03_154632) do
     t.integer "backend_challenge_id"
     t.integer "total_test_cases", default: 0
     t.integer "passed_test_cases", default: 0
-    t.text "failed_test_cases"
+    t.text "failed_test_cases_desc"
+    t.text "passed_test_cases_desc"
     t.float "score"
     t.text "submitted_url"
     t.string "status"

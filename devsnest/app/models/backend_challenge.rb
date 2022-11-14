@@ -20,6 +20,7 @@
 #
 #  index_backend_challenges_on_slug  (slug) UNIQUE
 #
+require 'rspec/core'
 class BackendChallenge < ApplicationRecord
   include ApplicationHelper
   enum difficulty: %i[easy medium hard]
@@ -64,23 +65,27 @@ class BackendChallenge < ApplicationRecord
     where(is_active: true).group(:topic).count
   end
 
-  def self.give_test_case_report(testcases_path)
-    error_stream = ''
+  def give_test_case_report
+    error_stream = StringIO.new
     output_stream = StringIO.new
-    status = RSpec::Core::Runner.run([testcases_path, '--format=json'], error_stream, output_stream) == 1
+    ENV['url'] = 'https://api.devsnest.in/api/v1/users/6713'
+    status = RSpec::Core::Runner.run([testcases_path, '--format=json'], error_stream, output_stream).zero?
     RSpec.reset
     total_passed = 0
     total_failed = 0
-    failing_testcase_description = []
+    failed_test_cases_desc = []
+    passed_test_cases_desc = []
     output_stream = JSON.parse(output_stream.string)
     output_stream['examples'].each do |example|
       if example['status'] == 'passed'
         total_passed += 1
+        passed_test_cases_desc.push(example['description'])
       else
         total_failed += 1
-        failing_testcase_description.push(example['description'])
+        failed_test_cases_desc.push(example['description'])
       end
     end
-    { all_test_passed: status, total_test_cases: total_passed + total_failed, total_passed: total_passed, total_failed: total_failed, failing_testcase_description: failing_testcase_description }
+    { all_test_passed: status, total_test_cases: total_passed + total_failed, total_passed: total_passed, total_failed: total_failed,
+      failed_test_cases_desc: failed_test_cases_desc, passed_test_cases_desc: passed_test_cases_desc }
   end
 end
