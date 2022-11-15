@@ -183,7 +183,6 @@ module Api
       end
 
       def college_login
-        byebug
         user = CollegeProfile.find_by_email(params['email'])&.user
         return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
 
