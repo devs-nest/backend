@@ -183,13 +183,11 @@ module Api
       end
 
       def college_login
-        byebug
         user = CollegeProfile.find_by_email(params['email'])&.user
         return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
         
         if user.present?
           sign_in(user)
-          set_current_user
           set_current_college_user
           return render_success(user.as_json.merge({ "type": 'college_user' })) if @current_user.present?
         end

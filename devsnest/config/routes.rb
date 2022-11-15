@@ -123,7 +123,7 @@ Rails.application.routes.draw do
           post :update_user_group
         end
       end
-      jsonapi_resources :college, only: %i[show] do
+      jsonapi_resources :college, only: %i[create show] do
         collection do
           post :invite, :join
         end
