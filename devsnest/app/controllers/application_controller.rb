@@ -94,7 +94,10 @@ class ApplicationController < ActionController::API
   end
 
   def set_current_college_user
-    @current_college_user = current_api_v1_user if current_api_v1_user.present?
+    if current_api_v1_user.present?
+      @current_college_user = current_api_v1_user 
+      @current_user = nil
+    end
   end
 
   protected
