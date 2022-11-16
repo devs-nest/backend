@@ -37,10 +37,6 @@ class BeSubmission < ApplicationRecord
   end
 
   def run_test_cases
-    test_case_report = backend_challenge.give_test_case_report
-    update(total_test_cases: test_case_report[:total_test_cases],
-           passed_test_cases: test_case_report[:total_passed],
-           passed_test_cases_desc: test_case_report[:passed_test_cases_desc],
-           failed_test_cases_desc: test_case_report[:failed_test_cases_desc])
+    BeEvaluationWorker.perform_async(id)
   end
 end

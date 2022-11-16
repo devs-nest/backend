@@ -7,6 +7,7 @@
 #  difficulty           :integer
 #  is_active            :boolean          default(FALSE)
 #  name                 :string(255)
+#  question_body        :text(65535)
 #  score                :integer          default(0)
 #  slug                 :string(255)
 #  testcases_path       :string(255)
@@ -65,10 +66,10 @@ class BackendChallenge < ApplicationRecord
     where(is_active: true).group(:topic).count
   end
 
-  def give_test_case_report
+  def give_test_case_report(url)
     error_stream = StringIO.new
     output_stream = StringIO.new
-    ENV['url'] = 'https://api.devsnest.in/api/v1/users/6713'
+    ENV['url'] = url
     status = RSpec::Core::Runner.run([testcases_path, '--format=json'], error_stream, output_stream).zero?
     RSpec.reset
     total_passed = 0
