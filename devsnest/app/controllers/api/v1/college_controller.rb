@@ -43,7 +43,7 @@ module Api
 
           template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
-                                            code: data_to_encode
+                                            code: encrypted_code
                                           }, template_id)
         end
         render_success(message: "Invite sent")
