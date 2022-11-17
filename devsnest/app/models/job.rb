@@ -22,7 +22,8 @@
 #
 # Indexes
 #
-#  index_jobs_on_slug  (slug) UNIQUE
+#  index_jobs_on_organization_id  (organization_id)
+#  index_jobs_on_slug             (slug) UNIQUE
 #
 class Job < ApplicationRecord
   has_many :job_applications

@@ -76,6 +76,11 @@ Rails.application.routes.draw do
         jsonapi_resources :reward, only: %i[create]
         jsonapi_resources :jobs, only: %i[index create update show destroy]
         jsonapi_resources :organization, only: %i[index create update show destroy]
+        jsonapi_resources :college_profile do
+          collection do
+            post :import_students
+          end
+        end
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
