@@ -95,7 +95,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
         'Token' => ENV['DISCORD_TOKEN'],
         'User-Type' => 'Bot'
       }
-      expect(response.status).to eq(401)
+      expect(response.status).to eq(400)
     end
     it 'it return bot_token  when discord_id is valid ' do
       get '/api/v1/users/get_token', params: { "data": { "attributes": { "discord_id": user.discord_id } } }, headers: {
