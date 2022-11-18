@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: backend_challenges
@@ -22,6 +24,7 @@
 #  index_backend_challenges_on_slug  (slug) UNIQUE
 #
 require 'rspec/core'
+# backend challenge model
 class BackendChallenge < ApplicationRecord
   include ApplicationHelper
   enum difficulty: %i[easy medium hard]

@@ -19,7 +19,6 @@ module Api
         def self_created_challenges
           render_success({ id: @current_user.id, type: 'backend_challenges', challenges: @current_user.backend_challenges })
         end
-
       end
     end
   end

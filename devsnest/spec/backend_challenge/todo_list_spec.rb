@@ -142,7 +142,7 @@ RSpec.describe 'Todo List', type: :request do
     end
 
     it 'should not return tasks if user is not authenticated' do
-      header = {
+      headers = {
         Authorization: "Bearer #{SecureRandom.hex}"
       }
       response = HTTParty.get("#{ENV['url']}/task", headers: headers)
