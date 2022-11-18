@@ -27,6 +27,10 @@ module Api
           submissions_succeded = FrontendChallengeScore.where(user: context[:user], frontend_challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:frontend_challenge_id)
           submissions_failed = FeSubmission.where(user: context[:user], frontend_challenge_id: question_ids, is_submitted: true).where.not(status: 'Accepted').distinct.pluck(:frontend_challenge_id)
           assignment_questions_data = FrontendChallenge.where(id: question_ids)
+        when 'backend'
+          submissions_succeded = BackendChallengeScore.where(user: context[:user], backend_challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:backend_challenge_id)
+          submissions_failed = BeSubmission.where(user: context[:user], backend_challenge_id: question_ids).where.not(status: 'Accepted').distinct.pluck(:backend_challenge_id)
+          assignment_questions_data = BackendChallenge.where(id: question_ids)
         end
         assignment_questions_data.each do |assignment_question|
           question_data = {

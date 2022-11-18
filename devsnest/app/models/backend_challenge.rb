@@ -32,7 +32,7 @@ class BackendChallenge < ApplicationRecord
   has_many :backend_challenge_scores
   has_many :be_submissions
   has_many :assignment_questions
-  belongs_to :course_curriculum
+  # belongs_to :course_curriculum
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug, case_sensitive: true
