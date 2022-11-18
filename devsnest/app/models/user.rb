@@ -102,6 +102,8 @@ class User < ApplicationRecord
   has_many :coin_logs
   has_many :job_applications
   has_many :article_submissions
+  has_many :backend_challenges
+  has_many :backend_challenge_scores
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
   after_create :send_registration_email

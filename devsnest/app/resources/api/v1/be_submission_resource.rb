@@ -4,7 +4,7 @@ module Api
   module V1
     # Be resource
     class BeSubmissionResource < JSONAPI::Resource
-      attributes :user_id, :backend_challenge_id, :submitted_url, :status, :score, :total_test_cases, :passed_test_cases, :failed_test_cases
+      attributes :user_id, :backend_challenge_id, :submitted_url, :status, :score, :total_test_cases, :passed_test_cases
     end
   end
 end
