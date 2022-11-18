@@ -9,6 +9,13 @@ module Api
         before_action :problem_setter_auth
         before_action :admin_auth, only: %i[index]
 
+        def context
+          {
+            user: @current_user,
+            action: params[:action]
+          }
+        end
+
         def self_created_challenges
           render_success({ id: @current_user.id, type: 'backend_challenges', challenges: @current_user.backend_challenges })
         end
