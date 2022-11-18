@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 2022_11_04_075034) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -93,6 +94,35 @@ ActiveRecord::Schema.define(version: 2022_11_04_075034) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
+  create_table "backend_challenge_scores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "backend_challenge_id"
+    t.integer "be_submission_id"
+    t.integer "total_test_cases", default: 0
+    t.integer "passed_test_cases", default: 0
+    t.float "score"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "backend_challenge_id"], name: "backend_challenge_score_index", unique: true
+  end
+
+  create_table "backend_challenges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.integer "day_no"
+    t.integer "topic"
+    t.integer "difficulty"
+    t.string "slug"
+    t.text "question_body"
+    t.integer "score", default: 0
+    t.boolean "is_active", default: false
+    t.integer "user_id"
+    t.integer "course_curriculum_id"
+    t.string "testcases_path"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["slug"], name: "index_backend_challenges_on_slug", unique: true
+  end
+
   create_table "batch_leader_sheets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "group_id"
@@ -120,6 +150,21 @@ ActiveRecord::Schema.define(version: 2022_11_04_075034) do
     t.integer "student_mentor_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "be_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "backend_challenge_id"
+    t.integer "total_test_cases", default: 0
+    t.integer "passed_test_cases", default: 0
+    t.text "failed_test_cases_desc"
+    t.text "passed_test_cases_desc"
+    t.float "score"
+    t.text "submitted_url"
+    t.string "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "backend_challenge_id"], name: "backend_submission_user_index"
   end
 
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -762,6 +807,7 @@ ActiveRecord::Schema.define(version: 2022_11_04_075034) do
     t.text "github_token"
     t.integer "fe_score", default: 0
     t.integer "listmonk_subscriber_id"
+    t.integer "be_score", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

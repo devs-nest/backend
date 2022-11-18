@@ -36,7 +36,7 @@ class FrontendChallenge < ApplicationRecord
   enum difficulty: %i[easy medium hard]
   enum topic: %i[html css javascript react]
   has_many :frontend_challenge_scores
-  has_many :assingment_questions
+  has_many :assignment_questions
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug, case_sensitive: true
