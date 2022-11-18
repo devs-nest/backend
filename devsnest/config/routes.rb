@@ -22,6 +22,7 @@ Rails.application.routes.draw do
         jsonapi_resources :users, only: %i[index] do
           collection do
             post :disconnect_user
+            post :support_mail
             get :check_user_details
           end
         end
@@ -81,6 +82,7 @@ Rails.application.routes.draw do
         jsonapi_resources :reward, only: %i[create]
         jsonapi_resources :jobs, only: %i[index create update show destroy]
         jsonapi_resources :organization, only: %i[index create update show destroy]
+        jsonapi_resources :article, only: %i[create update show destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -214,6 +216,13 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :be_submissions, only: %i[create show index]
       jsonapi_resources :backend_challenge, only: %i[index show]
+      jsonapi_resources :article, only: %i[index show] do
+        collection do
+          get :fetch_by_slug
+          post :create_submission
+        end
+      end
+      jsonapi_resources :article_submissions, only: %i[create show]
     end
   end
 end
