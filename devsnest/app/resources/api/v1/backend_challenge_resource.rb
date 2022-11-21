@@ -27,16 +27,6 @@ module Api
         end
       end
 
-      def testcases_path
-        return @model.testcases_path.sub(id.to_s, '') if @model.testcases_path.present? && context[:action] == 'show'
-
-        ''
-      end
-
-      # def files
-      #   context[:action] == 'show' ? @model.read_from_s3 : []
-      # end
-
       def submission_status
         user = context[:user]
         return 'signin to check submissions' if user.nil?
@@ -46,10 +36,6 @@ module Api
 
         submission.passed_test_cases == submission.total_test_cases ? 'solved' : 'attempted'
       end
-
-      # def previous_data
-      #   context[:action] == 'show' ? @model.fetch_files_s3('user-fe-submission', "#{context[:user].id}/#{id}") : []
-      # end
     end
   end
 end
