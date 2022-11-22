@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+# backend challenge testcases
 module BackendTest
   def self.run(url)
     test = TodoList.new(url)
     test.generate_result
   end
 
+  # test for todo list rest api
   class TodoList
     def initialize(url)
       @url = url
@@ -190,7 +192,7 @@ module BackendTest
       response = HTTParty.get("#{@url}/task", headers: headers)
       response_body = JSON.parse(response.body, symbolize_names: true)
 
-      if response.code == 200 && response_body[:title] == 'success' && response_body[:todos].is_a?(Array) && response_body[:todos].count == 0
+      if response.code == 200 && response_body[:title] == 'success' && response_body[:todos].is_a?(Array) && response_body[:todos].count.zero?
         @success << 'should return tasks of authenticated user'
       else
         @failed << 'should return tasks of authenticated user'
