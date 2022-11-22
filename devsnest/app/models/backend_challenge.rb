@@ -70,26 +70,9 @@ class BackendChallenge < ApplicationRecord
   end
 
   def give_test_case_report(url)
-    error_stream = StringIO.new
-    output_stream = StringIO.new
-    ENV['url'] = url
-    status = RSpec::Core::Runner.run([testcases_path, '--format=json'], error_stream, output_stream).zero?
-    RSpec.reset
-    total_passed = 0
-    total_failed = 0
-    failed_test_cases_desc = []
-    passed_test_cases_desc = []
-    output_stream = JSON.parse(output_stream.string)
-    output_stream['examples'].each do |example|
-      if example['status'] == 'passed'
-        total_passed += 1
-        passed_test_cases_desc.push(example['description'])
-      else
-        total_failed += 1
-        failed_test_cases_desc.push(example['description'])
-      end
-    end
-    { all_test_passed: status, total_test_cases: total_passed + total_failed, total_passed: total_passed, total_failed: total_failed,
-      failed_test_cases_desc: failed_test_cases_desc, passed_test_cases_desc: passed_test_cases_desc }
+    load testcases_path
+    report = BackendTest.run(url)
+    { all_test_passed: report[:status], total_test_cases: report[:total_test_cases], total_passed: report[:success].count, total_failed: report[:failed].count,
+      failed_test_cases_desc: report[:failed], passed_test_cases_desc: report[:success] }
   end
 end
