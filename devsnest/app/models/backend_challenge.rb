@@ -23,7 +23,7 @@
 #
 #  index_backend_challenges_on_slug  (slug) UNIQUE
 #
-require 'rspec/core'
+
 # backend challenge model
 class BackendChallenge < ApplicationRecord
   include ApplicationHelper
