@@ -21,6 +21,7 @@
 #
 #  backend_submission_user_index  (user_id,backend_challenge_id)
 #
+# Model
 class BeSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :backend_challenge
@@ -36,6 +37,19 @@ class BeSubmission < ApplicationRecord
     backend_challenge_score = BackendChallengeScore.find_or_create_by(user_id: user_id, backend_challenge_id: backend_challenge_id)
 
     backend_challenge_score.update!(score: final_score, be_submission_id: id, passed_test_cases: passed_test_cases, total_test_cases: total_test_cases)
+  end
+
+  def self.validate_uri(uri)
+    uri_regex = %r{^(http|https)://[a-z0-9]+([\-.]{1}[a-z0-9]+)*\.[a-z]{2,5}$}
+    return false unless uri.match(uri_regex)
+
+    parsed_uri = URI.parse(uri)
+    http_request = Net::HTTP.new(parsed_uri.host, parsed_uri.port)
+    http_request.use_ssl = (parsed_uri.scheme == 'https')
+    http_request.request_head('/')
+    true
+  rescue SocketError
+    false
   end
 
   def run_test_cases
