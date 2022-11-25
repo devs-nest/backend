@@ -3,6 +3,7 @@
 # worker that evaluates testcases of submission
 class BeEvaluationWorker
   include Sidekiq::Worker
+  sidekiq_options retry: 4
 
   def perform(be_submission_id)
     be_submission = BeSubmission.find_by_id(be_submission_id)

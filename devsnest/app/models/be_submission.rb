@@ -43,10 +43,10 @@ class BeSubmission < ApplicationRecord
     uri_regex = %r{^(http|https)://[a-z0-9]+([\-.]{1}[a-z0-9]+)*\.[a-z]{2,5}$}
     return false unless uri.match(uri_regex)
 
-    uri = URI.parse(uri)
-    req = Net::HTTP.new(uri.host, uri.port)
-    req.use_ssl = (uri.scheme == 'https')
-    req.request_head('/')
+    parsed_uri = URI.parse(uri)
+    http_request = Net::HTTP.new(parsed_uri.host, parsed_uri.port)
+    http_request.use_ssl = (parsed_uri.scheme == 'https')
+    http_request.request_head('/')
     true
   rescue SocketError
     false

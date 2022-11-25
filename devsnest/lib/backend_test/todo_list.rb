@@ -57,9 +57,9 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers)
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
 
-      if response.code == 200 && JSON.parse(response.body, symbolize_names: true)[:title] == 'user created'
+      if response.code == 200 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'user created'
         @success << 'should register a new user'
       else
         @failed << 'should register a new user'
@@ -75,9 +75,9 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers)
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
 
-      if response.code == 400 && JSON.parse(response.body, symbolize_names: true)[:title] == 'error' && JSON.parse(response.body, symbolize_names: true)[:error] == 'email already in use'
+      if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'error' && JSON.parse(response.body, symbolize_names: true)[:error] == 'email already in use'
         @success << 'should not create a new user if email is already registered'
       else
         @failed << 'should not create a new user if email is already registered'
@@ -92,8 +92,8 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers)
-      if response.code == 400
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
+      if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8'
         @success << 'should not register a new user if email is not provided'
       else
         @failed << 'should not register a new user if email is not provided'
@@ -109,8 +109,8 @@ module BackendTest
         'Content-Type' => 'application/json'
       }
 
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers)
-      if response.code == 400
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
+      if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8'
         @success << 'should not register a new user if username is not provided'
       else
         @failed << 'should not register a new user if username is not provided'
@@ -127,8 +127,8 @@ module BackendTest
         'Content-Type' => 'application/json'
       }
 
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers)
-      if response.code == 400
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
+      if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8'
         @success << 'should not register a new user if password is not provided'
       else
         @failed << 'should not register a new user if password is not provided'
@@ -143,8 +143,8 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers)
-      if response.code == 200 && JSON.parse(response.body, symbolize_names: true)[:title] == 'login success' && JSON.parse(response.body, symbolize_names: true)[:token].present?
+      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 1)
+      if response.code == 200 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'login success' && JSON.parse(response.body, symbolize_names: true)[:token].present?
         @auth_token = JSON.parse(response.body, symbolize_names: true)[:token]
         @success << 'should login user if correct credentials are provided'
       else
@@ -160,7 +160,12 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers)
+      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 1)
+      if response.headers['Content-type'] != 'application/json; charset=utf-8'
+        @failed << 'should not login with incorrect password'
+        return
+      end
+
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 401 && response_body[:title] == 'login failed' && response_body[:error] == 'invalid username or password'
         @success << 'should not login with incorrect password'
@@ -177,8 +182,8 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers)
-      if response.code == 401 && JSON.parse(response.body, symbolize_names: true)[:title] == 'user not found'
+      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 1)
+      if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'user not found'
         @success << 'should not login with incorrect email'
       else
         @failed << 'should not login with incorrect email'
@@ -189,7 +194,11 @@ module BackendTest
       headers = {
         Authorization: "Bearer #{@auth_token}"
       }
-      response = HTTParty.get("#{@url}/task", headers: headers)
+      response = HTTParty.get("#{@url}/task", headers: headers, timeout: 1)
+      if response.headers['Content-type'] != 'application/json; charset=utf-8'
+        @failed << 'should return tasks of authenticated user'
+        return
+      end
       response_body = JSON.parse(response.body, symbolize_names: true)
 
       if response.code == 200 && response_body[:title] == 'success' && response_body[:todos].is_a?(Array) && response_body[:todos].count.zero?
@@ -203,8 +212,8 @@ module BackendTest
       headers = {
         Authorization: "Bearer #{SecureRandom.hex}"
       }
-      response = HTTParty.get("#{@url}/task", headers: headers)
-      if response.code == 401 && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated' && JSON.parse(response.body, symbolize_names: true)[:todos].nil?
+      response = HTTParty.get("#{@url}/task", headers: headers, timeout: 1)
+      if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated' && JSON.parse(response.body, symbolize_names: true)[:todos].nil?
         @success << 'should not return tasks if user is not authenticated'
       else
         @failed << 'should not return tasks if user is not authenticated'
@@ -219,7 +228,11 @@ module BackendTest
       body = {
         title: 'Write RSpec for Users'
       }
-      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers)
+      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 1)
+      if response.headers['Content-type'] != 'application/json; charset=utf-8'
+        @failed << 'should create a task'
+        return
+      end
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 200 && response_body[:title] == 'successfully added' && !response_body[:todo].nil? && response_body[:todo][:title] == 'Write RSpec for Users' && !response_body[:todo][:completed]
         @success << 'should create a task'
@@ -237,7 +250,11 @@ module BackendTest
       body = {
         title: 'Write RSpec for Users'
       }
-      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers)
+      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 1)
+      if response.headers['Content-type'] != 'application/json; charset=utf-8'
+        @failed << 'should not create a task when user is not authorized'
+        return
+      end
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 401 && response_body[:title] == 'not authenticated' && response_body[:todo].nil?
         @success << 'should not create a task when user is not authorized'
@@ -254,7 +271,11 @@ module BackendTest
       body = {
         completed: false
       }
-      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers)
+      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 1)
+      if response.headers['Content-type'] != 'application/json; charset=utf-8'
+        @failed << 'should not create a task if title is not provided'
+        return
+      end
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 400 && response_body[:title] == 'error' && response_body[:todo].nil? && response_body[:error] == 'Todo validation failed: title: Path `title` is required.'
         @success << 'should not create a task if title is not provided'
@@ -271,7 +292,11 @@ module BackendTest
       body = {
         completed: true
       }
-      response = HTTParty.put("#{@url}/task/#{@task_id}", body: body.to_json, headers: headers)
+      response = HTTParty.put("#{@url}/task/#{@task_id}", body: body.to_json, headers: headers, timeout: 1)
+      if response.headers['Content-type'] != 'application/json; charset=utf-8'
+        @failed << 'should update the completed'
+        return
+      end
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 200 && response_body[:title] == 'todo updated' && response_body[:todo][:completed] == true
         @success << 'should update the completed'
@@ -287,8 +312,8 @@ module BackendTest
       body = {
         completed: false
       }
-      response = HTTParty.put("#{@url}/task/#{@task_id}", body: body.to_json, headers: headers)
-      if response.code == 401 && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated'
+      response = HTTParty.put("#{@url}/task/#{@task_id}", body: body.to_json, headers: headers, timeout: 1)
+      if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated'
         @success << 'should not update the task if user is not authenticated'
       else
         @failed << 'should not update the task if user is not authenticated'
@@ -296,8 +321,8 @@ module BackendTest
     end
 
     def should_not_delete_the_task_if_user_is_not_authenticated
-      response = HTTParty.delete("#{@url}/task/#{@task_id}")
-      if response.code == 401 && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated'
+      response = HTTParty.delete("#{@url}/task/#{@task_id}", timeout: 1)
+      if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated'
         @success << 'should not delete the task if user is not authenticated'
       else
         @failed << 'should not delete the task if user is not authenticated'
@@ -308,8 +333,8 @@ module BackendTest
       headers = {
         Authorization: "Bearer #{@auth_token}"
       }
-      response = HTTParty.delete("#{@url}/task/#{@task_id}", headers: headers)
-      if response.code == 200 && JSON.parse(response.body, symbolize_names: true)[:title] == 'todo deleted'
+      response = HTTParty.delete("#{@url}/task/#{@task_id}", headers: headers, timeout: 1)
+      if response.code == 200 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'todo deleted'
         @success << 'should delete the task'
       else
         @failed << 'should delete the task'
