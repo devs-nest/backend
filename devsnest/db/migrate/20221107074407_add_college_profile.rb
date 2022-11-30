@@ -3,6 +3,7 @@ class AddCollegeProfile < ActiveRecord::Migration[6.0]
     create_table :college_profiles do |t|
       t.integer :user_id
       t.integer :college_id
+      t.integer :college_structure_id
       t.integer :authority_level # enum 
       t.integer :department
       t.string :email

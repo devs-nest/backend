@@ -11,6 +11,7 @@
 class College < ApplicationRecord
   has_many :college_profiles
   has_many :college_invites
+  has_many :college_structure
 
   def self.create_college(college_name)
     College.create(name: college_name)
