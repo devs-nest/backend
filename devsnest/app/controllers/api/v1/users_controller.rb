@@ -189,7 +189,7 @@ module Api
         if user.present?
           sign_in(user)
           set_current_college_user
-          return render_success(user.as_json.merge({ "type": 'college_user' })) if @current_user.present?
+          return render_success(user.as_json.merge({ "type": 'college_user' })) if @current_college_user.present?
         end
         render_error({ message: 'Error occured while authenticating college user' })
       end

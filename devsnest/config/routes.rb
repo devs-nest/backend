@@ -137,7 +137,8 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :college, only: %i[create show] do
         collection do
-          post :invite, :join
+          post :invite, :join, :structure
+          get :structure_schema
         end
       end
       jsonapi_resources :college_invite, only: %i[index]

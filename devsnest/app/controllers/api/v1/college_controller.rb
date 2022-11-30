@@ -5,12 +5,12 @@ module Api
     class CollegeController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :set_current_college_user, except: %i[create]
-      before_action :college_admin_auth, only: %i[show invite]
+      before_action :college_admin_auth, only: %i[show invite structure_schema structure]
       before_action :user_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite join]
 
       def context
-        { user: @current_college_user }
+        { user: @current_college_user, college: @current_college_user&.college_profile&.college }
       end
 
       def create
@@ -38,7 +38,8 @@ module Api
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
 
         ActiveRecord::Base.transaction do
-          college_profile = CollegeProfile.create!(email: data[:email], college_id: college_id, authority_level: data[:authority_level], department: data[:department])
+          c_struc = CollegeStructure.find_by_name(data[:structure])
+          college_profile = CollegeProfile.create!(email: data[:email], college_id: college_id, college_structure_id: c_struc&.id ,authority_level: data[:authority_level], department: data[:department])
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id)
 
           template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
@@ -80,6 +81,25 @@ module Api
         render_success(message: "College joined")
       rescue => e
         render_error("Something went wrong: #{e}")
+      end
+
+      def structure_schema
+        api_render(200, { data: { schema: CollegeStructure::SCHEMA, structure: CollegeStructure.where(college_id: @current_college_user&.college_profile&.college&.id) } })
+      end
+
+      def structure
+        data = params.dig(:data, :attributes)
+        college = @current_college_user.college_profile.college
+
+        data.each do |course, course_data|
+          course_data[:batch].each do |batch|
+            start_year, end_year = CollegeStructure.split_batch(batch[:period])
+            year = batch[:year] || CollegeStructure.calc_year(start_year, course)
+            CollegeStructure.create!(college_id: college.id, course: course, batch: batch[:period], year: year, section: batch[:section], branch: batch[:branch])
+          end
+        end
+
+        render_success
       end
     end
   end
