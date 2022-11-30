@@ -198,12 +198,21 @@ ActiveRecord::Schema.define(version: 2022_11_24_080549) do
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
-  create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+  create_table "coin_log", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "title"
     t.text "description"
     t.string "pointable_type"
     t.integer "pointable_id"
     t.integer "coins", default: 0
+  end
+
+  create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "pointable_type"
+    t.integer "pointable_id"
+    t.integer "coins", default: 0
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "college_forms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -255,22 +264,20 @@ ActiveRecord::Schema.define(version: 2022_11_24_080549) do
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name"
-    t.boolean "is_verified", default: false
-  end
-
-  create_table "collge_structure_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.bigint "collge_structure_id", null: false
-    t.bigint "college_profile_id", null: false
-    t.index ["college_profile_id"], name: "index_collge_structure_mappings_on_college_profile_id"
-    t.index ["collge_structure_id"], name: "index_collge_structure_mappings_on_collge_structure_id"
-  end
-
-  create_table "collge_structures", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.integer "college_type"
-    t.integer "value"
+    t.integer "course"
+    t.string "batch"
+    t.integer "year"
+    t.integer "branch"
+    t.integer "specialization"
+    t.string "section"
     t.integer "college_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.boolean "is_verified", default: false
   end
 
   create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -565,7 +572,6 @@ ActiveRecord::Schema.define(version: 2022_11_24_080549) do
     t.string "slug"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["organization_id"], name: "index_jobs_on_organization_id"
     t.index ["slug"], name: "index_jobs_on_slug", unique: true
   end
 
@@ -677,6 +683,13 @@ ActiveRecord::Schema.define(version: 2022_11_24_080549) do
   create_table "referrals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "referred_user_id"
     t.string "referral_code"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "rewards", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -883,8 +896,6 @@ ActiveRecord::Schema.define(version: 2022_11_24_080549) do
 
   add_foreign_key "article_submissions", "articles"
   add_foreign_key "article_submissions", "users"
-  add_foreign_key "collge_structure_mappings", "college_profiles"
-  add_foreign_key "collge_structure_mappings", "collge_structures"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
 end
