@@ -9,7 +9,7 @@ class MassNotifierWorker
     bucket_size = 20
     while start * NotificationBot.count * bucket_size <= User.count
       NotificationBot.all.each do |bot|
-        discord_ids = User.where(bot_id: bot.id, discord_active: true, accepted_in_course: false).slice(start * bucket_size, bucket_size)
+        discord_ids = User.where(bot_id: bot.id, discord_active: true).slice(start * bucket_size, bucket_size)
         next unless discord_ids.present?
 
         data = {
