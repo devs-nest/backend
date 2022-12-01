@@ -140,6 +140,14 @@ module Api
         end
 
         render_success
+      def dashboard_details
+        # course = params.dig(:data, :attributes, 'course')
+        users = @current_college_user.college_profile.college.users
+        data = {}
+        users.each do |user|
+          data << User.get_dashboard_by_cache(user.id)
+        end
+        render_success(data)
       end
     end
   end
