@@ -9,16 +9,20 @@ module Api
       before_action :current_user_auth, only: %i[create]
 
       def create
-        backend_challenge_id = params[:data][:attributes][:backend_challenge_id]
-        submitted_url = params[:data][:attributes][:submitted_url]
+        backend_challenge_id = params.dig(:data, :attributes, :backend_challenge_id)
+        submitted_url = params.dig(:data, :attributes, :submitted_url)
         backend_challenge = BackendChallenge.find_by_id(backend_challenge_id)
-        return render_error({ message: 'challenge not found' }) unless backend_challenge
+        user_id = params.dig(:data, :attributes, :user_id)
+        return render_not_found({ message: 'Challenge Not Found' }) unless backend_challenge
 
-        return render_error({ message: 'no testcases found' }) unless backend_challenge.testcases_path.present?
+        return render_not_found({ message: 'No Testcases Found' }) unless backend_challenge.testcases_path.present?
 
-        return render_error({ message: 'invalid uri' }) unless BeSubmission.validate_uri(submitted_url)
+        return render_error({ message: 'Invalid URI' }) unless BeSubmission.validate_uri(submitted_url)
 
-        submission = BeSubmission.create(user_id: params[:data][:attributes][:user_id], backend_challenge_id: backend_challenge_id, submitted_url: submitted_url)
+        last_be_submission = BeSubmission.where(user_id: user_id, backend_challenge_id: backend_challenge_id).last
+        return render_error({ message: 'Please wait for your last submission to be processed.' }) if last_be_submission.present? && last_be_submission.total_test_cases.zero?
+
+        submission = BeSubmission.create(user_id: user_id, backend_challenge_id: backend_challenge_id, submitted_url: submitted_url)
         api_render(201, submission)
       end
     end

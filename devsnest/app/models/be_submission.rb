@@ -26,7 +26,7 @@ class BeSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :backend_challenge
   after_save :assign_score, if: :saved_change_to_passed_test_cases?
-  after_create :run_test_cases, if: :saved_change_to_submitted_url?
+  after_create_commit :run_test_cases, if: :saved_change_to_submitted_url?
   serialize :failed_test_cases_desc, Array
   serialize :passed_test_cases_desc, Array
 
