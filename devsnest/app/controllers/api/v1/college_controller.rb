@@ -48,7 +48,7 @@ module Api
           CollegeProfile.create(user_id: @current_user.id, college_id: college.id, email: data[:email] || @current_user.email, authority_level: 0)
         end
         render_success(message: 'Request submitted')
-      rescue => e
+      rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end
 
@@ -140,15 +140,8 @@ module Api
         end
 
         render_success
-      def dashboard_details
-        # course = params.dig(:data, :attributes, 'course')
-        users = @current_college_user.college_profile.college.users
-        data = {}
-        users.each do |user|
-          data << User.get_dashboard_by_cache(user.id)
-        end
-        render_success(data)
       end
+
     end
   end
 end
