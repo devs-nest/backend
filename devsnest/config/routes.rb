@@ -86,6 +86,7 @@ Rails.application.routes.draw do
         jsonapi_resources :college_profile do
           collection do
             post :import_students
+            get :dashboard_details
           end
         end
       end

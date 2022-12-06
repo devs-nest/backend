@@ -14,22 +14,22 @@ module Api
       end
 
       def create
-        return render_unauthorized("Already a college member or already submitted a request") if @current_user.college_profile.present?
-        
+        return render_unauthorized('Already a college member or already submitted a request') if @current_user.college_profile.present?
+
         data = params.dig(:data, :attributes)
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
           CollegeProfile.create(user_id: @current_user.id, college_id: college.id, email: data[:email] || @current_user.email, authority_level: 0)
         end
         render_success(message: 'Request submitted')
-      rescue => e
+      rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end
 
       def invite
         data = params.dig(:data, :attributes)
-        return render_error("Domain mismatched") if College.domains_matched?(@current_college_user.college_profile.email, data[:email])
- 
+        return render_error('Domain mismatched') if College.domains_matched?(@current_college_user.college_profile.email, data[:email])
+
         data_to_encode = {
           email: data[:email],
           initiated_at: Time.now
@@ -39,7 +39,8 @@ module Api
 
         ActiveRecord::Base.transaction do
           c_struc = CollegeStructure.find_by_name(data[:structure])
-          college_profile = CollegeProfile.create!(email: data[:email], college_id: college_id, college_structure_id: c_struc&.id ,authority_level: data[:authority_level], department: data[:department])
+          college_profile = CollegeProfile.create!(email: data[:email], college_id: college_id, college_structure_id: c_struc&.id, authority_level: data[:authority_level],
+                                                   department: data[:department])
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id)
 
           template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
@@ -47,8 +48,8 @@ module Api
                                             code: encrypted_code
                                           }, template_id)
         end
-        render_success(message: "Invite sent")
-      rescue => e
+        render_success(message: 'Invite sent')
+      rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end
 
@@ -56,30 +57,33 @@ module Api
         data = params.dig(:data, :attributes)
         invite_entitiy = CollegeInvite.find_by_uid(data[:code])
 
-        return render_error("Invalid code") if invite_entitiy.blank? || invite_entitiy.status != 'pending'
-        return render_error("Invalid password") if data[:password].blank?
-        
+        return render_error('Invalid code') if invite_entitiy.blank? || invite_entitiy.status != 'pending'
+        return render_error('Invalid password') if data[:password].blank?
+
         email = invite_entitiy.college_profile.email
-        
+
         code = $cryptor.decrypt_and_verify(data[:code])
         return render_error('Invite code tempered') if email != code[:email]
+
         user = User.find_by(email: email)
 
         ActiveRecord::Base.transaction do
-          user = User.create!(
-            name: data[:name],
-            email: email,
-            password: data[:password],
-            web_active: true,
-            is_verified: true
-          ) if user.blank?
-            
-          invite_entitiy.update(status: 'closed')
-          invite_entitiy.college_profile.update(user: user)
+          if user.blank?
+            user = User.create!(
+              name: data[:name],
+              email: email,
+              password: data[:password],
+              web_active: true,
+              is_verified: true
+            )
           end
 
-        render_success(message: "College joined")
-      rescue => e
+          invite_entitiy.update(status: 'closed')
+          invite_entitiy.college_profile.update(user: user)
+        end
+
+        render_success(message: 'College joined')
+      rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end
 
@@ -100,15 +104,8 @@ module Api
         end
 
         render_success
-      def dashboard_details
-        # course = params.dig(:data, :attributes, 'course')
-        users = @current_college_user.college_profile.college.users
-        data = {}
-        users.each do |user|
-          data << User.get_dashboard_by_cache(user.id)
-        end
-        render_success(data)
       end
+
     end
   end
 end

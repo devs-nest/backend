@@ -83,12 +83,12 @@ class CollegeStructure < ApplicationRecord
   }
 
   def assign_name
-    arr = [self.name, self.course, self.branch, self.batch, self.specialization, self.section].compact
-    self.name = arr.join("/")
+    arr = [self.batch, self.course, self.branch, self.specialization, self.section].compact
+    self.name = arr.join('/')
   end
 
   def self.split_batch(batch)
-    batch.split("-").map(&:to_i)
+    batch.split('-').map(&:to_i)
   end
 
   def self.calc_year(year, course)
