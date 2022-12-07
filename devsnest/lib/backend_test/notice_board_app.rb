@@ -13,9 +13,9 @@ module BackendTest
       @success = []
       @failed = []
       @notice = {
-        author: SecureRandom.hex,
-        message: SecureRandom.hex
-      }
+        author: SecureRandom.hex(3),
+        message: SecureRandom.hex(3)
+      }.with_indifferent_access
       @headers = {
         'Content-Type' => 'application/json'
       }
@@ -47,11 +47,12 @@ module BackendTest
       message = 'POST - should create a new Notice'
       response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 201 && response_body['author'] == body['author'] && response_body['message'] == body['message'] && response_body['likes'] == 0 && response_body['date'].present? && response_body['id'].present?
-        @notice_id = response_body['id']
+      if response.code == 201 && response_body.is_a?(Hash) && response_body[:author] == body[:author] && response_body[:message] == body[:message] &&
+         response_body[:likes].zero? && response_body[:date].present? && response_body[:id].present?
+        @notice_id = response_body[:id]
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -59,16 +60,15 @@ module BackendTest
 
     def should_not_create_a_notice_if_author_is_not_provided
       body = {
-        message: SecureRandom.hex
-      }
+        message: SecureRandom.hex(3)
+      }.with_indifferent_access
       response = HTTParty.post("#{@url}/api/notice", headers: @headers, body: body.to_json, timeout: 5)
       message = 'POST - should not create a new Notice if author is not provided'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 400
+      if response.code == 400
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -77,15 +77,14 @@ module BackendTest
     def should_not_create_a_notice_if_message_is_not_provided
       body = {
         author: SecureRandom.hex
-      }
+      }.with_indifferent_access
       response = HTTParty.post("#{@url}/api/notice", headers: @headers, body: body.to_json, timeout: 5)
       message = 'POST - should not create a new Notice if message is not provided'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 400
+      if response.code == 400
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -96,10 +95,10 @@ module BackendTest
       message = 'GET - should return all the notices'
       response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 200 && response_body['data'].is_a?(Array)
+      if response.code == 200 && response_body[:data].is_a?(Array) && response_body[:data].count.positive?
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -110,10 +109,11 @@ module BackendTest
       message = 'GET - should return the notice when id is provided'
       response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 200 && response_body['author'] == @notice['author'] && response_body['message'] == @notice['message'] && response_body['likes'].present? && response_body['date'].present? && response_body['id'].present?
+      if response.code == 200 && response_body.is_a?(Hash) && response_body[:author] == @notice[:author] && response_body[:message] == @notice[:message] && response_body[:likes].present? && 
+         response_body[:date].present? && response_body[:id].present?
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -123,12 +123,11 @@ module BackendTest
       id = 0
       response = HTTParty.get("#{@url}/api/notice/#{id}", headers: @headers, timeout: 5)
       message = 'GET - should not return the notice with id provided if it is not found'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 404
+      if response.code == 404
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -139,10 +138,11 @@ module BackendTest
       message = 'PUT - should increase the like count by 1'
       response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 200 && response_body['author'] == @notice['author'] && response_body['message'] == @notice['message'] && response_body['likes'] == 1 && response_body['date'].present? && response_body['id'].present?
+      if response.code == 200 && response_body.is_a?(Hash) && response_body[:author] == @notice[:author] && response_body[:message] == @notice[:message] && response_body[:likes] == 1 &&
+         response_body[:date].present? && response_body[:id].present?
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -152,20 +152,19 @@ module BackendTest
       id = 0
       response = HTTParty.put("#{@url}/api/notice/#{id}/like", headers: @headers, timeout: 5)
       message = 'PUT - should not increase the like count by 1 if notice is not found'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 404
+      if response.code == 404
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
     end
 
     def verify_content_type(response)
-      return JSON.parse(response.body, symbolize_names: true) if response.headers['Content-type'] == 'application/json; charset=utf-8'
-
+      JSON.parse(response.body, symbolize_names: true) if response.headers['Content-type'] == 'application/json; charset=utf-8'
+    rescue StandardError
       nil
     end
   end

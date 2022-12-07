@@ -13,11 +13,11 @@ module BackendTest
       @success = []
       @failed = []
       @product = {
-        name: SecureRandom.hex,
-        description: SecureRandom.hex,
-        brand: SecureRandom.hex,
+        name: SecureRandom.hex(3),
+        description: SecureRandom.hex(6),
+        brand: SecureRandom.hex(2),
         cost: 10
-      }
+      }.with_indifferent_access
       @headers = {
         'Content-Type' => 'application/json'
       }
@@ -53,11 +53,12 @@ module BackendTest
       message = 'POST - Create a new Product'
       response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 201 && response_body['name'] == body['name'] && response_body['description'] == body['description'] && response_body['brand'] == body['brand'] && response_body['cost'] == body['cost'] && response_body['id'].present?
+      if response.code == 201 && response_body.is_a?(Hash) && response_body[:name] == body[:name] && response_body[:description] == body[:description] && response_body[:brand] == body[:brand] &&
+         response_body[:cost] == body[:cost] && response_body[:id].present?
         @product_id = response_body['id']
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -68,15 +69,14 @@ module BackendTest
         description: 'some description as well',
         brand: 'testing',
         cost: 10
-      }
+      }.with_indifferent_access
       response = HTTParty.post("#{@url}/api/v1/products/add", body: body.to_json, headers: @headers, timeout: 5)
       message = 'POST - Should not create a new Product if name is missing'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 400
+      if response.code == 400
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -87,15 +87,14 @@ module BackendTest
         name: 'Product 1',
         brand: 'testing',
         cost: 10
-      }
+      }.with_indifferent_access
       response = HTTParty.post("#{@url}/api/v1/products/add", body: body.to_json, headers: @headers, timeout: 5)
       message = 'POST - Should not create a new Product if description is missing'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 400
+      if response.code == 400
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -106,15 +105,14 @@ module BackendTest
         name: 'Product 1',
         description: 'description 1',
         cost: 10
-      }
+      }.with_indifferent_access
       response = HTTParty.post("#{@url}/api/v1/products/add", body: body.to_json, headers: @headers, timeout: 5)
       message = 'POST - Should not create a new Product if brand is missing'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 400
+      if response.code == 400
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -125,15 +123,14 @@ module BackendTest
         name: 'Product 1',
         description: 'description 1',
         brand: 'brand 1'
-      }
+      }.with_indifferent_access
       response = HTTParty.post("#{@url}/api/v1/products/add", body: body.to_json, headers: @headers, timeout: 5)
       message = 'POST - Should not create a new Product if cost is missing'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 400
+      if response.code == 400
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -144,10 +141,10 @@ module BackendTest
       message = 'GET - should return all the products'
       response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 200 && response_body['products'].is_a?(Array)
+      if response.code == 200 && response_body[:products].is_a?(Array) && response_body[:products].count.positive?
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -158,25 +155,25 @@ module BackendTest
       message = 'GET - should return the product when id is provided'
       response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 200 && response_body['name'] == @product['name'] && response_body['description'] == @product['description'] && response_body['brand'] == @product['brand'] && response_body['cost'] == @product['cost']
+      if response.code == 200 && response_body.is_a?(Hash) && response_body[:name] == @product[:name] && response_body[:description] == @product[:description] && response_body[:brand] == @product[:brand] && 
+         response_body[:cost] == @product[:cost]
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
     end
 
     def should_not_return_a_product_with_id_if_is_not_found
-      id = -100
+      id = 0
       response = HTTParty.get("#{@url}/api/v1/products/#{id}", headers: @headers, timeout: 5)
       message = 'GET - should not return a product with id provided if it is not found'
-      response_body = verify_content_type(response)
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 404 && !response_body['name'].present? && !response_body['description'].present? && !response_body['brand'].present? && !response_body['cost'].present?
+      if response.code == 404
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -184,40 +181,40 @@ module BackendTest
 
     def should_update_a_product
       body = {
-        name: SecureRandom.hex,
-        description: SecureRandom.hex,
-        brand: SecureRandom.hex,
+        name: SecureRandom.hex(3),
+        description: SecureRandom.hex(6),
+        brand: SecureRandom.hex(2),
         cost: 100
-      }
+      }.with_indifferent_access
       response = HTTParty.put("#{@url}/api/v1/products/#{@product_id}", headers: @headers, body: body.to_json, timeout: 5)
       response_body = verify_content_type(response)
       message = 'PUT - should update a product'
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 200 && response_body['name'] == body['name'] && response_body['description'] == body['description'] && response_body['brand'] == body['brand'] && response_body['cost'] == body['cost']
+      if response.code == 200 && response_body.is_a?(Hash) && response_body[:name] == body[:name] && response_body[:description] == body[:description] && response_body[:brand] == body[:brand] &&
+         response_body[:cost] == body[:cost]
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
     end
 
     def should_not_update_product_if_it_is_not_found
-      id = -100
+      id = 0
       body = {
-        name: SecureRandom.hex,
-        description: SecureRandom.hex,
-        brand: SecureRandom.hex,
+        name: SecureRandom.hex(3),
+        description: SecureRandom.hex(6),
+        brand: SecureRandom.hex(2),
         cost: 100
-      }
+      }.with_indifferent_access
       response = HTTParty.put("#{@url}/api/v1/products/#{id}", headers: @headers, body: body.to_json, timeout: 5)
-      response_body = verify_content_type(response)
       message = 'PUT - should not update a product if it is not found'
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 404 && !response_body['name'].present? && !response_body['description'].present? && !response_body['brand'].present? && !response_body['cost'].present?
+      if response.code == 404
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -225,13 +222,12 @@ module BackendTest
 
     def should_delete_a_product
       response = HTTParty.delete("#{@url}/api/v1/products/#{@product_id}", headers: @headers, timeout: 5)
-      response_body = verify_content_type(response)
       message = 'DELETE - should delete a product'
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 200
+      if response.code == 200
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
@@ -239,21 +235,20 @@ module BackendTest
 
     def should_not_delete_a_product_if_it_is_not_found
       response = HTTParty.delete("#{@url}/api/v1/products/#{@product_id}", headers: @headers, timeout: 5)
-      response_body = verify_content_type(response)
       message = 'DELETE - should not delete a product if it is not found'
 
-      if response_body.nil?
-        @failed << message
-      elsif response.code == 404
+      if response.code == 404
         @success << message
+      else
+        @failed << message
       end
     rescue Net::ReadTimeout
       @failed << message
     end
 
     def verify_content_type(response)
-      return JSON.parse(response.body, symbolize_names: true) if response.headers['Content-type'] == 'application/json; charset=utf-8'
-
+      JSON.parse(response.body, symbolize_names: true) if response.headers['Content-type'] == 'application/json; charset=utf-8'
+    rescue StandardError
       nil
     end
   end
