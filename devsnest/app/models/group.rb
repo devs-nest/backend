@@ -213,6 +213,13 @@ class Group < ApplicationRecord
         recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge')
                                                             .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id).uniq
         recent_solved_assignments_count = FrontendChallengeScore.where(user_id: user.id, frontend_challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
+      when 'backend'
+        total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'BackendChallenge').pluck(:question_id).uniq
+        solved_assignments_count = BackendChallengeScore.where(user_id: user.id, backend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+
+        recent_total_assignments_ch_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'BackendChallenge')
+                                                            .where('created_at > ?', (Date.today - 15.days).beginning_of_day).pluck(:question_id).uniq
+        recent_solved_assignments_count = BackendChallengeScore.where(user_id: user.id, backend_challenge_id: recent_total_assignments_ch_ids).where('passed_test_cases = total_test_cases').count
       end
 
       result.append({

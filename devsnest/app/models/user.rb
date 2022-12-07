@@ -499,6 +499,8 @@ class User < ApplicationRecord
       main_lb = LeaderboardDevsnest::FEInitializer::LB
     when 'dsa'
       main_lb = LeaderboardDevsnest::DSAInitializer::LB
+    when 'backend'
+      main_lb = LeaderboardDevsnest::BEInitializer::LB
     end
     rank = main_lb&.rank_for(username)
 
@@ -517,6 +519,9 @@ class User < ApplicationRecord
     when 'frontend'
       total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id).uniq
       solved_assignments_count = FrontendChallengeScore.where(user_id: id, frontend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
+    when 'backend'
+      total_assignments_challenge_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'BackendChallenge').pluck(:question_id).uniq
+      solved_assignments_count = BackendChallengeScore.where(user_id: id, backend_challenge_id: total_assignments_challenge_ids).where('passed_test_cases = total_test_cases').count
     end
 
     {
