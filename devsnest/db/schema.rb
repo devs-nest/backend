@@ -198,14 +198,6 @@ ActiveRecord::Schema.define(version: 2022_11_24_080549) do
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
-  create_table "coin_log", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.string "pointable_type"
-    t.integer "pointable_id"
-    t.integer "coins", default: 0
-  end
-
   create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "pointable_type"
     t.integer "pointable_id"

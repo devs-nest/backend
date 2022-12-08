@@ -141,7 +141,6 @@ module Api
 
         render_success
       end
-
     end
   end
 end
