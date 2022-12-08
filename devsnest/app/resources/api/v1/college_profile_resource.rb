@@ -2,6 +2,7 @@
 
 module Api
   module V1
+    # College Profile Resource
     class CollegeProfileResource < JSONAPI::Resource
       attributes :name, :email, :department, :authority_level
 

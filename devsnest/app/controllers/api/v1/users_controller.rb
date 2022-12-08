@@ -173,7 +173,7 @@ module Api
         else
           user = User.fetch_google_user(code, googleId, params[:referral_code])
         end
-        
+
         if user.present?
           sign_in(user)
           set_current_user
@@ -185,7 +185,7 @@ module Api
       def college_login
         user = CollegeProfile.find_by_email(params['email'])&.user
         return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
-        
+
         if user.present?
           sign_in(user)
           set_current_college_user

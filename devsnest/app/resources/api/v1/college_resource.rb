@@ -12,10 +12,9 @@ module Api
       def all_members
         college = context[:college]
 
-        strucs = college.college_structure.as_json(include: :college_profiles)
+        college.college_structure.as_json(include: :college_profiles)
         # @model.college_profiles.as_json(include: :college_structure)
         # @model.college_profiles.map {|cp| cp.as_json.merge(cp&.college_structure&.as_json || {}) }
-        strucs
       end
     end
   end

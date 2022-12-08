@@ -7,17 +7,15 @@ class AddCollegeProfile < ActiveRecord::Migration[6.0]
       t.integer :authority_level # enum 
       t.integer :department
       t.string :email
-  
       t.timestamps
       t.index :email, unique: true
     end
-  
     create_table :college_invites do |t|
       t.integer :college_profile_id
       t.integer :college_id
       t.text :uid
       t.integer :status, default: 0 # enum
-      t.integer :authority_level # enum 
+      t.integer :authority_level # enum
       t.timestamps
     end
 

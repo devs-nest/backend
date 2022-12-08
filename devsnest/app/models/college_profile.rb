@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: college_profiles
@@ -17,12 +19,11 @@
 #  index_college_profiles_on_email  (email) UNIQUE
 #
 class CollegeProfile < ApplicationRecord
-
   belongs_to :user, optional: true
   belongs_to :college, optional: true
   belongs_to :college_structure, optional: true
   has_one :college_invites
   enum authority_level: %i[superadmin admin head]
-  
+
   validates_presence_of :email
 end

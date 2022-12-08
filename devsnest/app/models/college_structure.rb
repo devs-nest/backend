@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: college_structures
@@ -23,7 +25,7 @@ class CollegeStructure < ApplicationRecord
   enum course: %i[btech bca bba bsc]
   enum branch: %i[cs me ece civil it]
 
-  validates_uniqueness_of :course, scope: [:batch, :year, :branch, :section]
+  validates_uniqueness_of :course, scope: %i[batch year branch section]
 
   SCHEMA = {
     course: %w[
@@ -55,25 +57,25 @@ class CollegeStructure < ApplicationRecord
         2022-2026
       ],
       bca: %w[
-         2018-2021
-         2019-2022
-         2020-2023
-         2021-2024
-         2022-2025
+        2018-2021
+        2019-2022
+        2020-2023
+        2021-2024
+        2022-2025
       ],
       bba: %w[
-         2018-2021
-         2019-2022
-         2020-2023
-         2021-2024
-         2022-2025
+        2018-2021
+        2019-2022
+        2020-2023
+        2021-2024
+        2022-2025
       ],
       bsc: %w[
-         2018-2021
-         2019-2022
-         2020-2023
-         2021-2024
-         2022-2025
+        2018-2021
+        2019-2022
+        2020-2023
+        2021-2024
+        2022-2025
       ]
     },
     branch: {
@@ -83,7 +85,7 @@ class CollegeStructure < ApplicationRecord
   }
 
   def assign_name
-    arr = [self.batch, self.course, self.branch, self.specialization, self.section].compact
+    arr = [batch, course, branch, specialization, section].compact
     self.name = arr.join('/')
   end
 

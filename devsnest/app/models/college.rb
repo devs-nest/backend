@@ -18,6 +18,6 @@ class College < ApplicationRecord
   end
 
   def self.domains_matched?(email1, email2)
-    email1.split("@")[-1] == email2.split("@")[-1]
+    email1.split('@')[-1] == email2.split('@')[-1]
   end
 end

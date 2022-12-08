@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: college_structure_mappings
@@ -11,7 +13,7 @@
 # Indexes
 #
 #  index_college_structure_mappings_on_college_profile_id    (college_profile_id)
-#  index_college_structure_mappings_on_college_structure_id  (college_structure_id)
+#  index_college_structure_mappings_on_college_structure_id  (college_structure_id)# frozen_string_literal: true
 #
 # Foreign Keys
 #

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: college_invites
@@ -12,7 +14,6 @@
 #  college_profile_id :integer
 #
 class CollegeInvite < ApplicationRecord
-
   belongs_to :college_profile
   belongs_to :college
   enum status: %i[pending expired closed]
