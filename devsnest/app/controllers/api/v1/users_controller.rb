@@ -173,7 +173,7 @@ module Api
         else
           user = User.fetch_google_user(code, googleId, params[:referral_code])
         end
-        
+
         if user.present?
           sign_in(user)
           set_current_user
