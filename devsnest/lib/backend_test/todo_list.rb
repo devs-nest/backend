@@ -57,13 +57,16 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should register a new user'
 
       if response.code == 200 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'user created'
-        @success << 'should register a new user'
+        @success << message
       else
-        @failed << 'should register a new user'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_create_a_new_user_if_email_is_already_registered
@@ -75,13 +78,17 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
-
-      if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'error' && JSON.parse(response.body, symbolize_names: true)[:error] == 'email already in use'
-        @success << 'should not create a new user if email is already registered'
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not create a new user if email is already registered'
+      if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body,
+symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
+                                                                                                                      symbolize_names: true)[:error] == 'email already in use'
+        @success << message
       else
-        @failed << 'should not create a new user if email is already registered'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_register_a_new_user_if_email_is_not_provided
@@ -92,12 +99,15 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not register a new user if email is not provided'
       if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8'
-        @success << 'should not register a new user if email is not provided'
+        @success << message
       else
-        @failed << 'should not register a new user if email is not provided'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_register_a_new_user_if_username_is_not_provided
@@ -109,12 +119,15 @@ module BackendTest
         'Content-Type' => 'application/json'
       }
 
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not register a new user if username is not provided'
       if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8'
-        @success << 'should not register a new user if username is not provided'
+        @success << message
       else
-        @failed << 'should not register a new user if username is not provided'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_register_a_new_user_if_password_is_not_provided
@@ -127,12 +140,15 @@ module BackendTest
         'Content-Type' => 'application/json'
       }
 
-      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not register a new user if password is not provided'
       if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8'
-        @success << 'should not register a new user if password is not provided'
+        @success << message
       else
-        @failed << 'should not register a new user if password is not provided'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_login_user_if_correct_credentials_are_provided
@@ -143,13 +159,18 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 1)
-      if response.code == 200 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'login success' && JSON.parse(response.body, symbolize_names: true)[:token].present?
+      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should login user if correct credentials are provided'
+      if response.code == 200 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body,
+                                                               symbolize_names: true)[:title] == 'login success' && JSON.parse(response.body,
+                                                                symbolize_names: true)[:token].present?
         @auth_token = JSON.parse(response.body, symbolize_names: true)[:token]
-        @success << 'should login user if correct credentials are provided'
+        @success << message
       else
-        @failed << 'should login user if correct credentials are provided'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_login_with_incorrect_password
@@ -160,18 +181,21 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not login with incorrect password'
       if response.headers['Content-type'] != 'application/json; charset=utf-8'
-        @failed << 'should not login with incorrect password'
+        @failed << message
         return
       end
 
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 401 && response_body[:title] == 'login failed' && response_body[:error] == 'invalid username or password'
-        @success << 'should not login with incorrect password'
+        @success << message
       else
-        @failed << 'should not login with incorrect password'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_login_with_incorrect_email
@@ -182,42 +206,52 @@ module BackendTest
       headers = {
         'Content-Type' => 'application/json'
       }
-      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not login with incorrect email'
       if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'user not found'
-        @success << 'should not login with incorrect email'
+        @success << message
       else
-        @failed << 'should not login with incorrect email'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_return_task_of_authenticated_user
       headers = {
         Authorization: "Bearer #{@auth_token}"
       }
-      response = HTTParty.get("#{@url}/task", headers: headers, timeout: 1)
+      response = HTTParty.get("#{@url}/task", headers: headers, timeout: 5)
+      message = 'should return tasks of authenticated user'
       if response.headers['Content-type'] != 'application/json; charset=utf-8'
-        @failed << 'should return tasks of authenticated user'
+        @failed << message
         return
       end
       response_body = JSON.parse(response.body, symbolize_names: true)
 
       if response.code == 200 && response_body[:title] == 'success' && response_body[:todos].is_a?(Array) && response_body[:todos].count.zero?
-        @success << 'should return tasks of authenticated user'
+        @success << message
       else
-        @failed << 'should return tasks of authenticated user'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_return_task_if_user_is_not_authenticated
       headers = {
         Authorization: "Bearer #{SecureRandom.hex}"
       }
-      response = HTTParty.get("#{@url}/task", headers: headers, timeout: 1)
-      if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated' && JSON.parse(response.body, symbolize_names: true)[:todos].nil?
-        @success << 'should not return tasks if user is not authenticated'
+      response = HTTParty.get("#{@url}/task", headers: headers, timeout: 5)
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      message = 'should not return tasks if user is not authenticated'
+      if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && response_body[:title] == 'not authenticated' && response_body[:todos].nil?
+        @success << message
       else
-        @failed << 'should not return tasks if user is not authenticated'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_create_a_task
@@ -228,18 +262,21 @@ module BackendTest
       body = {
         title: 'Write RSpec for Users'
       }
-      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should create a task'
       if response.headers['Content-type'] != 'application/json; charset=utf-8'
-        @failed << 'should create a task'
+        @failed << message
         return
       end
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 200 && response_body[:title] == 'successfully added' && !response_body[:todo].nil? && response_body[:todo][:title] == 'Write RSpec for Users' && !response_body[:todo][:completed]
-        @success << 'should create a task'
+        @success << message
         @task_id = response_body[:todo][:_id]
       else
-        @failed << 'should create a task'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_create_a_task_if_user_is_not_authenticated
@@ -250,17 +287,20 @@ module BackendTest
       body = {
         title: 'Write RSpec for Users'
       }
-      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not create a task when user is not authorized'
       if response.headers['Content-type'] != 'application/json; charset=utf-8'
-        @failed << 'should not create a task when user is not authorized'
+        @failed << message
         return
       end
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 401 && response_body[:title] == 'not authenticated' && response_body[:todo].nil?
-        @success << 'should not create a task when user is not authorized'
+        @success << message
       else
-        @failed << 'should not create a task when user is not authorized'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_create_a_task_if_title_is_not_provided
@@ -271,17 +311,20 @@ module BackendTest
       body = {
         completed: false
       }
-      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.post("#{@url}/task", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not create a task if title is not provided'
       if response.headers['Content-type'] != 'application/json; charset=utf-8'
-        @failed << 'should not create a task if title is not provided'
+        @failed << message
         return
       end
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 400 && response_body[:title] == 'error' && response_body[:todo].nil? && response_body[:error] == 'Todo validation failed: title: Path `title` is required.'
-        @success << 'should not create a task if title is not provided'
+        @success << message
       else
-        @failed << 'should not create a task if title is not provided'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_update_the_completed
@@ -292,17 +335,20 @@ module BackendTest
       body = {
         completed: true
       }
-      response = HTTParty.put("#{@url}/task/#{@task_id}", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.put("#{@url}/task/#{@task_id}", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should update the completed'
       if response.headers['Content-type'] != 'application/json; charset=utf-8'
-        @failed << 'should update the completed'
+        @failed << message
         return
       end
       response_body = JSON.parse(response.body, symbolize_names: true)
       if response.code == 200 && response_body[:title] == 'todo updated' && response_body[:todo][:completed] == true
-        @success << 'should update the completed'
+        @success << message
       else
-        @failed << 'should update the completed'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_update_the_task_if_user_is_not_authenticated
@@ -312,33 +358,42 @@ module BackendTest
       body = {
         completed: false
       }
-      response = HTTParty.put("#{@url}/task/#{@task_id}", body: body.to_json, headers: headers, timeout: 1)
+      response = HTTParty.put("#{@url}/task/#{@task_id}", body: body.to_json, headers: headers, timeout: 5)
+      message = 'should not update the task if user is not authenticated'
       if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated'
-        @success << 'should not update the task if user is not authenticated'
+        @success << message
       else
-        @failed << 'should not update the task if user is not authenticated'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_not_delete_the_task_if_user_is_not_authenticated
-      response = HTTParty.delete("#{@url}/task/#{@task_id}", timeout: 1)
+      response = HTTParty.delete("#{@url}/task/#{@task_id}", timeout: 5)
+      message = 'should not delete the task if user is not authenticated'
       if response.code == 401 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'not authenticated'
-        @success << 'should not delete the task if user is not authenticated'
+        @success << message
       else
-        @failed << 'should not delete the task if user is not authenticated'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
 
     def should_delete_the_task
       headers = {
         Authorization: "Bearer #{@auth_token}"
       }
-      response = HTTParty.delete("#{@url}/task/#{@task_id}", headers: headers, timeout: 1)
+      response = HTTParty.delete("#{@url}/task/#{@task_id}", headers: headers, timeout: 5)
+      message = 'should delete the task'
       if response.code == 200 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body, symbolize_names: true)[:title] == 'todo deleted'
-        @success << 'should delete the task'
+        @success << message
       else
-        @failed << 'should delete the task'
+        @failed << message
       end
+    rescue Net::ReadTimeout
+      @failed << message
     end
   end
 end
