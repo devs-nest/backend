@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_04_075034) do
+ActiveRecord::Schema.define(version: 2022_11_24_080537) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -169,7 +169,7 @@ ActiveRecord::Schema.define(version: 2022_11_04_075034) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "zca0JH7Cs5g"
+    t.string "cuid", default: "Mp9dHpxw+98"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -218,8 +218,44 @@ ActiveRecord::Schema.define(version: 2022_11_04_075034) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "college_invites", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "college_profile_id"
+    t.integer "college_id"
+    t.text "uid"
+    t.integer "status", default: 0
+    t.integer "authority_level"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "college_profiles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "college_id"
+    t.integer "college_structure_id"
+    t.integer "authority_level"
+    t.integer "department"
+    t.string "email"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_college_profiles_on_email", unique: true
+  end
+
+  create_table "college_structures", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.integer "course"
+    t.string "batch"
+    t.integer "year"
+    t.integer "branch"
+    t.integer "specialization"
+    t.string "section"
+    t.integer "college_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name"
+    t.boolean "is_verified", default: false
   end
 
   create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

@@ -76,9 +76,28 @@ class ApplicationController < ActionController::API
     render_unauthorized
   end
 
+  def college_admin_auth
+    return true if @current_college_user.present? && @current_college_user&.college_profile&.authority_level == 'superadmin'
+
+    render_unauthorized
+  end
+
+  def check_college_verification
+    return true if @current_college_user.present? && @current_college_user&.college_profile&.college.is_verified
+
+    render_unauthorized('College is not verified, we are on it.')
+  end
+
   def set_current_user
     @current_user = nil
     @current_user = current_api_v1_user if current_api_v1_user.present?
+  end
+
+  def set_current_college_user
+    if current_api_v1_user.present?
+      @current_college_user = current_api_v1_user
+      @current_user = nil
+    end
   end
 
   protected

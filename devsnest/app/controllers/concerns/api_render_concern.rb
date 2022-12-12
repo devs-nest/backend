@@ -16,8 +16,8 @@ module ApiRenderConcern
     api_render 403, code: :forbidden, errors: ['Forbidden']
   end
 
-  def render_unauthorized
-    api_render 401, code: :unauthorized, errors: ['Unauthorized']
+  def render_unauthorized(message = nil)
+    api_render 401, code: :unauthorized, errors: ['Unauthorized'], message: message
   end
 
   def render_unprocessable(message)

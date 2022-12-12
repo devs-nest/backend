@@ -83,6 +83,12 @@ Rails.application.routes.draw do
         jsonapi_resources :jobs, only: %i[index create update show destroy]
         jsonapi_resources :organization, only: %i[index create update show destroy]
         jsonapi_resources :article, only: %i[create update show destroy]
+        jsonapi_resources :college_profile do
+          collection do
+            post :import_students
+            get :dashboard_details
+          end
+        end
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -97,7 +103,7 @@ Rails.application.routes.draw do
           get :report, :leaderboard, :me, :get_token
           post :upload_i_have_enrolled_for_course_image
           put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username, :upload_files
-          post :login, :connect_discord, :connect_github, :create_github_repo
+          post :login, :college_login, :connect_discord, :connect_github, :create_github_repo
           delete :logout
           get :unsubscribe
           get :check_group_name
@@ -130,7 +136,14 @@ Rails.application.routes.draw do
           post :update_user_group
         end
       end
-      jsonapi_resources :college, only: %i[index]
+      jsonapi_resources :college, only: %i[create show] do
+        collection do
+          post :invite, :join, :structure
+          get :structure_schema
+        end
+      end
+      jsonapi_resources :college_invite, only: %i[index]
+      jsonapi_resources :college_profile, only: %i[index]
       jsonapi_resources :scrums, only: %i[create index update] do
         collection do
           get :weekly_leaderboard

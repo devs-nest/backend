@@ -104,6 +104,10 @@ class User < ApplicationRecord
   has_many :article_submissions
   has_many :backend_challenges
   has_many :backend_challenge_scores
+  has_one :college_profile
+  
+  delegate :college, to: :college_profile, allow_nil: true
+
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
   after_create :send_registration_email
@@ -544,5 +548,25 @@ class User < ApplicationRecord
     user = lb_main.score_and_rank_for(username)
     user_prev_rank = lb_copy.rank_for(username)
     user.merge(rank_change: user_prev_rank.zero? ? user_prev_rank : user_prev_rank - user[:rank])
+  end
+
+  def self.get_dashboard_by_cache(id)
+    Rails.cache.fetch("user_dashboard_#{id}", expires_in: 1.day) do
+      user = User.find_by_id(id)
+      {
+        name: user.name,
+        dsa_solved: user.solved,
+        dsa_solved_by_difficulty: user.total_by_difficulty,
+        fe_solved: user.fe_solved,
+        fe_solved_by_topic: user.fe_total_by_topic,
+        tha_details: user.tha_details, # Bootcamp Progress
+        leaderboard_details: user.leaderboard_details('dsa'),
+        fe_leaderboard_details: user.leaderboard_details('frontend')
+      }
+    end
+  end
+
+  def self.expire_dashboard_cache(id)
+    Rails.cache.delete("user_dashboard_#{id}")
   end
 end

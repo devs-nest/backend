@@ -182,6 +182,18 @@ module Api
         render_error({ message: 'Error occured while authenticating' })
       end
 
+      def college_login
+        user = CollegeProfile.find_by_email(params['email'])&.user
+        return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
+
+        if user.present?
+          sign_in(user)
+          set_current_college_user
+          return render_success(user.as_json.merge({ "type": 'college_user', "college_id": user.college.id })) if @current_college_user.present?
+        end
+        render_error({ message: 'Error occured while authenticating college user' })
+      end
+
       def update_college
         college_name = params['data']['attributes']['college_name']
         unless college_name.present?
