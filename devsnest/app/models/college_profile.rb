@@ -23,7 +23,7 @@ class CollegeProfile < ApplicationRecord
   belongs_to :college, optional: true
   belongs_to :college_structure, optional: true
   has_one :college_invites
-  enum authority_level: %i[superadmin admin head]
+  enum authority_level: %i[superadmin admin head student]
 
   validates_presence_of :email
 end
