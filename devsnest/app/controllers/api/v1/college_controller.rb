@@ -10,7 +10,7 @@ module Api
       before_action :check_college_verification, only: %i[show invite join]
 
       def context
-        { user: @current_college_user, college: @current_college_user&.college_profile&.college }
+        { user: @current_college_user, college: @current_college_user&.college }
       end
 
       def create
@@ -47,8 +47,11 @@ module Api
           email: data[:email],
           initiated_at: Time.now
         }
-        college_id = @current_college_user.college_profile.college.id
+
+        college_id = @current_college_user.college.id
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
+
+        skip_pass = User.find_by_email(data[:email]).blank?
 
         ActiveRecord::Base.transaction do
           c_struc = CollegeStructure.find_by_name(data[:structure])
@@ -58,7 +61,8 @@ module Api
 
           template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
-                                            code: encrypted_code
+                                            code: encrypted_code,
+                                            skip_pass: skip_pass
                                           }, template_id)
         end
         render_success(message: 'Invite sent')
