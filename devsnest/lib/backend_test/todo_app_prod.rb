@@ -80,7 +80,7 @@ module BackendTest
     end
 
     def should_return_all_the_todos
-      response = HTTParty.get("#{@url}/api/todos", headers: @headers, timeout: 5)
+      response = HTTParty.get("#{@url}/api/todo", headers: @headers, timeout: 5)
       message = 'GET - should return all the todos'
       response_body = verify_content_type(response)
 

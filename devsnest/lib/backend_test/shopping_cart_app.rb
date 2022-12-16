@@ -16,7 +16,9 @@ module BackendTest
         name: SecureRandom.hex(3),
         description: SecureRandom.hex(6),
         brand: SecureRandom.hex(2),
-        cost: 10
+        cost: 10,
+        productImage: 'Image',
+        date: Date.today
       }.with_indifferent_access
       @headers = {
         'Content-Type' => 'application/json'
@@ -55,7 +57,7 @@ module BackendTest
 
       if response.code == 201 && response_body.is_a?(Hash) && response_body[:name] == body[:name] && response_body[:description] == body[:description] && response_body[:brand] == body[:brand] &&
          response_body[:cost] == body[:cost] && response_body[:id].present?
-        @product_id = response_body['id']
+        @product_id = response_body[:id]
         @success << message
       else
         @failed << message
@@ -155,7 +157,7 @@ module BackendTest
       message = 'GET - should return the product when id is provided'
       response_body = verify_content_type(response)
 
-      if response.code == 200 && response_body.is_a?(Hash) && response_body[:name] == @product[:name] && response_body[:description] == @product[:description] && response_body[:brand] == @product[:brand] && 
+      if response.code == 200 && response_body.is_a?(Hash) && response_body[:name] == @product[:name] && response_body[:description] == @product[:description] && response_body[:brand] == @product[:brand] &&
          response_body[:cost] == @product[:cost]
         @success << message
       else
