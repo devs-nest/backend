@@ -10,12 +10,25 @@ module Api
       before_action :check_college_verification, only: %i[show invite join]
 
       def context
-        { user: @current_college_user, college: @current_college_user&.college_profile&.college }
+        { user: @current_college_user, college: @current_college_user&.college }
       end
 
       def create
         return render_unauthorized('Already a college member or already submitted a request') if @current_user.college_profile.present?
 
+        data = params.dig(:data, :attributes)
+        ActiveRecord::Base.transaction do
+          college = College.create!(name: data[:name])
+          CollegeProfile.create(user_id: @current_user.id, college_id: college.id, email: data[:email] || @current_user.email, authority_level: 0)
+        end
+        render_success(message: 'Request submitted')
+      rescue StandardError => e
+        render_error("Something went wrong: #{e}")
+      end
+
+      def create
+        return render_unauthorized("Already a college member or already submitted a request") if @current_user.college_profile.present?
+        
         data = params.dig(:data, :attributes)
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
@@ -34,8 +47,11 @@ module Api
           email: data[:email],
           initiated_at: Time.now
         }
-        college_id = @current_college_user.college_profile.college.id
+
+        college_id = @current_college_user.college.id
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
+
+        skip_pass = User.find_by_email(data[:email]).blank?
 
         ActiveRecord::Base.transaction do
           c_struc = CollegeStructure.find_by_name(data[:structure])
@@ -45,7 +61,10 @@ module Api
 
           template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
-                                            code: encrypted_code
+                                            collegename: @current_college_user.college.name,
+                                            username: data[:email].split("@")[0],
+                                            code: encrypted_code,
+                                            skip_pass: skip_pass
                                           }, template_id)
         end
         render_success(message: 'Invite sent')
@@ -76,6 +95,10 @@ module Api
               web_active: true,
               is_verified: true
             )
+          end
+
+          if invite_entitiy.college_profile.is_admin?
+            user.update(user_type: 'college_admin')
           end
 
           invite_entitiy.update(status: 'closed')
