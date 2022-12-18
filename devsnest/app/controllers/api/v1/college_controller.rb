@@ -61,6 +61,8 @@ module Api
 
           template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
+                                            collegename: @current_college_user.college.name,
+                                            username: data[:email].split("@")[0],
                                             code: encrypted_code,
                                             skip_pass: skip_pass
                                           }, template_id)
@@ -93,6 +95,10 @@ module Api
               web_active: true,
               is_verified: true
             )
+          end
+
+          if invite_entitiy.college_profile.is_admin?
+            user.update(user_type: 'college_admin')
           end
 
           invite_entitiy.update(status: 'closed')

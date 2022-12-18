@@ -81,7 +81,7 @@ class User < ApplicationRecord
          :jwt_authenticatable,
          jwt_revocation_strategy: JwtBlacklist
   after_create :create_bot_token
-  enum user_type: %i[user admin problem_setter]
+  enum user_type: %i[user admin problem_setter college_admin]
   after_create :create_username
   validates_uniqueness_of :username, case_sensitive: true
   validates_uniqueness_of :referral_code, case_sensitive: true

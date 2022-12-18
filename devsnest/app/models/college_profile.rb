@@ -30,4 +30,8 @@ class CollegeProfile < ApplicationRecord
   enum authority_level: %i[superadmin admin head student]
 
   validates_presence_of :email
+
+  def is_admin?
+    authority_level == 0
+  end
 end
