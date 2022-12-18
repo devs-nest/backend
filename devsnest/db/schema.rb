@@ -251,14 +251,10 @@ ActiveRecord::Schema.define(version: 2022_11_24_080549) do
     t.integer "college_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-=======
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
->>>>>>> apis
   end
 
   create_table "colleges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-=======
->>>>>>> college struc
     t.string "name"
     t.integer "course"
     t.string "batch"
