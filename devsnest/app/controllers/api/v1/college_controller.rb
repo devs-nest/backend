@@ -7,7 +7,7 @@ module Api
       before_action :set_current_college_user, except: %i[create]
       before_action :college_admin_auth, only: %i[show invite structure_schema structure]
       before_action :user_auth, only: %i[create]
-      before_action :check_college_verification, only: %i[show invite join]
+      before_action :check_college_verification, only: %i[show invite]
 
       def context
         { user: @current_college_user, college: @current_college_user&.college }
@@ -16,19 +16,6 @@ module Api
       def create
         return render_unauthorized('Already a college member or already submitted a request') if @current_user.college_profile.present?
 
-        data = params.dig(:data, :attributes)
-        ActiveRecord::Base.transaction do
-          college = College.create!(name: data[:name])
-          CollegeProfile.create(user_id: @current_user.id, college_id: college.id, email: data[:email] || @current_user.email, authority_level: 0)
-        end
-        render_success(message: 'Request submitted')
-      rescue StandardError => e
-        render_error("Something went wrong: #{e}")
-      end
-
-      def create
-        return render_unauthorized("Already a college member or already submitted a request") if @current_user.college_profile.present?
-        
         data = params.dig(:data, :attributes)
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
@@ -105,7 +92,13 @@ module Api
           invite_entitiy.college_profile.update(user: user)
         end
 
-        render_success(message: 'College joined')
+        render_success(message: 'College joined', data: {
+          data: {
+              attributes: {
+                user_type: user.user_type
+              }
+          }
+        })
       rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end
