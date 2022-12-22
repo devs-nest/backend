@@ -14,21 +14,8 @@ module Api
       end
 
       def create
-        return render_unauthorized("Already a college member or already submitted a request") if @current_user.college_profile.present?
-        
-        data = params.dig(:data, :attributes)
-        ActiveRecord::Base.transaction do
-          college = College.create!(name: data[:name])
-          CollegeProfile.create(user_id: @current_user.id, college_id: college.id, email: data[:email] || @current_user.email, authority_level: 0)
-        end
-        render_success(message: 'Request submitted')
-      rescue StandardError => e
-        render_error("Something went wrong: #{e}")
-      end
+        return render_unauthorized('Already a college member or already submitted a request') if @current_user.college_profile.present?
 
-      def create
-        return render_unauthorized("Already a college member or already submitted a request") if @current_user.college_profile.present?
-        
         data = params.dig(:data, :attributes)
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
