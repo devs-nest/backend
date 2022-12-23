@@ -25,6 +25,7 @@
 class CodingRoom < ApplicationRecord
   has_many :coding_room_user_mappings
   has_many :users, through: :coding_room_user_mappings, dependent: :destroy
+  has_many :algo_submissions
 
   serialize :challenge_list, Array
 

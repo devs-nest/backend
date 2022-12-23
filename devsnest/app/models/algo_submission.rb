@@ -30,6 +30,7 @@
 class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
+  belongs_to :coding_room, optional: true
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
   after_commit :expire_cache
   include AlgoHelper

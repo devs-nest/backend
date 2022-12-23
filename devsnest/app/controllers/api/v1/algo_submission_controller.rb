@@ -16,6 +16,7 @@ module Api
         lang = params[:data][:attributes][:language].to_s
         challenge_id = params[:data][:attributes][:challenge_id].to_s
         source_code = params[:data][:attributes][:source_code]
+        coding_room_id = params[:data][:attributes][:coding_room_id].to_i
 
         if params[:run_code].present?
           record_type = 'run_submissions'
@@ -25,7 +26,7 @@ module Api
           is_submitted = true
           record_type = 'algo_submissions'
           submission = AlgoSubmission.create(source_code: source_code, user_id: @current_user.id, language: lang, challenge_id: challenge_id, test_cases: {}, is_submitted: is_submitted,
-                                             status: 'Pending')
+                                             status: 'Pending', coding_room_id: coding_room_id)
           batch, total_test_cases, expected_output_batch, stdins = AlgoSubmission.submit_code(params, lang, challenge_id, source_code, submission.id)
         end
 
