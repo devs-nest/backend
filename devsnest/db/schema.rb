@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_24_080537) do
+ActiveRecord::Schema.define(version: 2022_12_22_093330) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(version: 2022_11_24_080537) do
     t.string "total_runtime"
     t.string "total_memory"
     t.boolean "is_best_submission", default: false
+    t.integer "coding_room_id"
+    t.index ["challenge_id", "coding_room_id"], name: "index_algo_submissions_on_challenge_id_and_coding_room_id"
     t.index ["is_submitted", "status"], name: "index_algo_submissions_on_is_submitted_and_status"
     t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
   end
@@ -169,7 +171,7 @@ ActiveRecord::Schema.define(version: 2022_11_24_080537) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "Mp9dHpxw+98"
+    t.string "cuid", default: "WLk4hKuJzZ8"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -196,6 +198,33 @@ ActiveRecord::Schema.define(version: 2022_11_24_080537) do
     t.string "parent_id"
     t.integer "course_curriculum_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
+  end
+
+  create_table "coding_room_user_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.bigint "coding_room_id", null: false
+    t.bigint "user_id", null: false
+    t.boolean "has_left", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["coding_room_id", "user_id"], name: "index_coding_room_user_mappings_on_coding_room_id_and_user_id"
+    t.index ["coding_room_id"], name: "index_coding_room_user_mappings_on_coding_room_id"
+    t.index ["user_id"], name: "index_coding_room_user_mappings_on_user_id"
+  end
+
+  create_table "coding_rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "unique_id", default: "c2e2fb0d65f7"
+    t.string "name"
+    t.integer "room_time"
+    t.text "challenge_list"
+    t.boolean "is_private", default: false
+    t.datetime "finish_at"
+    t.boolean "is_active", default: true
+    t.boolean "has_started", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["finish_at"], name: "index_coding_rooms_on_finish_at"
+    t.index ["is_active"], name: "index_coding_rooms_on_is_active"
+    t.index ["unique_id"], name: "index_coding_rooms_on_unique_id"
   end
 
   create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -874,6 +903,8 @@ ActiveRecord::Schema.define(version: 2022_11_24_080537) do
 
   add_foreign_key "article_submissions", "articles"
   add_foreign_key "article_submissions", "users"
+  add_foreign_key "coding_room_user_mappings", "coding_rooms"
+  add_foreign_key "coding_room_user_mappings", "users"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
 end

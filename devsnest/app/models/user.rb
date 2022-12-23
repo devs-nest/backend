@@ -104,6 +104,7 @@ class User < ApplicationRecord
   has_many :article_submissions
   has_many :backend_challenges
   has_many :backend_challenge_scores
+  has_many :coding_rooms
   has_one :college_profile
   
   delegate :college, to: :college_profile, allow_nil: true

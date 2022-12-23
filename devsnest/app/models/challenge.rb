@@ -47,6 +47,8 @@ class Challenge < ApplicationRecord
   # before_update :re_evaluate_user_scores, if: :will_save_change_to_score?
   before_update :recalculate_user_scores, if: :will_save_change_to_is_active?
   after_save :remove_saved_templates
+
+  scope :active, -> { where(is_active: true) }
   Language.all.each do |language|
     require "algo_templates/#{language.name}"
   end
