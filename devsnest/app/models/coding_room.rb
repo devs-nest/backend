@@ -14,7 +14,7 @@
 #  room_time      :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  unique_id      :string(255)      default("c2e2fb0d65f7")
+#  unique_id      :string(255)      default("e9b160675a54")
 #
 # Indexes
 #

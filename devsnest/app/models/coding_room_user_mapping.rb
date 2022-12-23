@@ -16,6 +16,7 @@
 #  index_coding_room_user_mappings_on_coding_room_id              (coding_room_id)
 #  index_coding_room_user_mappings_on_coding_room_id_and_user_id  (coding_room_id,user_id)
 #  index_coding_room_user_mappings_on_user_id                     (user_id)
+#  index_coding_room_user_mappings_on_user_id_and_has_left        (user_id,has_left)
 #
 # Foreign Keys
 #

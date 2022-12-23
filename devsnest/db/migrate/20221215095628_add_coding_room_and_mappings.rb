@@ -26,5 +26,6 @@ class AddCodingRoomAndMappings < ActiveRecord::Migration[6.0]
     end
 
     add_index :coding_room_user_mappings, %i[coding_room_id user_id]
+    add_index :coding_room_user_mappings, %i[user_id has_left]
   end
 end

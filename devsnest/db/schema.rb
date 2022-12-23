@@ -208,11 +208,12 @@ ActiveRecord::Schema.define(version: 2022_12_22_093330) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["coding_room_id", "user_id"], name: "index_coding_room_user_mappings_on_coding_room_id_and_user_id"
     t.index ["coding_room_id"], name: "index_coding_room_user_mappings_on_coding_room_id"
+    t.index ["user_id", "has_left"], name: "index_coding_room_user_mappings_on_user_id_and_has_left"
     t.index ["user_id"], name: "index_coding_room_user_mappings_on_user_id"
   end
 
   create_table "coding_rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "unique_id", default: "c2e2fb0d65f7"
+    t.string "unique_id", default: "e9b160675a54"
     t.string "name"
     t.integer "room_time"
     t.text "challenge_list"
