@@ -555,10 +555,10 @@ class User < ApplicationRecord
       user = User.find_by_id(id)
       {
         name: user.name,
-        dsa_solved: user.solved,
-        dsa_solved_by_difficulty: user.total_by_difficulty,
-        fe_solved: user.fe_solved,
-        fe_solved_by_topic: user.fe_total_by_topic,
+        dsa_solved: Challenge.count_solved(user.id),
+        dsa_solved_by_difficulty: Challenge.split_by_difficulty,
+        fe_solved: FrontendChallenge.count_solved(user.id),
+        fe_solved_by_topic: FrontendChallenge.split_by_topic,
         tha_details: user.tha_details, # Bootcamp Progress
         leaderboard_details: user.leaderboard_details('dsa'),
         fe_leaderboard_details: user.leaderboard_details('frontend')
