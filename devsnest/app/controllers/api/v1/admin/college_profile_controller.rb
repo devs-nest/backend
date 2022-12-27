@@ -6,15 +6,20 @@ module Api
       # college profile admin controller
       class CollegeProfileController < ApplicationController
         include JSONAPI::ActsAsResourceController
-        before_action :admin_auth
         before_action :set_current_college_user, except: %i[create]
+        before_action :college_admin_auth, only: %i[show iimport_students dashboard_details]
 
         def import_students
           file = params[:file]
           return render_error('File not found') unless file
 
-          invalid_students = CollegeStudentImportWorker.perform_async(file, params[:college_id])
-          api_render(201, { invalid_students: invalid_students })
+          key = SecureRandom.hex(5) + ".csv"
+          # temp name
+          a = $s3&.put_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key, body: file)
+
+          invalid_students = CollegeStudentImportWorker.perform_async(key, @current_college_user.college.id, params[:structure])
+
+          api_render(201, { message: "Students are being added" })
         end
 
         def dashboard_details
