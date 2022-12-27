@@ -3,15 +3,15 @@
 class CollegeStudentImportWorker
   include Sidekiq::Worker
 
-  def perform(file, college_id, stucture = nil)
-    invalid_students = {}
+  def perform(key, college_id, stucture = nil)
+    invalid_students = []
+    file = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key).body.string
     template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
     c_struc = CollegeStructure.find_by_name(stucture)
-    CSV.foreach(file, headers: true) do |row|
+
+    CSV.parse(file.strip)[1..].flatten.each do |row|
       begin
-        email = row['Email']
-        department = row['Department']
-        authority_level = row['Authority Level']
+        email = row
 
         user = User.find_by_email(email)
         skip_pass = user.blank?
@@ -24,11 +24,11 @@ class CollegeStudentImportWorker
 
 
         ActiveRecord::Base.transaction do
-          college_profile = CollegeProfile.create!(email: email, college_id: college_id, college_structure_id: c_struc&.id, authority_level: authority_level)
+          college_profile = CollegeProfile.create!(email: email, college_id: college_id, college_structure_id: c_struc&.id, authority_level: 'student')
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id)
 
           EmailSenderWorker.perform_async(email, {
-                                            collegename: user.college.name,
+                                            collegename: college_profile.college.name,
                                             username: email.split("@")[0],
                                             code: encrypted_code,
                                             skip_pass: skip_pass
@@ -38,6 +38,8 @@ class CollegeStudentImportWorker
         invalid_students << { email: email, error: e }
       end
     end
+    # cleanup
+    $s3.delete_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key)
     invalid_students
   end
 end
