@@ -3,29 +3,43 @@
 class CollegeStudentImportWorker
   include Sidekiq::Worker
 
-  def perform(file, college_id)
-    invalid_students = {}
-    CSV.foreach(file, headers: true) do |row|
+  def perform(key, college_id, stucture = nil)
+    invalid_students = []
+    file = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key).body.string
+    template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
+    c_struc = CollegeStructure.find_by_name(stucture)
+
+    CSV.parse(file.strip)[1..].flatten.each do |row|
       begin
-        email = row['Email']
-        department = row['Department']
-        authority_level = row['Authority Level']
-        user_id = User.find_by(email: email)&.id
-        template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
+        email = row
+
+        user = User.find_by_email(email)
+        skip_pass = user.blank?
+
         data_to_encode = {
           email: email,
           initiated_at: Time.now
         }
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
-        if CollegeProfile.create!(user_id: user_id, college_id: college_id, email: email, department: department, authority_level: authority_level)
+
+
+        ActiveRecord::Base.transaction do
+          college_profile = CollegeProfile.create!(email: email, college_id: college_id, college_structure_id: c_struc&.id, authority_level: 'student')
+          CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id)
+
           EmailSenderWorker.perform_async(email, {
-                                            code: encrypted_code
+                                            collegename: college_profile.college.name,
+                                            username: email.split("@")[0],
+                                            code: encrypted_code,
+                                            skip_pass: skip_pass
                                           }, template_id)
         end
       rescue => e
         invalid_students << { email: email, error: e }
       end
     end
+    # cleanup
+    $s3.delete_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key)
     invalid_students
   end
 end
