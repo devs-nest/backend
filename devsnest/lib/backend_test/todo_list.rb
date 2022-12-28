@@ -65,7 +65,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -81,13 +81,13 @@ module BackendTest
       response = HTTParty.post("#{@url}/user/signup", body: body.to_json, headers: headers, timeout: 5)
       message = 'should not create a new user if email is already registered'
       if response.code == 400 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body,
-symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
-                                                                                                                      symbolize_names: true)[:error] == 'email already in use'
+                                                                                                                     symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
+                                                                                                                                                                             symbolize_names: true)[:error] == 'email already in use'
         @success << message
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -106,7 +106,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -126,7 +126,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -147,7 +147,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -162,14 +162,14 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       response = HTTParty.post("#{@url}/user/login", body: body.to_json, headers: headers, timeout: 5)
       message = 'should login user if correct credentials are provided'
       if response.code == 200 && response.headers['Content-type'] == 'application/json; charset=utf-8' && JSON.parse(response.body,
-                                                               symbolize_names: true)[:title] == 'login success' && JSON.parse(response.body,
-                                                                symbolize_names: true)[:token].present?
+                                                                                                                     symbolize_names: true)[:title] == 'login success' && JSON.parse(response.body,
+                                                                                                                                                                                     symbolize_names: true)[:token].present?
         @auth_token = JSON.parse(response.body, symbolize_names: true)[:token]
         @success << message
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -194,7 +194,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -213,7 +213,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -234,7 +234,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -250,7 +250,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -275,7 +275,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -299,7 +299,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -323,7 +323,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -347,7 +347,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -365,7 +365,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -377,7 +377,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -392,7 +392,7 @@ symbolize_names: true)[:title] == 'error' && JSON.parse(response.body,
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
   end
