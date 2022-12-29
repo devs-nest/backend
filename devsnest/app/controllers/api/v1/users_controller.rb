@@ -9,10 +9,10 @@ module Api
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
-                             create_github_repo repo_details sourcecode_io leaderboard github_graph github_featured_repository add_repo remove_repo]
+                             create_github_repo repo_details sourcecode_io leaderboard github_data add_repo remove_repo]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
-      before_action :is_github_connected, only: %i[github_graph github_featured_repository add_repo remove_repo]
+      before_action :is_github_connected, only: %i[github_data add_repo remove_repo]
 
       def context
         { user: @current_user }
@@ -483,7 +483,7 @@ module Api
 
       def github_data
         data = {
-          github_graph: GithubDataHelper.get_github_graph(@current_user.github_client.login, @current_user.github_token)
+          github_graph: GithubDataHelper.get_github_graph(@current_user.github_client.login, @current_user.github_token),
           github_repository_data: GithubDataHelper.get_repository_data(@current_user.github_client.login, @current_user.github_repos)
         }
         render_success(data)
