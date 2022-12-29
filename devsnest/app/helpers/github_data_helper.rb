@@ -1,4 +1,4 @@
-#frozen_string_literal: true
+# frozen_string_literal: true
 
 # helper for getting users github data
 module GithubDataHelper
@@ -38,7 +38,7 @@ module GithubDataHelper
       repository_data << {
         name: response['name'],
         description: response['description'],
-        html_url: response['html_url'],
+        html_url: response['html_url']
       }
     end
     repository_data

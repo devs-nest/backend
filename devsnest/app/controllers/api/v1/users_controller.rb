@@ -491,22 +491,22 @@ module Api
 
       def add_repo
         repo_name = params.dig(:data, :attributes, :repository_name)
-        return render_error({message: 'Repository does not exist'}) if GithubDataHelper.does_repository_exists(@current_user.github_client.login, repo_name)
+        return render_error({ message: 'Repository does not exist' }) if GithubDataHelper.does_repository_exists(@current_user.github_client.login, repo_name)
 
-        return render_error({message: 'Repository already added'}) if @current_user.github_repos.include?(repo_name)
+        return render_error({ message: 'Repository already added' }) if @current_user.github_repos.include?(repo_name)
 
         @current_user.github_repos << repo_name
         @current_user.save!
-        render_success({ message: 'Repository Added'})
+        render_success({ message: 'Repository Added' })
       end
 
       def remove_repo
         repo_name = params.dig(:data, :attributes, :repository_name)
-        return render_error({message: 'Repository does not exist'}) if @current_user.github_repos.exclude?(repo_name)
+        return render_error({ message: 'Repository does not exist' }) if @current_user.github_repos.exclude?(repo_name)
 
         @current_user.github_repos.delete(repo_name)
         @current_user.save!
-        render_success({ message: 'Repository Removed'})
+        render_success({ message: 'Repository Removed' })
       end
 
       private
