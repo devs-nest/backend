@@ -23,6 +23,7 @@
 #  encrypted_password                 :string(255)      default(""), not null
 #  enrolled_for_course_image_url      :string(255)
 #  fe_score                           :integer          default(0)
+#  github_repos                       :text(65535)
 #  github_token                       :text(65535)
 #  github_url                         :string(255)
 #  grad_end                           :integer

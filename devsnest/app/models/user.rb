@@ -23,6 +23,7 @@
 #  encrypted_password                 :string(255)      default(""), not null
 #  enrolled_for_course_image_url      :string(255)
 #  fe_score                           :integer          default(0)
+#  github_repos                       :text(65535)
 #  github_token                       :text(65535)
 #  github_url                         :string(255)
 #  grad_end                           :integer
@@ -118,6 +119,7 @@ class User < ApplicationRecord
   after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
   after_save :manage_list, if: Proc.new{ !Rails.env.test? && ENV['LISTMONK_LIST_CONTROL'] == 'true' }
   before_validation :create_referral_code, if: :is_referall_empty?
+  serialize :github_repos, Array
   has_paper_trail
 
   def update_user_fe_score_lb
