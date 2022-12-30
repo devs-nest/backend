@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Helper for Minibootcamp
+# Helper for Leetcode Integration
 module LeetcodeHelper
   class LeetUser
     def initialize(username = nil)
@@ -109,7 +109,31 @@ module LeetcodeHelper
     end
   
     def query(query_schema = "UserPublicProfile")
-      HTTParty.get(@url, body: send(query_schema), headers: @headers).body
+      JSON.parse(HTTParty.get(@url, body: send(query_schema), headers: @headers).body)
     end
+
+    def prepare_results
+      {
+        public_profile: query("UserPublicProfile"),
+        language_stats: query("LanguageStats"),
+        problems_solved: query("UserProblemsSolved"),
+        profile_callender: query("UserProfileCalendar"),
+      }
+    end
+
+    # def prepare_results
+    #   data = {
+    #     public_profile: Thread.new { Thread.current[:output] = query("UserPublicProfile") },
+    #     language_stats: Thread.new { Thread.current[:output] = query("LanguageStats") },
+    #     problems_solved: Thread.new { Thread.current[:output] = query("UserProblemsSolved") },
+    #     profile_callender: Thread.new { Thread.current[:output] = query("UserProfileCalendar") },
+    #   }
+
+    #   #join each threads
+    #   data.values.map(&:join)
+      
+    #   #extract output
+    #   data.transform_values! {|res| res[:output] }
+    # end
   end
 end

@@ -241,7 +241,12 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :article_submissions, only: %i[create show]
-      jsonapi_resources :user_integration
+      jsonapi_resources :user_integration, only: %i[] do
+        collection do
+          put :update_links
+          get :leetcode
+        end
+      end
     end
   end
 end
