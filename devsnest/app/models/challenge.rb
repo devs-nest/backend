@@ -39,6 +39,7 @@ class Challenge < ApplicationRecord
   has_many :company_challenge_mappings
   has_many :companies, through: :company_challenge_mappings
   has_many :user_challenge_scores
+  has_many :room_best_submissions
   belongs_to :user
   has_many :assingment_questions
   after_create :create_slug

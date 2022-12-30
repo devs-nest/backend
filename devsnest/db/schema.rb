@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_22_093330) do
+ActiveRecord::Schema.define(version: 2022_12_30_091521) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -171,7 +171,7 @@ ActiveRecord::Schema.define(version: 2022_12_22_093330) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "WLk4hKuJzZ8"
+    t.string "cuid", default: "EyDlVPAAylA"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -213,7 +213,7 @@ ActiveRecord::Schema.define(version: 2022_12_22_093330) do
   end
 
   create_table "coding_rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "unique_id", default: "e9b160675a54"
+    t.string "unique_id", default: "16477d618cf5"
     t.string "name"
     t.integer "room_time"
     t.text "challenge_list"
@@ -700,6 +700,19 @@ ActiveRecord::Schema.define(version: 2022_12_22_093330) do
     t.text "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "room_best_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "challenge_id"
+    t.integer "user_id"
+    t.integer "coding_room_id"
+    t.integer "algo_submission_id"
+    t.integer "total_test_cases"
+    t.integer "passed_test_cases"
+    t.integer "score"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "challenge_id", "coding_room_id"], name: "index_room_best_submission", unique: true
   end
 
   create_table "run_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|

@@ -14,7 +14,7 @@
 #  room_time      :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  unique_id      :string(255)      default("e9b160675a54")
+#  unique_id      :string(255)      default("7e47dc44b550")
 #
 # Indexes
 #
@@ -26,6 +26,7 @@ class CodingRoom < ApplicationRecord
   has_many :coding_room_user_mappings
   has_many :users, through: :coding_room_user_mappings, dependent: :destroy
   has_many :algo_submissions
+  has_many :room_best_submissions
 
   serialize :challenge_list, Array
 
@@ -36,6 +37,7 @@ class CodingRoom < ApplicationRecord
   # callbacks
   after_update :update_finish_time, if: :has_started_changed?
   after_create :close_room, if: :has_started_changed?
+  after_create :generate_leaderboard
 
   def update_finish_time
     if has_started?
@@ -48,5 +50,9 @@ class CodingRoom < ApplicationRecord
     if has_started?
       CloseRoomWorker.perform_in((self.room_time.to_i / 60).minutes, self.id)
     end
+  end
+
+  def generate_leaderboard
+    LeaderboardDevsnest::RoomLeaderboard.new(id.to_s)
   end
 end

@@ -98,6 +98,7 @@ class User < ApplicationRecord
   has_many :certifications, dependent: :delete_all
   has_many :manual_login_changelog
   has_many :user_challenge_scores
+  has_many :room_best_submissions
   has_many :frontend_challenge_scores
   has_many :coin_logs
   has_many :job_applications
@@ -106,7 +107,7 @@ class User < ApplicationRecord
   has_many :backend_challenge_scores
   has_many :coding_rooms
   has_one :college_profile
-  
+
   delegate :college, to: :college_profile, allow_nil: true
 
   before_save :markdown_encode, if: :will_save_change_to_markdown?
@@ -132,7 +133,6 @@ class User < ApplicationRecord
   end
 
   def manage_list
-    byebug
     changes = saved_changes
     $listmonk.list_control(changes, self)
   end
