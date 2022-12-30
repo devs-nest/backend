@@ -3,7 +3,7 @@ module Api
     class UserIntegrationController < ApplicationController
       include JSONAPI::ActsAsResourceController
       include LeetcodeHelper
-      before_action :user_auth
+      before_action :user_auth, except: %i[leetcode]
 
       def context
         { user: @current_user }
