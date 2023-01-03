@@ -18,6 +18,8 @@ module Api
         
         return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
         
+
+        skip_pass = User.find_by_email(data[:email]).blank?
         data_to_encode = {
           email: data[:email],
           initiated_at: Time.now
@@ -33,7 +35,7 @@ module Api
                                             collegename: college.name,
                                             username: data[:email].split("@")[0],
                                             code: encrypted_code,
-                                            skip_pass: false
+                                            skip_pass: skip_pass
                                           }, template_id)
         end
         render_success(message: 'College created')
