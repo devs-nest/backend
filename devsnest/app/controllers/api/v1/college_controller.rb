@@ -6,7 +6,7 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :set_current_college_user, except: %i[create]
       before_action :college_admin_auth, only: %i[show invite structure_schema structure]
-      before_action :user_auth, only: %i[create]
+      before_action :admin_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite]
 
       def context
@@ -14,14 +14,29 @@ module Api
       end
 
       def create
-        return render_unauthorized('Already a college member or already submitted a request') if @current_user.college_profile.present?
-
         data = params.dig(:data, :attributes)
+        
+        return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
+        
+        data_to_encode = {
+          email: data[:email],
+          initiated_at: Time.now
+        }
+
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
-          CollegeProfile.create(user_id: @current_user.id, college_id: college.id, email: data[:email] || @current_user.email, authority_level: 0)
+          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0)
+          CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college.id)
+
+          template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
+          EmailSenderWorker.perform_async(data[:email], {
+                                            collegename: college.name,
+                                            username: data[:email].split("@")[0],
+                                            code: encrypted_code,
+                                            skip_pass: false
+                                          }, template_id)
         end
-        render_success(message: 'Request submitted')
+        render_success(message: 'College created')
       rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end
