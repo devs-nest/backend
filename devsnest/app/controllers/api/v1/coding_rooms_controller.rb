@@ -63,7 +63,7 @@ module Api
       end
 
       def active_user_list
-        room_id = params[:coding_room_id]
+        room_id = params[:id]
         active_users = CodingRoomUserMapping.where(coding_room_id: room_id, has_left: false).includes(:user).map { |mapping| [mapping.user.name, mapping.user.username, mapping.user.image_url] }
         render_success(users: active_users.as_json)
       end
