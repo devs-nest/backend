@@ -137,7 +137,7 @@ class AlgoSubmission < ApplicationRecord
   def assign_score_into_rooms
     return unless coding_room_id.present?
 
-    user_room_map = CodingRoomUserMapping.find_by(coding_room_id: room_id, user_id: user_id)
+    user_room_map = CodingRoomUserMapping.find_by(coding_room_id: coding_room_id, user_id: user_id)
     return if user_room_map.nil? || user_room_map.has_left == true
 
     user = User.get_by_cache(user_id)
