@@ -246,6 +246,10 @@ Rails.application.routes.draw do
           put :leave_room
           put :start_room
         end
+        member do
+          get :user_submissions
+          get :active_user_list
+        end
       end
     end
   end

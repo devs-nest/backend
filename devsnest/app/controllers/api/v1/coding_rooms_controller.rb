@@ -52,18 +52,20 @@ module Api
 
         challenge_list = active_room.challenge_list
         challenges = Challenge.where(id: challenge_list).order(:difficulty)
-        all_submissions = @current_user.algo_submissions.where(challenge_id: challenge_list, is_submitted: true, coding_room_id: active_room.id).where.not(status: 'Stale')
-        challenges = challenges.map do |challenge|
-          {
-            challenge: challenge,
-            user_submission: all_submissions.where(challenge_id: challenge.id).last&.tap do |submission|
-                               submission['score_achieved'] = submission['passed_test_cases'] / submission['total_test_cases'].to_f * challenge.score
-                             end
-          }
-        end
         remaining_time = (active_room.finish_at.to_i - Time.current.to_i).positive? ? (active_room.finish_at.to_i - Time.current.to_i).seconds : 0
-        other_users = CodingRoomUserMapping.where(coding_room_id: active_room.id, has_left: false).includes(:user).map { |mapping| [mapping.user.name, mapping.user.username, mapping.user.image_url] }
-        render_success(id: active_room.id, challenge: challenges, remaining_time: remaining_time, other_users: other_users)
+        render_success(id: active_room.id, challenge: challenges, remaining_time: remaining_time)
+      end
+
+      def user_submissions
+        coding_room = CodingRoom.find_by(id: params[:id])
+        algo_submissions = AlgoSubmission.where(coding_room_id: coding_room.id, user_id: @current_user.id)
+        render_success(submissions: algo_submissions)
+      end
+
+      def active_user_list
+        room_id = params[:coding_room_id]
+        active_users = CodingRoomUserMapping.where(coding_room_id: room_id, has_left: false).includes(:user).map { |mapping| [mapping.user.name, mapping.user.username, mapping.user.image_url] }
+        render_success(users: active_users.as_json)
       end
 
       def leave_room
