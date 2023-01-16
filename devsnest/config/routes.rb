@@ -244,7 +244,7 @@ Rails.application.routes.draw do
       jsonapi_resources :user_integration, only: %i[] do
         collection do
           put :update_links
-          get :leetcode
+          get :links, :leetcode, :gfg, :hackerrank
         end
       end
     end
