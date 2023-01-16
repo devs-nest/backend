@@ -14,14 +14,15 @@ module Api
       end
 
       def create
-        topics = params[:topics]
-        difficulty = params[:difficulty]
-        number_of_questions = params[:number_of_questions]
         room_params = params.dig(:data, :attributes)
+        topics = room_params[:topics]
+        difficulty = room_params[:difficulty]
+        number_of_questions = room_params[:number_of_questions]
+
         return render_error(message: 'You are a part of an active coding room') if active_user_group_check
 
-        challenges = Challenge.active.where(topic: JSON.parse(topics), difficulty: JSON.parse(difficulty)).sample(number_of_questions.to_i)
-        room_details = CodingRoom.create!(name: room_params[:name], room_time: room_params[:room_time], is_private: room_params[:is_private], challenge_list: challenges.map(&:id))
+        challenges = Challenge.active.where(topic: topics, difficulty: difficulty).sample(number_of_questions.to_i)
+        room_details = CodingRoom.create!(name: room_params[:name], room_time: room_params[:room_time], is_private: room_params[:is_private], challenge_list: challenges.pluck(:id))
         CodingRoomUserMapping.create!(user_id: @current_user.id, coding_room_id: room_details.id)
         render_success(room_details: room_details, challenge_list: challenges)
       end
