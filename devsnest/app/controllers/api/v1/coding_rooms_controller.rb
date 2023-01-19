@@ -7,7 +7,13 @@ module Api
       before_action :user_auth
 
       def index
-        coding_rooms = CodingRoom.active.public_rooms
+        if active_user_group_check
+          user_coding_rooms = CodingRoomUserMapping.where(user_id: @current_user.id, has_left: false).pluck(&:coding_room_id)
+          coding_rooms = CodingRoom.where(id: user_coding_rooms, is_active: true)
+        else
+          coding_rooms = CodingRoom.active.public_rooms
+        end
+
         return render_success(message: 'There are no active rooms') if coding_rooms.blank?
 
         render_success(coding_rooms: coding_rooms.as_json)
