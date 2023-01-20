@@ -9,10 +9,13 @@ Challenge.create(user: User.first, name: 'test3', topic: 'hashmap', is_active: t
 
 CodingRoom.create(name: 'DN-Team', room_time: 1, challenge_list: [1], finish_at: Time.now + 7.days)
 
-AlgoSubmission.create(user_id: User.find_by(username: 'adhikram1').id, challenge_id: Challenge.first.id, language: 'cpp', status: 'Accepted', passed_test_cases: 5, total_test_cases: 10, is_submitted: true, coding_room_id: 1)
-AlgoSubmission.create(user_id: User.find_by(username: 'adhikram1').id, challenge_id: Challenge.second.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true, coding_room_id: 1)
-AlgoSubmission.create(user_id: User.find_by(username: 'adhikram1').id, challenge_id: Challenge.second.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true, coding_room_id: 1)
-AlgoSubmission.create(user_id: User.find_by(username: 'adhikram1').id, challenge_id: Challenge.last.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true, coding_room_id: 1)
-AlgoSubmission.create(user_id: User.find_by(username: 'manish1').id, challenge_id: Challenge.first.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true, coding_room_id: 1)
-AlgoSubmission.create(user_id: User.find_by(username: 'manish1').id, challenge_id: Challenge.second.id, language: 'cpp', status: 'Accepted', passed_test_cases: 5, total_test_cases: 10,is_submitted: true, coding_room_id: 1)
-AlgoSubmission.create(user_id: User.find_by(username: 'manish1').id, challenge_id: Challenge.last.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true, coding_room_id: 1)
+CodingRoomUserMapping.create(user_id: User.second_to_last.id, coding_room_id: 4)
+CodingRoomUserMapping.create(user_id: User.last.id, coding_room_id: 4)
+
+AlgoSubmission.create(user_id: 1, challenge_id: Challenge.first.id, language: 'cpp', status: 'Accepted', passed_test_cases: 5, total_test_cases: 10, is_submitted: true, coding_room_id: 4)
+AlgoSubmission.create(user_id: 1, challenge_id: Challenge.second.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true, coding_room_id: 4)
+AlgoSubmission.create(user_id: 1, challenge_id: Challenge.last.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true, coding_room_id: 4)
+AlgoSubmission.create(user_id: User.last.id, challenge_id: Challenge.first.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true,coding_room_id: 4)
+AlgoSubmission.create(user_id: User.last.id, challenge_id: Challenge.second.id, language: 'cpp', status: 'Accepted', passed_test_cases: 5, total_test_cases: 10, is_submitted: true,coding_room_id: 4)
+AlgoSubmission.create(user_id: User.last.id, challenge_id: Challenge.last.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true, coding_room_id: 4)
+AlgoSubmission.create(user_id: User.second_to_last.id, challenge_id: Challenge.last.id, language: 'cpp', status: 'Accepted', passed_test_cases: 10, total_test_cases: 10, is_submitted: true,coding_room_id: 4)

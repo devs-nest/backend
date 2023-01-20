@@ -83,6 +83,22 @@ module Api
         render_success(message: 'You have left the room')
       end
 
+      def leaderboard
+        leaderboard = LeaderboardDevsnest::RoomLeaderboard.new(params[:id].to_s).call
+
+        leaderboard.page_size = params[:size].to_i || 10
+        page = params[:page].to_i
+
+        data = {
+          id: page,
+          type: "#{params[:id]}_leaderboard",
+          current_user: leaderboard.score_and_rank_for(@current_user.username),
+          scoreboard: leaderboard.leaders(page),
+          count: leaderboard.total_pages
+        }
+        render_success(data)
+      end
+
       private
 
       def active_user_group_check
