@@ -12,7 +12,7 @@ module Api
         resource = Article.all.where(resource_type: resource_type)
         return render_not_found('resource') if resource.blank?
 
-        render_success(resource.as_json)
+        render_success(data: resource)
       end
 
       def fetch_by_slug
