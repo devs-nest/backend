@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :user_integration do
+    
+  end
+
   factory :coin_log do
     
   end

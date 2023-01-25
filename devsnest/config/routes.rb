@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :user_integrations
   get '/health_check', to: 'health_check#index'
 
   # Sidekiq Web UI, only for admins.
@@ -242,6 +243,12 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :article_submissions, only: %i[create show]
+      jsonapi_resources :user_integration, only: %i[] do
+        collection do
+          put :update_links
+          get :links, :leetcode, :gfg, :hackerrank
+        end
+      end
     end
   end
 end
