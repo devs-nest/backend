@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_26_083916) do
 
+ActiveRecord::Schema.define(version: 2022_12_27_091805) do
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -169,7 +169,7 @@ ActiveRecord::Schema.define(version: 2022_12_26_083916) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "aqODC2g5TJ8"
+    t.string "cuid", default: "DUFrfG2jmrE"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -860,6 +860,7 @@ ActiveRecord::Schema.define(version: 2022_12_26_083916) do
     t.integer "fe_score", default: 0
     t.integer "listmonk_subscriber_id"
     t.integer "be_score", default: 0
+    t.text "github_repos"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

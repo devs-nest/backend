@@ -9,9 +9,10 @@ module Api
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
                     only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
-                             create_github_repo repo_details sourcecode_io leaderboard]
+                             create_github_repo repo_details sourcecode_io leaderboard github_data add_repo remove_repo]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
+      before_action :is_github_connected, only: %i[github_data add_repo remove_repo]
 
       def context
         { user: @current_user }
@@ -480,10 +481,47 @@ module Api
         render_success({ message: 'User is decoupled!' })
       end
 
+      def github_data
+        data = {
+          github_graph: GithubDataHelper.get_github_graph(@current_user.github_client.login, @current_user.github_token),
+          github_repository_data: GithubDataHelper.get_repository_data(@current_user.github_client.login, @current_user.github_repos)
+        }
+        render_success(data)
+      end
+
+      def add_repo
+        repo_name = params.dig(:data, :attributes, :repository_name)
+        return render_error({ message: 'Repository does not exist' }) if GithubDataHelper.does_repository_exists(@current_user.github_client.login, repo_name)
+
+        return render_error({ message: 'Repository already added' }) if @current_user.github_repos.include?(repo_name)
+
+        @current_user.github_repos << repo_name
+        @current_user.save!
+        render_success({ message: 'Repository Added' })
+      end
+
+      def remove_repo
+        repo_name = params.dig(:data, :attributes, :repository_name)
+        return render_error({ message: 'Repository does not exist' }) if @current_user.github_repos.exclude?(repo_name)
+
+        @current_user.github_repos.delete(repo_name)
+        @current_user.save!
+        render_success({ message: 'Repository Removed' })
+      end
+
       private
 
       def sign_up_params
         params.permit(:email, :password, :password_confirmation, :name)
+      end
+
+      def is_github_connected
+        github_connected = begin
+          @current_user.github_client.login
+        rescue StandardError
+          nil
+        end
+        return render_error({ message: 'Github not connected.' }) if github_connected.nil?
       end
     end
   end

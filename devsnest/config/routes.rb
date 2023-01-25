@@ -111,6 +111,8 @@ Rails.application.routes.draw do
           get :check_user_details
           get :dashboard_details, :github_ping, :repo_files
           post :sourcecode_io, :disconnect_user
+          get :github_data
+          post :add_repo, :remove_repo
         end
       end
 
