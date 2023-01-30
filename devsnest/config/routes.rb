@@ -246,6 +246,7 @@ Rails.application.routes.draw do
           post :join_room
           put :leave_room
           put :start_room
+          get :current_user_room
         end
         member do
           get :user_submissions
