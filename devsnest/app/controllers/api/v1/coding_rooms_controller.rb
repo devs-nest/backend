@@ -53,14 +53,14 @@ module Api
       end
 
       def show
-        user_room = CodingRoomUserMapping.where(user_id: @current_user.id, has_left: false).last
+        user_room = CodingRoomUserMapping.where(user_id: @current_user.id, has_left: false)&.last
         active_room = CodingRoom.find_by(id: user_room&.coding_room_id)
         return render_error(message: 'You are not a part of any room or the room has ended') if active_room.blank? || active_room.is_active == false
 
         challenge_list = active_room.challenge_list
         challenges = Challenge.where(id: challenge_list).order(:difficulty)
-        remaining_time = (active_room.finish_at.to_i - Time.current.to_i).positive? ? (active_room.finish_at.to_i - Time.current.to_i).seconds : 0
-        render_success(id: active_room.id, challenge: challenges, remaining_time: remaining_time)
+        remaining_time = ((active_room.updated_at + active_room.finish_at) - Time.current.to_i).positive? ? (active_room.finish_at.to_i - Time.current.to_i).seconds : 0
+        render_success(id: active_room.id, challenge: challenges, room_details: active_room, remaining_time: remaining_time)
       end
 
       def user_submissions
@@ -81,6 +81,14 @@ module Api
 
         mappings.update_all(has_left: true)
         render_success(message: 'You have left the room')
+      end
+
+      def current_user_room
+        user_room = CodingRoomUserMapping.where(user_id: @current_user.id, has_left: false)&.last
+        return render_error(message: 'You are not a part of an active coding room') if user_room.blank?
+
+        active_room = CodingRoom.find_by(id: user_room&.coding_room_id)
+        render_success(room_id: active_room.id)
       end
 
       def leaderboard
