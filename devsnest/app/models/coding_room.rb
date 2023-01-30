@@ -35,12 +35,12 @@ class CodingRoom < ApplicationRecord
   scope :public_rooms, -> { where.not(is_private: true) }
 
   # callbacks
-  after_update :update_finish_time, if: :has_started_changed?
+  after_update :update_finish_time
   after_create :close_room, if: :has_started_changed?
   after_create :generate_leaderboard
 
   def update_finish_time
-    if has_started?
+    if has_started? && self.finish_at.blank?
       time = (Time.current + self.room_time.to_i)
       self.update(finish_at: time)
     end

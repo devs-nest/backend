@@ -59,7 +59,7 @@ module Api
 
         challenge_list = active_room.challenge_list
         challenges = Challenge.where(id: challenge_list).order(:difficulty)
-        remaining_time = ((active_room.updated_at + active_room.finish_at) - Time.current.to_i).positive? ? (active_room.finish_at.to_i - Time.current.to_i).seconds : 0
+        remaining_time = (active_room.finish_at.to_i - Time.current.to_i).positive? ? (active_room.finish_at.to_i - Time.current.to_i).seconds : 0
         render_success(id: active_room.id, challenge: challenges, room_details: active_room, remaining_time: remaining_time)
       end
 
