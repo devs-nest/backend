@@ -56,7 +56,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -75,12 +75,12 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
     def should_return_all_the_todos
-      response = HTTParty.get("#{@url}/api/todos", headers: @headers, timeout: 5)
+      response = HTTParty.get("#{@url}/api/todo", headers: @headers, timeout: 5)
       message = 'GET - should return all the todos'
       response_body = verify_content_type(response)
 
@@ -89,7 +89,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -104,7 +104,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -118,7 +118,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -140,7 +140,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 

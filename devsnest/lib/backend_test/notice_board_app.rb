@@ -54,7 +54,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -70,7 +70,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -86,7 +86,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -100,7 +100,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -109,13 +109,13 @@ module BackendTest
       message = 'GET - should return the notice when id is provided'
       response_body = verify_content_type(response)
 
-      if response.code == 200 && response_body.is_a?(Hash) && response_body[:author] == @notice[:author] && response_body[:message] == @notice[:message] && response_body[:likes].present? && 
+      if response.code == 200 && response_body.is_a?(Hash) && response_body[:author] == @notice[:author] && response_body[:message] == @notice[:message] && response_body[:likes].present? &&
          response_body[:date].present? && response_body[:id].present?
         @success << message
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -129,7 +129,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -144,7 +144,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -158,7 +158,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 

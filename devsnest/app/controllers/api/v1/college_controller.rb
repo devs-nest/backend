@@ -6,22 +6,39 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :set_current_college_user, except: %i[create]
       before_action :college_admin_auth, only: %i[show invite structure_schema structure]
-      before_action :user_auth, only: %i[create]
-      before_action :check_college_verification, only: %i[show invite join]
+      before_action :admin_auth, only: %i[create]
+      before_action :check_college_verification, only: %i[show invite]
 
       def context
-        { user: @current_college_user, college: @current_college_user&.college_profile&.college }
+        { user: @current_college_user, college: @current_college_user&.college }
       end
 
       def create
-        return render_unauthorized('Already a college member or already submitted a request') if @current_user.college_profile.present?
-
         data = params.dig(:data, :attributes)
+        
+        return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
+        
+
+        skip_pass = User.find_by_email(data[:email]).blank?
+        data_to_encode = {
+          email: data[:email],
+          initiated_at: Time.now
+        }
+
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
-          CollegeProfile.create(user_id: @current_user.id, college_id: college.id, email: data[:email] || @current_user.email, authority_level: 0)
+          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0)
+          CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college.id)
+
+          template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
+          EmailSenderWorker.perform_async(data[:email], {
+                                            collegename: college.name,
+                                            username: data[:email].split("@")[0],
+                                            code: encrypted_code,
+                                            skip_pass: skip_pass
+                                          }, template_id)
         end
-        render_success(message: 'Request submitted')
+        render_success(message: 'College created')
       rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end
@@ -34,8 +51,11 @@ module Api
           email: data[:email],
           initiated_at: Time.now
         }
-        college_id = @current_college_user.college_profile.college.id
+
+        college_id = @current_college_user.college.id
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
+
+        skip_pass = User.find_by_email(data[:email]).blank?
 
         ActiveRecord::Base.transaction do
           c_struc = CollegeStructure.find_by_name(data[:structure])
@@ -45,7 +65,10 @@ module Api
 
           template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
-                                            code: encrypted_code
+                                            collegename: @current_college_user.college.name,
+                                            username: data[:email].split("@")[0],
+                                            code: encrypted_code,
+                                            skip_pass: skip_pass
                                           }, template_id)
         end
         render_success(message: 'Invite sent')
@@ -78,11 +101,21 @@ module Api
             )
           end
 
+          if invite_entitiy.college_profile.is_admin?
+            user.update(user_type: 'college_admin')
+          end
+
           invite_entitiy.update(status: 'closed')
           invite_entitiy.college_profile.update(user: user)
         end
 
-        render_success(message: 'College joined')
+        render_success(message: 'College joined', data: {
+          data: {
+              attributes: {
+                user_type: user.user_type
+              }
+          }
+        })
       rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end

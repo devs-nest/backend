@@ -62,6 +62,8 @@ ActiveRecord::Schema.define(version: 2022_12_30_091521) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "slug"
+    t.integer "resource_type", null: false
+    t.index ["resource_type"], name: "index_articles_on_resource_type"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
   end
 
