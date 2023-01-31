@@ -240,6 +240,19 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :article_submissions, only: %i[create show]
+      jsonapi_resources :coding_rooms, only: %i[index create show] do
+        collection do
+          get :leaderboard
+          post :join_room
+          put :leave_room
+          put :start_room
+          get :current_user_room
+        end
+        member do
+          get :user_submissions
+          get :active_user_list
+        end
+      end
     end
   end
 end

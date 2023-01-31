@@ -15,6 +15,13 @@ module LeaderboardDevsnest
     'MONTHLY': 'monthly'
   }.freeze
 
+  REDIS_CONNECTION = {
+    redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'],
+                                password: ENV['REDIS_PASSWORD_LB'],
+                                db: ENV['REDIS_DB_LB'],
+                                timeout: 3600)
+  }.freeze
+
   class DSAInitializer
     RedisConnection = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 3600) }
     LB = CompetitionRankingLeaderboard.new('dn_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
@@ -34,6 +41,7 @@ module LeaderboardDevsnest
     def initialize(type, timeline)
       @name = "#{type}_#{timeline}_leaderboard_copy"
     end
+
     def call
       redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
@@ -65,6 +73,17 @@ module LeaderboardDevsnest
   class BeLeaderboard
     def initialize(name)
       @name = "#{name}_be"
+    end
+
+    def call
+      redis = { redis_connection: Redis.new(url: ENV['REDIS_HOST_LB'], password: ENV['REDIS_PASSWORD_LB'], db: ENV['REDIS_DB_LB'], timeout: 1800) }
+      CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
+    end
+  end
+
+  class RoomLeaderboard
+    def initialize(room_id)
+      @name = "room_#{room_id}"
     end
 
     def call
