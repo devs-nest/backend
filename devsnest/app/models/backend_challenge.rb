@@ -5,9 +5,11 @@
 # Table name: backend_challenges
 #
 #  id                   :bigint           not null, primary key
+#  banner               :string(255)
 #  day_no               :integer
 #  difficulty           :integer
 #  is_active            :boolean          default(FALSE)
+#  is_project           :boolean          default(FALSE)
 #  name                 :string(255)
 #  question_body        :text(65535)
 #  score                :integer          default(0)

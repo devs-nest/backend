@@ -6,6 +6,7 @@
 #
 #  id                   :bigint           not null, primary key
 #  active_path          :string(255)
+#  banner               :string(255)
 #  challenge_type       :string(255)
 #  day_no               :integer
 #  difficulty           :integer
@@ -13,6 +14,7 @@
 #  folder_name          :string(255)
 #  hidden_files         :text(65535)
 #  is_active            :boolean          default(FALSE)
+#  is_project           :boolean          default(FALSE)
 #  name                 :string(255)
 #  open_paths           :text(65535)
 #  protected_paths      :text(65535)

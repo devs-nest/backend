@@ -267,6 +267,11 @@ Rails.application.routes.draw do
           get :active_user_list
         end
       end
+      jsonapi_resources :projects, only: %i[index] do
+        collection do
+          get :completed
+        end
+      end
     end
   end
 end
