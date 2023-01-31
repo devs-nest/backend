@@ -240,6 +240,11 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :article_submissions, only: %i[create show]
+      jsonapi_resources :projects, only: %i[index] do
+        collection do
+          get :completed
+        end
+      end
     end
   end
 end

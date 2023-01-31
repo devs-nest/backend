@@ -13,7 +13,7 @@ module Api
 
       def self.records(options = {})
         if options[:context][:action] == 'index'
-          super(options).where(is_active: true)
+          super(options).where(is_active: true, is_project: false)
         else
           super(options)
         end
