@@ -8,16 +8,25 @@ module Api
       # frontend project public code
 
       def index
-        be_projects = BackendChallenge.where(is_project: true, is_active: true).select(:id, :name, :question_body, :banner, :difficulty, :score, :slug).all
-        fe_projects = FrontendChallenge.where(is_project: true, is_active: true).select(:id, :name, :difficulty, :slug, :score, :banner, :question_body).all
-        web3 = Article.where(resource_type: 'article').select(:id, :author, :banner, :category, :content, :slug, :title).all
+        projects = []
+
+        BackendChallenge.where(is_project: true, is_active: true).select(:id, :name, :question_body, :banner, :difficulty, :score, :slug).all.map do |h|
+          projects << { id: h.id, name: h.name, question_body: h.question_body, banner: h.banner, difficulty: h.difficulty, score: h.score, slug: h.slug, type: 'be_projects' }
+        end
+
+        FrontendChallenge.where(is_project: true, is_active: true).select(:id, :name, :difficulty, :slug, :score, :banner, :question_body).all.map do |h|
+          projects << { id: h.id, name: h.name, difficulty: h.difficulty, slug: h.slug, score: h.score, banner: h.banner, question_body: h.question_body, type: 'fe_projects' }
+        end
+
+        Article.where(resource_type: 'article').select(:id, :author, :banner, :category, :content, :slug, :title).all.map do |h|
+          projects << { id: h.id, author: h.author, banner: h.banner, category: h.category, content: h.content, slug: h.slug, title: h.title, type: 'web3_projects' }
+        end
 
         data = {
           type: 'projects',
-          be_projects: be_projects,
-          fe_projects: fe_projects,
-          web3: web3
+          projects: projects
         }
+
         render_success(data)
       end
 
@@ -25,30 +34,26 @@ module Api
         user = User.find_by_username(params.dig(:data, :attributes, :username))
         return render_not_found if user.nil?
 
-        completed_be_challenges = []
-        completed_fe_challenges = []
-        completed_web3 = []
+        projects = []
 
-        BackendChallenge.where(is_project: true, is_active: true).select(:id, :name, :banner, :slug).find_each do |be_challenge|
-          submission = user.backend_challenge_scores.find_by(backend_challenge_id: be_challenge.id)
-          completed_be_challenges << be_challenge if submission.present? && submission.passed_test_cases == submission.total_test_cases
+        BackendChallenge.where(is_project: true, is_active: true).select(:id, :name, :banner, :slug).find_each do |ch|
+          submission = user.backend_challenge_scores.find_by(backend_challenge_id: ch.id)
+          projects << { id: ch.id, name: ch.name, banner: ch.banner, slug: ch.slug, type: 'be_projects' } if submission.present? && submission.passed_test_cases == submission.total_test_cases
         end
 
-        FrontendChallenge.where(is_project: true, is_active: true).select(:id, :name, :banner, :slug).find_each do |fe_challenge|
-          submission = user.frontend_challenge_scores.find_by(frontend_challenge_id: fe_challenge.id)
-          completed_fe_challenges << fe_challenge if submission.present? && submission.passed_test_cases == submission.total_test_cases
+        FrontendChallenge.where(is_project: true, is_active: true).select(:id, :name, :banner, :slug).find_each do |ch|
+          submission = user.frontend_challenge_scores.find_by(frontend_challenge_id: ch.id)
+          projects << { id: ch.id, name: ch.name, banner: ch.banner, slug: ch.slug, type: 'be_projects' } if submission.present? && submission.passed_test_cases == submission.total_test_cases
         end
 
-        Article.select(:id, :title, :banner, :slug).find_each do |article|
-          submission = ArticleSubmission.find_by(user_id: user.id, article_id: article.id)
-          completed_web3 << article if submission.present?
+        Article.select(:id, :title, :banner, :slug).find_each do |ch|
+          submission = ArticleSubmission.find_by(user_id: user.id, article_id: ch.id)
+          projects << { id: ch.id, title: ch.title, banner: ch.banner, slug: ch.slug } if submission.present?
         end
 
         data = {
           type: 'projects',
-          be_projects: completed_be_challenges,
-          fe_projects: completed_fe_challenges,
-          web3_projects: completed_web3
+          projects: projects
         }
 
         render_success(data)
