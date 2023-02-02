@@ -28,7 +28,8 @@ module Api
         return render_error(message: 'You are a part of an active coding room') if active_user_group_check
 
         challenges = Challenge.active.where(topic: topics, difficulty: difficulty).sample(number_of_questions.to_i)
-        room_details = CodingRoom.create!(name: room_params[:name], room_time: room_params[:room_time], is_private: room_params[:is_private], challenge_list: challenges.pluck(:id))
+        room_details = CodingRoom.create!(name: room_params[:name], room_time: room_params[:room_time], is_private: room_params[:is_private], challenge_list: challenges.pluck(:id),
+                                          unique_id: SecureRandom.hex(6))
         CodingRoomUserMapping.create!(user_id: @current_user.id, coding_room_id: room_details.id)
         render_success(room_details: room_details, challenge_list: challenges)
       end
