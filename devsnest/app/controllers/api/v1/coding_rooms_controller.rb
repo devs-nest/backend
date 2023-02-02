@@ -11,7 +11,7 @@ module Api
           user_coding_rooms = CodingRoomUserMapping.where(user_id: @current_user.id, has_left: false).pluck(&:coding_room_id)
           coding_rooms = CodingRoom.where(id: user_coding_rooms, is_active: true)
         else
-          coding_rooms = CodingRoom.active.public_rooms
+          coding_rooms = CodingRoom.active.public_rooms.where('finish_at > ?', Time.current)
         end
 
         return render_success(message: 'There are no active rooms') if coding_rooms.blank?
