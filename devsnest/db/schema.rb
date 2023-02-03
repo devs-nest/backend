@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_30_091521) do
+ActiveRecord::Schema.define(version: 2023_02_03_063451) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -173,7 +173,7 @@ ActiveRecord::Schema.define(version: 2022_12_30_091521) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "EyDlVPAAylA"
+    t.string "cuid", default: "6sbhpnqcCp8"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -215,7 +215,7 @@ ActiveRecord::Schema.define(version: 2022_12_30_091521) do
   end
 
   create_table "coding_rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "unique_id", default: "16477d618cf5"
+    t.string "unique_id"
     t.string "name"
     t.integer "room_time"
     t.text "challenge_list"
@@ -888,6 +888,9 @@ ActiveRecord::Schema.define(version: 2022_12_30_091521) do
     t.integer "fe_score", default: 0
     t.integer "listmonk_subscriber_id"
     t.integer "be_score", default: 0
+    t.integer "dsa_streak", default: 0
+    t.datetime "streak_end_date"
+    t.integer "last_dsa_streak", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
