@@ -5,7 +5,7 @@ module Api
     # allows challenges api calls to challenge resources
     class FrontendChallengeController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :user_auth, only: %i[fetch_by_slug show]
+      before_action :user_auth, only: %i[show]
       before_action :callback_auth, only: %i[fetch_frontend_testcases]
 
       def context
@@ -17,12 +17,11 @@ module Api
         challenge = FrontendChallenge.find_by(slug: params[:slug])
         return render_not_found('challenge') if challenge.nil?
 
-        data = []
-        files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}frontend-testcases", prefix: "#{challenge.id}/")
-        files.contents.each do |file|
-          data << { 'path' => file.key.to_s, 'content' => $s3.get_object(bucket: "#{ENV['S3_PREFIX']}frontend-testcases", key: file.key).body.read.to_s }
-        end
-        api_render(200, challenge.as_json.merge({ 'files': data }))
+        user = User.find_by(username: params[:username])
+        return render_not_found('user') if user.nil?
+
+        previous_data = challenge.fetch_files_s3('user-fe-submission', "#{user.id}/#{challenge.id}")
+        api_render(200, challenge.as_json.merge({ 'files': challenge.read_from_s3, 'previous_data': previous_data }))
       end
 
       def fetch_frontend_testcases
