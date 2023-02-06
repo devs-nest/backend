@@ -5,8 +5,6 @@ module Api
     # Devsnest Projects
     class ProjectsController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      # frontend project public code
-
       def index
         projects = []
 
