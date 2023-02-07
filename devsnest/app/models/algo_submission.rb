@@ -118,8 +118,7 @@ class AlgoSubmission < ApplicationRecord
     return unless challenge.is_active || is_submitted
 
     score_will_change = false
-    user.update(dsa_streak: user.dsa_streak + 1)
-    user.update(streak_end_date: Time.now)
+    user.update(dsa_streak: user.dsa_streak + 1, streak_end_date: DateTime.current.to_date) if user.streak_end_date.blank? || DateTime.current.to_date > user.streak_end_date
 
     previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
 

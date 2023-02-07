@@ -56,7 +56,7 @@
 #  role                               :integer
 #  school                             :string(255)
 #  score                              :float(24)        default(0.0)
-#  streak_end_date                    :datetime
+#  streak_end_date                    :date
 #  update_count                       :integer          default(0)
 #  user_type                          :integer          default("user")
 #  username                           :string(255)      default(""), not null
