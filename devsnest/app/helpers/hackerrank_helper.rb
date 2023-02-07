@@ -7,6 +7,8 @@ module HackerrankHelper
       @headers = {"User-Agent": "Rails"}
       @url = "https://www.hackerrank.com/rest/contests/master/hackers/#{username}/profile"
       @heatmap_url = "https://www.hackerrank.com/rest/hackers/#{username}/submission_histories"
+      @certificates_url = "https://www.hackerrank.com/community/v1/test_results/hacker_certificate?username=#{username}"
+      @badges_url = "https://www.hackerrank.com/rest/hackers/#{username}/badges"
     end
 
     def profile
@@ -15,6 +17,14 @@ module HackerrankHelper
 
     def get_profile_api
       JSON.parse(HTTParty.get(@url, headers: @headers).body)
+    end
+    
+    def certificates
+      JSON.parse(HTTParty.get(@certificates_url, headers: @headers).body)
+    end
+
+    def badges
+      JSON.parse(HTTParty.get(@badges_url, headers: @headers).body)
     end
 
     def heatmap

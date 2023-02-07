@@ -120,20 +120,5 @@ module LeetcodeHelper
         profile_callender: query("UserProfileCalendar"),
       }
     end
-
-    # def prepare_results
-    #   data = {
-    #     public_profile: Thread.new { Thread.current[:output] = query("UserPublicProfile") },
-    #     language_stats: Thread.new { Thread.current[:output] = query("LanguageStats") },
-    #     problems_solved: Thread.new { Thread.current[:output] = query("UserProblemsSolved") },
-    #     profile_callender: Thread.new { Thread.current[:output] = query("UserProfileCalendar") },
-    #   }
-
-    #   #join each threads
-    #   data.values.map(&:join)
-      
-    #   #extract output
-    #   data.transform_values! {|res| res[:output] }
-    # end
   end
 end

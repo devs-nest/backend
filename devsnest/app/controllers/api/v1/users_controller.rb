@@ -131,6 +131,7 @@ module Api
 
       def connect_github
         permitted_params = params.permit(%i[code]).to_h
+        byebug
         return render_error({ message: 'Github Access Code not found' }) unless permitted_params['code'].present?
 
         res = User.fetch_github_access_token(permitted_params['code'])
@@ -480,15 +481,7 @@ module Api
         user.un_merge_discord_user
         render_success({ message: 'User is decoupled!' })
       end
-
-      def github_data
-        data = {
-          github_graph: GithubDataHelper.get_github_graph(@current_user.github_client.login, @current_user.github_token),
-          github_repository_data: GithubDataHelper.get_repository_data(@current_user.github_client.login, @current_user.github_repos)
-        }
-        render_success(data)
-      end
-
+      
       def add_repo
         repo_name = params.dig(:data, :attributes, :repository_name)
         return render_error({ message: 'Repository does not exist' }) if GithubDataHelper.does_repository_exists(@current_user.github_client.login, repo_name)

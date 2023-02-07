@@ -111,7 +111,6 @@ Rails.application.routes.draw do
           get :check_user_details
           get :dashboard_details, :github_ping, :repo_files
           post :sourcecode_io, :disconnect_user
-          get :github_data
           post :add_repo, :remove_repo
         end
       end
@@ -246,7 +245,7 @@ Rails.application.routes.draw do
       jsonapi_resources :user_integration, only: %i[] do
         collection do
           put :update_links
-          get :links, :leetcode, :gfg, :hackerrank
+          get :links, :leetcode, :gfg, :hackerrank, :github_data
         end
       end
     end
