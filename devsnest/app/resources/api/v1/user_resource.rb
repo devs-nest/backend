@@ -16,6 +16,7 @@ module Api
       attributes :markdown, :bio
       attributes :type, :user_group_slug
       attributes :batch_leader_details, :user_group_details, :referred_by_code, :current_module
+      attributes :dsa_streak
 
       def markdown
         @model.markdown.dup.encode('ISO-8859-1').force_encoding('utf-8') unless @model.markdown.blank?
@@ -101,6 +102,10 @@ module Api
       def current_module
         course = Course.last
         course.try(:current_module)
+      end
+
+      def dsa_streak
+        @model.dsa_streak
       end
     end
   end
