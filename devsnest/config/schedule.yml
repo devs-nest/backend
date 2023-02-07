@@ -41,7 +41,7 @@ update_group_activity_point:
 
 user_streak_reset:
   cron: "00 00 * * *" # every day at 00:00
-  class: "StreakChangesWorker"
+  class: "StreakChangerWorker"
 
 user_streak_notifier:
   cron: "00 00 * * *" # every day at 00:00
