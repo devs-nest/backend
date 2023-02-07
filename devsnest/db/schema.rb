@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_03_063451) do
+ActiveRecord::Schema.define(version: 2023_02_07_070410) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -889,7 +889,7 @@ ActiveRecord::Schema.define(version: 2023_02_03_063451) do
     t.integer "listmonk_subscriber_id"
     t.integer "be_score", default: 0
     t.integer "dsa_streak", default: 0
-    t.datetime "streak_end_date"
+    t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
