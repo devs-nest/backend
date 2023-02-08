@@ -101,8 +101,8 @@ module Api
         data = {
           id: page,
           type: "#{params[:id]}_leaderboard",
-          current_user: leaderboard.score_and_rank_for(@current_user.username),
-          scoreboard: leaderboard.leaders(page),
+          current_user: { name: @current_user.username, score: leaderboard.member_data_for(@current_user.username).to_i, rank: leaderboard.rank_for(@current_user.username) },
+          scoreboard: leaderboard.leaders(page, with_member_data: true),
           count: leaderboard.total_pages
         }
         render_success(data)
