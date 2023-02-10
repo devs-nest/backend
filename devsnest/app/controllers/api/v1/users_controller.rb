@@ -423,10 +423,24 @@ module Api
       end
 
       def sourcecode_io
-        challenge = FrontendChallenge.find_by(id: params.dig(:data, :attributes, 'challenge_id'))
+        database = ''
+        bucket = ''
+        challenge_type = params.dig(:data, :attributes, 'challenge_type')
+
+        case challenge_type
+        when 'backend'
+          database = BackendChallenge
+          bucket = 'user-be-submission'
+        when 'frontend'
+          database = FrontendChallenge
+          bucket = 'user-fe-submission'
+        else
+          return render_not_found('challenge_type')
+        end
+
+        challenge = database.find_by(id: params.dig(:data, :attributes, 'challenge_id'))
         return render_not_found('challenge') if challenge.nil?
 
-        bucket = 'user-fe-submission'
         files = params.dig(:data, :attributes, 'files')
         action = params.dig(:data, :attributes, 'action')
         base_path = "#{@current_user.id}/#{challenge.id}"
@@ -476,7 +490,7 @@ module Api
         return render_unauthorized unless user.id == @current_user.id
         return render_error(message: 'Can\'t decouple the user') unless user.discord_active && user.web_active
 
-        user.un_merge_discord_user
+        user.un_merge_discord_userb
         render_success({ message: 'User is decoupled!' })
       end
 

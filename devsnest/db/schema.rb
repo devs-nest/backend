@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_20_070053) do
+ActiveRecord::Schema.define(version: 2023_02_08_172603) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -123,6 +123,16 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
     t.string "testcases_path"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_project", default: false
+    t.string "banner"
+    t.string "active_path"
+    t.text "files"
+    t.string "folder_name"
+    t.text "hidden_files"
+    t.text "open_paths"
+    t.text "protected_paths"
+    t.string "template"
+    t.integer "challenge_type", default: 0
     t.index ["slug"], name: "index_backend_challenges_on_slug", unique: true
   end
 
@@ -429,6 +439,8 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
     t.text "files"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_project", default: false
+    t.string "banner"
     t.index ["slug"], name: "index_frontend_challenges_on_slug", unique: true
   end
 
