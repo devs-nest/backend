@@ -47,7 +47,7 @@ module Api
       end
 
       def files
-        context[:action] == 'show' ? @model.read_from_s3 : []
+        context[:action] == 'show' ? @model.fetch_files_s3('backend-testcases', @model.id.to_s) : []
       end
 
       def submission_status

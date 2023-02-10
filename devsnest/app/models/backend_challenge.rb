@@ -93,16 +93,10 @@ class BackendChallenge < ApplicationRecord
     files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{prefix}/")
 
     files.contents.each do |file|
-      next if challenge_type == 'github' && file.key.to_s == testcases_path
-
       path = file.key.to_s.sub(prefix, '')
       content = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}#{bucket}", key: file.key).body.read.to_s
       data[path.to_s] = content.to_s
     end
     data.as_json
-  end
-
-  def read_from_s3
-    Rails.cache.fetch('backend_challenge_' + id.to_s) { fetch_files_s3('backend-testcases', id.to_s) }
   end
 end
