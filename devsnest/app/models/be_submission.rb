@@ -54,6 +54,7 @@ class BeSubmission < ApplicationRecord
   end
 
   def run_test_cases
-    BeEvaluationWorker.perform_async(id)
+    backend_challenge = BackendChallenge.find_by_id(backend_challenge_id)
+    BeEvaluationWorker.perform_async(id) if backend_challenge.challenge_type == 'normal'
   end
 end

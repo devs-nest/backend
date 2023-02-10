@@ -6,8 +6,11 @@ module Api
       # api for backend challenge
       class BackendChallengeController < ApplicationController
         include JSONAPI::ActsAsResourceController
+        include ApplicationHelper
         before_action :problem_setter_auth
         before_action :admin_auth, only: %i[index]
+        before_action :add_files, only: %i[update]
+        before_action :remove_files, only: %i[destroy]
 
         def context
           {
@@ -18,6 +21,31 @@ module Api
 
         def self_created_challenges
           render_success({ id: @current_user.id, type: 'backend_challenges', challenges: @current_user.backend_challenges })
+        end
+
+        def add_files
+          challenge = BackendChallenge.find_by(id: params['id'])
+          return render_not_found('challenge') if challenge.nil?
+
+          return render_error('invalid challenge type') if challenge.challenge_type == 'normal'
+
+          bucket = 'backend-testcases'
+          files = params.dig(:data, :attributes, 'files')
+          return if files.nil?
+
+          io_boilerplate(files, challenge.id.to_s, bucket)
+          params['data']['attributes'].delete('files')
+        end
+
+        def remove_files
+          challenge = BackendChallenge.find_by(id: params['id'])
+          return render_not_found('challenge') if challenge.nil?
+
+          return render_error('invalid challenge type') if challenge.challenge_type == 'normal'
+
+          bucket = 'backend-testcases'
+          files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{challenge.id}/")
+          io_boilerplate(files, '', bucket, 'remove')
         end
       end
     end
