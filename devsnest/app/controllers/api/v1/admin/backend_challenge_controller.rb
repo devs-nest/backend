@@ -41,11 +41,11 @@ module Api
           challenge = BackendChallenge.find_by(id: params['id'])
           return render_not_found('challenge') if challenge.nil?
 
-          return render_error('invalid challenge type') if challenge.challenge_type == 'normal'
-
-          bucket = 'backend-testcases'
-          files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{challenge.id}/")
-          io_boilerplate(files, '', bucket, 'remove')
+          if challenge.challenge_type == 'stackblitz'
+            bucket = 'backend-testcases'
+            files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{challenge.id}/")
+            io_boilerplate(files, '', bucket, 'remove')
+          end
         end
       end
     end
