@@ -15,6 +15,7 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  unique_id      :string(255)
+#  user_id        :integer          not null
 #
 # Indexes
 #

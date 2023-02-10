@@ -29,15 +29,20 @@ module Api
 
         challenges = Challenge.active.where(topic: topics, difficulty: difficulty).sample(number_of_questions.to_i)
         room_details = CodingRoom.create!(name: room_params[:name], room_time: room_params[:room_time], is_private: room_params[:is_private], challenge_list: challenges.pluck(:id),
-                                          unique_id: SecureRandom.hex(6))
+                                          unique_id: SecureRandom.hex(6), user_id: @current_user.id)
         CodingRoomUserMapping.create!(user_id: @current_user.id, coding_room_id: room_details.id)
+        lb = LeaderboardDevsnest::RoomLeaderboard.new(room_details.id.to_s).call
+        lb.rank_member(@current_user.username, 0, { 'score' => 0, 'is_active' => true }.to_json)
         render_success(room_details: room_details, challenge_list: challenges)
       end
 
       def start_room
         coding_room_id = params[:coding_room_id]
-        room = CodingRoom.find_by(id: coding_room_id)&.update(has_started: true)
+        room = CodingRoom.find_by(id: coding_room_id)
         return render_error(message: 'No such Room exists') if room.nil?
+
+        room.update(has_started: true)
+        return render_error(message: 'Permission Denied, Ask Room Creater to Start the room') if @current_user.id != room.user_id
 
         render_success(message: 'The room has started')
       end
@@ -50,6 +55,8 @@ module Api
         return render_error(message: "Room has ended or doesn't exist") if room.nil?
 
         CodingRoomUserMapping.create!(user_id: @current_user.id, coding_room_id: room.id)
+        lb = LeaderboardDevsnest::RoomLeaderboard.new(room.id.to_s).call
+        lb.rank_member(@current_user.username, 0, { 'score' => 0, 'is_active' => true }.to_json)
         render_success(coding_room_id: room.id)
       end
 
@@ -77,10 +84,14 @@ module Api
       end
 
       def leave_room
-        mappings = CodingRoomUserMapping.where(user_id: @current_user.id, coding_room_id: CodingRoom.active.pluck(:id))
-        return render_error(message: 'You are not a part of any active room') unless mappings
+        mapping = CodingRoomUserMapping.where(user_id: @current_user.id, coding_room_id: params[:coding_room_id])
+        return render_error(message: 'You are not a part of any active room') unless mapping
 
-        mappings.update_all(has_left: true)
+        lb = LeaderboardDevsnest::RoomLeaderboard.new(params[:coding_room_id].to_s).call
+        member_data = lb.members_data_for(@current_user.username)[0]
+        current_score = member_data.present? ? JSON.parse(member_data)['score'] : 0
+        lb.update_member_data(@current_user.username, { 'score' => current_score, 'is_active' => false }.to_json)
+        mapping.update(has_left: true)
         render_success(message: 'You have left the room')
       end
 
@@ -96,12 +107,14 @@ module Api
         leaderboard = LeaderboardDevsnest::RoomLeaderboard.new(params[:id].to_s).call
 
         leaderboard.page_size = params[:size].to_i || 10
+        member_data = leaderboard.members_data_for(user.username)[0]
+        current_score = member_data.present? ? JSON.parse(member_data)['score'] : 0
         page = params[:page].to_i
 
         data = {
           id: page,
           type: "#{params[:id]}_leaderboard",
-          current_user: { name: @current_user.username, score: leaderboard.member_data_for(@current_user.username).to_i, rank: leaderboard.rank_for(@current_user.username) },
+          current_user: { name: @current_user.username, score: current_score, rank: leaderboard.rank_for(@current_user.username) },
           scoreboard: leaderboard.leaders(page, with_member_data: true),
           count: leaderboard.total_pages
         }
