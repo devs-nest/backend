@@ -107,6 +107,9 @@ class User < ApplicationRecord
   has_many :backend_challenge_scores
   has_one :college_profile
   has_one :user_integration
+
+  has_many :user_skills
+  has_many :skills, through: :user_skills
   
   delegate :college, to: :college_profile, allow_nil: true
 
