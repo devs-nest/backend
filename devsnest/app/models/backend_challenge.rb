@@ -47,7 +47,7 @@ class BackendChallenge < ApplicationRecord
   belongs_to :user
   after_create :create_slug
   validates_uniqueness_of :name, :slug, case_sensitive: true
-  # before_save :expire_cache
+  before_save :expire_cache
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
   before_update :recalculate_user_scores, if: :will_save_change_to_is_active?
 
