@@ -6,12 +6,15 @@
 #
 #  id             :bigint           not null, primary key
 #  challenge_list :text(65535)
+#  difficulty     :string(255)      not null
 #  finish_at      :datetime
 #  has_started    :boolean          default(FALSE)
 #  is_active      :boolean          default(TRUE)
 #  is_private     :boolean          default(FALSE)
 #  name           :string(255)
+#  question_count :integer          not null
 #  room_time      :integer
+#  starts_at      :datetime         not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  unique_id      :string(255)
@@ -28,6 +31,7 @@ class CodingRoom < ApplicationRecord
   has_many :users, through: :coding_room_user_mappings, dependent: :destroy
   has_many :algo_submissions
   has_many :room_best_submissions
+  has_many :coding_room_user_mappings
 
   serialize :challenge_list, Array
 
@@ -36,21 +40,17 @@ class CodingRoom < ApplicationRecord
   scope :public_rooms, -> { where.not(is_private: true) }
 
   # callbacks
-  after_update :update_finish_time
+  after_create :update_details
   after_create :close_room, if: :has_started_changed?
   after_create :generate_leaderboard
 
-  def update_finish_time
-    if has_started? && self.finish_at.blank?
-      time = (Time.current + self.room_time.to_i)
-      self.update(finish_at: time)
-    end
+  def update_details
+    time = (self.starts_at + self.room_time.to_i)
+    self.update(finish_at: time, unique_id: SecureRandom.hex(6))
   end
 
   def close_room
-    if has_started?
-      CloseRoomWorker.perform_in((self.room_time.to_i / 60).minutes, self.id)
-    end
+    CloseRoomWorker.perform_in(self.finish_at - Time.now, self.id)
   end
 
   def generate_leaderboard

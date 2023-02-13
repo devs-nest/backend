@@ -226,6 +226,9 @@ ActiveRecord::Schema.define(version: 2023_02_10_062125) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id", null: false
+    t.datetime "starts_at", null: false
+    t.string "difficulty", null: false
+    t.integer "question_count", null: false
     t.index ["finish_at"], name: "index_coding_rooms_on_finish_at"
     t.index ["is_active"], name: "index_coding_rooms_on_is_active"
     t.index ["unique_id"], name: "index_coding_rooms_on_unique_id"
