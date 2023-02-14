@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_20_070053) do
+ActiveRecord::Schema.define(version: 2023_01_30_042640) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -27,8 +27,6 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
     t.string "total_runtime"
     t.string "total_memory"
     t.boolean "is_best_submission", default: false
-    t.integer "coding_room_id"
-    t.index ["challenge_id", "coding_room_id"], name: "index_algo_submissions_on_challenge_id_and_coding_room_id"
     t.index ["is_submitted", "status"], name: "index_algo_submissions_on_is_submitted_and_status"
     t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
   end
@@ -106,6 +104,7 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
     t.float "score"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "submitted_url"
     t.index ["user_id", "backend_challenge_id"], name: "backend_challenge_score_index", unique: true
   end
 
@@ -170,10 +169,19 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
     t.index ["user_id", "backend_challenge_id"], name: "backend_submission_user_index"
   end
 
+  create_table "bootcamp_progresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "course_id"
+    t.integer "course_curriculum_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_bootcamp_progresses_on_user_id"
+  end
+
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "WLk4hKuJzZ8"
+    t.string "cuid", default: "zca0JH7Cs5g"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -200,34 +208,6 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
     t.string "parent_id"
     t.integer "course_curriculum_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
-  end
-
-  create_table "coding_room_user_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.bigint "coding_room_id", null: false
-    t.bigint "user_id", null: false
-    t.boolean "has_left", default: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["coding_room_id", "user_id"], name: "index_coding_room_user_mappings_on_coding_room_id_and_user_id"
-    t.index ["coding_room_id"], name: "index_coding_room_user_mappings_on_coding_room_id"
-    t.index ["user_id", "has_left"], name: "index_coding_room_user_mappings_on_user_id_and_has_left"
-    t.index ["user_id"], name: "index_coding_room_user_mappings_on_user_id"
-  end
-
-  create_table "coding_rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "unique_id", default: "e9b160675a54"
-    t.string "name"
-    t.integer "room_time"
-    t.text "challenge_list"
-    t.boolean "is_private", default: false
-    t.datetime "finish_at"
-    t.boolean "is_active", default: true
-    t.boolean "has_started", default: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["finish_at"], name: "index_coding_rooms_on_finish_at"
-    t.index ["is_active"], name: "index_coding_rooms_on_is_active"
-    t.index ["unique_id"], name: "index_coding_rooms_on_unique_id"
   end
 
   create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -336,6 +316,7 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
     t.boolean "locked", default: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.json "extra_data"
     t.index ["course_id", "course_type"], name: "index_course_curriculums_on_course_id_and_course_type"
     t.index ["course_id", "day"], name: "index_course_curriculums_on_course_id_and_day"
   end
@@ -704,19 +685,6 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "room_best_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.integer "challenge_id"
-    t.integer "user_id"
-    t.integer "coding_room_id"
-    t.integer "algo_submission_id"
-    t.integer "total_test_cases"
-    t.integer "passed_test_cases"
-    t.integer "score"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id", "challenge_id", "coding_room_id"], name: "index_room_best_submission", unique: true
-  end
-
   create_table "run_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -919,8 +887,6 @@ ActiveRecord::Schema.define(version: 2023_01_20_070053) do
 
   add_foreign_key "article_submissions", "articles"
   add_foreign_key "article_submissions", "users"
-  add_foreign_key "coding_room_user_mappings", "coding_rooms"
-  add_foreign_key "coding_room_user_mappings", "users"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
 end

@@ -104,8 +104,9 @@ class User < ApplicationRecord
   has_many :article_submissions
   has_many :backend_challenges
   has_many :backend_challenge_scores
+  has_many :bootcamp_progresses
   has_one :college_profile
-  
+
   delegate :college, to: :college_profile, allow_nil: true
 
   before_save :markdown_encode, if: :will_save_change_to_markdown?
@@ -532,6 +533,12 @@ class User < ApplicationRecord
       total_assignments_count: total_assignments_challenge_ids.count,
       solved_assignments_count: solved_assignments_count
     }
+  end
+
+  def bootcamp_progress_details
+    BootcampProgress.includes(:course_curriculum).where(user_id: id).map do |progress|
+      progress.attributes.merge(type: progress.course_curriculum.course_type)
+    end
   end
 
   def group_details

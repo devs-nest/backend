@@ -240,6 +240,11 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :article_submissions, only: %i[create show]
+      jsonapi_resources :bootcamp_progresses, only: %i[create index] do
+        collection do
+          post :complete_day
+        end
+      end
     end
   end
 end
