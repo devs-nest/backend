@@ -16,12 +16,14 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  challenge_id       :integer
+#  coding_room_id     :integer
 #  user_id            :integer
 #
 # Indexes
 #
-#  index_algo_submissions_on_is_submitted_and_status   (is_submitted,status)
-#  index_algo_submissions_on_user_id_and_challenge_id  (user_id,challenge_id)
+#  index_algo_submissions_on_challenge_id_and_coding_room_id  (challenge_id,coding_room_id)
+#  index_algo_submissions_on_is_submitted_and_status          (is_submitted,status)
+#  index_algo_submissions_on_user_id_and_challenge_id         (user_id,challenge_id)
 #
 require 'rails_helper'
 

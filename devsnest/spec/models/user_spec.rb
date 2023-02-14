@@ -19,6 +19,7 @@
 #  discord_username                   :string(255)
 #  dob                                :date
 #  dsa_skill                          :integer          default(0)
+#  dsa_streak                         :integer          default(0)
 #  email                              :string(255)      default(""), not null
 #  encrypted_password                 :string(255)      default(""), not null
 #  enrolled_for_course_image_url      :string(255)
@@ -38,6 +39,7 @@
 #  is_verified                        :boolean          default(FALSE)
 #  kind                               :integer          default(0)
 #  known_from                         :string(255)
+#  last_dsa_streak                    :integer          default(0)
 #  linkedin_url                       :string(255)
 #  login_count                        :integer          default(0)
 #  markdown                           :text(65535)
@@ -54,6 +56,7 @@
 #  role                               :integer
 #  school                             :string(255)
 #  score                              :float(24)        default(0.0)
+#  streak_end_date                    :date
 #  update_count                       :integer          default(0)
 #  user_type                          :integer          default("user")
 #  username                           :string(255)      default(""), not null
