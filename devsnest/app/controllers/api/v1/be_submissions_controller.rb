@@ -29,10 +29,9 @@ module Api
 
         options = {
           score: params.dig(:data, :attributes, :total_test_cases),
-          passed_test_cases_desc: params.dig(:data, :attributes, :passed_test_cases_desc),
           passed_test_cases: params.dig(:data, :attributes, :passed_test_cases),
-          failed_test_cases_desc: params.dig(:data, :attributes, :failed_test_cases_desc),
           total_test_cases: params.dig(:data, :attributes, :total_test_cases),
+          result: params.dig(:data, :attributes, :result),
           user_id: user_id,
           backend_challenge_id: backend_challenge_id
         }

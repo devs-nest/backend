@@ -31,12 +31,6 @@ module Api
           []
         end
 
-        def testcases_path
-          return @model.testcases_path.sub(id.to_s, '') if @model.testcases_path.present? && context[:action] == 'show'
-
-          ''
-        end
-
         def files
           context[:action] == 'show' ? @model.fetch_files_s3('backend-testcases', @model.id.to_s) : []
         end
