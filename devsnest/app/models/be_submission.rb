@@ -8,6 +8,7 @@
 #  failed_test_cases_desc :text(65535)
 #  passed_test_cases      :integer          default(0)
 #  passed_test_cases_desc :text(65535)
+#  result                 :text(65535)
 #  score                  :float(24)
 #  status                 :string(255)
 #  submitted_url          :text(65535)
