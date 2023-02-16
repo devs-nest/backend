@@ -90,7 +90,7 @@ module Api
       end
 
       def leave_room
-        mapping = CodingRoomUserMapping.where(user_id: @current_user.id, coding_room_id: params[:coding_room_id])
+        mapping = CodingRoomUserMapping.find_by(user_id: @current_user.id, coding_room_id: params[:coding_room_id], has_left: false)
         return render_error(message: 'You are not a part of any active room') unless mapping
 
         lb = LeaderboardDevsnest::RoomLeaderboard.new(params[:coding_room_id].to_s).call
