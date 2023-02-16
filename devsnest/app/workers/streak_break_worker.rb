@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # worker changes streak of an User
-class StreakbreakWorker
+class StreakBreakWorker
   include Sidekiq::Worker
   sidekiq_options retry: 5
   def perform
