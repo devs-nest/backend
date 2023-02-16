@@ -173,7 +173,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_062125) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "6sbhpnqcCp8"
+    t.string "cuid", default: "rEDEY0k7s_A"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -228,6 +228,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_062125) do
     t.integer "user_id", null: false
     t.datetime "starts_at", null: false
     t.string "difficulty", null: false
+    t.string "topics", null: false
     t.integer "question_count", null: false
     t.index ["finish_at"], name: "index_coding_rooms_on_finish_at"
     t.index ["is_active"], name: "index_coding_rooms_on_is_active"

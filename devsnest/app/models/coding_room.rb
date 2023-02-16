@@ -15,6 +15,7 @@
 #  question_count :integer          not null
 #  room_time      :integer
 #  starts_at      :datetime         not null
+#  topics         :string(255)      not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  unique_id      :string(255)
@@ -41,7 +42,7 @@ class CodingRoom < ApplicationRecord
 
   # callbacks
   after_create :update_details
-  after_create :close_room, if: :has_started_changed?
+  after_create :close_room
   after_create :generate_leaderboard
 
   def update_details
@@ -50,7 +51,8 @@ class CodingRoom < ApplicationRecord
   end
 
   def close_room
-    CloseRoomWorker.perform_in(self.finish_at - Time.now, self.id)
+    byebug
+    CloseRoomWorker.perform_in(self.starts_at + self.room_time.to_i - Time.now.to_i, self.id)
   end
 
   def generate_leaderboard
