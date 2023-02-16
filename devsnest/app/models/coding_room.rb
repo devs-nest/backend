@@ -51,7 +51,6 @@ class CodingRoom < ApplicationRecord
   end
 
   def close_room
-    byebug
     CloseRoomWorker.perform_in(self.starts_at + self.room_time.to_i - Time.now.to_i, self.id)
   end
 
