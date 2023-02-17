@@ -91,6 +91,7 @@ Rails.application.routes.draw do
             get :dashboard_details
           end
         end
+        jsonapi_resources :projects, only: %i[index create destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do

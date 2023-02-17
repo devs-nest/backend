@@ -6,7 +6,6 @@
 #
 #  id                   :bigint           not null, primary key
 #  active_path          :string(255)
-#  banner               :string(255)
 #  challenge_type       :string(255)
 #  day_no               :integer
 #  difficulty           :integer
