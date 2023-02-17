@@ -46,12 +46,12 @@ class CodingRoom < ApplicationRecord
   after_create :generate_leaderboard
 
   def update_details
-    time = (self.starts_at + self.room_time.to_i)
-    self.update(finish_at: time, unique_id: SecureRandom.hex(6))
+    self.update(finish_at: self.starts_at + self.room_time.to_i)
+    self.update(unique_id: SecureRandom.hex(6))
   end
 
   def close_room
-    CloseRoomWorker.perform_in(self.starts_at + self.room_time.to_i - Time.now.to_i, self.id)
+    CloseRoomWorker.perform_in(self.finish_at - Time.now, self.id)
   end
 
   def generate_leaderboard

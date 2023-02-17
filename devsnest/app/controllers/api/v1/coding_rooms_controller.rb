@@ -9,12 +9,12 @@ module Api
       def index
         user_coding_room_id = CodingRoomUserMapping.find_by(user_id: @current_user.id, has_left: false)&.coding_room_id
         user_room_details = if user_coding_room_id.blank?
-                              CodingRoom.where(id: user_coding_room_id).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time)
-                            else
                               []
+                            else
+                              CodingRoom.where(id: user_coding_room_id).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time, :finish_at)
                             end
 
-        all_coding_rooms = CodingRoom.public_rooms.where.not(id: user_coding_room_id).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time)
+        all_coding_rooms = CodingRoom.public_rooms.where.not(id: user_coding_room_id).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time, :finish_at)
 
         return render_success(message: 'There are no active rooms') if all_coding_rooms.blank? && user_room_details.blank?
 
@@ -59,15 +59,17 @@ module Api
 
         CodingRoomUserMapping.create!(user_id: @current_user.id, coding_room_id: room.id)
         lb = LeaderboardDevsnest::RoomLeaderboard.new(room.id.to_s).call
-        lb.rank_member(@current_user.username, 0, { 'score' => 0, 'is_active' => true }.to_json)
+        member_data = lb.members_data_for(@current_user.username)[0]
+        current_score = member_data.present? ? JSON.parse(member_data)['score'] : 0
+        lb.rank_member(@current_user.username, 0, { 'score' => current_score, 'is_active' => true }.to_json)
         render_success(coding_room_id: room.id)
       end
 
       def show
         user_coding_room = CodingRoomUserMapping.find_by(user_id: @current_user.id, has_left: false)&.coding_room
-        return render_error(message: 'You are not a part of any room or the room has ended') if user_coding_room.blank? || user_coding_room.is_active == false
+        return render_error(message: 'You are not a part of any room') if user_coding_room.blank?
 
-        user_room_details = CodingRoom.where(id: user_coding_room.id).select(:id, :unique_id, :name, :is_active, :starts_at, :difficulty, :question_count)
+        user_room_details = CodingRoom.where(id: user_coding_room.id).select(:id, :unique_id, :name, :is_active, :starts_at, :difficulty, :question_count, :room_time, :finish_at).first
         remaining_time = (user_coding_room.finish_at.to_i - Time.current.to_i).positive? ? (user_coding_room.finish_at.to_i - Time.current.to_i).seconds : 0
         if Time.now < user_coding_room.starts_at
           return render_success(id: user_coding_room.id, challenge: [], room_details: user_room_details, remaining_time: remaining_time,
@@ -91,7 +93,7 @@ module Api
 
       def leave_room
         mapping = CodingRoomUserMapping.find_by(user_id: @current_user.id, coding_room_id: params[:coding_room_id], has_left: false)
-        return render_error(message: 'You are not a part of any active room') unless mapping
+        return render_error(message: 'You are not a part of any active room') if mapping.blank?
 
         lb = LeaderboardDevsnest::RoomLeaderboard.new(params[:coding_room_id].to_s).call
         member_data = lb.members_data_for(@current_user.username)[0]
