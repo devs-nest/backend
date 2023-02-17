@@ -61,7 +61,7 @@ module Api
       end
 
       def previous_data
-        context[:action] == 'show' ? @model.fetch_files_s3('user-be-submission', "#{context[:user].id}/#{id}") : []
+        context[:action] == 'show' ? @model.fetch_files_s3('user-be-submission', "#{context[:user].id}/#{id}") : {}
       end
     end
   end

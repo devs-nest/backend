@@ -5,56 +5,43 @@ module Api
     # Devsnest Projects
     class ProjectsController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      def index
-        projects = []
 
-        BackendChallenge.where(is_project: true, is_active: true).select(:id, :name, :question_body, :banner, :difficulty, :score, :slug).all.map do |h|
-          projects << { id: h.id, name: h.name, question_body: h.question_body, banner: h.banner, difficulty: h.difficulty, score: h.score, slug: h.slug, type: 'be_projects' }
-        end
-
-        FrontendChallenge.where(is_project: true, is_active: true).select(:id, :name, :difficulty, :slug, :score, :banner, :question_body).all.map do |h|
-          projects << { id: h.id, name: h.name, difficulty: h.difficulty, slug: h.slug, score: h.score, banner: h.banner, question_body: h.question_body, type: 'fe_projects' }
-        end
-
-        Article.where(resource_type: 'article').select(:id, :author, :banner, :category, :content, :slug, :title).all.map do |h|
-          projects << { id: h.id, author: h.author, banner: h.banner, category: h.category, content: h.content, slug: h.slug, title: h.title, type: 'web3_projects' }
-        end
-
-        data = {
-          type: 'projects',
-          projects: projects
+      def context
+        {
+          user: @current_user
         }
-
-        render_success(data)
       end
 
       def completed
-        user = User.find_by_username(params.dig(:data, :attributes, :username))
-        return render_not_found if user.nil?
+        user = User.find_by_username(params[:username])
+        return render_not_found('User') if user.nil?
 
         projects = []
 
-        BackendChallenge.where(is_project: true, is_active: true).select(:id, :name, :banner, :slug).find_each do |ch|
-          submission = user.backend_challenge_scores.find_by(backend_challenge_id: ch.id)
-          projects << { id: ch.id, name: ch.name, banner: ch.banner, slug: ch.slug, type: 'be_projects' } if submission.present? && submission.passed_test_cases == submission.total_test_cases
+        Project.find_each do |project|
+          case project.challenge_type
+          when 'Article'
+            submission = ArticleSubmission.find_by(user_id: user.id, article_id: project.challenge_id)
+            projects << { title: project.challenge.title, slug: project.challenge.slug, banner: project.banner } if submission.present?
+          when 'BackendChallenge'
+            submission = user.backend_challenge_scores.find_by(backend_challenge_id: project.challenge_id)
+          when 'FrontendChallenge'
+            submission = user.frontend_challenge_scores.find_by(frontend_challenge_id: project.challenge_id)
+          end
+
+          if project.challenge_type != 'Article'
+            data = {
+              banner: project.banner,
+              name: project.challenge.name,
+              difficulty: project.challenge.difficulty,
+              slug: project.challenge.slug,
+              score: project.challenge.score
+            }
+            projects << data if submission.present? && submission.passed_test_cases == submission.total_test_cases
+          end
         end
 
-        FrontendChallenge.where(is_project: true, is_active: true).select(:id, :name, :banner, :slug).find_each do |ch|
-          submission = user.frontend_challenge_scores.find_by(frontend_challenge_id: ch.id)
-          projects << { id: ch.id, name: ch.name, banner: ch.banner, slug: ch.slug, type: 'be_projects' } if submission.present? && submission.passed_test_cases == submission.total_test_cases
-        end
-
-        Article.select(:id, :title, :banner, :slug).find_each do |ch|
-          submission = ArticleSubmission.find_by(user_id: user.id, article_id: ch.id)
-          projects << { id: ch.id, title: ch.title, banner: ch.banner, slug: ch.slug } if submission.present?
-        end
-
-        data = {
-          type: 'projects',
-          projects: projects
-        }
-
-        render_success(data)
+        render_success({ data: projects, type: 'projects' })
       end
     end
   end
