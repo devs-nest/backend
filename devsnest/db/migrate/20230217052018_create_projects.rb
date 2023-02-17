@@ -4,6 +4,7 @@ class CreateProjects < ActiveRecord::Migration[6.0]
       t.integer :challenge_id
       t.string :challenge_type
       t.string :banner
+      t.text :intro
 
       t.timestamps
     end
