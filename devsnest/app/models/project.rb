@@ -5,6 +5,7 @@
 #  id             :bigint           not null, primary key
 #  banner         :string(255)
 #  challenge_type :string(255)
+#  intro          :text(65535)
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  challenge_id   :integer
