@@ -32,10 +32,13 @@ module Api
       private
 
       def add_course_curriculum_id
-        course = Course.find_by_id(params.dig(:data, :attributes, :course_id))
-        return if course.blank?
+        course_id = params.dig(:data, :attributes, :course_id)
+        course_type = params.dig(:data, :attributes, :course_type)
 
-        params[:data][:attributes][:course_curriculum_id] = course.course_curriculums.first.try(:id)
+        first_curriculum_id = CourseCurriculum.where(course_id: course_id, course_type: course_type).first.try(:id)
+        return if first_curriculum_id.blank?
+
+        params[:data][:attributes][:course_curriculum_id] = first_curriculum_id
       end
     end
   end
