@@ -139,7 +139,7 @@ class AlgoSubmission < ApplicationRecord
     return unless coding_room_id.present?
 
     user_room_map = CodingRoomUserMapping.find_by(coding_room_id: coding_room_id, user_id: user_id)
-    return if user_room_map.nil? || user_room_map.has_left == true
+    return if user_room_map.nil?
 
     user = User.get_by_cache(user_id)
     challenge = Challenge.find(challenge_id)
@@ -155,7 +155,9 @@ class AlgoSubmission < ApplicationRecord
     lb = LeaderboardDevsnest::RoomLeaderboard.new(coding_room_id.to_s).call
     member_data = lb.members_data_for(user.username)[0]
     current_score = member_data.present? ? JSON.parse(member_data)['score'] : 0
-    lb.rank_member(user.username, ((CodingRoom.find(coding_room_id).finish_at - Time.now) * user_score), { 'score' => user_score, 'is_active' => true }.to_json) if current_score < user_score
+    finish_at = CodingRoom.find(coding_room_id).finish_at
+    time_left = finish_at > Time.now ? (finish_at - Time.now) : 0
+    lb.rank_member(user.username, (time_left * user_score), { 'score' => user_score, 'is_active' => true }.to_json) if current_score < user_score
   end
 
   def execution_completed

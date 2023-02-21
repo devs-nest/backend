@@ -52,6 +52,7 @@ class CodingRoom < ApplicationRecord
 
   def close_room
     CloseRoomWorker.perform_in(self.finish_at - Time.now, self.id)
+    # UpdateRoomUserWorker.perform_in(self.finish_at - (Time.now - 1.hours), self.id)
   end
 
   def generate_leaderboard
