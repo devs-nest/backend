@@ -57,6 +57,7 @@ module Api
       end
 
       def join_room
+        byebug
         room_code = params[:unique_room_code]
         # return render_error(message: 'You are a part of an active coding room') if active_user_group_check
 
@@ -97,7 +98,7 @@ module Api
 
       def active_user_list
         room_id = params[:id]
-        active_users = CodingRoomUserMapping.where(coding_room_id: room_id).includes(:user).map { |mapping| [mapping.user.name, mapping.user.username, mapping.user.image_url] }
+        active_users = CodingRoomUserMapping.where(coding_room_id: room_id).count
         render_success(users: active_users.as_json)
       end
 
