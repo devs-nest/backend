@@ -7,18 +7,21 @@ module Api
       before_action :user_auth
 
       def index
-        user_coding_room_id = CodingRoomUserMapping.find_by(user_id: @current_user.id, has_left: false)&.coding_room_id
-        user_room_details = if user_coding_room_id.blank?
+        user_coding_room_ids = CodingRoomUserMapping.where(user_id: @current_user.id).pluck(:coding_room_id)
+        user_room_details = if user_coding_room_ids.blank?
                               []
                             else
-                              CodingRoom.where(id: user_coding_room_id).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time, :finish_at)
+                              CodingRoom.where(id: user_coding_room_ids).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time, :finish_at, :is_active)
                             end
 
-        all_coding_rooms = CodingRoom.public_rooms.where.not(id: user_coding_room_id).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time, :finish_at)
-
+        all_coding_rooms = CodingRoom.public_rooms.where.not(id: user_coding_room_ids).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time, :finish_at,
+                                                                                              :is_active)
+        active_user_rooms = user_room_details.where(is_active: true)
         return render_success(message: 'There are no active rooms') if all_coding_rooms.blank? && user_room_details.blank?
 
-        render_success({ user_coding_room: user_room_details, coding_rooms: all_coding_rooms.order('finish_at desc') }.as_json)
+        render_success({ active_user_room: active_user_rooms.order('finish_at desc'),
+                         user_coding_room: user_room_details.where.not(id: active_user_rooms.pluck(:id)).order('finish_at desc'),
+                         coding_rooms: all_coding_rooms.order('finish_at desc') }.as_json)
       end
 
       def create
@@ -28,16 +31,16 @@ module Api
         number_of_questions = room_params[:number_of_questions]
         starts_at = room_params[:starts_at]
 
-        return render_error(message: 'You are a part of an active coding room') if active_user_group_check
+        # return render_error(message: 'You are a part of an active coding room') if active_user_group_check
 
         challenges = Challenge.active.where(topic: topics, difficulty: difficulty).sample(number_of_questions.to_i)
         room_details = CodingRoom.create!(name: room_params[:name], room_time: room_params[:room_time], is_private: room_params[:is_private], challenge_list: challenges.pluck(:id),
                                           user_id: @current_user.id, starts_at: starts_at, question_count: number_of_questions, difficulty: difficulty, topics: topics)
-        if room_details.starts_at >= Time.now
-          CodingRoomUserMapping.create!(user_id: @current_user.id, coding_room_id: room_details.id)
-          lb = LeaderboardDevsnest::RoomLeaderboard.new(room_details.id.to_s).call
-          lb.rank_member(@current_user.username, 0, { 'score' => 0, 'is_active' => true }.to_json)
-        end
+
+        CodingRoomUserMapping.create!(user_id: @current_user.id, coding_room_id: room_details.id)
+        lb = LeaderboardDevsnest::RoomLeaderboard.new(room_details.id.to_s).call
+        lb.rank_member(@current_user.username, 0, { 'score' => 0, 'is_active' => true }.to_json)
+
         render_success(room_details: room_details, challenge_list: challenges)
       end
 
@@ -54,15 +57,15 @@ module Api
 
       def join_room
         room_code = params[:unique_room_code]
-        return render_error(message: 'You are a part of an active coding room') if active_user_group_check
+        # return render_error(message: 'You are a part of an active coding room') if active_user_group_check
 
-        room = CodingRoom.find_by(unique_id: room_code, is_active: true)
-        return render_error(message: "Room has ended or doesn't exist") if room.nil?
+        room = CodingRoom.find_by(unique_id: room_code)
+        return render_error(message: "Room  doesn't exist") if room.nil?
 
         user_room_mapping = CodingRoomUserMapping.find_by(user_id: @current_user.id, coding_room_id: room.id)
 
         CodingRoomUserMapping.create!(user_id: @current_user.id, coding_room_id: room.id) unless user_room_mapping.present?
-        user_room_mapping.update!(has_left: false) if user_room_mapping.present? && user_room_mapping.has_left == true
+        # user_room_mapping.update!(has_left: false) if user_room_mapping.present? && user_room_mapping.has_left == true
         lb = LeaderboardDevsnest::RoomLeaderboard.new(room.id.to_s).call
         member_data = lb.members_data_for(@current_user.username)[0]
         user_score = lb.score_for(@current_user.username)
@@ -72,8 +75,8 @@ module Api
       end
 
       def show
-        user_coding_room = CodingRoomUserMapping.find_by(user_id: @current_user.id, coding_room_id: params[:id], has_left: false)&.coding_room
-        return render_error(message: 'You are not a part of any room') if user_coding_room.blank?
+        user_coding_room = CodingRoomUserMapping.find_by(user_id: @current_user.id, coding_room_id: params[:id])&.coding_room
+        return render_error(message: 'You are not a part of this room,Join Room') if user_coding_room.blank?
 
         user_room_details = CodingRoom.where(id: user_coding_room.id).select(:id, :unique_id, :name, :is_active, :starts_at, :difficulty, :question_count, :room_time, :finish_at).first
         remaining_time = (user_coding_room.finish_at.to_i - Time.current.to_i).positive? ? (user_coding_room.finish_at.to_i - Time.current.to_i).seconds : 0
@@ -93,7 +96,7 @@ module Api
 
       def active_user_list
         room_id = params[:id]
-        active_users = CodingRoomUserMapping.where(coding_room_id: room_id, has_left: false).includes(:user).map { |mapping| [mapping.user.name, mapping.user.username, mapping.user.image_url] }
+        active_users = CodingRoomUserMapping.where(coding_room_id: room_id).includes(:user).map { |mapping| [mapping.user.name, mapping.user.username, mapping.user.image_url] }
         render_success(users: active_users.as_json)
       end
 
