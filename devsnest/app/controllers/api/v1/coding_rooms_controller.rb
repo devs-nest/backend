@@ -16,7 +16,7 @@ module Api
 
         all_coding_rooms = CodingRoom.public_rooms.where.not(id: user_coding_room_ids).select(:id, :unique_id, :name, :starts_at, :topics, :difficulty, :question_count, :room_time, :finish_at,
                                                                                               :is_active)
-        active_user_rooms = user_room_details.blank? ? [] : user_room_details.where(is_active: true).blank?
+        active_user_rooms = user_room_details.blank? ? [] : user_room_details.where(is_active: true)
 
         return render_success(message: 'There are no active rooms') if all_coding_rooms.blank? && user_room_details.blank?
 
