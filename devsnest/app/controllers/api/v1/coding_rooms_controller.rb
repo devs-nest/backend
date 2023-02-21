@@ -69,7 +69,7 @@ module Api
         # user_room_mapping.update!(has_left: false) if user_room_mapping.present? && user_room_mapping.has_left == true
         lb = LeaderboardDevsnest::RoomLeaderboard.new(room.id.to_s).call
         member_data = lb.members_data_for(@current_user.username)[0]
-        user_score = lb.score_for(@current_user.username)
+        user_score = lb.score_for(@current_user.username) || 0
         current_score = member_data.present? ? JSON.parse(member_data)['score'] : 0
         lb.rank_member(@current_user.username, user_score, { 'score' => current_score, 'is_active' => true }.to_json)
         render_success(coding_room_id: room.id)
