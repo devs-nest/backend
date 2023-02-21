@@ -57,7 +57,6 @@ module Api
       end
 
       def join_room
-        byebug
         room_code = params[:unique_room_code]
         # return render_error(message: 'You are a part of an active coding room') if active_user_group_check
 
