@@ -3,6 +3,7 @@
 # Table name: bootcamp_progresses
 #
 #  id                   :bigint           not null, primary key
+#  completed            :boolean          default(FALSE)
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  course_curriculum_id :integer

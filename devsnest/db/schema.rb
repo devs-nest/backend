@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(version: 2023_02_07_070410) do
     t.string "total_runtime"
     t.string "total_memory"
     t.boolean "is_best_submission", default: false
+    t.integer "coding_room_id"
+    t.index ["challenge_id", "coding_room_id"], name: "index_algo_submissions_on_challenge_id_and_coding_room_id"
     t.index ["is_submitted", "status"], name: "index_algo_submissions_on_is_submitted_and_status"
     t.index ["user_id", "challenge_id"], name: "index_algo_submissions_on_user_id_and_challenge_id"
   end
@@ -175,13 +177,14 @@ ActiveRecord::Schema.define(version: 2023_02_07_070410) do
     t.integer "course_curriculum_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "completed", default: false
     t.index ["user_id"], name: "index_bootcamp_progresses_on_user_id"
   end
 
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "6sbhpnqcCp8"
+    t.string "cuid", default: "zca0JH7Cs5g"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -237,6 +240,7 @@ ActiveRecord::Schema.define(version: 2023_02_07_070410) do
     t.index ["is_active"], name: "index_coding_rooms_on_is_active"
     t.index ["unique_id"], name: "index_coding_rooms_on_unique_id"
   end
+
   create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "pointable_type"
     t.integer "pointable_id"
@@ -712,6 +716,19 @@ ActiveRecord::Schema.define(version: 2023_02_07_070410) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "room_best_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "challenge_id"
+    t.integer "user_id"
+    t.integer "coding_room_id"
+    t.integer "algo_submission_id"
+    t.integer "total_test_cases"
+    t.integer "passed_test_cases"
+    t.integer "score"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "challenge_id", "coding_room_id"], name: "index_room_best_submission", unique: true
+  end
+
   create_table "run_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -917,6 +934,8 @@ ActiveRecord::Schema.define(version: 2023_02_07_070410) do
 
   add_foreign_key "article_submissions", "articles"
   add_foreign_key "article_submissions", "users"
+  add_foreign_key "coding_room_user_mappings", "coding_rooms"
+  add_foreign_key "coding_room_user_mappings", "users"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
 end

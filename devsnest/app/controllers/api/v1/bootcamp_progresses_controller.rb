@@ -8,6 +8,10 @@ module Api
       before_action :user_auth
       before_action :add_course_curriculum_id, only: :create
 
+      def index
+        render json: { data: @current_user.bootcamp_progress_details }, status: :ok
+      end
+
       def complete_day
         course_curriculum_id = params.dig(:data, :attributes, :course_curriculum_id)
         user_id = User.find_by_id(params.dig(:data, :attributes, :user_id))
