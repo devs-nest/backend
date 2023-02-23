@@ -79,7 +79,7 @@ module Api
         user_coding_room = CodingRoomUserMapping.find_by(user_id: @current_user.id, coding_room_id: params[:id])&.coding_room
         return render_error(message: 'You are not a part of this room,Join Room') if user_coding_room.blank?
 
-        user_room_details = CodingRoom.where(id: user_coding_room.id).select(:id, :unique_id, :name, :is_active, :starts_at, :difficulty, :question_count, :room_time, :finish_at).first
+        user_room_details = CodingRoom.find_by(id: user_coding_room.id).attributes.except("challenge_list")
         remaining_time = (user_coding_room.finish_at.to_i - Time.current.to_i).positive? ? (user_coding_room.finish_at.to_i - Time.current.to_i).seconds : 0
         if Time.now < user_coding_room.starts_at
           return render_success(id: user_coding_room.id, challenge: [], room_details: user_room_details, remaining_time: remaining_time,
