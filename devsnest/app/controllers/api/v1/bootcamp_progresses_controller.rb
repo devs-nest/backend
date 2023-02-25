@@ -38,6 +38,7 @@ module Api
       def add_course_curriculum_id
         course_id = params.dig(:data, :attributes, :course_id)
         course_type = params.dig(:data, :attributes, :course_type)
+        params[:data][:attributes].delete(:course_type)
 
         first_curriculum_id = CourseCurriculum.where(course_id: course_id, course_type: course_type).first.try(:id)
         return if first_curriculum_id.blank?

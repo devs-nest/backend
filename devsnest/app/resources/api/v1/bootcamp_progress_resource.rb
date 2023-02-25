@@ -4,13 +4,14 @@ module Api
   module V1
     # Bootcamp Progress resource
     class BootcampProgressResource < JSONAPI::Resource
-      attributes :user_id, :course_id, :course_curriculum_id, :completed, :type, :created_at, :updated_at
+      attributes :user_id, :course_id, :course_curriculum_id, :completed, :created_at, :updated_at
+      attributes :course_type
 
       def self.creatable_fields(context)
         super - [:completed]
       end
 
-      def type
+      def course_type
         @model.course_curriculum.try(:course_type)
       end
     end
