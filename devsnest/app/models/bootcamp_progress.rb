@@ -18,5 +18,5 @@ class BootcampProgress < ApplicationRecord
   belongs_to :user
   belongs_to :course
   belongs_to :course_curriculum
-  validates_uniqueness_of :user_id, scope: :course_id
+  validates_uniqueness_of :user_id, scope: %i[course_id course_curriculum_id]
 end
