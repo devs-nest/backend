@@ -5,10 +5,10 @@ module HackerrankHelper
 
       @username = username
       @headers = {"User-Agent": "Rails"}
-      @url = "https://www.hackerrank.com/rest/contests/master/hackers/#{username}/profile"
-      @heatmap_url = "https://www.hackerrank.com/rest/hackers/#{username}/submission_histories"
-      @certificates_url = "https://www.hackerrank.com/community/v1/test_results/hacker_certificate?username=#{username}"
-      @badges_url = "https://www.hackerrank.com/rest/hackers/#{username}/badges"
+      @url = URI.encode("https://www.hackerrank.com/rest/contests/master/hackers/#{username}/profile")
+      @heatmap_url = URI.encode("https://www.hackerrank.com/rest/hackers/#{username}/submission_histories")
+      @certificates_url = URI.encode("https://www.hackerrank.com/community/v1/test_results/hacker_certificate?username=#{username}")
+      @badges_url = URI.encode("https://www.hackerrank.com/rest/hackers/#{username}/badges")
     end
 
     def profile

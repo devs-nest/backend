@@ -130,8 +130,7 @@ module Api
       end
 
       def connect_github
-        permitted_params = params.permit(%i[code]).to_h
-        byebug
+        permitted_params = params.permit(%i[code]).to_h 
         return render_error({ message: 'Github Access Code not found' }) unless permitted_params['code'].present?
 
         res = User.fetch_github_access_token(permitted_params['code'])

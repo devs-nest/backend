@@ -786,6 +786,16 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.index ["user_id", "challenge_id"], name: "index_user_challenge_scores_on_user_id_and_challenge_id", unique: true
   end
 
+  create_table "user_integration_caches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.text "leetcode_cache", size: :medium
+    t.text "gfg_cache", size: :medium
+    t.text "hackerrank_cache", size: :medium
+    t.text "github_cache", size: :medium
+    t.integer "user_integration_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "user_integrations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "leetcode_user_name"
     t.string "gfg_user_name"

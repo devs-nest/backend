@@ -137,7 +137,6 @@ class User < ApplicationRecord
   end
 
   def manage_list
-    byebug
     changes = saved_changes
     $listmonk.list_control(changes, self)
   end

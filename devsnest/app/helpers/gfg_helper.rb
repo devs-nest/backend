@@ -4,7 +4,7 @@ module GfgHelper
       raise "Username is required" if username.nil?
 
       @username = username
-      @url = "https://auth.geeksforgeeks.org/user/#{username}/"
+      @url = URI.encode("https://auth.geeksforgeeks.org/user/#{username}/")
       scraped_body
     end
 
