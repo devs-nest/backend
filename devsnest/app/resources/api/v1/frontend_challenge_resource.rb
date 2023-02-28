@@ -12,6 +12,8 @@ module Api
       filter :is_active
       attributes :files, :previous_data
 
+      paginator :paged
+
       def self.records(options = {})
         if options[:context][:action] == 'index'
           super(options).where(is_active: true)

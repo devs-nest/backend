@@ -15,6 +15,8 @@ module Api
         records.where(id: CompanyChallengeMapping.where(company_id: value.map(&:to_i)).pluck(:challenge_id))
       }
 
+      paginator :paged
+
       def self.records(options = {})
         if options[:context][:challenge_id].nil?
           super(options).where(is_active: true)
