@@ -24,6 +24,7 @@
 #  encrypted_password                 :string(255)      default(""), not null
 #  enrolled_for_course_image_url      :string(255)
 #  fe_score                           :integer          default(0)
+#  github_repos                       :text(65535)
 #  github_token                       :text(65535)
 #  github_url                         :string(255)
 #  grad_end                           :integer
@@ -110,7 +111,11 @@ class User < ApplicationRecord
   has_many :backend_challenge_scores
   has_many :coding_rooms
   has_one :college_profile
+  has_one :user_integration
 
+  has_many :user_skills
+  has_many :skills, through: :user_skills
+  
   delegate :college, to: :college_profile, allow_nil: true
 
   before_save :markdown_encode, if: :will_save_change_to_markdown?
@@ -123,6 +128,7 @@ class User < ApplicationRecord
   after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
   after_save :manage_list, if: Proc.new{ !Rails.env.test? && ENV['LISTMONK_LIST_CONTROL'] == 'true' }
   before_validation :create_referral_code, if: :is_referall_empty?
+  serialize :github_repos, Array
   has_paper_trail
 
   def update_user_fe_score_lb

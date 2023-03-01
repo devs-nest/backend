@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_10_062125) do
+ActiveRecord::Schema.define(version: 2023_02_10_093148) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -202,6 +202,14 @@ ActiveRecord::Schema.define(version: 2023_02_10_062125) do
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
+  create_table "coin_log", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "pointable_type"
+    t.integer "pointable_id"
+    t.integer "coins", default: 0
+  end
+  
   create_table "coding_room_user_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.bigint "coding_room_id", null: false
     t.bigint "user_id", null: false
@@ -233,15 +241,6 @@ ActiveRecord::Schema.define(version: 2023_02_10_062125) do
     t.index ["finish_at"], name: "index_coding_rooms_on_finish_at"
     t.index ["is_active"], name: "index_coding_rooms_on_is_active"
     t.index ["unique_id"], name: "index_coding_rooms_on_unique_id"
-  end
-
-  create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "pointable_type"
-    t.integer "pointable_id"
-    t.integer "coins", default: 0
-    t.integer "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "college_forms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -777,7 +776,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_062125) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "logo"
+    t.text "logo", size: :medium
   end
 
   create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -826,6 +825,33 @@ ActiveRecord::Schema.define(version: 2023_02_10_062125) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "challenge_id"], name: "index_user_challenge_scores_on_user_id_and_challenge_id", unique: true
+  end
+
+  create_table "user_integration_caches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.text "leetcode_cache", size: :medium
+    t.text "gfg_cache", size: :medium
+    t.text "hackerrank_cache", size: :medium
+    t.text "github_cache", size: :medium
+    t.integer "user_integration_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "user_integrations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "leetcode_user_name"
+    t.string "gfg_user_name"
+    t.string "hackerrank_user_name"
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "user_skills", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "skill_id"
+    t.integer "level"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
