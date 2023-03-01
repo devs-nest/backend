@@ -67,7 +67,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -88,7 +88,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -109,7 +109,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -130,7 +130,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -151,7 +151,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -172,7 +172,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -193,7 +193,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -214,7 +214,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -228,7 +228,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -242,7 +242,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -256,7 +256,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -281,7 +281,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -294,13 +294,13 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
     def should_not_update_the_book_if_it_is_not_found
       body = {
-        name: SecureRandom.hex(3),
+        name: SecureRandom.hex(3)
       }.with_indifferent_access
       response = HTTParty.put("#{@url}/api/v1/books/#{@book_id}", headers: @headers, body: body.to_json, timeout: 5)
       message = 'PUT - should not update the Book if it is not found with given id'
@@ -310,7 +310,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -323,7 +323,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 

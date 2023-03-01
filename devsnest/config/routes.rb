@@ -83,7 +83,7 @@ Rails.application.routes.draw do
         jsonapi_resources :reward, only: %i[create]
         jsonapi_resources :jobs, only: %i[index create update show destroy]
         jsonapi_resources :organization, only: %i[index create update show destroy]
-        jsonapi_resources :article, only: %i[create update show destroy]
+        jsonapi_resources :article, only: %i[index create update show destroy]
         jsonapi_resources :college_profile do
           collection do
             post :import_students
@@ -247,6 +247,19 @@ Rails.application.routes.draw do
         collection do
           put :update_links
           get :links, :leetcode, :gfg, :hackerrank, :github_data
+        end
+       end
+      jsonapi_resources :coding_rooms, only: %i[index create show] do
+        collection do
+          get :leaderboard
+          post :join_room
+          put :leave_room
+          put :start_room
+          get :current_user_room
+        end
+        member do
+          get :user_submissions
+          get :active_user_list
         end
       end
     end

@@ -19,6 +19,7 @@
 #  discord_username                   :string(255)
 #  dob                                :date
 #  dsa_skill                          :integer          default(0)
+#  dsa_streak                         :integer          default(0)
 #  email                              :string(255)      default(""), not null
 #  encrypted_password                 :string(255)      default(""), not null
 #  enrolled_for_course_image_url      :string(255)
@@ -39,6 +40,7 @@
 #  is_verified                        :boolean          default(FALSE)
 #  kind                               :integer          default(0)
 #  known_from                         :string(255)
+#  last_dsa_streak                    :integer          default(0)
 #  linkedin_url                       :string(255)
 #  login_count                        :integer          default(0)
 #  markdown                           :text(65535)
@@ -55,6 +57,7 @@
 #  role                               :integer
 #  school                             :string(255)
 #  score                              :float(24)        default(0.0)
+#  streak_end_date                    :date
 #  update_count                       :integer          default(0)
 #  user_type                          :integer          default("user")
 #  username                           :string(255)      default(""), not null
@@ -99,12 +102,14 @@ class User < ApplicationRecord
   has_many :certifications, dependent: :delete_all
   has_many :manual_login_changelog
   has_many :user_challenge_scores
+  has_many :room_best_submissions
   has_many :frontend_challenge_scores
   has_many :coin_logs
   has_many :job_applications
   has_many :article_submissions
   has_many :backend_challenges
   has_many :backend_challenge_scores
+  has_many :coding_rooms
   has_one :college_profile
   has_one :user_integration
 
@@ -560,10 +565,10 @@ class User < ApplicationRecord
       user = User.find_by_id(id)
       {
         name: user.name,
-        dsa_solved: user.solved,
-        dsa_solved_by_difficulty: user.total_by_difficulty,
-        fe_solved: user.fe_solved,
-        fe_solved_by_topic: user.fe_total_by_topic,
+        dsa_solved: Challenge.count_solved(user.id),
+        dsa_solved_by_difficulty: Challenge.split_by_difficulty,
+        fe_solved: FrontendChallenge.count_solved(user.id),
+        fe_solved_by_topic: FrontendChallenge.split_by_topic,
         tha_details: user.tha_details, # Bootcamp Progress
         leaderboard_details: user.leaderboard_details('dsa'),
         fe_leaderboard_details: user.leaderboard_details('frontend')
