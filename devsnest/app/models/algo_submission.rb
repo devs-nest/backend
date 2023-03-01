@@ -128,6 +128,8 @@ class AlgoSubmission < ApplicationRecord
       ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
       AlgoSubmission.update_best_submission(best_submission, previous_best_submission, id, new_score)
     end
+
+    Rails.cache.delete("user_algo_submission_#{user_id}_#{challenge_id}") if Rails.cache.fetch("user_algo_submission_#{user_id}_#{challenge_id}") != 'solved'
   end
 
   def execution_completed
