@@ -48,7 +48,7 @@ class BootcampProgress < ApplicationRecord
     end
     EmailSenderWorker.perform_async(user.email, {
                                       'username': user.username,
-                                      'course_name': course.name.upcase,
+                                      'course_name': course_curriculum.course_type.upcase,
                                       'certificate_link': "https://devsnest.in/certificate/#{certificate.cuid}"
                                     },
                                     template_id)
