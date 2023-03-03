@@ -30,7 +30,7 @@ class BootcampProgress < ApplicationRecord
 
     EmailSenderWorker.perform_async(user.email, {
                                       'username': user.username,
-                                      'course_name': course.name.upcase
+                                      'course_name': course_curriculum.course_type.upcase
                                     },
                                     template_id)
   end
