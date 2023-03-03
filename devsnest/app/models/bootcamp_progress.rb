@@ -29,7 +29,7 @@ class BootcampProgress < ApplicationRecord
     return if user.blank? || template_id.blank?
 
     EmailSenderWorker.perform_async(user.email, {
-                                      'username': user.username,
+                                      'username': user.name.blank? ? user.username : user.name.titleize,
                                       'course_name': course_curriculum.course_type.upcase
                                     },
                                     template_id)
@@ -37,7 +37,7 @@ class BootcampProgress < ApplicationRecord
 
   def send_completion_mail
     user = User.find_by_id(user_id)
-    course = Course.find_by_id(course_id)
+    course_curriculum = CourseCurriculum.find_by_id(course_curriculum_id)
     template_id = EmailTemplate.find_by(name: 'bootcamp_completion_mail').try(:template_id)
     return if user.blank? || template_id.blank?
 
@@ -47,7 +47,7 @@ class BootcampProgress < ApplicationRecord
       certificate = Certification.create(user_id: user.id, certificate_type: type, title: Certification.type_to_title(type), cuid: SecureRandom.base64(10).gsub('/', '_').gsub(/=+$/, ''))
     end
     EmailSenderWorker.perform_async(user.email, {
-                                      'username': user.username,
+                                      'username': user.name.blank? ? user.username : user.name.titleize,
                                       'course_name': course_curriculum.course_type.upcase,
                                       'certificate_link': "https://devsnest.in/certificate/#{certificate.cuid}"
                                     },
