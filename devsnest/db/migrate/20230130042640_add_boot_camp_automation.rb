@@ -6,7 +6,7 @@ class AddBootCampAutomation < ActiveRecord::Migration[6.0]
       t.integer :course_curriculum_id
       t.boolean :completed, default: false
       
-      t.index %i[user_id], unique: true
+      t.index %i[user_id]
 
       t.timestamps
     end

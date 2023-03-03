@@ -73,4 +73,15 @@ class Certification < ApplicationRecord
     end
     invalid_discord_ids
   end
+
+  def self.get_type_from_course_type(course_type)
+    case course_type
+    when 'dsa'
+      'course_dsa'
+    when 'frontend'
+      'course_frontend'
+    when 'backend'
+      'course_backend'
+    end
+  end
 end
