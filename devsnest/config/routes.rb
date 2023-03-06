@@ -243,12 +243,17 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :article_submissions, only: %i[create show]
+      jsonapi_resources :bootcamp_progresses, only: %i[create index] do
+        collection do
+          post :complete_day
+        end
+      end
       jsonapi_resources :user_integration, only: %i[] do
         collection do
           put :update_links
           get :links, :leetcode, :gfg, :hackerrank, :github_data
         end
-       end
+      end
       jsonapi_resources :coding_rooms, only: %i[index create show] do
         collection do
           get :leaderboard

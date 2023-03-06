@@ -451,7 +451,8 @@ module Api
           leaderboard_details: user.leaderboard_details('dsa'), # Leaderboard Details
           fe_solved: FrontendChallenge.count_solved(user.id),
           fe_total_by_topic: FrontendChallenge.split_by_topic,
-          fe_leaderboard_details: user.leaderboard_details('frontend')
+          fe_leaderboard_details: user.leaderboard_details('frontend'),
+          bootcamp_progress_details: user.bootcamp_progress_details
         }
         render_success(data.as_json)
       end
