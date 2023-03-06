@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: bootcamp_progresses
@@ -24,7 +26,7 @@ class BootcampProgress < ApplicationRecord
   after_update :send_completion_mail, if: ->(obj) { obj.previous_changes.key?('completed') && obj.completed == true }
 
   def send_welcome_mail
-    user = User.find_by_id(user_id)
+    user = User.get_by_cache(user_id)
     template_id = EmailTemplate.find_by(name: 'bootcamp_welcome_mail').try(:template_id)
     return if user.blank? || template_id.blank?
 
@@ -36,8 +38,8 @@ class BootcampProgress < ApplicationRecord
   end
 
   def send_completion_mail
-    user = User.find_by_id(user_id)
-    course_curriculum = CourseCurriculum.find_by_id(course_curriculum_id)
+    user = User.get_by_cache(user_id)
+    course_curriculum = CourseCurriculum.get_by_cache(course_curriculum_id)
     template_id = EmailTemplate.find_by(name: 'bootcamp_completion_mail').try(:template_id)
     return if user.blank? || template_id.blank?
 

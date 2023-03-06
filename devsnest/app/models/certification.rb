@@ -75,13 +75,7 @@ class Certification < ApplicationRecord
   end
 
   def self.get_type_from_course_type(course_type)
-    case course_type
-    when 'dsa'
-      'course_dsa'
-    when 'frontend'
-      'course_frontend'
-    when 'backend'
-      'course_backend'
-    end
+    course_type_to_type = { 'dsa': 'course_dsa', 'frontend': 'course_frontend', 'backend': 'course_backend' }
+    course_type_to_type.fetch(course_type.to_sym, nil)
   end
 end

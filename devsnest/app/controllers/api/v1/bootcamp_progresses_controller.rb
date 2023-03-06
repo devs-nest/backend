@@ -14,12 +14,12 @@ module Api
 
       def complete_day
         course_curriculum_id = params.dig(:data, :attributes, :course_curriculum_id)
-        user_id = User.find_by_id(params.dig(:data, :attributes, :user_id))
-        bootcamp_progress = BootcampProgress.find_by(user_id: user_id, course_curriculum_id: course_curriculum_id)
+        user = User.get_by_cache(params.dig(:data, :attributes, :user_id))
+        bootcamp_progress = BootcampProgress.find_by(user_id: user.id, course_curriculum_id: course_curriculum_id)
         return render_error(message: 'Invalid Input.') if bootcamp_progress.blank?
 
-        course_curriculum = CourseCurriculum.find_by_id(course_curriculum_id)
-        user_assignment_data = course_curriculum.user_assignment_data(User.find_by_id(user_id))
+        course_curriculum = CourseCurriculum.get_by_cache(course_curriculum_id)
+        user_assignment_data = course_curriculum.user_assignment_data(user)
         all_questions_completed = user_assignment_data.select { |assignment| [0, 1].include?(assignment[:status]) }.count.zero?
         return render_error(message: 'Questions Not Solved.') unless all_questions_completed
 
