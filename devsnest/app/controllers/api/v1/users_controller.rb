@@ -436,7 +436,8 @@ module Api
 
       # Ex:- :default =>''
       def dashboard_details
-        user = @current_user
+        target_user = User.find_by(username: params[:username])
+        user = target_user || @current_user
         return render_not_found({ message: 'User not found' }) if user.blank?
 
         data = {
