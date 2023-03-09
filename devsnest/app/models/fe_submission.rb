@@ -40,5 +40,7 @@ class FeSubmission < ApplicationRecord
     elsif frontend_challenge_score.score < final_score
       frontend_challenge_score.update!(score: final_score, fe_submission_id: id, passed_test_cases: passed_test_cases, total_test_cases: total_test_cases)
     end
+
+    Rails.cache.delete("user_fe_submission_#{user_id}_#{frontend_challenge_id}") if Rails.cache.fetch("user_fe_submission_#{user_id}_#{frontend_challenge_id}") != 'solved'
   end
 end

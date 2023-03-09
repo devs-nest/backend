@@ -15,6 +15,8 @@ module Api
         records.where(id: CompanyChallengeMapping.where(company_id: value.map(&:to_i)).pluck(:challenge_id))
       }
 
+      paginator :paged
+
       def self.records(options = {})
         if options[:context][:challenge_id].nil?
           super(options).where(is_active: true)
@@ -27,10 +29,14 @@ module Api
         user = context[:user]
         return 'signin to check submissions' if user.nil?
 
-        algo_submission = user.user_challenge_scores.find_by(challenge_id: @model.id)
-        return 'unsolved' if algo_submission.blank?
-
-        algo_submission.passed_test_cases == algo_submission.total_test_cases ? 'solved' : 'attempted'
+        Rails.cache.fetch("user_algo_submission_#{user.id}_#{@model.id}") do
+          submission = user.user_challenge_scores.find_by(challenge_id: @model.id)
+          if submission.blank?
+            'unsolved'
+          else
+            submission.passed_test_cases == submission.total_test_cases ? 'solved' : 'attempted'
+          end
+        end
       end
     end
   end

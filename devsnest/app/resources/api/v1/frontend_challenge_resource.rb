@@ -12,6 +12,8 @@ module Api
       filter :is_active
       attributes :files, :previous_data
 
+      paginator :paged
+
       def self.records(options = {})
         if options[:context][:action] == 'index'
           super(options).where(is_active: true)
@@ -60,10 +62,14 @@ module Api
         user = context[:user]
         return 'signin to check submissions' if user.nil?
 
-        submission = user.frontend_challenge_scores.find_by(frontend_challenge_id: @model.id)
-        return 'unsolved' if submission.blank?
-
-        submission.passed_test_cases == submission.total_test_cases ? 'solved' : 'attempted'
+        Rails.cache.fetch("user_fe_submission_#{user.id}_#{@model.id}") do
+          submission = user.frontend_challenge_scores.find_by(frontend_challenge_id: @model.id)
+          if submission.blank?
+            'unsolved'
+          else
+            submission.passed_test_cases == submission.total_test_cases ? 'solved' : 'attempted'
+          end
+        end
       end
 
       def previous_data
