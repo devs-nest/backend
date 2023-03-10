@@ -3,10 +3,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.2'
+ruby '3.1.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.4', '>= 6.0.4'
+gem 'rails', '~> 7', '>= 7'
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.5.2'
 # Use Puma as the app server
@@ -55,7 +55,7 @@ gem 'jsonapi-resources', '~> 0.10.2'
 
 gem 'httparty', '0.18.1'
 gem 'redis', '4.2.5'
-gem 'redis-namespace', '1.8.0'
+gem 'redis-namespace', '~> 1.10'
 gem 'redis-rails', '5.0.2'
 gem 'sidekiq-cron', '1.2.0'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -67,7 +67,7 @@ gem 'rubocop', '~> 1.16', require: false
 
 gem 'newrelic_rpm', '~> 7.1'
 
-gem 'audited', '~> 4.9'
+gem 'audited', '~> 5.3', '>= 5.3.2'
 
 gem 'leaderboard', '~> 3.12', '>= 3.12.1'
 
@@ -84,3 +84,5 @@ gem 'paper_trail'
 gem "octokit", "~> 4.0"
 
 gem 'rbnacl'
+
+gem 'faraday-retry', '~> 2.1'
