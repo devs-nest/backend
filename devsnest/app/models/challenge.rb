@@ -39,6 +39,7 @@ class Challenge < ApplicationRecord
   has_many :company_challenge_mappings
   has_many :companies, through: :company_challenge_mappings
   has_many :user_challenge_scores
+  has_many :room_best_submissions
   belongs_to :user
   has_many :assingment_questions
   after_create :create_slug
@@ -47,6 +48,8 @@ class Challenge < ApplicationRecord
   # before_update :re_evaluate_user_scores, if: :will_save_change_to_score?
   before_update :recalculate_user_scores, if: :will_save_change_to_is_active?
   after_save :remove_saved_templates
+
+  scope :active, -> { where(is_active: true) }
   Language.all.each do |language|
     require "algo_templates/#{language.name}"
   end

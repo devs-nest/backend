@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :user_integrations
   get '/health_check', to: 'health_check#index'
 
   # Sidekiq Web UI, only for admins.
@@ -82,7 +83,7 @@ Rails.application.routes.draw do
         jsonapi_resources :reward, only: %i[create]
         jsonapi_resources :jobs, only: %i[index create update show destroy]
         jsonapi_resources :organization, only: %i[index create update show destroy]
-        jsonapi_resources :article, only: %i[create update show destroy]
+        jsonapi_resources :article, only: %i[index create update show destroy]
         jsonapi_resources :college_profile do
           collection do
             post :import_students
@@ -110,6 +111,7 @@ Rails.application.routes.draw do
           get :check_user_details
           get :dashboard_details, :github_ping, :repo_files
           post :sourcecode_io, :disconnect_user
+          post :add_repo, :remove_repo
         end
       end
 
@@ -117,6 +119,7 @@ Rails.application.routes.draw do
       jsonapi_resources :submissions, only: %i[create]
       jsonapi_resources :frontend_submissions, only: %i[create]
       jsonapi_resources :frontend_questions, only: %i[show]
+      jsonapi_resources :user_skill, only: %i[index create]
       jsonapi_resources :groups, only: %i[show index create update] do
         jsonapi_relationships
         collection do
@@ -240,6 +243,30 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :article_submissions, only: %i[create show]
+      jsonapi_resources :bootcamp_progresses, only: %i[create index] do
+        collection do
+          post :complete_day
+        end
+      end
+      jsonapi_resources :user_integration, only: %i[] do
+        collection do
+          put :update_links
+          get :links, :leetcode, :gfg, :hackerrank, :github_data
+        end
+      end
+      jsonapi_resources :coding_rooms, only: %i[index create show] do
+        collection do
+          get :leaderboard
+          post :join_room
+          put :leave_room
+          put :start_room
+          get :current_user_room
+        end
+        member do
+          get :user_submissions
+          get :active_user_list
+        end
+      end
     end
   end
 end

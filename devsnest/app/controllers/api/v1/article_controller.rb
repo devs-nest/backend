@@ -7,9 +7,17 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :user_auth, only: %i[create_submission]
 
+      def index
+        resource_type = params[:resource_type]
+        resource = Article.all.where(resource_type: resource_type)
+        return render_not_found('resource') if resource.blank?
+
+        render_success(data: resource)
+      end
+
       def fetch_by_slug
         article = Article.find_by(slug: params[:slug])
-        return render_not_found('article') if article.nil?
+        return render_not_found('resource') if article.nil?
 
         user_submission = article.article_submissions&.find_by(user_id: @current_user&.id)
 

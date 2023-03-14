@@ -17,6 +17,7 @@ module Api
       attributes :type, :user_group_slug
       attributes :batch_leader_details, :user_group_details, :referred_by_code, :current_module
       attributes :dsa_rank, :fe_rank
+      attributes :dsa_streak
 
       def markdown
         @model.markdown.dup.encode('ISO-8859-1').force_encoding('utf-8') unless @model.markdown.blank?
@@ -110,6 +111,10 @@ module Api
 
       def fe_rank
         @model.leaderboard_details('frontend')
+      end
+      
+      def dsa_streak
+        @model.dsa_streak
       end
     end
   end

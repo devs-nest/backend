@@ -58,7 +58,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -75,7 +75,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -92,7 +92,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -109,7 +109,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -126,7 +126,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -143,7 +143,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -161,7 +161,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -177,7 +177,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -192,7 +192,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -207,7 +207,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
@@ -222,7 +222,7 @@ module BackendTest
       else
         @failed << message
       end
-    rescue Net::ReadTimeout
+    rescue StandardError
       @failed << message
     end
 
