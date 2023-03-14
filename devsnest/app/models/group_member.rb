@@ -18,7 +18,7 @@
 #
 # Indexes
 #
-#  index_group_members_on_user_id               (user_id) UNIQUE
+#  index_group_members_on_user_id               (user_id)
 #  index_group_members_on_user_id_and_group_id  (user_id,group_id) UNIQUE
 #
 class GroupMember < ApplicationRecord
