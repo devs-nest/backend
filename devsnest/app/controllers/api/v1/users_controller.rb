@@ -8,7 +8,7 @@ module Api
       before_action :simple_auth, only: %i[report]
       before_action :bot_auth, only: %i[left_discord create index get_token update_discord_username check_group_name check_user_detais]
       before_action :user_auth,
-                    only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator create_github_commit connect_github
+                    only: %i[logout me update connect_discord onboard markdown_encode upload_files email_verification_initiator dashboard_details create_github_commit connect_github
                              create_github_repo repo_details sourcecode_io leaderboard]
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
@@ -436,9 +436,8 @@ module Api
 
       # Ex:- :default =>''
       def dashboard_details
-        target_user = User.find_by(username: params[:username])
-        user = target_user || @current_user
-        return render_not_found('user') if user.blank?
+        user = @current_user
+        return render_not_found({ message: 'User not found' }) if user.blank?
 
         data = {
           accepted_in_course: user.accepted_in_course, # To distinguish from old user vs new user
