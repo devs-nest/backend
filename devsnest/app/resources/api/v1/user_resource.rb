@@ -16,6 +16,7 @@ module Api
       attributes :markdown, :bio
       attributes :type, :user_group_slug
       attributes :batch_leader_details, :user_group_details, :referred_by_code, :current_module
+      attributes :dsa_rank, :fe_rank
       attributes :dsa_streak
 
       def markdown
@@ -104,6 +105,14 @@ module Api
         course.try(:current_module)
       end
 
+      def dsa_rank
+        @model.leaderboard_details('dsa')
+      end
+
+      def fe_rank
+        @model.leaderboard_details('frontend')
+      end
+      
       def dsa_streak
         @model.dsa_streak
       end
