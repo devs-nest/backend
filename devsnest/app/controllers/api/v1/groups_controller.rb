@@ -106,6 +106,10 @@ module Api
 
         return render_error(message: 'Group not found') if group.nil?
 
+        GroupMember.where(user_id: user.id).includes(:group).each do |group_member|
+          return render_error(message: "User already present in the #{group.bootcamp_type} group") if group_member.group.bootcamp_type == group.bootcamp_type
+        end
+
         ActiveRecord::Base.transaction do
           group.group_members.create!(user_id: user.id)
           user.update(group_assigned: true)
@@ -120,7 +124,7 @@ module Api
         render_error(message: e)
       rescue ActiveRecord::RecordNotUnique
         user.update(group_assigned: true)
-        render_error(message: 'User already in a group')
+        render_error(message: 'User already present in the given group')
       rescue StandardError => e
         render_error(message: e)
       end
@@ -155,7 +159,10 @@ module Api
       def create_validations
         return render_error(message: 'User not connected to discord') unless @current_user.discord_active
 
-        return render_error(message: "User in a group can't create another group") if @current_user.group_assigned || GroupMember.find_by_user_id(@current_user.id).present?
+        bootcamp_type = params.dig(:data, :attributes, :bootcamp_type) || 'dsa'
+        GroupMember.where(user_id: @current_user.id).includes(:group).each do |group_member|
+          return render_error(message: "User in the #{bootcamp_type} group can't create another #{bootcamp_type} group") if group_member.group.bootcamp_type == bootcamp_type
+        end
 
         render_error(message: 'Group with this name already exists') if Group.find_by(name: params[:data][:attributes][:name]).present?
 

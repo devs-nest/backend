@@ -6,7 +6,7 @@ module Api
     class GroupResource < JSONAPI::Resource
       # caching
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
-                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time, :activity_point
+                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time, :activity_point, :bootcamp_type
       has_many :group_members
       filter :classification
       filter :language
@@ -14,6 +14,7 @@ module Api
       filter :members, apply: lambda { |records, value, _options|
         records.where('members_count >= ? AND members_count <= ?', value[0], value[1])
       }
+      filter :bootcamp_type
 
       def description
         @model.description.dup.encode('ISO-8859-1').force_encoding('utf-8')
