@@ -213,14 +213,6 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
-  create_table "coin_log", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.string "pointable_type"
-    t.integer "pointable_id"
-    t.integer "coins", default: 0
-  end
-  
   create_table "coding_room_user_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.bigint "coding_room_id", null: false
     t.bigint "user_id", null: false
@@ -252,6 +244,15 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.index ["finish_at"], name: "index_coding_rooms_on_finish_at"
     t.index ["is_active"], name: "index_coding_rooms_on_is_active"
     t.index ["unique_id"], name: "index_coding_rooms_on_unique_id"
+  end
+
+  create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "pointable_type"
+    t.integer "pointable_id"
+    t.integer "coins", default: 0
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "college_forms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -934,6 +935,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.integer "dsa_streak", default: 0
     t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
+    t.text "github_repos"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
