@@ -130,13 +130,6 @@ module Api
         }
         render_success(data)
       end
-
-      private
-
-      def active_user_group_check
-        user_coding_rooms = CodingRoomUserMapping.where(user_id: @current_user.id, has_left: false).pluck(&:coding_room_id)
-        CodingRoom.where(id: user_coding_rooms, is_active: true).any?
-      end
     end
   end
 end

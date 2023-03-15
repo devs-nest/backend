@@ -186,4 +186,12 @@ FactoryBot.define do
 
   factory :email_template do
   end
+
+  factory :coding_room do
+    sequence(:name) { |n| "test#{n}" }
+    sequence(:unique_id) { SecureRandom.hex(4) }
+    sequence(:room_time) { [0, 1, 2].sample }
+    sequence(:difficulty) { [0, 1, 2].sample }
+    sequence(:topics) { [0, 1, 2].sample }
+  end
 end
