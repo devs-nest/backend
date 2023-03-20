@@ -19,6 +19,11 @@ module Api
         def self_created_challenges
           render_success({ id: @current_user.id, type: 'backend_challenges', challenges: @current_user.backend_challenges })
         end
+
+        def active_questions
+          backend_challenges = BackendChallenge.where(is_active: true).select('id', 'name')
+          render_success({ type: 'backend_challenges', backend_challenges: backend_challenges })
+        end
       end
     end
   end
