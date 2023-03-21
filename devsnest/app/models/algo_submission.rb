@@ -18,18 +18,22 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  challenge_id       :integer
+#  coding_room_id     :integer
 #  user_id            :integer
 #
 # Indexes
 #
-#  index_algo_submissions_on_is_submitted_and_status   (is_submitted,status)
-#  index_algo_submissions_on_user_id_and_challenge_id  (user_id,challenge_id)
+#  index_algo_submissions_on_challenge_id_and_coding_room_id  (challenge_id,coding_room_id)
+#  index_algo_submissions_on_is_submitted_and_status          (is_submitted,status)
+#  index_algo_submissions_on_user_id_and_challenge_id         (user_id,challenge_id)
 #
 class AlgoSubmission < ApplicationRecord
   belongs_to :user
   belongs_to :challenge
+  belongs_to :coding_room, optional: true
   after_commit :assign_score_to_user, if: :execution_completed, on: %i[create update]
   after_commit :expire_cache
+  after_commit :assign_score_into_rooms, if: :execution_completed, on: %i[create update]
   include AlgoHelper
 
   scope :accessible, -> { where.not(status: 'Stale') }
@@ -114,6 +118,7 @@ class AlgoSubmission < ApplicationRecord
     return unless challenge.is_active || is_submitted
 
     score_will_change = false
+    user.update(dsa_streak: user.dsa_streak + 1, streak_end_date: DateTime.current.to_date) if user.streak_end_date.blank? || DateTime.current.to_date > user.streak_end_date
 
     previous_best_submission = UserChallengeScore.find_by(user_id: user.id, challenge_id: challenge.id)
 
@@ -128,10 +133,61 @@ class AlgoSubmission < ApplicationRecord
       ch_lb.rank_member(user.username.to_s, challenge.score * (passed_test_cases.to_f / total_test_cases))
       AlgoSubmission.update_best_submission(best_submission, previous_best_submission, id, new_score)
     end
+
+    Rails.cache.delete("user_algo_submission_#{user_id}_#{challenge_id}") if Rails.cache.fetch("user_algo_submission_#{user_id}_#{challenge_id}") != 'solved'
+  end
+
+  def assign_score_into_rooms
+    return unless coding_room_id.present?
+
+    user_room_map = CodingRoomUserMapping.find_by(coding_room_id: coding_room_id, user_id: user_id)
+    return if user_room_map.nil?
+
+    user = User.get_by_cache(user_id)
+    challenge = Challenge.find(challenge_id)
+
+    previous_best_submission = RoomBestSubmission.find_by(user_id: user.id, challenge_id: challenge_id, coding_room_id: coding_room_id)
+
+    return unless previous_best_submission.nil? || previous_best_submission.passed_test_cases < passed_test_cases
+
+    best_submission = self
+    new_score = (passed_test_cases / total_test_cases.to_f) * challenge.score || 0
+    AlgoSubmission.update_room_best_submission(coding_room_id, best_submission, id, new_score)
+    user_score = RoomBestSubmission.where(coding_room_id: coding_room_id, user_id: user.id).sum(:score)
+    lb = LeaderboardDevsnest::RoomLeaderboard.new(coding_room_id.to_s).call
+    member_data = lb.members_data_for(user.username)[0]
+    current_score = member_data.present? ? JSON.parse(member_data)['score'] : 0
+    finish_at = CodingRoom.find(coding_room_id).finish_at
+    time_left = finish_at > Time.now ? (finish_at - Time.now) : 0
+    lb.rank_member(user.username, (time_left * user_score), { 'score' => user_score, 'is_active' => true }.to_json) if current_score < user_score
   end
 
   def execution_completed
     ['Pending', 'Compilation Error'].exclude?(status) && is_submitted
+  end
+
+  def self.update_room_best_submission(room_id, best_submission, current_submission_id, score)
+    entry = RoomBestSubmission.find_by(user_id: best_submission.user_id, challenge_id: best_submission.challenge_id, coding_room_id: room_id)
+
+    if entry.present?
+      entry.assign_attributes({
+                                score: score,
+                                algo_submission_id: current_submission_id,
+                                passed_test_cases: best_submission.passed_test_cases,
+                                total_test_cases: best_submission.total_test_cases
+                              })
+      entry.save!
+    else
+      RoomBestSubmission.create(
+        user_id: best_submission.user_id,
+        challenge_id: best_submission.challenge_id,
+        coding_room_id: room_id,
+        score: score,
+        algo_submission_id: current_submission_id,
+        passed_test_cases: best_submission.passed_test_cases,
+        total_test_cases: best_submission.total_test_cases
+      )
+    end
   end
 
   def self.update_best_submission(best_submission, _previous_best_submission, current_submission_id, score)
