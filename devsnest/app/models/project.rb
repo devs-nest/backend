@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: projects
@@ -12,4 +14,25 @@
 #
 class Project < ApplicationRecord
   belongs_to :challenge, polymorphic: true
+  after_create :make_project_true
+  after_destroy :make_project_false
+
+  def challenge_data
+    return { title: challenge.title, slug: challenge.slug } if challenge_type == 'Article'
+
+    {
+      name: challenge.name,
+      difficulty: challenge.difficulty,
+      slug: challenge.slug,
+      score: challenge.score
+    }
+  end
+
+  def make_project_true
+    challenge.update!(is_project: true) if challenge_type != 'Article'
+  end
+
+  def make_project_false
+    challenge.update!(is_project: false) if challenge_type != 'Article'
+  end
 end

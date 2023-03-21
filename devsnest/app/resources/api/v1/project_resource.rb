@@ -2,18 +2,12 @@
 
 module Api
   module V1
+    # Projects resource
     class ProjectResource < JSONAPI::Resource
       attributes :banner, :challenge_details, :challenge_id, :challenge_type, :submission_status, :intro
 
       def challenge_details
-        return { title: @model.challenge.title, slug: @model.challenge.slug } if challenge_type == 'Article'
-
-        {
-          name: @model.challenge.name,
-          difficulty: @model.challenge.difficulty,
-          slug: @model.challenge.slug,
-          score: @model.challenge.score
-        }
+        @model.challenge_data
       end
 
       def submission_status
