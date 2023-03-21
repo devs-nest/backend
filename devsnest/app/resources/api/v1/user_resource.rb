@@ -91,7 +91,11 @@ module Api
       end
 
       def user_group_details
-        GroupMember.find_by(user_id: @model.id)&.group&.as_json
+        groups = []
+        GroupMember.where(user_id: @model.id).includes(:group).each do |group_member|
+          groups << group_member.group
+        end
+        groups.as_json
       end
 
       def referred_by_code
