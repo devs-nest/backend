@@ -151,7 +151,7 @@ GEM
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
     json (2.6.3)
-    jsonapi-resources (0.10.7)
+    jsonapi-resources (0.9.12)
       activerecord (>= 4.1)
       concurrent-ruby
       railties (>= 4.1)
@@ -323,7 +323,7 @@ GEM
       faraday
     sentry-sidekiq (4.2.0)
       sentry-ruby-core (~> 4.2.0)
-    sidekiq (6.3.1)
+    sidekiq (6.5.1)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -383,11 +383,11 @@ DEPENDENCIES
   factory_bot_rails (~> 6.2)
   faraday-retry (~> 2.1)
   httparty (= 0.18.1)
-  jsonapi-resources (~> 0.10.2)
+  jsonapi-resources (~> 0.9.12)
   leaderboard (~> 3.12, >= 3.12.1)
   listen (~> 3.2)
   mimemagic!
-  mysql2 (~> 0.5.2)
+  mysql2 (~> 0.5.5)
   newrelic_rpm (~> 7.1)
   octokit (~> 4.0)
   paper_trail
@@ -405,7 +405,7 @@ DEPENDENCIES
   sentry-rails (= 4.2.1)
   sentry-ruby (= 4.2.1)
   sentry-sidekiq (= 4.2.0)
-  sidekiq (~> 6.3.1, >= 6.3.1)
+  sidekiq (~> 6.4, >= 6.4)
   sidekiq-cron (= 1.2.0)
   simplecov (~> 0.21.2)
   spring (= 2.1.1)

@@ -8,7 +8,7 @@ ruby '2.6.6'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.6', '>= 6.0.6'
 # Use mysql as the database for Active Record
-gem 'mysql2', '~> 0.5.2'
+gem 'mysql2', '~> 0.5.5'
 # Use Puma as the app server
 gem 'puma', '~> 4.3.10'
 # gem 'mimemagic', github: 'mimemagicrb/mimemagic', ref: '01f92d86d15d85cfd0f20dabd025dcbd36a8a60f'
@@ -25,7 +25,7 @@ gem 'devise-jwt', '~> 0.10.0'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem 'sidekiq', '~> 6.3.1', '>= 6.3.1'
+gem 'sidekiq', '~> 6.4', '>= 6.4'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -51,8 +51,7 @@ gem 'sentry-ruby', '4.2.1'
 gem 'sentry-sidekiq', '4.2.0'
 
 gem 'dotenv', '~> 2.7', '>= 2.7.6'
-gem 'jsonapi-resources', '~> 0.10.2'
-
+gem 'jsonapi-resources', '~> 0.9.12'
 gem 'httparty', '0.18.1'
 gem 'redis', '4.2.5'
 gem 'redis-namespace', '~> 1.10'
