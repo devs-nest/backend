@@ -57,8 +57,8 @@ module Api
         end
 
         def active_questions
-          frontend_challenges = FrontendChallenge.where(is_active: true).select('id', 'name')
-          render_success({ type: 'frontend_challenges', frontend_challenges: frontend_challenges })
+          frontend_challenges = FrontendChallenge.where(is_active: true).select('id', 'name', 'slug')
+          render_success({ type: 'frontend_challenges', challenges: frontend_challenges })
         end
       end
     end

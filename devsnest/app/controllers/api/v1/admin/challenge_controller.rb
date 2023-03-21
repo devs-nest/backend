@@ -79,7 +79,7 @@ module Api
         end
 
         def active_questions
-          challenges = Challenge.where(is_active: true).select('id', 'name')
+          challenges = Challenge.where(is_active: true).select('id', 'name', 'slug')
           render_success({ type: 'challenges', challenges: challenges })
         end
       end
