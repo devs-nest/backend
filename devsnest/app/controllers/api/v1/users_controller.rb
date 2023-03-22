@@ -492,10 +492,10 @@ module Api
         return render_unauthorized unless user.id == @current_user.id
         return render_error(message: 'Can\'t decouple the user') unless user.discord_active && user.web_active
 
-        user.un_merge_discord_userb
+        user.un_merge_discord_user
         render_success({ message: 'User is decoupled!' })
       end
-      
+
       def add_repo
         repo_name = params.dig(:data, :attributes, :repository_name)
         return render_error({ message: 'Repository does not exist' }) if GithubDataHelper.does_repository_exists(@current_user.github_client.login, repo_name)

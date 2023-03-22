@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 # frozen_string_literal: true
 
-=======
->>>>>>> 7b58c63f5874672c86571b8c251c024a32c5c969
 # == Schema Information
 #
 # Table name: projects
