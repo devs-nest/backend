@@ -131,6 +131,16 @@ module Api
         render_success(data)
       end
 
+      def update_room_details
+        params.require(:data).permit(attributes: %i[name id])
+        coding_room = CodingRoom.find_by(id: params[:data][:attributes][:id])
+        return render_error(message: 'Room Does not exists') if coding_room.blank?
+        return render_error(message: 'Permission Denied, Ask Room Creater to update the room') if @current_user.id != coding_room.user_id
+
+        coding_room.update!(name: params[:data][:attributes][:name])
+        render_success(message: 'Room Details Updated')
+      end
+
       private
 
       def active_user_group_check
