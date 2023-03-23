@@ -26,9 +26,19 @@ module Api
         def fetch_custom_image
           prefix = params[:search] || ''
           bucket = "#{ENV['S3_PREFIX']}custom-images"
-          s3_files = $s3_resource.bucket(bucket).objects(prefix: prefix).collect(&:key)
-          public_urls = s3_files.map { |e| "https://#{ENV['S3_PREFIX']}custom-images.s3.ap-south-1.amazonaws.com/#{e}" }
-          api_render(200, { id: 1, type: 'custom_images', public_urls: public_urls })
+          marker = params[:marker] || ''
+
+          list_objects = $s3.list_objects(bucket: bucket, prefix: prefix, max_keys: 20, marker: marker)
+          public_urls = []
+          list_objects[:contents].each do |response|
+            public_urls << "https://#{ENV['S3_PREFIX']}custom-images.s3.ap-south-1.amazonaws.com/#{response[:key]}"
+          end
+
+          api_render(200, { id: 1,
+                            type: 'custom_images',
+                            public_urls: public_urls,
+                            next_marker: list_objects[:contents].empty? ? '' : list_objects[:contents].last.key,
+                            next_page: list_objects.next_page? })
         end
       end
     end

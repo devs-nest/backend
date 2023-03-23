@@ -6,7 +6,7 @@
 #
 #  id               :bigint           not null, primary key
 #  certificate_type :string(255)
-#  cuid             :string(255)      default("6sbhpnqcCp8")
+#  cuid             :string(255)      default("zca0JH7Cs5g")
 #  title            :string(255)      default("")
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
@@ -72,5 +72,10 @@ class Certification < ApplicationRecord
       end
     end
     invalid_discord_ids
+  end
+
+  def self.get_type_from_course_type(course_type)
+    course_type_to_type = { 'dsa': 'course_dsa', 'frontend': 'course_frontend', 'backend': 'course_backend' }
+    course_type_to_type.fetch(course_type.to_sym, nil)
   end
 end

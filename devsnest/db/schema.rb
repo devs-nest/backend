@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_08_172603) do
+ActiveRecord::Schema.define(version: 2023_02_10_093148) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -106,6 +106,7 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.float "score"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "submitted_url"
     t.index ["user_id", "backend_challenge_id"], name: "backend_challenge_score_index", unique: true
   end
 
@@ -180,10 +181,20 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.index ["user_id", "backend_challenge_id"], name: "backend_submission_user_index"
   end
 
+  create_table "bootcamp_progresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "course_id"
+    t.integer "course_curriculum_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "completed", default: false
+    t.index ["user_id"], name: "index_bootcamp_progresses_on_user_id"
+  end
+
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "WLk4hKuJzZ8"
+    t.string "cuid", default: "zca0JH7Cs5g"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -212,6 +223,14 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
+  create_table "coin_log", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "pointable_type"
+    t.integer "pointable_id"
+    t.integer "coins", default: 0
+  end
+  
   create_table "coding_room_user_mappings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.bigint "coding_room_id", null: false
     t.bigint "user_id", null: false
@@ -225,7 +244,7 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
   end
 
   create_table "coding_rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "unique_id", default: "e9b160675a54"
+    t.string "unique_id"
     t.string "name"
     t.integer "room_time"
     t.text "challenge_list"
@@ -235,18 +254,14 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.boolean "has_started", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id", null: false
+    t.datetime "starts_at", null: false
+    t.string "difficulty", null: false
+    t.string "topics", null: false
+    t.integer "question_count", null: false
     t.index ["finish_at"], name: "index_coding_rooms_on_finish_at"
     t.index ["is_active"], name: "index_coding_rooms_on_is_active"
     t.index ["unique_id"], name: "index_coding_rooms_on_unique_id"
-  end
-
-  create_table "coin_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.string "pointable_type"
-    t.integer "pointable_id"
-    t.integer "coins", default: 0
-    t.integer "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "college_forms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -346,6 +361,7 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.boolean "locked", default: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.json "extra_data"
     t.index ["course_id", "course_type"], name: "index_course_curriculums_on_course_id_and_course_type"
     t.index ["course_id", "day"], name: "index_course_curriculums_on_course_id_and_day"
   end
@@ -784,7 +800,7 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "logo"
+    t.text "logo", size: :medium
   end
 
   create_table "submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -833,6 +849,33 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "challenge_id"], name: "index_user_challenge_scores_on_user_id_and_challenge_id", unique: true
+  end
+
+  create_table "user_integration_caches", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.text "leetcode_cache", size: :medium
+    t.text "gfg_cache", size: :medium
+    t.text "hackerrank_cache", size: :medium
+    t.text "github_cache", size: :medium
+    t.integer "user_integration_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "user_integrations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.string "leetcode_user_name"
+    t.string "gfg_user_name"
+    t.string "hackerrank_user_name"
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "user_skills", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "skill_id"
+    t.integer "level"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -900,6 +943,9 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.integer "fe_score", default: 0
     t.integer "listmonk_subscriber_id"
     t.integer "be_score", default: 0
+    t.integer "dsa_streak", default: 0
+    t.date "streak_end_date"
+    t.integer "last_dsa_streak", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

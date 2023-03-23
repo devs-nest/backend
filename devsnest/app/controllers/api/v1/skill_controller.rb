@@ -5,6 +5,8 @@ module Api
     class SkillController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :admin_auth, only: %i[create destroy]
+      before_action :user_auth, only: %i[index]
+
 
 
       def create

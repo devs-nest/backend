@@ -18,6 +18,8 @@ module Api
       after_action :assign_leader, only: %i[create]
       before_action :description_emoji_parse, only: %i[create update]
 
+      before_action :course_validations, only: %i[index show]
+
       def context
         {
           user: @current_user, is_create: request.post?,
@@ -241,6 +243,14 @@ module Api
 
       def description_emoji_parse
         params[:data][:attributes][:description] = params[:data][:attributes][:description].dup.force_encoding('ISO-8859-1').encode('UTF-8') if params[:data][:attributes][:description].present?
+      end
+
+      private
+
+      def course_validations
+        return render_unauthorized unless @current_user.discord_active
+
+        render_unauthorized unless @current_user.is_fullstack_course_22_form_filled
       end
     end
   end

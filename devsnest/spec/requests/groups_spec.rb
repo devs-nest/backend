@@ -102,9 +102,9 @@ RSpec.describe Api::V1::GroupsController, type: :request do
     end
 
     context 'Get Groups' do
-      let!(:user) { create(:user, user_type: 1) } # admin
-      let!(:user2) { create(:user, user_type: 0) }
-      let!(:new_user) { create(:user, user_type: 0, discord_active: true, accepted_in_course: true) }
+      let!(:user) { create(:user, user_type: 1, discord_active: true, is_fullstack_course_22_form_filled: true) } # admin
+      let!(:user2) { create(:user, user_type: 0, discord_active: true, is_fullstack_course_22_form_filled: true) }
+      let!(:new_user) { create(:user, user_type: 0, discord_active: true, accepted_in_course: true, is_fullstack_course_22_form_filled: true) }
       let(:controller) { Api::V1::AdminController }
       let(:group) { create(:group, owner_id: user.id, server_id: server1.id) }
 

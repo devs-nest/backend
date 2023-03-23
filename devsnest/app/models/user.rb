@@ -19,10 +19,12 @@
 #  discord_username                   :string(255)
 #  dob                                :date
 #  dsa_skill                          :integer          default(0)
+#  dsa_streak                         :integer          default(0)
 #  email                              :string(255)      default(""), not null
 #  encrypted_password                 :string(255)      default(""), not null
 #  enrolled_for_course_image_url      :string(255)
 #  fe_score                           :integer          default(0)
+#  github_repos                       :text(65535)
 #  github_token                       :text(65535)
 #  github_url                         :string(255)
 #  grad_end                           :integer
@@ -38,6 +40,7 @@
 #  is_verified                        :boolean          default(FALSE)
 #  kind                               :integer          default(0)
 #  known_from                         :string(255)
+#  last_dsa_streak                    :integer          default(0)
 #  linkedin_url                       :string(255)
 #  login_count                        :integer          default(0)
 #  markdown                           :text(65535)
@@ -54,6 +57,7 @@
 #  role                               :integer
 #  school                             :string(255)
 #  score                              :float(24)        default(0.0)
+#  streak_end_date                    :date
 #  update_count                       :integer          default(0)
 #  user_type                          :integer          default("user")
 #  username                           :string(255)      default(""), not null
@@ -98,13 +102,20 @@ class User < ApplicationRecord
   has_many :certifications, dependent: :delete_all
   has_many :manual_login_changelog
   has_many :user_challenge_scores
+  has_many :room_best_submissions
   has_many :frontend_challenge_scores
   has_many :coin_logs
   has_many :job_applications
   has_many :article_submissions
   has_many :backend_challenges
   has_many :backend_challenge_scores
+  has_many :bootcamp_progresses
+  has_many :coding_rooms
   has_one :college_profile
+  has_one :user_integration
+
+  has_many :user_skills
+  has_many :skills, through: :user_skills
   
   delegate :college, to: :college_profile, allow_nil: true
 
@@ -118,6 +129,7 @@ class User < ApplicationRecord
   after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
   after_save :manage_list, if: Proc.new{ !Rails.env.test? && ENV['LISTMONK_LIST_CONTROL'] == 'true' }
   before_validation :create_referral_code, if: :is_referall_empty?
+  serialize :github_repos, Array
   has_paper_trail
 
   def update_user_fe_score_lb
@@ -131,7 +143,6 @@ class User < ApplicationRecord
   end
 
   def manage_list
-    byebug
     changes = saved_changes
     $listmonk.list_control(changes, self)
   end
@@ -532,6 +543,12 @@ class User < ApplicationRecord
       total_assignments_count: total_assignments_challenge_ids.count,
       solved_assignments_count: solved_assignments_count
     }
+  end
+
+  def bootcamp_progress_details
+    BootcampProgress.includes(:course_curriculum).where(user_id: id).map do |progress|
+      progress.attributes.merge(course_type: progress.course_curriculum.course_type)
+    end
   end
 
   def group_details

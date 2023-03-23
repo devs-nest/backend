@@ -38,6 +38,7 @@ class BeSubmission < ApplicationRecord
     backend_challenge_score = BackendChallengeScore.find_or_create_by(user_id: user_id, backend_challenge_id: backend_challenge_id)
 
     backend_challenge_score.update!(score: final_score, be_submission_id: id, passed_test_cases: passed_test_cases, total_test_cases: total_test_cases)
+    Rails.cache.delete("user_be_submission_#{user_id}_#{backend_challenge_id}") if Rails.cache.fetch("user_be_submission_#{user_id}_#{backend_challenge_id}") != 'solved'
   end
 
   def self.validate_uri(uri)

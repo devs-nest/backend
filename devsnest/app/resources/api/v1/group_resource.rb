@@ -16,6 +16,20 @@ module Api
       }
       filter :bootcamp_type
 
+      filter :name, apply: lambda { |records, value, _options|
+        records.where("name LIKE '%#{value.first}%'")
+      }
+
+      filter :language, apply: lambda { |records, value, _options|
+        records.where(language: value)
+      }
+
+      filter :classification, apply: lambda { |records, value, _options|
+        records.where(classification: value)
+      }
+
+      paginator :paged
+
       def description
         @model.description.dup.encode('ISO-8859-1').force_encoding('utf-8')
       rescue StandardError
