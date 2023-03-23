@@ -24,6 +24,7 @@ module Api
         return render_error(message: 'Questions Not Solved.') unless all_questions_completed
 
         next_curriculum_id = course_curriculum.next_curriculum_id
+        _previous_curriculum_id = course_curriculum.previous_curriculum_id
         if next_curriculum_id.blank?
           bootcamp_progress.update(completed: true) if bootcamp_progress.completed == false
           render_success({ message: 'Bootcamp Completed!', bootcamp_progress: bootcamp_progress.as_json })
