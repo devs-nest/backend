@@ -7,6 +7,10 @@ ruby '2.7.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.6', '>= 6.0.6'
+gem 'redis', '~> 4.2.5'
+gem 'redis-rails', '5.0.2'
+gem 'sidekiq', '6.4.2'
+gem 'sidekiq-cron', '~> 1.1'
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.5.5'
 # Use Puma as the app server
@@ -24,8 +28,6 @@ gem 'devise-jwt', '~> 0.10.0'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
-
-gem 'sidekiq', '~> 6.4', '>= 6.4'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -53,10 +55,7 @@ gem 'sentry-sidekiq', '4.2.0'
 gem 'dotenv', '~> 2.7', '>= 2.7.6'
 gem 'jsonapi-resources', '~> 0.9.12'
 gem 'httparty', '0.18.1'
-gem 'redis', '4.2.5'
 gem 'redis-namespace', '~> 1.10'
-gem 'redis-rails', '5.0.2'
-gem 'sidekiq-cron', '1.2.0'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', '1.2.9', platforms: %i[mingw mswin x64_mingw jruby]
 
