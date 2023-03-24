@@ -261,11 +261,11 @@ Rails.application.routes.draw do
           put :leave_room
           put :start_room
           get :current_user_room
-          put :update_room_details
         end
         member do
           get :user_submissions
           get :active_user_list
+          put :update_room_details
         end
       end
     end

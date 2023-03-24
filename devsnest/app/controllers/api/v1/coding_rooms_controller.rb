@@ -79,7 +79,7 @@ module Api
         user_coding_room = CodingRoomUserMapping.find_by(user_id: @current_user.id, coding_room_id: params[:id])&.coding_room
         return render_error(message: 'You are not a part of this room,Join Room') if user_coding_room.blank?
 
-        user_room_details = CodingRoom.find_by(id: user_coding_room.id).attributes.except("challenge_list")
+        user_room_details = CodingRoom.find_by(id: user_coding_room.id).attributes.except('challenge_list')
         remaining_time = (user_coding_room.finish_at.to_i - Time.current.to_i).positive? ? (user_coding_room.finish_at.to_i - Time.current.to_i).seconds : 0
         if Time.now < user_coding_room.starts_at
           return render_success(id: user_coding_room.id, challenge: [], room_details: user_room_details, remaining_time: remaining_time,
@@ -132,9 +132,8 @@ module Api
       end
 
       def update_room_details
-        params.require(:data).permit(attributes: %i[name id])
-        coding_room = CodingRoom.find_by(id: params[:data][:attributes][:id])
-        return render_error(message: 'Room Does not exists') if coding_room.blank?
+        coding_room = CodingRoom.find_by(id: params[:id])
+
         return render_error(message: 'Permission Denied, Ask Room Creater to update the room') if @current_user.id != coding_room.user_id
 
         coding_room.update!(name: params[:data][:attributes][:name])
