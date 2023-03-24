@@ -66,13 +66,12 @@ module Api
       end
 
       def user_group
-        if context[:user].present?
-          member_entity = GroupMember.find_by(user_id: context[:user].id)&.group_id
-          group = Group.where(id: member_entity).first if member_entity.present?
-          group == @model
-        else
-          false
+        return false unless context[:user].present?
+
+        GroupMember.where(user_id: context[:user].id).includes(:group).each do |group_member|
+          return true if group_member.group == @model
         end
+        false
       end
 
       def server_link
