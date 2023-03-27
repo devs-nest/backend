@@ -265,6 +265,7 @@ Rails.application.routes.draw do
         member do
           get :user_submissions
           get :active_user_list
+          put :update_room_details
         end
       end
     end
