@@ -55,6 +55,11 @@ module Api
           io_boilerplate(files, challenge.id.to_s, bucket, action)
           render_success({ message: 'Updated Files' })
         end
+
+        def active_questions
+          frontend_challenges = FrontendChallenge.where(is_active: true).select('id', 'name', 'slug')
+          render_success({ type: 'frontend_challenges', challenges: frontend_challenges })
+        end
       end
     end
   end

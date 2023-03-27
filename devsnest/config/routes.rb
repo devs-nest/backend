@@ -31,12 +31,14 @@ Rails.application.routes.draw do
         jsonapi_resources :backend_challenge, only: %i[create index show update destroy] do
           collection do
             get :self_created_challenges
+            get :active_questions
           end
         end
         jsonapi_resources :frontend_challenge, only: %i[create index show update destroy] do
           collection do
             get :self_created_challenges
             post :files_io
+            get :active_questions
           end
         end
         jsonapi_resources :listmonk, only: %i[] do
@@ -47,6 +49,7 @@ Rails.application.routes.draw do
         jsonapi_resources :challenge, only: %i[show index create update] do
           collection do
             get :self_created_challenges
+            get :active_questions
           end
           member do
             post :add_testcase
