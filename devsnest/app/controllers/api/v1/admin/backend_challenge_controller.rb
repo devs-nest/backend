@@ -58,6 +58,11 @@ module Api
 
           render_success({ message: 'Updated files' })
         end
+
+        def active_questions
+          backend_challenges = BackendChallenge.where(is_active: true).select('id', 'name', 'slug')
+          render_success({ type: 'backend_challenges', challenges: backend_challenges })
+        end
       end
     end
   end

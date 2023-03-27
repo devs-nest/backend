@@ -77,6 +77,11 @@ module Api
 
           render_success({ id: challenge.id, type: 'challenges', message: 'Company Tags Updated Successfully' })
         end
+
+        def active_questions
+          challenges = Challenge.where(is_active: true).select('id', 'name', 'slug')
+          render_success({ type: 'challenges', challenges: challenges })
+        end
       end
     end
   end
