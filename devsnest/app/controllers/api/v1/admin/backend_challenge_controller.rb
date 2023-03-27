@@ -23,6 +23,7 @@ module Api
           render_success({ id: @current_user.id, type: 'backend_challenges', challenges: @current_user.backend_challenges })
         end
 
+
         def add_files
           challenge = BackendChallenge.find_by(id: params['id'])
           return render_not_found('challenge') if challenge.nil?
@@ -57,6 +58,11 @@ module Api
           remove_test_cases(bucket, key)
 
           render_success({ message: 'Updated files' })
+        end
+
+        def active_questions
+          backend_challenges = BackendChallenge.where(is_active: true).select('id', 'name', 'slug')
+          render_success({ type: 'backend_challenges', challenges: backend_challenges })
         end
       end
     end
