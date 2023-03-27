@@ -48,7 +48,7 @@ module Api
           end
         end
 
-        def files_io
+        def remove_testcases
           challenge = BackendChallenge.find_by(id: params.dig(:data, :attributes, :id))
           return render_not_found('challenge') if challenge.nil?
 

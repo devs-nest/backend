@@ -31,7 +31,7 @@ Rails.application.routes.draw do
         jsonapi_resources :backend_challenge, only: %i[create index show update destroy] do
           collection do
             get :self_created_challenges
-            post :files_io
+            post :remove_testcases
           end
         end
         jsonapi_resources :frontend_challenge, only: %i[create index show update destroy] do

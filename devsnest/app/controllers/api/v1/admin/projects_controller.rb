@@ -7,7 +7,7 @@ module Api
       class ProjectsController < ApplicationController
         include JSONAPI::ActsAsResourceController
         before_action :admin_auth
-        before_action :project_creation_validation, only: %i[create]
+        before_action :create_validation, only: %i[create]
 
         def context
           {
@@ -17,7 +17,7 @@ module Api
 
         private
 
-        def project_creation_validation
+        def create_validation
           challenge_type = params.dig(:data, :attributes, :challenge_type)
           return render_not_found('Challenge Type Not Found') if %w[BackendChallenge FrontendChallenge Article].exclude?(challenge_type)
 
