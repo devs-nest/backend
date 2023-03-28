@@ -6,7 +6,7 @@ module Api
     class GroupResource < JSONAPI::Resource
       # caching
       attributes :name, :owner_id, :co_owner_id, :members_count, :student_mentor_id, :owner_name, :co_owner_name, :batch_leader_id, :slug, :created_at, :user_group, :group_type, :language,
-                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time, :activity_point
+                 :classification, :description, :version, :server_link, :scrum_start_time, :scrum_end_time, :activity_point, :bootcamp_type
       has_many :group_members
       filter :classification
       filter :language
@@ -14,6 +14,7 @@ module Api
       filter :members, apply: lambda { |records, value, _options|
         records.where('members_count >= ? AND members_count <= ?', value[0], value[1])
       }
+      filter :bootcamp_type
 
       filter :name, apply: lambda { |records, value, _options|
         records.where("name LIKE '%#{value.first}%'")
@@ -65,13 +66,12 @@ module Api
       end
 
       def user_group
-        if context[:user].present?
-          member_entity = GroupMember.find_by(user_id: context[:user].id)&.group_id
-          group = Group.where(id: member_entity).first if member_entity.present?
-          group == @model
-        else
-          false
+        return false unless context[:user].present?
+
+        GroupMember.where(user_id: context[:user].id).pluck(:group_id).each do |group_id|
+          return true if group_id == @model.id
         end
+        false
       end
 
       def server_link
@@ -86,11 +86,7 @@ module Api
         if options[:context][:is_create] || options[:context][:slug].present? || options[:context][:group_id].present? || options[:context][:user]&.is_admin?
           super(options)
         else
-          user_group = GroupMember.find_by(user_id: options[:context][:user]&.id)&.group
-          return super(options).where(id: user_group.id) if user_group.present?
-
           Group.eligible_groups.order('activity_point desc, ((members_count%15) - (members_count)%5)/10 desc , (members_count%15)%5')
-
         end
       end
     end
