@@ -68,8 +68,8 @@ module Api
       def user_group
         return false unless context[:user].present?
 
-        GroupMember.where(user_id: context[:user].id).includes(:group).each do |group_member|
-          return true if group_member.group == @model
+        GroupMember.where(user_id: context[:user].id).pluck(:group_id).each do |group_id|
+          return true if group_id == @model.id
         end
         false
       end
