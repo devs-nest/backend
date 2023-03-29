@@ -47,7 +47,14 @@ user_streak_reset:
   cron: "00 00 * * * Asia/Kolkata" # every day at 00:00
   class: "StreakChangerWorker"
 
-# user_streak_notifier:
-#   cron: "00 00 * * *" # every day at 00:00
-#   class: "StreakNotifierWorker"
+user_streak_break_notifier:
+  cron: "00 8 * * * Asia/Kolkata" # every day at 00:00
+  class: "StreakBreakNotifierWorker"
 
+user_streak_notifier:
+  cron: "00 6 * * * Asia/Kolkata" # every day at 00:00
+  class: "StreakNotifierWorker"
+
+weekly_report_notifier:
+  cron: "00 9 * * sun Asia/Kolkata" # every day at 09:00
+  class: "UserWeeklyActivityWorker"

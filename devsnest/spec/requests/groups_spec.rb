@@ -141,7 +141,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
         sign_in(new_user)
         post '/api/v1/groups/join', params: { "data": { "attributes": { "group_id": group.id }, "type": 'group' } }.to_json, headers: HEADERS
         expect(response.status).to eq(400)
-        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq('User already in a group')
+        expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:error][:message]).to eq("User already present in the #{group.bootcamp_type} group")
 
         group = Group.find(GroupMember.find_by(user_id: new_user.id).group_id)
         sign_in(new_user)

@@ -6,6 +6,7 @@
 #
 #  id                :bigint           not null, primary key
 #  activity_point    :integer          default(0)
+#  bootcamp_type     :integer          default("dsa")
 #  classification    :integer          default("students")
 #  description       :text(65535)
 #  five_members_flag :boolean          default(FALSE)
@@ -51,6 +52,7 @@ class Group < ApplicationRecord
   enum group_type: %i[public private], _prefix: :group
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
+  enum bootcamp_type: %i[dsa frontend backend]
 
   has_paper_trail
 
@@ -239,7 +241,7 @@ class Group < ApplicationRecord
   end
 
   def count_activity_point
-    Scrum.where('group_id = ? and created_at > ?', id, (Date.today - 13.days).beginning_of_day).group(:creation_date).having('count(attendance) >= ?', members_count / 2).count.count
+    Scrum.where('group_id = ? and created_at > ?', id, (Date.today - 6.days).beginning_of_day).group(:creation_date).having('count(attendance) >= ?', members_count * 0.3).count.count
   end
 
   def self.eligible_groups

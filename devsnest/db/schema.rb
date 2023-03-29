@@ -106,7 +106,6 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.float "score"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.text "submitted_url"
     t.index ["user_id", "backend_challenge_id"], name: "backend_challenge_score_index", unique: true
   end
 
@@ -175,16 +174,16 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.integer "user_id"
     t.integer "course_id"
     t.integer "course_curriculum_id"
+    t.boolean "completed", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "completed", default: false
     t.index ["user_id"], name: "index_bootcamp_progresses_on_user_id"
   end
 
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "zca0JH7Cs5g"
+    t.string "cuid", default: "rEDEY0k7s_A"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
