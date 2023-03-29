@@ -13,6 +13,7 @@ RSpec.describe 'Listmonk', type: :model do
       expect(response.code).to eq(200)
     end
 
+    # TODO retest it
     # it 'adds subscriber to list' do
     #   user.update(web_active: true, discord_active: true)
     #   $listmonk.list_control([], user)

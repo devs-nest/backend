@@ -183,7 +183,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
   create_table "certifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "rEDEY0k7s_A"
+    t.string "cuid", default: "BqwEQKcjDFg"
     t.string "title", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -931,6 +931,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.integer "fe_score", default: 0
     t.integer "listmonk_subscriber_id"
     t.integer "be_score", default: 0
+    t.text "github_repos"
     t.integer "dsa_streak", default: 0
     t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
