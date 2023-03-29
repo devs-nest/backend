@@ -935,6 +935,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.integer "dsa_streak", default: 0
     t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
+    t.text "github_repos"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
