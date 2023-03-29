@@ -7,6 +7,7 @@
 require 'simplecov'
 SimpleCov.start 'rails' do
   add_filter 'spec'
+  add_filter 'lib/backend_test'
 end
 # Given that it is always loaded, you are encouraged to keep this file as
 # light-weight as possible. Requiring heavyweight dependencies from this file
