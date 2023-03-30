@@ -8,6 +8,7 @@
 #  failed_test_cases_desc :text(65535)
 #  passed_test_cases      :integer          default(0)
 #  passed_test_cases_desc :text(65535)
+#  result                 :text(65535)
 #  score                  :float(24)
 #  status                 :string(255)
 #  submitted_url          :text(65535)
@@ -54,6 +55,7 @@ class BeSubmission < ApplicationRecord
   end
 
   def run_test_cases
-    BeEvaluationWorker.perform_async(id)
+    backend_challenge = BackendChallenge.find_by_id(backend_challenge_id)
+    BeEvaluationWorker.perform_async(id) if backend_challenge.challenge_type == 'normal'
   end
 end

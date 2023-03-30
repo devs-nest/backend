@@ -32,6 +32,7 @@ Rails.application.routes.draw do
           collection do
             get :self_created_challenges
             get :active_questions
+            post :remove_testcases
           end
         end
         jsonapi_resources :frontend_challenge, only: %i[create index show update destroy] do
@@ -93,6 +94,7 @@ Rails.application.routes.draw do
             get :dashboard_details
           end
         end
+        jsonapi_resources :projects, only: %i[index create destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
@@ -269,6 +271,11 @@ Rails.application.routes.draw do
           get :user_submissions
           get :active_user_list
           put :update_room_details
+        end
+      end
+      jsonapi_resources :projects, only: %i[index] do
+        collection do
+          get :completed
         end
       end
     end
