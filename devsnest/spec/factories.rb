@@ -2,11 +2,9 @@
 
 FactoryBot.define do
   factory :user_integration do
-    
   end
 
   factory :coin_log do
-    
   end
 
   factory :user_challenge_score do
@@ -174,12 +172,26 @@ FactoryBot.define do
   end
 
   factory :course do
-    sequence(:current_module) { |n| "dsa" }
+    sequence(:current_module) { |_n| 'dsa' }
   end
 
   factory :course_curriculum do
   end
 
   factory :assignment_question do
+  end
+
+  factory :bootcamp_progress do
+  end
+
+  factory :email_template do
+  end
+
+  factory :coding_room do
+    sequence(:name) { |n| "test#{n}" }
+    sequence(:unique_id) { SecureRandom.hex(4) }
+    sequence(:room_time) { [0, 1, 2].sample }
+    sequence(:difficulty) { [0, 1, 2].sample }
+    sequence(:topics) { [0, 1, 2].sample }
   end
 end

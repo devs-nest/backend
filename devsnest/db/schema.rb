@@ -943,6 +943,7 @@ ActiveRecord::Schema.define(version: 2023_02_08_172603) do
     t.integer "fe_score", default: 0
     t.integer "listmonk_subscriber_id"
     t.integer "be_score", default: 0
+    t.text "github_repos"
     t.integer "dsa_streak", default: 0
     t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
