@@ -5,19 +5,11 @@ module Api
     class GroupMembersController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :simple_auth
-      # before_action :check_authorization, except: %i[update_user_group show index]
       before_action :bot_auth, only: %i[update_user_group]
       before_action :admin_auth, only: %i[destroy]
 
       def context
         { user: @current_user, group_id: params[:group_id] }
-      end
-
-      def check_authorization
-        group = Group.find_by(id: params[:group_id])
-        return render_not_found unless group.present?
-
-        return render_forbidden unless group.check_auth(@current_user)
       end
 
       def destroy
