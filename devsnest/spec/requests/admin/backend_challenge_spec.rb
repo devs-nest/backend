@@ -17,13 +17,17 @@ RSpec.describe Api::V1::Admin::BackendChallengeController, type: :request do
     end
 
     it 'should return a backend challenge when id is provided' do
-      get "/api/v1/backend-challenge/admin/#{be_challenge.id}"
+      get "/api/v1/admin/backend-challenge/#{be_challenge.id}"
       expect(response.status).to eq(200)
     end
 
     it 'should not return a backend challenge when the challenge is not found' do
-      get '/api/v1/backend-challenge/admin/1201'
+      get '/api/v1/admin/backend-challenge/1201'
       expect(response.status).to eq(404)
+    end
+
+    it 'should return all the active challenges' do
+      get '/api/v1/admin/backend-challenge/active-questions'
     end
   end
 end
