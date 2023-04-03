@@ -112,7 +112,7 @@ RSpec.describe User, type: :model do
 
   context 'create user test' do
     before do
-      @new_user = User.create_google_user(valid_user, 9000)
+      @new_user = User.create_google_user(valid_user)
     end
 
     it 'creates a discord user' do
@@ -120,7 +120,7 @@ RSpec.describe User, type: :model do
     end
 
     it 'checks if user is in database' do
-      expect(User.find_by(google_id: 9000)).to be_present
+      expect(User.find_by(name: 'KayDee')).to be_present
     end
   end
 

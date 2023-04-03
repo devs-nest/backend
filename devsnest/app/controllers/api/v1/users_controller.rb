@@ -165,14 +165,13 @@ module Api
 
       def login
         code = params['code']
-        googleId = params['googleId']
-        return render_error({ message: 'googleId parameter not specified or invalid login method' }) if !googleId && params['login_method'] != 'manual'
+        return render_error({ message: 'code parameter not specified or invalid login method' }) if !code && params['login_method'] != 'manual'
 
         if params['login_method'] == 'manual'
           user = User.find_by_email(params['email'])
           return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
         else
-          user = User.fetch_google_user(code, googleId, params[:referral_code])
+          user = User.fetch_google_user(code, params[:referral_code])
         end
 
         if user.present?

@@ -177,43 +177,39 @@ class User < ApplicationRecord
     user_details['id']
   end
 
-  def self.fetch_google_user(code, googleId, referral_code = '')
+  def self.fetch_google_user(code, referral_code = '')
     user_details = fetch_google_user_details(code)
     return if user_details.nil?
 
-    user = create_google_user(user_details, googleId, referral_code)
+    user = create_google_user(user_details, referral_code)
     Referral.create(referral_code: referral_code, referred_user_id: User.last.id) if referral_code.present?
     user
   end
 
   def self.fetch_google_user_details(code)
-    url = URI("https://oauth2.googleapis.com/tokeninfo?id_token=#{code}")
-    https = Net::HTTP.new(url.host, url.port)
-    https.use_ssl = true
-    request = Net::HTTP::Post.new(url)
-    response = https.request(request)
-    JSON(response.read_body)
+    response = HTTParty.get('https://www.googleapis.com/oauth2/v3/userinfo', headers: { Authorization: "Bearer #{code}" })
+    JSON.parse(response.body)
   end
 
-  def self.create_google_user(user_details, googleId, _referral_code = '')
+  def self.create_google_user(user_details, _referral_code = '')
     email = user_details['email']
     name = user_details['name']
+    google_id = user_details['sub'] # We are receiving google_id in the 'sub' key from google
     user = User.where(email: email).first
     avatar = nil
     avatar = user_details['picture'] if user_details['picture'].present?
     if user.present?
-      user.update(web_active: true, google_id: googleId)
+      user.update(web_active: true, google_id: google_id)
       return user
     end
 
     User.create(
       name: name,
-      username: name,
       email: email,
       password: Devise.friendly_token[0, 20],
       web_active: true,
       image_url: avatar,
-      google_id: googleId,
+      google_id: google_id,
       is_verified: true
     )
   end
