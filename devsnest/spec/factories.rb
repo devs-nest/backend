@@ -194,4 +194,31 @@ FactoryBot.define do
     sequence(:difficulty) { [0, 1, 2].sample }
     sequence(:topics) { [0, 1, 2].sample }
   end
+
+  factory :frontend_challenge do
+    sequence(:user_id) { |n| n }
+    sequence(:is_project) { |n| n }
+    sequence(:name) { |n| n }
+  end
+
+  factory :fe_submission do
+    sequence(:user_id) { |n| n }
+    sequence(:frontend_challenge_id) { |n| n }
+    sequence(:total_test_cases) { |n| n }
+    sequence(:passed_test_cases) { |n| n }
+  end
+
+  factory :backend_challenge do
+    sequence(:user_id) { |n| n }
+    sequence(:is_project) { |n| n }
+    sequence(:name) { |n| n }
+    sequence(:challenge_type) { |n| n }
+  end
+
+  factory :be_submission do
+    sequence(:user_id) { |n| n }
+    sequence(:backend_challenge_id) { |n| n }
+    sequence(:total_test_cases) { |n| n }
+    sequence(:passed_test_cases) { |n| n }
+  end
 end
