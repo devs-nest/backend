@@ -5,7 +5,7 @@ module Api
     # allows challenges api calls to challenge resources
     class FrontendChallengeController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :user_auth, only: %i[fetch_by_slug show]
+      before_action :user_auth, only: %i[fetch_by_slug index show]
       before_action :callback_auth, only: %i[fetch_frontend_testcases]
 
       def context

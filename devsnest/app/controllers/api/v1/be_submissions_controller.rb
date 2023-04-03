@@ -15,28 +15,14 @@ module Api
         user_id = params.dig(:data, :attributes, :user_id)
         return render_not_found({ message: 'Challenge Not Found' }) unless backend_challenge
 
-        if backend_challenge.challenge_type == 'normal'
-          return render_not_found({ message: 'No Testcases Found' }) unless backend_challenge.testcases_path.present?
+        return render_not_found({ message: 'No Testcases Found' }) unless backend_challenge.testcases_path.present?
 
-          return render_error({ message: 'Invalid URI' }) unless BeSubmission.validate_uri(submitted_url)
+        return render_error({ message: 'Invalid URI' }) unless BeSubmission.validate_uri(submitted_url)
 
-          last_be_submission = BeSubmission.where(user_id: user_id, backend_challenge_id: backend_challenge_id).last
-          return render_error({ message: 'Please wait for your last submission to be processed.' }) if last_be_submission.present? && last_be_submission.total_test_cases.zero?
+        last_be_submission = BeSubmission.where(user_id: user_id, backend_challenge_id: backend_challenge_id).last
+        return render_error({ message: 'Please wait for your last submission to be processed.' }) if last_be_submission.present? && last_be_submission.total_test_cases.zero?
 
-          submission = BeSubmission.create(user_id: user_id, backend_challenge_id: backend_challenge_id, submitted_url: submitted_url)
-          return api_render(201, submission)
-        end
-
-        options = {
-          score: params.dig(:data, :attributes, :total_test_cases),
-          passed_test_cases: params.dig(:data, :attributes, :passed_test_cases),
-          total_test_cases: params.dig(:data, :attributes, :total_test_cases),
-          result: params.dig(:data, :attributes, :result),
-          user_id: user_id,
-          backend_challenge_id: backend_challenge_id
-        }
-
-        submission = BeSubmission.create(options)
+        submission = BeSubmission.create(user_id: user_id, backend_challenge_id: backend_challenge_id, submitted_url: submitted_url)
         api_render(201, submission)
       end
     end
