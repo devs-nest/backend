@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_10_093148) do
+ActiveRecord::Schema.define(version: 2023_03_10_173745) do
 
   create_table "algo_submissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.integer "user_id"
@@ -491,7 +491,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "group_id"], name: "index_group_members_on_user_id_and_group_id", unique: true
-    t.index ["user_id"], name: "index_group_members_on_user_id", unique: true
+    t.index ["user_id"], name: "index_group_members_on_user_id"
   end
 
   create_table "groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
@@ -515,6 +515,7 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.time "scrum_start_time", default: "2000-01-01 14:30:00"
     t.time "scrum_end_time", default: "2000-01-01 15:00:00"
     t.integer "activity_point", default: 0
+    t.integer "bootcamp_type", default: 0
     t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true
@@ -935,7 +936,6 @@ ActiveRecord::Schema.define(version: 2023_02_10_093148) do
     t.integer "dsa_streak", default: 0
     t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
-    t.text "github_repos"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
