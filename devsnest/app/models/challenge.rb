@@ -29,7 +29,7 @@
 #  index_challenges_on_slug  (slug) UNIQUE
 #
 class Challenge < ApplicationRecord
-  enum difficulty: %i[easy_level medium hard]
+  enum difficulty: %i[easy_level medium_level hard_level]
   enum content_type: %i[topic sub_topic]
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queue heaps dynamicprogramming backtracking greedy maths]
   has_many :algo_submissions

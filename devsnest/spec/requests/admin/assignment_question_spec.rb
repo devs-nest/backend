@@ -6,7 +6,7 @@ RSpec.describe AssignmentQuestion, type: :request do
   let(:user) { create(:user) }
   let!(:course) { create(:course, name: 'test') }
   let!(:course_curriculum) { create(:course_curriculum, course_id: course.id, course_type: 'dsa') }
-  let!(:question) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test', is_active: true, score: 100, difficulty: 'medium') }
+  let!(:question) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test', is_active: true, score: 100, difficulty: 'medium_level') }
   before :each do
     sign_in(user)
   end
