@@ -183,7 +183,6 @@ RSpec.describe Api::V1::GroupsController, type: :request do
         group1 = create(:group, name: 'omega', owner_id: user2.id, co_owner_id: co_owner.id, server_id: server1.id, version: 2)
         create(:group_member, user_id: user2.id, group_id: group1.id)
         get '/api/v1/groups', headers: HEADERS
-        byebug
         expect(response.status).to eq(200)
       end
     end
