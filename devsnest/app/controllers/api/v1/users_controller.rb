@@ -423,10 +423,24 @@ module Api
       end
 
       def sourcecode_io
-        challenge = FrontendChallenge.find_by(id: params.dig(:data, :attributes, 'challenge_id'))
+        table_name = ''
+        bucket = ''
+        challenge_type = params.dig(:data, :attributes, 'challenge_type')
+
+        case challenge_type
+        when 'backend'
+          table_name = BackendChallenge
+          bucket = 'user-be-submission'
+        when 'frontend'
+          table_name = FrontendChallenge
+          bucket = 'user-fe-submission'
+        else
+          return render_not_found('challenge_type')
+        end
+
+        challenge = table_name.find_by(id: params.dig(:data, :attributes, 'challenge_id'))
         return render_not_found('challenge') if challenge.nil?
 
-        bucket = 'user-fe-submission'
         files = params.dig(:data, :attributes, 'files')
         action = params.dig(:data, :attributes, 'action')
         base_path = "#{@current_user.id}/#{challenge.id}"
@@ -480,7 +494,7 @@ module Api
         user.un_merge_discord_user
         render_success({ message: 'User is decoupled!' })
       end
-      
+
       def add_repo
         repo_name = params.dig(:data, :attributes, :repository_name)
         return render_error({ message: 'Repository does not exist' }) if GithubDataHelper.does_repository_exists(@current_user.github_client.login, repo_name)
