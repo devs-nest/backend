@@ -27,7 +27,20 @@ RSpec.describe Api::V1::Admin::BackendChallengeController, type: :request do
     end
 
     it 'should return all the active challenges' do
-      get '/api/v1/admin/backend-challenge/active-questions'
+      get '/api/v1/admin/backend-challenge/active_questions'
+      expect(response.status).to eq(200)
+    end
+  end
+
+  context 'DELETE - backend challenge' do
+    it 'should delete backend challenge with specified id' do
+      delete "/api/v1/admin/backend-challenge/#{be_challenge.id}"
+      expect(response.status).to eq(204)
+    end
+
+    it 'should not delete backend challenge if its not found' do
+      delete "/api/v1/admin/backend-challenge/#{be_challenge.id}00000"
+      expect(response.status).to eq(404)
     end
   end
 end
