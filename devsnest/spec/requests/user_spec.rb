@@ -66,7 +66,6 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
     it 'increase the login count when user hits /me url' do
       sign_in(user)
-      byebug
       get '/api/v1/users/me', headers: HEADERS
       expect(response.status).to eq(302)
       follow_redirect!
