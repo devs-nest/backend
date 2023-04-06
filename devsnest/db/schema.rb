@@ -105,6 +105,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.float "score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "submitted_url"
     t.index ["user_id", "backend_challenge_id"], name: "backend_challenge_score_index", unique: true
   end
 
@@ -122,6 +123,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.string "testcases_path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_project", default: false
+    t.string "banner"
+    t.string "active_path"
+    t.text "files"
+    t.string "folder_name"
+    t.text "hidden_files"
+    t.text "open_paths"
+    t.text "protected_paths"
+    t.string "template"
+    t.integer "challenge_type", default: 0
     t.index ["slug"], name: "index_backend_challenges_on_slug", unique: true
   end
 
@@ -211,6 +222,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
+  create_table "coding_room_user_mappings", charset: "utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "pointable_type"
+    t.integer "pointable_id"
+    t.integer "coins", default: 0
+  end
+  
   create_table "coding_room_user_mappings", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "coding_room_id", null: false
     t.bigint "user_id", null: false
@@ -444,6 +463,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.text "files"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_project", default: false
+    t.string "banner"
     t.index ["slug"], name: "index_frontend_challenges_on_slug", unique: true
   end
 
