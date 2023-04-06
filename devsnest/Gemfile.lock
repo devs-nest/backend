@@ -215,7 +215,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (5.0.1)
-    puma (4.3.12)
+    puma (6.2.1)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.6.2)
@@ -394,7 +394,7 @@ DEPENDENCIES
   octokit (~> 4.0)
   paper_trail
   pry (= 0.14.1)
-  puma (~> 4.3.10)
+  puma (~> 6.2, >= 6.2.1)
   rack-cors (~> 1.1.1)
   rails (~> 7.0, >= 7.0.4.3)
   rbnacl
