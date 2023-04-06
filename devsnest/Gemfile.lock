@@ -153,8 +153,8 @@ GEM
       raabro (~> 1.4)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    httparty (0.18.1)
-      mime-types (~> 3.0)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
@@ -180,9 +180,6 @@ GEM
       net-smtp
     marcel (1.0.2)
     method_source (1.0.0)
-    mime-types (3.4.1)
-      mime-types-data (~> 3.2015)
-    mime-types-data (3.2023.0218.1)
     mini_mime (1.1.2)
     minitest (5.18.0)
     msgpack (1.7.0)
@@ -373,6 +370,9 @@ PLATFORMS
   arm64-darwin-22
 
 DEPENDENCIES
+  actionpack (>= 6.1.7.1)
+  activerecord (>= 6.1.7.1)
+  activesupport (>= 6.1.7.3)
   annotate
   audited (~> 5.3, >= 5.3.2)
   awesome_print (~> 1.9, >= 1.9.2)
@@ -384,7 +384,7 @@ DEPENDENCIES
   dotenv (~> 2.7, >= 2.7.6)
   factory_bot_rails (~> 6.2)
   faraday-retry (~> 2.1)
-  httparty (= 0.18.1)
+  httparty (= 0.21.0)
   jsonapi-resources (~> 0.9.12)
   leaderboard (~> 3.12, >= 3.12.1)
   listen (~> 3.2)

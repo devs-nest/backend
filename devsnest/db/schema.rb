@@ -193,7 +193,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "5cF7DMuZNa4"
+    t.string "cuid", default: "9dY5MJb9oac"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
