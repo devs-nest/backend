@@ -1,4 +1,4 @@
-FROM ruby:2.7.2-alpine3.13
+FROM ruby:3.0.6-alpine3.16
 RUN apk update
 RUN apk add \
     build-base \
@@ -8,7 +8,7 @@ RUN apk add \
     git \
     libsodium
 
-RUN gem install bundler
+RUN gem install bundler -v 2.4
 COPY ./Gemfile  ./
 COPY ./Gemfile.lock ./
 
