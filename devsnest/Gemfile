@@ -44,7 +44,6 @@ group :development, :test do
 end
 
 group :development do
-  gem 'listen', '~> 3.2'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'awesome_print', '~> 1.9', '>= 1.9.2'
   gem 'spring', '2.1.1'
@@ -55,6 +54,7 @@ gem 'rack-cors', '~> 1.1.1'
 gem 'sentry-rails', '4.2.1'
 gem 'sentry-ruby', '4.2.1'
 gem 'sentry-sidekiq', '4.2.0'
+gem 'listen', '~> 3.2'
 
 gem 'dotenv', '~> 2.7', '>= 2.7.6'
 gem 'httparty', '0.21.0'
