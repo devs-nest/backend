@@ -2,6 +2,7 @@ version: "3"
 services:
   "backend":
     image: prachipathrayan/devsnestbackend
+    # build: . # use when building locally
     ports:
       - "8000:3000"
     container_name: backend

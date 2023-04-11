@@ -10,10 +10,10 @@ RSpec.describe CourseCurriculum, type: :request do
       let!(:course_curriculum) { create(:course_curriculum, course_id: course.id, course_type: 'dsa') }
       let!(:course_curriculum2) { create(:course_curriculum, course_id: course.id, course_type: 'frontend') }
       let!(:course_curriculum3) { create(:course_curriculum, course_id: course.id, course_type: 'backend') }
-      let!(:question) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test', is_active: true, score: 100, difficulty: 'medium') }
+      let!(:question) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test', is_active: true, score: 100, difficulty: 'medium_level') }
       let!(:assignment_question) { create(:assignment_question, course_curriculum_id: course_curriculum.id, question_id: question.id, question_type: 'Challenge') }
       let!(:ucs) { create(:user_challenge_score, user_id: user.id, challenge_id: question.id, passed_test_cases: 10, total_test_cases: 10) }
-      let!(:question2) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test 2', is_active: true, score: 100, difficulty: 'medium') }
+      let!(:question2) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test 2', is_active: true, score: 100, difficulty: 'medium_level') }
       let!(:assignment_question2) { create(:assignment_question, course_curriculum_id: course_curriculum.id, question_id: question2.id, question_type: 'Challenge') }
       let!(:u_s1) { create(:algo_submission, user_id: user.id, challenge_id: question2.id, passed_test_cases: 7, total_test_cases: 10, is_best_submission: true, is_submitted: true) }
 

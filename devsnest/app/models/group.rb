@@ -14,8 +14,8 @@
 #  language          :integer          default("english")
 #  members_count     :integer          default(0)
 #  name              :string(255)      default(""), not null
-#  scrum_end_time    :time             default(Sat, 01 Jan 2000 15:00:00 IST +05:30)
-#  scrum_start_time  :time             default(Sat, 01 Jan 2000 14:30:00 IST +05:30)
+#  scrum_end_time    :time             default(Sat, 01 Jan 2000 15:00:00.000000000 IST +05:30)
+#  scrum_start_time  :time             default(Sat, 01 Jan 2000 14:30:00.000000000 IST +05:30)
 #  slug              :string(255)
 #  version           :integer          default(2)
 #  created_at        :datetime         not null

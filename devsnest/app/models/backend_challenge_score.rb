@@ -7,7 +7,6 @@
 #  id                   :bigint           not null, primary key
 #  passed_test_cases    :integer          default(0)
 #  score                :float(24)
-#  submitted_url        :text(65535)
 #  total_test_cases     :integer          default(0)
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null

@@ -672,7 +672,7 @@ RSpec.describe Api::V1::UsersController, type: :request do
     let!(:server) { create(:server, name: 'Devsnest', guild_id: '123456789') }
     let(:group) { create(:group, owner_id: user.id, server_id: server.id, name: 'Test Team') }
     let!(:group_member) { create(:group_member, group_id: group.id, user_id: user.id) }
-    let!(:question) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test', is_active: true, score: 100, difficulty: 'medium') }
+    let!(:question) { create(:challenge, topic: 0, question_body: 'testbody xyz', user_id: user.id, name: 'two sum test', is_active: true, score: 100, difficulty: 'medium_level') }
     let!(:spec_leaderboard) { LeaderboardDevsnest::DSAInitializer::LB }
     let!(:course) { create(:course, name: 'Test Course') }
     let!(:course_curriculum) { create(:course_curriculum, course_id: course.id) }
@@ -691,8 +691,8 @@ RSpec.describe Api::V1::UsersController, type: :request do
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:is_fullstack_course_22_form_filled]).to eq(false)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:group_details][:group_slug]).to eq('test-team')
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:group_details][:group_name]).to eq('Test Team')
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:total_by_difficulty][:medium]).to eq(1)
-      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:solved][:medium]).to eq(1)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:total_by_difficulty][:medium_level]).to eq(1)
+      expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:solved][:medium_level]).to eq(1)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:tha_details][:total_assignments_count]).to eq(1)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:tha_details][:solved_assignments_count]).to eq(1)
       expect(JSON.parse(response.body, symbolize_names: true)[:data][:attributes][:leaderboard_details][:score]).to eq(10_000.0)

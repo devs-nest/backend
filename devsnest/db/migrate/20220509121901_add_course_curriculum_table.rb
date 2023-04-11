@@ -14,7 +14,7 @@ class AddCourseCurriculumTable < ActiveRecord::Migration[6.0]
       t.string :topic
       t.integer :day
       t.text :video_link
-      t.text :resources
+      t.json :resources
       t.boolean :locked, default: true
       t.index %i[course_id course_type]
       t.index %i[course_id day]

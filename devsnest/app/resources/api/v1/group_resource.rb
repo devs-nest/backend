@@ -86,7 +86,7 @@ module Api
         if options[:context][:is_create] || options[:context][:slug].present? || options[:context][:group_id].present? || options[:context][:user]&.is_admin?
           super(options)
         else
-          Group.eligible_groups.order('activity_point desc, ((members_count%15) - (members_count)%5)/10 desc , (members_count%15)%5')
+          Group.eligible_groups.order(Arel.sql('activity_point desc, ((members_count % 15) - (members_count) % 5) / 10 desc, (members_count % 15) % 5'))
         end
       end
     end
