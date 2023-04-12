@@ -18,4 +18,16 @@ class Unsubscribe < ApplicationRecord
   belongs_to :user
   validates_uniqueness_of :user_id, scope: :category
   enum category: %i[default]
+
+  after_commit :expire_cache
+
+  def self.get_by_cache
+    Rails.cache.fetch('unsubscribed_user_ids') do
+      Unsubscribe.all.pluck(:user_id)
+    end
+  end
+
+  def expire_cache
+    Rails.cache.delete('unsubscribed_user_ids')
+  end
 end
