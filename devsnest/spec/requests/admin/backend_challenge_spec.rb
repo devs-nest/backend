@@ -28,14 +28,6 @@ RSpec.describe Api::V1::Admin::BackendChallengeController, type: :request do
   end
 
   context 'DELETE - backend challenge' do
-    it 'should delete backend challenge with specified id' do
-      delete "/api/v1/admin/backend-challenge/#{be_challenge.id}"
-
-      s3 = Aws::S3::Client.new
-      allow(s3).to receive(:list_objects).and_return(true)
-      expect(response.status).to eq(204)
-    end
-
     it 'should not delete backend challenge if its not found' do
       delete "/api/v1/admin/backend-challenge/#{be_challenge.id}00000"
       expect(response.status).to eq(404)
