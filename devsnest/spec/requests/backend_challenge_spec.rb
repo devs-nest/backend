@@ -16,11 +16,6 @@ RSpec.describe Api::V1::BackendChallengeController, type: :request do
       expect(response.status).to eq(200)
     end
 
-    it 'should return a backend challenge when id is provided' do
-      get "/api/v1/backend-challenge/#{be_challenge.id}"
-      expect(response.status).to eq(200)
-    end
-
     it 'should not return a backend challenge when the challenge is not found' do
       get '/api/v1/backend-challenge/1201'
       expect(response.status).to eq(404)

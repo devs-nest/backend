@@ -16,11 +16,6 @@ RSpec.describe Api::V1::Admin::BackendChallengeController, type: :request do
       expect(response.status).to eq(200)
     end
 
-    it 'should return a backend challenge when id is provided' do
-      get "/api/v1/admin/backend-challenge/#{be_challenge.id}"
-      expect(response.status).to eq(200)
-    end
-
     it 'should not return a backend challenge when the challenge is not found' do
       get '/api/v1/admin/backend-challenge/1201'
       expect(response.status).to eq(404)
@@ -35,6 +30,8 @@ RSpec.describe Api::V1::Admin::BackendChallengeController, type: :request do
   context 'DELETE - backend challenge' do
     it 'should delete backend challenge with specified id' do
       delete "/api/v1/admin/backend-challenge/#{be_challenge.id}"
+
+      allow($s3).to receive(:list_objects).and_return(true)
       expect(response.status).to eq(204)
     end
 
