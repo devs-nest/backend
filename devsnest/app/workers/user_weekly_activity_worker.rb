@@ -6,7 +6,8 @@ class UserWeeklyActivityWorker
   sidekiq_options retry: 5
   def perform
     template_id = EmailTemplate.find_by(name: 'weekly_report')&.template_id
-    User.where(web_active: true).each do |user|
+    unsub_user_ids = Unsubscribe.get_by_cache
+    User.where.not(id: unsub_user_ids).where(web_active: true).each do |user|
       dashboard_data = User.get_dashboard_by_cache(user.id)
 
       EmailSenderWorker.perform_async(user.email, {
@@ -17,7 +18,8 @@ class UserWeeklyActivityWorker
                                         'total_dsa': dashboard_data[:dsa_solved_by_difficulty].values.sum,
                                         'frontend_rank': dashboard_data[:fe_leaderboard_details][:rank],
                                         'frontend_solved': dashboard_data[:fe_solved].values.sum,
-                                        'total_frontend': dashboard_data[:fe_solved_by_topic].values.sum
+                                        'total_frontend': dashboard_data[:fe_solved_by_topic].values.sum,
+                                        'mass_emailer': true
                                       }, template_id)
     end
   end
