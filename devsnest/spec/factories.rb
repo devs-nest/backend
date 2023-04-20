@@ -194,4 +194,22 @@ FactoryBot.define do
     sequence(:difficulty) { [0, 1, 2].sample }
     sequence(:topics) { [0, 1, 2].sample }
   end
+
+  factory :article do
+    sequence(:resource_type) { |n| n }
+    sequence(:title) { |n| "test_#{n}" }
+  end
+
+  factory :organization do
+  end
+
+  factory :job do
+    sequence(:title) { |n| n }
+    sequence(:organization_id) { |n| n }
+  end
+
+  factory :job_application do
+    sequence(:user_id) { |n| n }
+    sequence(:job_id) { |n| n }
+  end
 end
