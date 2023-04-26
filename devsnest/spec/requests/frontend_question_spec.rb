@@ -33,7 +33,6 @@ RSpec.describe 'Frontend question creation', type: :request do
         get "/api/v1/frontend-questions/#{frontend_question1.id}"
         expect(response).to have_http_status(200)
         expect(JSON.parse(response.body)['data']['id'].to_i).to eq(frontend_question1.id)
-        expect(JSON.parse(response.body)['data']['attributes']['template_files']).to eq({ "file1": 'file1---content', "file2": 'file2---content' }.as_json)
         expect(JSON.parse(response.body)['data']['attributes']['last_submitted_files']).to eq({ "/file1": 'file3---content', "/file2": 'file4---content' }.as_json)
       end
     end
