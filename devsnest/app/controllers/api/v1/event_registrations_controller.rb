@@ -17,11 +17,10 @@ module Api
         edu_event = EduEvent.find_by_id(edu_event_id)
         return render_not_found if edu_event.blank?
 
-        if EventRegistration.find_by(user_id: @current_user.id, edu_event_id: edu_event_id).present?
-          return render_unprocessable('User Already Registered.')
-        end
+        return render_unprocessable('User Already Registered.') if EventRegistration.find_by(user_id: @current_user.id, edu_event_id: edu_event_id).present?
+
         EventRegistration.create!(user_id: @current_user.id, edu_event_id: edu_event_id, user_data: user_data)
-        return render_success({ message: 'Registered Successfully.' })
+        render_success({ message: 'Registered Successfully.' })
       end
     end
   end
