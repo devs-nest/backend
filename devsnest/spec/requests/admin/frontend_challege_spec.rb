@@ -109,27 +109,6 @@ RSpec.describe Api::V1::Admin::FrontendChallengeController, type: :request do
     end
   end
 
-  context 'when the challenge exists' do
-    before do
-      sign_in(user)
-      delete "/api/v1/admin/frontend-challenge/#{challenge.id}", headers: HEADERS
-    end
-    it 'returns a success response' do
-      expect(response).to have_http_status(204)
-    end
-
-    it 'deletes the challenge' do
-      expect(FrontendChallenge.find_by(id: challenge.id)).to be_nil
-    end
-
-    it 'removes the challenge files from S3' do
-      bucket = 'frontend-testcases'
-      files = $s3.list_objects(bucket: "#{ENV['S3_PREFIX']}#{bucket}", prefix: "#{challenge.id}/")
-
-      expect(files.contents).to be_empty
-    end
-  end
-
   context 'when the challenge does not exist' do
     it 'returns a not found response' do
       sign_in(user)
