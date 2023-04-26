@@ -17,24 +17,20 @@ RSpec.describe Api::V1::FrontendChallengeController, type: :request do
   let!(:callback_hearders) { { 'Content-Type': 'application/vnd.api+json', 'Accept': 'application/vnd.api+json', 'Token': user.bot_token } }
   before :each do
     sign_in(user)
+    s3_object_mock = double('s3_object', body: double('body', read: 'file content'))
+    s3_list_objects_mock = double('s3_list_objects', contents: [double('file', key: 'test-file')])
+    allow($s3).to receive(:get_object).and_return(s3_object_mock)
+    allow($s3).to receive(:list_objects).and_return(s3_list_objects_mock)
   end
 
   context 'show call' do
     it 'returns a success response' do
-      s3_object_mock = double('s3_object', body: double('body', read: 'file content'))
-      s3_list_objects_mock = double('s3_list_objects', contents: [double('file', key: 'test-file')])
-      allow($s3).to receive(:get_object).and_return(s3_object_mock)
-      allow($s3).to receive(:list_objects).and_return(s3_list_objects_mock)
       get "/api/v1/frontend-challenge/#{challenge_id}", headers: HEADERS
       expect(response).to have_http_status(:ok)
     end
   end
   context 'when challenge is found' do
     it 'returns a success response' do
-      s3_object_mock = double('s3_object', body: double('body', read: 'file content'))
-      s3_list_objects_mock = double('s3_list_objects', contents: [double('file', key: 'test-file')])
-      allow($s3).to receive(:get_object).and_return(s3_object_mock)
-      allow($s3).to receive(:list_objects).and_return(s3_list_objects_mock)
       get '/api/v1/frontend-challenge/fetch_by_slug', headers: HEADERS, params: { slug: slug }
       expect(response).to have_http_status(:ok)
     end
@@ -56,13 +52,10 @@ RSpec.describe Api::V1::FrontendChallengeController, type: :request do
     end
   end
 
-  # context 'when challenge is found' do
-  #   it 'returns a success response' do
-  #     sign_in(user)
-  #     s3_object_mock = double('s3_object', body: double('body', read: 'file content'))
-  #     allow($s3).to receive(:get_object).and_return(s3_object_mock)
-  #     get '/api/v1/frontend-challenge/fetch_frontend_testcases', headers: callback_hearders, params: { id: challenge_id, data: { attributes: { user_id: user.id } } }
-  #     expect(response).to have_http_status(:ok)
-  #   end
-  # end
+  context 'when challenge is found' do
+    it 'returns a success response' do
+      get '/api/v1/frontend-challenge/fetch_frontend_testcases', headers: callback_hearders, params: { id: challenge_id, data: { attributes: { user_id: user.id } } }
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end
