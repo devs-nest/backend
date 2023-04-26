@@ -113,6 +113,8 @@ class User < ApplicationRecord
   has_many :coding_rooms
   has_one :college_profile
   has_one :user_integration
+  has_many :event_registrations
+  has_many :edu_events, through: :event_registrations
 
   has_many :user_skills
   has_many :skills, through: :user_skills

@@ -9,7 +9,7 @@
 #  day         :integer
 #  extra_data  :json
 #  locked      :boolean          default(TRUE)
-#  resources   :json
+#  resources   :json             not null
 #  topic       :string(255)
 #  video_link  :text(65535)
 #  created_at  :datetime         not null

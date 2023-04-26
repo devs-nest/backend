@@ -278,6 +278,8 @@ Rails.application.routes.draw do
           get :completed
         end
       end
+      jsonapi_resources :edu_events, only: %i[show index]
+      jsonapi_resources :event_registrations, only: :create
     end
   end
 end
