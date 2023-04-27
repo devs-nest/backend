@@ -4,7 +4,7 @@ module Api
   module V1
     # Educational Events Resource
     class EduEventResource < JSONAPI::Resource
-      attributes :title, :description, :starting_date, :ending_date, :organizer
+      attributes :title, :description, :starting_date, :ending_date, :organizer, :form_columns
       attributes :current_user_registered
 
       def current_user_registered

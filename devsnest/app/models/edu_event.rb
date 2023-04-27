@@ -7,6 +7,7 @@
 #  id            :bigint           not null, primary key
 #  description   :text(65535)
 #  ending_date   :date
+#  form_columns  :json
 #  organizer     :string(255)
 #  starting_date :date
 #  title         :string(255)

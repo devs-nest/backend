@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_25_124909) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -399,6 +399,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_124909) do
     t.string "organizer"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.json "form_columns"
   end
 
   create_table "email_templates", charset: "utf8mb3", force: :cascade do |t|
