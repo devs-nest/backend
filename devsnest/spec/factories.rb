@@ -194,4 +194,7 @@ FactoryBot.define do
     sequence(:difficulty) { [0, 1, 2].sample }
     sequence(:topics) { [0, 1, 2].sample }
   end
+  factory :frontend_challenge do
+    sequence(:name) { |n| "test#{n}" }
+  end
 end

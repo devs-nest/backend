@@ -109,5 +109,22 @@ RSpec.describe GroupMember, type: :request do
         expect(group.group_members.where(user_id: user.id)).to eq([])
       end
     end
+
+    context 'delete group members' do
+      let!(:server1) { create(:server, id: 1, name: 'Devsnest', guild_id: '123456789') }
+      let!(:group) { create(:group, server_id: server1.id) }
+      let!(:admin) { create(:user, user_type: 1) }
+      let(:group_member) { create(:group_member, group_id: group.id, user_id: admin.id) }
+
+      it 'destroys the group_member with admin user' do
+        sign_in(admin)
+        delete "/api/v1/group-members/#{group_member.id}", headers: HEADERS
+        expect(response).to have_http_status(:ok)
+      end
+      it 'returns forbidden status' do
+        delete "/api/v1/group-members/#{group_member.id}", headers: HEADERS
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
   end
 end
