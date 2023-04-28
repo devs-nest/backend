@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    # Shows a list of Events
+    # Shows a list of Edu Events
     class EduEventsController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
