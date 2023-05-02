@@ -12,7 +12,7 @@ module Api
           skill_ids = params[:data][:attributes][:skill_ids]
           Job.create!(job_params.merge(slug: "#{job_params[:title].parameterize}-#{SecureRandom.hex(2)}").permit!)
           job_id = Job.last.id
-          skill_ids.each do |skill_id|
+          skill_ids&.each do |skill_id|
             JobSkillMapping.create!(job_id: job_id, skill_id: skill_id)
           end
           render_success(id: Job.last.id, message: 'Job created successfully')
@@ -21,9 +21,12 @@ module Api
         def update
           job_params = params[:data][:attributes].except(:skill_ids)
           skill_ids = params[:data][:attributes][:skill_ids]
-          Job.find_by(id: params[:id]).update!(job_params.merge(slug: "#{job_params[:title].parameterize}-#{SecureRandom.hex(2)}").permit!)
+          job = Job.find_by(id: params[:id])
+          return render_not_found if job.nil?
+
+          job.update!(job_params.merge(slug: "#{job_params[:title].parameterize}-#{SecureRandom.hex(2)}").permit!)
           JobSkillMapping.where(job_id: params[:id]).destroy_all
-          skill_ids.each do |skill_id|
+          skill_ids&.each do |skill_id|
             JobSkillMapping.create!(job_id: params[:id], skill_id: skill_id)
           end
           render_success(id: params[:id], message: 'Job updated successfully')
