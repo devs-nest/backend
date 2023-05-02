@@ -198,7 +198,7 @@ FactoryBot.define do
   factory :frontend_challenge do
     sequence(:user_id) { |n| n }
     sequence(:is_project) { |n| n }
-    sequence(:name) { |n| n }
+    sequence(:name) { |n| "test#{n}" }
   end
 
   factory :fe_submission do
@@ -220,5 +220,23 @@ FactoryBot.define do
     sequence(:backend_challenge_id) { |n| n }
     sequence(:total_test_cases) { |n| n }
     sequence(:passed_test_cases) { |n| n }
+  end
+
+  factory :article do
+    sequence(:resource_type) { |n| n }
+    sequence(:title) { |n| "test_#{n}" }
+  end
+
+  factory :organization do
+  end
+
+  factory :job do
+    sequence(:title) { |n| n }
+    sequence(:organization_id) { |n| n }
+  end
+
+  factory :job_application do
+    sequence(:user_id) { |n| n }
+    sequence(:job_id) { |n| n }
   end
 end

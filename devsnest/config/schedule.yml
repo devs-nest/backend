@@ -55,6 +55,6 @@ user_streak_notifier:
   cron: "00 6 * * * Asia/Kolkata" # every day at 00:00
   class: "StreakNotifierWorker"
 
-weekly_report_notifier:
-  cron: "00 9 * * sun Asia/Kolkata" # every day at 09:00
-  class: "UserWeeklyActivityWorker"
+# weekly_report_notifier:
+#   cron: "00 9 * * sun Asia/Kolkata" # every day at 09:00
+#   class: "UserWeeklyActivityWorker"
