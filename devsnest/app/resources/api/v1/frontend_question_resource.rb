@@ -20,10 +20,9 @@ module Api
           next unless file.end_with?('.txt')
 
           content = $s3&.get_object(bucket: bucket, key: file)&.body&.read
-          file.slice! prefix
-          file.slice! '.txt'
+          file_name = file.sub(prefix, '').sub('.txt', '')
 
-          files.merge!(Hash["/"+file, content])
+          files.merge!(Hash["/"+file_name, content])
         end
 
         files

@@ -212,4 +212,8 @@ FactoryBot.define do
     sequence(:user_id) { |n| n }
     sequence(:job_id) { |n| n }
   end
+
+  factory :frontend_challenge do
+    sequence(:name) { |n| "test#{n}" }
+  end
 end
