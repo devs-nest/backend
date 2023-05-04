@@ -69,7 +69,7 @@ module UtilConcern
     link = group.server.try(:link)
     ping_discord(user, 'Group_Join', [group_name, link])
     ping_discord(group, 'User_Joined', ["#{user.name}|#|#{user.discord_id}"])
-    template_id = EmailTemplate.find_by(name: 'group_join_message')&.template_id
+    template_id = EmailTemplate.find_by(name: 'group_join_message_lm')&.template_id
     EmailSenderWorker.perform_async(user.email, {
                                       'unsubscribe_token': user.unsubscribe_token,
                                       'username': user.username,

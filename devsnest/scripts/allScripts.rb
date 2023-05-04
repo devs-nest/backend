@@ -74,3 +74,8 @@ end
 
 # Server.create(name: 'Devsnest Main', guild_id: '781576398414413854', link: 'https://discord.gg/ZqXBanhE')
 # Server.create(name: 'Devsnest Community 2.0', guild_id: '985833665940578304', link: 'https://discord.gg/rwSfztZf')
+
+
+user = User.find_by(email:'adhikramm@gmail.com')
+template_id = EmailTemplate.find_by(name: 'group_join_message')&.template_id
+group_name = 'testing_groups'
