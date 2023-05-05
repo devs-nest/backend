@@ -396,7 +396,7 @@ class User < ApplicationRecord
   # sending 1st step of the 3 steps
   def send_step_one_mail
     if discord_active == false && saved_change_to_attribute?(:is_fullstack_course_22_form_filled) && is_fullstack_course_22_form_filled
-      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_not_connected')&.template_id
+      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_not_connected_lm)&.template_id
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token, 'user_accepted': true, username: username
                                       }, template_id)
@@ -406,7 +406,7 @@ class User < ApplicationRecord
         RoleModifierWorker.perform_async('add_role', discord_id, 'Verified', server.guild_id)
         RoleModifierWorker.perform_async('add_role', discord_id, 'DN JUNE BATCH', server.guild_id) if accepted_in_course
       end
-      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected')&.template_id
+      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected_lm')&.template_id
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token, 'user_accepted': true, 'username': username
                                       }, template_id)
@@ -416,7 +416,7 @@ class User < ApplicationRecord
   # sending 2st step of the 3 steps
   def send_step_two_mail_if_discord_active_false
     if web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
-      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected')&.template_id
+      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected_lm')&.template_id
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token,
                                         'username': username
