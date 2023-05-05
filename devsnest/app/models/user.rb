@@ -118,7 +118,7 @@ class User < ApplicationRecord
 
   has_many :user_skills
   has_many :skills, through: :user_skills
-  
+
   delegate :college, to: :college_profile, allow_nil: true
 
   before_save :markdown_encode, if: :will_save_change_to_markdown?
@@ -129,7 +129,7 @@ class User < ApplicationRecord
   after_update :update_user_coins_for_signup
   after_update :update_user_score_lb, if: :saved_change_to_score?
   after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
-  after_save :manage_list, if: Proc.new{ !Rails.env.test? && ENV['LISTMONK_LIST_CONTROL'] == 'true' }
+  after_save :manage_list, if: proc { !Rails.env.test? && ENV['LISTMONK_LIST_CONTROL'] == 'true' }
   before_validation :create_referral_code, if: :is_referall_empty?
   serialize :github_repos, Array
   has_paper_trail
@@ -278,12 +278,12 @@ class User < ApplicationRecord
     request.body = "code=#{code}&client_id=#{ENV['GITHUB_CLIENT_ID']}&client_secret=#{ENV['GITHUB_CLIENT_SECRET']}"
     response = https.request(request)
     json_response_body = Rack::Utils.parse_nested_query(response.body)
-    if response.code == '200'
-      if json_response_body.key?('access_token')
-        { 'access_token': json_response_body['access_token'] }
-      else
-        { 'error': json_response_body['error'] }
-      end
+    return unless response.code == '200'
+
+    if json_response_body.key?('access_token')
+      { 'access_token': json_response_body['access_token'] }
+    else
+      { 'error': json_response_body['error'] }
     end
   end
 
@@ -384,19 +384,19 @@ class User < ApplicationRecord
 
   # when new user signs up on the website, send them a welcome email
   def send_registration_email
-    if web_active == true
-      template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
-      EmailSenderWorker.perform_async(email, {
-                                        'unsubscribe_token': unsubscribe_token,
-                                        'username': username
-                                      }, template_id)
-    end
+    return unless web_active == true
+
+    template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
+    EmailSenderWorker.perform_async(email, {
+                                      'unsubscribe_token': unsubscribe_token,
+                                      'username': username
+                                    }, template_id)
   end
 
   # sending 1st step of the 3 steps
   def send_step_one_mail
     if discord_active == false && saved_change_to_attribute?(:is_fullstack_course_22_form_filled) && is_fullstack_course_22_form_filled
-      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_not_connected_lm)&.template_id
+      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_not_connected_lm')&.template_id
       EmailSenderWorker.perform_async(email, {
                                         'unsubscribe_token': unsubscribe_token, 'user_accepted': true, username: username
                                       }, template_id)
@@ -415,23 +415,23 @@ class User < ApplicationRecord
 
   # sending 2st step of the 3 steps
   def send_step_two_mail_if_discord_active_false
-    if web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
-      template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected_lm')&.template_id
-      EmailSenderWorker.perform_async(email, {
-                                        'unsubscribe_token': unsubscribe_token,
-                                        'username': username
-                                      }, template_id)
-    end
+    return unless web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
+
+    template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected_lm')&.template_id
+    EmailSenderWorker.perform_async(email, {
+                                      'unsubscribe_token': unsubscribe_token,
+                                      'username': username
+                                    }, template_id)
   end
 
   def update_user_coins_for_signup
-    if web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
-      referred_user = Referral.find_by(referred_user_id: id)
-      if referred_user.present?
-        refered_by = User.find_by(referral_code: referred_user.referral_code)
-        refered_by.update(coins: refered_by.coins + 10) if refered_by.present?
-      end
-    end
+    return unless web_active && is_fullstack_course_22_form_filled && saved_change_to_attribute?(:discord_active) && discord_active
+
+    referred_user = Referral.find_by(referred_user_id: id)
+    return unless referred_user.present?
+
+    refered_by = User.find_by(referral_code: referred_user.referral_code)
+    refered_by.update(coins: refered_by.coins + 10) if refered_by.present?
   end
 
   def is_admin?
