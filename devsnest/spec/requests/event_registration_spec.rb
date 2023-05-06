@@ -7,20 +7,19 @@ RSpec.describe EventRegistration, type: :request do
     context 'Create EventRegistration' do
       let!(:user) { create(:user) }
       let!(:edu_event) { create(:edu_event) }
-      let!(:params) {
+      let!(:params) do
         {
-          "data":{
-            "type": "event-registration",
-            "attributes":{
-                "edu_event_id": edu_event.id,
-                "user_data": {
-                    "name": "Testing"
-                }
-    
+          "data": {
+            "type": 'event-registration',
+            "attributes": {
+              "edu_event_id": edu_event.id,
+              "user_data": {
+                "name": 'Testing'
+              }
             }
           }
         }.with_indifferent_access
-      }
+      end
 
       it 'should not create a registration if user is not logged in' do
         post '/api/v1/event-registrations', params: params
