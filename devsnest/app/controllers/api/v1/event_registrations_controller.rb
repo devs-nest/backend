@@ -7,10 +7,6 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
 
-      def context
-        { user: @current_user }
-      end
-
       def create
         edu_event_id = params.dig(:data, :attributes, :edu_event_id)
         user_data = params.dig(:data, :attributes, :user_data) || {}

@@ -194,7 +194,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "yiWu8hC4hwg"
+    t.string "cuid", default: "TcwO6Xb9AF0"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -358,7 +358,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.string "topic"
     t.integer "day"
     t.text "video_link"
-    t.json "resources", null: false
+    t.json "resources"
     t.boolean "locked", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -414,6 +414,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.json "user_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["edu_event_id"], name: "index_event_registrations_on_edu_event_id"
+    t.index ["user_id", "edu_event_id"], name: "index_event_registrations_on_user_id_and_edu_event_id", unique: true
   end
 
   create_table "events", charset: "utf8mb3", force: :cascade do |t|
