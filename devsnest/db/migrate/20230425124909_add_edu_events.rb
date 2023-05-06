@@ -6,6 +6,7 @@ class AddEduEvents < ActiveRecord::Migration[7.0]
       t.date :starting_date
       t.date :ending_date
       t.string :organizer
+      t.json :form_columns
 
       t.timestamps
     end
