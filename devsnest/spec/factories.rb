@@ -228,6 +228,7 @@ FactoryBot.define do
   end
 
   factory :organization do
+    sequence(:name) { |n| n }
   end
 
   factory :job do
@@ -238,5 +239,9 @@ FactoryBot.define do
   factory :job_application do
     sequence(:user_id) { |n| n }
     sequence(:job_id) { |n| n }
+  end
+
+  factory :skill do
+    sequence(:name) { |n| n }
   end
 end
