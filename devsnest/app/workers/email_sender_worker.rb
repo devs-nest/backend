@@ -13,7 +13,7 @@ class EmailSenderWorker
       return if unsub_user_ids.include?(user.id)
     end
 
-    SendgridMailer.send(receiver_email, meta_data, template_id)
+    ListmonkMailer.send(receiver_email, meta_data, template_id.to_i)
     user.update(accepted_in_course: true) if meta_data['user_accepted']
   end
 end
