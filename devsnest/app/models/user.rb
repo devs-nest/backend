@@ -386,7 +386,7 @@ class User < ApplicationRecord
   def send_registration_email
     return unless web_active == true
 
-    template_id = EmailTemplate.find_by(name: 'registration_mail')&.template_id
+    template_id = EmailTemplate.find_by(name: 'registration_mail_lm')&.template_id
     EmailSenderWorker.perform_async(email, {
                                       'unsubscribe_token': unsubscribe_token,
                                       'username': username
