@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -107,7 +107,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.float "score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "submitted_url"
     t.index ["user_id", "backend_challenge_id"], name: "backend_challenge_score_index", unique: true
   end
 
@@ -125,8 +124,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.string "testcases_path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "is_project", default: false
-    t.string "banner"
     t.string "active_path"
     t.text "files"
     t.string "folder_name"
@@ -135,6 +132,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.text "protected_paths"
     t.string "template"
     t.integer "challenge_type", default: 0
+    t.boolean "is_project", default: false
     t.index ["slug"], name: "index_backend_challenges_on_slug", unique: true
   end
 
@@ -179,6 +177,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "result"
     t.index ["user_id", "backend_challenge_id"], name: "backend_submission_user_index"
   end
 
@@ -195,7 +194,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "9dY5MJb9oac"
+    t.string "cuid", default: "TcwO6Xb9AF0"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -224,14 +223,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
-  create_table "coding_room_user_mappings", charset: "utf8mb3", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.string "pointable_type"
-    t.integer "pointable_id"
-    t.integer "coins", default: 0
-  end
-  
   create_table "coding_room_user_mappings", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "coding_room_id", null: false
     t.bigint "user_id", null: false
@@ -400,10 +391,31 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.index ["user_id"], name: "index_discussions_on_user_id"
   end
 
+  create_table "edu_events", charset: "utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.date "starting_date"
+    t.date "ending_date"
+    t.string "organizer"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.json "form_columns"
+  end
+
   create_table "email_templates", charset: "utf8mb3", force: :cascade do |t|
     t.string "template_id"
     t.string "name"
     t.index ["template_id", "name"], name: "index_email_templates_on_template_id_and_name"
+  end
+
+  create_table "event_registrations", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "edu_event_id"
+    t.integer "user_id"
+    t.json "user_data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["edu_event_id"], name: "index_event_registrations_on_edu_event_id"
+    t.index ["user_id", "edu_event_id"], name: "index_event_registrations_on_user_id_and_edu_event_id", unique: true
   end
 
   create_table "events", charset: "utf8mb3", force: :cascade do |t|
@@ -466,7 +478,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_project", default: false
-    t.string "banner"
     t.index ["slug"], name: "index_frontend_challenges_on_slug", unique: true
   end
 
@@ -727,6 +738,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_10_173745) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_organizations_on_slug", unique: true
+  end
+
+  create_table "projects", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "challenge_id"
+    t.string "challenge_type"
+    t.string "banner"
+    t.text "intro"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "referrals", charset: "utf8mb3", force: :cascade do |t|
