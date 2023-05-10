@@ -234,6 +234,7 @@ FactoryBot.define do
   factory :job do
     sequence(:title) { |n| n }
     sequence(:organization_id) { |n| n }
+    sequence(:slug) { SecureRandom.hex(3) }
   end
 
   factory :job_application do

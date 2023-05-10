@@ -32,5 +32,15 @@ RSpec.describe 'Job', type: :request do
       get '/api/v1/jobs/0'
       expect(response).to have_http_status(404)
     end
+
+    it 'should return job when fetched by slug' do
+      get "/api/v1/jobs/fetch_by_slug?slug=#{job.slug}"
+      expect(response).to have_http_status(200)
+    end
+
+    it 'should not return job when not found by slug' do
+      get "/api/v1/jobs/fetch_by_slug?slug=#{job.slug}afaskfjhsalkfj"
+      expect(response).to have_http_status(404)
+    end
   end
 end
