@@ -14,7 +14,7 @@ class BootcampReminderWorker
       puts "Bootcamp Reminder Mail Going #{bootcamp_progress.id}"
       puts '----------------------------------------------------'
       user = bootcamp_progress.user
-      template_id = EmailTemplate.find_by(name: 'bootcamp_pending_mail').try(:template_id)
+      template_id = EmailTemplate.find_by(name: 'bootcamp_pending_mail_lm').try(:template_id)
       next if template_id.blank?
 
       EmailSenderWorker.perform_async(user.email, {

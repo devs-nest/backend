@@ -30,7 +30,7 @@ module Api
           college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0)
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college.id)
 
-          template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
+          template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
                                             collegename: college.name,
                                             username: data[:email].split("@")[0],
@@ -63,7 +63,7 @@ module Api
                                                    department: data[:department])
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id)
 
-          template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
+          template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
                                             collegename: @current_college_user.college.name,
                                             username: data[:email].split("@")[0],

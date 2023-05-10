@@ -8,7 +8,7 @@ RSpec.describe GroupPeerLearningWorker, type: :worker do
     let!(:user) { create(:user) }
     let!(:user1) { create(:user) }
     let!(:course) { create(:course) }
-    let!(:server) { create(:server, name: 'Devsnest', guild_id: '123456789') }
+    let!(:server) { create(:server, name: 'Devsnest', guild_id: '12345678910') }
     let!(:group) { create(:group, owner_id: user1.id, server_id: server.id, name: 'Test1 Team', scrum_start_time: DateTime.now + 10.minutes) }
     it 'Should add worker for Report Weekly Scrum' do
       expect do

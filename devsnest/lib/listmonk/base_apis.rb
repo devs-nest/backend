@@ -30,13 +30,14 @@ module Listmonk
       @headers = { 'Content-Type': 'application/json' }
     end
 
-    def get_templates
-      response = JSON.parse(HTTParty.get("#{@endpoint}/api/templates", basic_auth: @auth).response.body)
+    def get_templates(id = nil)
+      endpoint = id.present? ? "#{@endpoint}/api/templates/#{id}" : "#{@endpoint}/api/templates"
+      response = JSON.parse(HTTParty.get(endpoint, basic_auth: @auth).response.body)
     end
 
-    def tx(user, template_id, **data)
+    def tx(email, template_id, **data)
       payload = {
-        'subscriber_email' => user.email,
+        'subscriber_email' => email,
         'template_id' => template_id,
         'status' => 'enabled',
         'data' => data

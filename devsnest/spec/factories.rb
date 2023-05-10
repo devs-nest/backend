@@ -242,7 +242,14 @@ FactoryBot.define do
     sequence(:job_id) { |n| n }
   end
 
+
   factory :skill do
     sequence(:name) { |n| n }
+  end
+
+  factory :edu_event do
+    sequence(:title) { |n| "testEvent#{n}" }
+    sequence(:starting_date) { Time.zone.now + 2.days }
+    sequence(:ending_date) { Time.zone.now + 4.days }
   end
 end

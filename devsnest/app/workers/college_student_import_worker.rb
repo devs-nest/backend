@@ -6,7 +6,7 @@ class CollegeStudentImportWorker
   def perform(key, college_id, stucture = nil)
     invalid_students = []
     file = $s3.get_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key).body.string
-    template_id = EmailTemplate.find_by(name: 'college_join')&.template_id
+    template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
     c_struc = CollegeStructure.find_by_name(stucture)
 
     CSV.parse(file.strip)[1..].flatten.each do |row|

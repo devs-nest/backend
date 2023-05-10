@@ -27,7 +27,7 @@ class BootcampProgress < ApplicationRecord
 
   def send_welcome_mail
     user = User.get_by_cache(user_id)
-    template_id = EmailTemplate.find_by(name: 'bootcamp_welcome_mail').try(:template_id)
+    template_id = EmailTemplate.find_by(name: 'bootcamp_welcome_mail_lm').try(:template_id)
     return if user.blank? || template_id.blank?
 
     EmailSenderWorker.perform_async(user.email, {
@@ -40,7 +40,7 @@ class BootcampProgress < ApplicationRecord
   def send_completion_mail
     user = User.get_by_cache(user_id)
     course_curriculum = CourseCurriculum.get_by_cache(course_curriculum_id)
-    template_id = EmailTemplate.find_by(name: 'bootcamp_completion_mail').try(:template_id)
+    template_id = EmailTemplate.find_by(name: 'bootcamp_completion_mail_lm').try(:template_id)
     return if user.blank? || template_id.blank?
 
     type = Certification.get_type_from_course_type(course_curriculum.course_type)
