@@ -228,16 +228,23 @@ FactoryBot.define do
   end
 
   factory :organization do
+    sequence(:name) { |n| n }
   end
 
   factory :job do
     sequence(:title) { |n| n }
     sequence(:organization_id) { |n| n }
+    sequence(:slug) { SecureRandom.hex(3) }
   end
 
   factory :job_application do
     sequence(:user_id) { |n| n }
     sequence(:job_id) { |n| n }
+  end
+
+
+  factory :skill do
+    sequence(:name) { |n| n }
   end
 
   factory :edu_event do
