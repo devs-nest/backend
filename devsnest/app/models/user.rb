@@ -35,6 +35,7 @@
 #  group_assigned                     :boolean          default(FALSE)
 #  image_url                          :string(255)      default("")
 #  is_college_form_filled             :boolean          default(FALSE)
+#  is_college_student                 :boolean          default(FALSE)
 #  is_discord_form_filled             :boolean          default(FALSE)
 #  is_fullstack_course_22_form_filled :boolean          default(FALSE)
 #  is_verified                        :boolean          default(FALSE)
@@ -115,6 +116,7 @@ class User < ApplicationRecord
   has_one :user_integration
   has_many :event_registrations
   has_many :edu_events, through: :event_registrations
+  has_one :college_student
 
   has_many :user_skills
   has_many :skills, through: :user_skills

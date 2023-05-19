@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :college_student do
+  end
+
   factory :user_integration do
   end
 
