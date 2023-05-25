@@ -763,6 +763,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_073408) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "orders", charset: "utf8mb3", force: :cascade do |t|
+    t.string "razorpay_order_id"
+    t.string "razorpay_payment_id"
+    t.string "razorpay_signature"
+    t.string "razorpay_payment_link_id"
+    t.string "payment_link"
+    t.float "amount"
+    t.string "description"
+    t.string "status"
+    t.integer "user_id"
+    t.string "currency"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "organizations", charset: "utf8mb3", force: :cascade do |t|
     t.string "name"
     t.string "slug"
@@ -1022,11 +1037,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_073408) do
     t.integer "fe_score", default: 0
     t.integer "listmonk_subscriber_id"
     t.integer "be_score", default: 0
-    t.text "github_repos"
     t.integer "dsa_streak", default: 0
     t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
     t.boolean "is_college_student", default: false
+    t.text "github_repos"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

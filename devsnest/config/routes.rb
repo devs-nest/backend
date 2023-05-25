@@ -287,6 +287,9 @@ Rails.application.routes.draw do
           put :personal_details
           put :education_details
           put :preview
+      jsonapi_resources :orders, only: %i[create] do
+        collection do
+          get :verify_payment
         end
       end
     end

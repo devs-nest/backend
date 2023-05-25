@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :college_student do
+  factory :order do
+    
   end
 
   factory :user_integration do
