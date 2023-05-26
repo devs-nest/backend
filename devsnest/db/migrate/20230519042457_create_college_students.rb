@@ -24,8 +24,7 @@ class CreateCollegeStudents < ActiveRecord::Migration[7.0]
       t.string :higher_secondary_passing_year
       t.integer :higher_secondary_result
 
-      t.boolean :ed_detail, default: false
-      t.boolean :pd_detail, default: false
+      t.integer :state, default: 0
       t.integer :higher_education_type
       t.boolean :phone_verified, default: false
       t.integer :user_id

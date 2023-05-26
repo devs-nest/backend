@@ -7,7 +7,6 @@
 #  diploma_result                :integer
 #  diploma_university_name       :string(255)
 #  dob                           :date
-#  ed_detail                     :boolean          default(FALSE)
 #  email                         :string(255)
 #  high_school_board             :string(255)
 #  high_school_name              :string(255)
@@ -22,9 +21,9 @@
 #  parent_email                  :string(255)
 #  parent_name                   :string(255)
 #  parent_phone                  :string(255)
-#  pd_detail                     :boolean          default(FALSE)
 #  phone                         :string(255)
 #  phone_verified                :boolean          default(FALSE)
+#  state                         :integer          default(0)
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  user_id                       :integer

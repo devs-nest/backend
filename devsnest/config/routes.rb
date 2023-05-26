@@ -280,10 +280,11 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :edu_events, only: %i[show index]
       jsonapi_resources :event_registrations, only: :create
-      jsonapi_resources :college_students, only: %i[] do
+      jsonapi_resources :college_students, only: %i[show] do
         collection do
-          post :personal_details
-          post :education_details
+          put :verify_phone
+          put :personal_details
+          put :education_details
         end
       end
     end
