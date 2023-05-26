@@ -32,5 +32,6 @@ class CollegeStudent < ApplicationRecord
   belongs_to :user
 
   enum higher_education_type: %i[higher_secondary diploma]
-  enum state: %i[verify_phone personal_detail education_detail preview registration_fee test interview completed]
+  enum state: %i[verify_phone fill_pd fill_ed preview pay_reg_fee test interview completed]
+  validates_uniqueness_of :email, case_sensitive: true
 end

@@ -174,6 +174,8 @@ module Api
           user = User.fetch_google_user(code, params[:referral_code])
         end
 
+        user.update!(is_college_student: true) if params['is_college_student'] == true && user.is_college_student == false
+
         if user.present?
           sign_in(user)
           set_current_user
@@ -518,7 +520,7 @@ module Api
       private
 
       def sign_up_params
-        params.permit(:email, :password, :password_confirmation, :name)
+        params.permit(:email, :password, :password_confirmation, :name, :is_college_student)
       end
 
       def is_github_connected
