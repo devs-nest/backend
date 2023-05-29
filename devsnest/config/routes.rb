@@ -285,6 +285,7 @@ Rails.application.routes.draw do
           put :verify_phone
           put :personal_details
           put :education_details
+          put :preview
         end
       end
     end

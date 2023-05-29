@@ -5,11 +5,13 @@ class CreateCollegeStudents < ActiveRecord::Migration[7.0]
       t.string :phone
       t.date :dob
       t.string :email
+      t.integer :gender
 
       t.string :parent_name
       t.string :parent_phone
       t.string :parent_email
 
+      t.integer :high_school_board_type
       t.string :high_school_board
       t.string :high_school_name
       t.string :high_school_passing_year
@@ -19,6 +21,7 @@ class CreateCollegeStudents < ActiveRecord::Migration[7.0]
       t.string :diploma_passing_year
       t.integer :diploma_result
 
+      t.integer :higher_secondary_board_type
       t.string :higher_secondary_board
       t.string :higher_secondary_school_name
       t.string :higher_secondary_passing_year
