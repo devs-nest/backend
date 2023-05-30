@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_30_065343) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -194,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "TcwO6Xb9AF0"
+    t.string "cuid", default: "yiWu8hC4hwg"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -263,6 +261,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "college_enquiries", charset: "utf8mb3", force: :cascade do |t|
+    t.string "phone_number"
+    t.integer "enquiry_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone_number"], name: "index_college_enquiries_on_phone_number"
   end
 
   create_table "college_forms", charset: "utf8mb3", force: :cascade do |t|
@@ -358,7 +364,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.string "topic"
     t.integer "day"
     t.text "video_link"
-    t.json "resources"
+    t.json "resources", null: false
     t.boolean "locked", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -414,8 +420,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.json "user_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["edu_event_id"], name: "index_event_registrations_on_edu_event_id"
-    t.index ["user_id", "edu_event_id"], name: "index_event_registrations_on_user_id_and_edu_event_id", unique: true
   end
 
   create_table "events", charset: "utf8mb3", force: :cascade do |t|
@@ -738,6 +742,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_organizations_on_slug", unique: true
+  end
+
+  create_table "otp_logs", charset: "utf8mb3", force: :cascade do |t|
+    t.string "phone_number"
+    t.integer "timeout"
+    t.integer "request_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone_number"], name: "index_otp_logs_on_phone_number"
   end
 
   create_table "projects", charset: "utf8mb3", force: :cascade do |t|

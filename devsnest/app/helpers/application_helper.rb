@@ -24,4 +24,27 @@ module ApplicationHelper
       end
     end
   end
+
+  def valid_phone_number?(phone_number)
+    /^\d{10}$/.match?(phone_number)
+  end
+
+  def remaining_time_label(remaining_time)
+    if remaining_time >= 60
+      "#{remaining_time/60} minutes"
+    else
+      "#{remaining_time} seconds"
+    end
+  end
+
+  def send_otp_service(phone_number, otp)
+    response = HTTParty.post('https://www.fast2sms.com/dev/bulkV2', headers: {
+      authorization: ENV['OTP_SERVICE_API_KEY']
+      }, body: {
+      route: 'otp',
+      variables_values: otp,
+      numbers: phone_number
+    })
+    [response.code, JSON.parse(response.body)]
+  end
 end

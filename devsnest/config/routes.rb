@@ -117,6 +117,7 @@ Rails.application.routes.draw do
           get :dashboard_details, :github_ping, :repo_files
           post :sourcecode_io, :disconnect_user
           post :add_repo, :remove_repo
+          post :send_otp, :verify_phone_number
         end
       end
 
