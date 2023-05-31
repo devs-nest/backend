@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_31_073408) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -194,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "TcwO6Xb9AF0"
+    t.string "cuid", default: "EODUXLTOzQY"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -265,6 +263,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "college_enquiries", charset: "utf8mb3", force: :cascade do |t|
+    t.string "phone_number"
+    t.integer "enquiry_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone_number"], name: "index_college_enquiries_on_phone_number"
+  end
+
   create_table "college_forms", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "tpo_or_faculty_name", null: false
@@ -309,6 +315,37 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.integer "college_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "college_students", charset: "utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.string "phone"
+    t.date "dob"
+    t.string "email"
+    t.integer "gender"
+    t.string "parent_name"
+    t.string "parent_phone"
+    t.string "parent_email"
+    t.integer "high_school_board_type"
+    t.string "high_school_board"
+    t.string "high_school_name"
+    t.string "high_school_passing_year"
+    t.integer "high_school_result"
+    t.string "diploma_university_name"
+    t.string "diploma_passing_year"
+    t.integer "diploma_result"
+    t.integer "higher_secondary_board_type"
+    t.string "higher_secondary_board"
+    t.string "higher_secondary_school_name"
+    t.string "higher_secondary_passing_year"
+    t.integer "higher_secondary_result"
+    t.integer "state", default: 0
+    t.integer "higher_education_type"
+    t.boolean "phone_verified", default: false
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "referral_code"
   end
 
   create_table "colleges", charset: "utf8mb3", force: :cascade do |t|
@@ -397,9 +434,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.date "starting_date"
     t.date "ending_date"
     t.string "organizer"
+    t.json "form_columns"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.json "form_columns"
   end
 
   create_table "email_templates", charset: "utf8mb3", force: :cascade do |t|
@@ -740,6 +777,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.index ["slug"], name: "index_organizations_on_slug", unique: true
   end
 
+  create_table "otp_logs", charset: "utf8mb3", force: :cascade do |t|
+    t.string "phone_number"
+    t.integer "timeout"
+    t.integer "request_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone_number"], name: "index_otp_logs_on_phone_number"
+  end
+
   create_table "projects", charset: "utf8mb3", force: :cascade do |t|
     t.integer "challenge_id"
     t.string "challenge_type"
@@ -754,6 +800,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.string "referral_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "referred_by"
+    t.integer "referral_type", default: 0
   end
 
   create_table "rewards", charset: "utf8mb3", force: :cascade do |t|
@@ -978,6 +1026,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_183533) do
     t.integer "dsa_streak", default: 0
     t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
+    t.boolean "is_college_student", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

@@ -6,13 +6,16 @@
 #
 #  id               :bigint           not null, primary key
 #  referral_code    :string(255)
+#  referral_type    :integer          default("devsnest_registration")
+#  referred_by      :integer
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  referred_user_id :integer
 #
 class Referral < ApplicationRecord
   has_many :coin_log, as: :pointable
-  validates_uniqueness_of :referred_user_id, case_sensitive: true
+  validates :referred_user_id, uniqueness: { scope: [:referral_type] }
+  enum referral_type: %i[devsnest_registration college]
 
   def title
     'Refferal points'

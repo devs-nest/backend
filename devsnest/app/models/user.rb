@@ -35,6 +35,7 @@
 #  group_assigned                     :boolean          default(FALSE)
 #  image_url                          :string(255)      default("")
 #  is_college_form_filled             :boolean          default(FALSE)
+#  is_college_student                 :boolean          default(FALSE)
 #  is_discord_form_filled             :boolean          default(FALSE)
 #  is_fullstack_course_22_form_filled :boolean          default(FALSE)
 #  is_verified                        :boolean          default(FALSE)
@@ -115,6 +116,7 @@ class User < ApplicationRecord
   has_one :user_integration
   has_many :event_registrations
   has_many :edu_events, through: :event_registrations
+  has_one :college_student
 
   has_many :user_skills
   has_many :skills, through: :user_skills
@@ -129,6 +131,9 @@ class User < ApplicationRecord
   after_update :update_user_coins_for_signup
   after_update :update_user_score_lb, if: :saved_change_to_score?
   after_update :update_user_fe_score_lb, if: :saved_change_to_fe_score?
+
+  after_create :create_college_student
+  after_update :create_college_student, if: :saved_change_to_is_college_student?
   after_save :manage_list, if: proc { !Rails.env.test? && ENV['LISTMONK_LIST_CONTROL'] == 'true' }
   before_validation :create_referral_code, if: :is_referall_empty?
   serialize :github_repos, Array
@@ -166,7 +171,7 @@ class User < ApplicationRecord
   end
 
   def create_referral_code
-    Rails.logger.info 'Retrying referral code generation' while update(referral_code: SecureRandom.hex(3)) == false
+    Rails.logger.info 'Retrying referral code generation' while update(referral_code: "#{self.name&.first(3)&.upcase}#{SecureRandom.hex(3).upcase}") == false
   end
 
   def self.fetch_discord_id(code)
@@ -179,12 +184,15 @@ class User < ApplicationRecord
     user_details['id']
   end
 
-  def self.fetch_google_user(code, referral_code = '')
+  def self.fetch_google_user(code, params)
+    referral_code = params[:referral_code] || ''
     user_details = fetch_google_user_details(code)
     return if user_details.nil?
 
     user = create_google_user(user_details, referral_code)
-    Referral.create(referral_code: referral_code, referred_user_id: User.last.id) if referral_code.present?
+    referral_type = 'college' if params[:is_college_student] == 'true'
+    referred_by = User.find_by(referral_code: referral_code)&.id
+    Referral.create(referral_code: referral_code, referred_user_id: User.last.id, referral_type: referral_type, referred_by: referred_by) if referred_by.present?
     user
   end
 
@@ -583,5 +591,9 @@ class User < ApplicationRecord
 
   def self.expire_dashboard_cache(id)
     Rails.cache.delete("user_dashboard_#{id}")
+  end
+
+  def create_college_student
+    CollegeStudent.create!(email: email, user_id: id) if is_college_student
   end
 end

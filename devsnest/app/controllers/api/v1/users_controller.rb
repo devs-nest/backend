@@ -13,6 +13,7 @@ module Api
       before_action :update_college, only: %i[update onboard]
       before_action :update_username, only: %i[update]
       before_action :is_github_connected, only: %i[github_data add_repo remove_repo]
+      before_action :validate_phone_number, only: %i[send_otp verify_phone_number]
 
       def context
         { user: @current_user }
@@ -171,8 +172,10 @@ module Api
           user = User.find_by_email(params['email'])
           return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
         else
-          user = User.fetch_google_user(code, params[:referral_code])
+          user = User.fetch_google_user(code, params)
         end
+
+        user.update!(is_college_student: true) if params['is_college_student'] == true && user.is_college_student == false
 
         if user.present?
           sign_in(user)
@@ -296,7 +299,11 @@ module Api
         referral_code = params[:referral_code]
         user.web_active = true
         if user.save
-          Referral.create(referral_code: referral_code, referred_user_id: user.id) if referral_code.present?
+          referred_by = User.find_by_referral_code(referral_code)&.id
+          if referred_by.present?
+            referral_type = 'college' if params[:is_college_student] == 'true'
+            Referral.create(referral_code: referral_code, referred_user_id: user.id, referral_type: referral_type, referred_by: referred_by) if referral_code.present?
+          end
           sign_in(user)
           set_current_user
           render json: user if @current_user.present?
@@ -515,10 +522,58 @@ module Api
         render_success({ message: 'Repository Removed' })
       end
 
+      def send_otp
+        if params[:verification_type] == 'college_registration'
+          return render_error({ message: 'Phone Number Already Used.' }) if CollegeStudent.find_by_phone(@phone_number).exists?
+        end
+
+        otp_log = OtpLog.find_by_phone_number(@phone_number)
+        if otp_log.present?
+          time_till_next_otp = (Time.zone.now.to_i - (otp_log.updated_at.to_i + otp_log.timeout.minutes.to_i))
+          return render_error({ message: "Please Wait for #{remaining_time_label(time_till_next_otp.abs)} before sending another OTP." }) unless time_till_next_otp.positive?
+        end
+        
+        otp = SecureRandom.random_number(1000000).to_s.rjust(6, '0')
+        code, response_body = send_otp_service(@phone_number, otp)
+
+        if code == 200
+          otp_log = OtpLog.create(phone_number: @phone_number, request_count: 0, timeout: 1) if otp_log.blank?
+          if otp_log.request_count == 3
+            otp_log.update(request_count: 1, timeout: 1)
+          else
+            otp_log.update(request_count: otp_log.request_count + 1, timeout: otp_log.request_count == 2 ? 30 : 1)
+          end
+          Rails.cache.write("otp_#{@phone_number}", otp, expires_in: 2.minutes)
+          render_success({ message: 'OTP Sent.' })
+        else
+          render_error({ message: response_body['message'].first })
+        end
+      end
+
+      def verify_phone_number
+        generated_otp = Rails.cache.fetch("otp_#{@phone_number}")
+        input_otp = params[:otp]
+        return render_error({ message: 'Invalid OTP.' }) if generated_otp != input_otp
+
+        if params[:verification_type] == 'college_registration'
+          student = CollegeStudent.find_by_id(params[:student_id])
+          student&.update(phone: @phone_number, phone_verified: true)
+        else
+          enquiry = CollegeEnquiry.find_by_phone_number(@phone_number)
+          if enquiry.present?
+            enquiry.update(enquiry_count: enquiry.enquiry_count + 1)
+          else
+            CollegeEnquiry.create!(phone_number: @phone_number, enquiry_count: 1)
+          end
+        end
+
+        render_success({ message: 'Phone Number Verified.' })
+      end
+
       private
 
       def sign_up_params
-        params.permit(:email, :password, :password_confirmation, :name)
+        params.permit(:email, :password, :password_confirmation, :name, :is_college_student)
       end
 
       def is_github_connected
@@ -528,6 +583,11 @@ module Api
           nil
         end
         return render_error({ message: 'Github not connected.' }) if github_connected.nil?
+      end
+
+      def validate_phone_number
+        @phone_number = params[:phone_number]
+        return render_error({ message: 'Invalid Phone Number.' }) unless valid_phone_number?(@phone_number)
       end
     end
   end

@@ -117,6 +117,7 @@ Rails.application.routes.draw do
           get :dashboard_details, :github_ping, :repo_files
           post :sourcecode_io, :disconnect_user
           post :add_repo, :remove_repo
+          post :send_otp, :verify_phone_number
         end
       end
 
@@ -280,6 +281,14 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :edu_events, only: %i[show index]
       jsonapi_resources :event_registrations, only: :create
+      jsonapi_resources :college_students, only: %i[show] do
+        collection do
+          put :verify_phone
+          put :personal_details
+          put :education_details
+          put :preview
+        end
+      end
     end
   end
 end

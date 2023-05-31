@@ -35,6 +35,7 @@
 #  group_assigned                     :boolean          default(FALSE)
 #  image_url                          :string(255)      default("")
 #  is_college_form_filled             :boolean          default(FALSE)
+#  is_college_student                 :boolean          default(FALSE)
 #  is_discord_form_filled             :boolean          default(FALSE)
 #  is_fullstack_course_22_form_filled :boolean          default(FALSE)
 #  is_verified                        :boolean          default(FALSE)
