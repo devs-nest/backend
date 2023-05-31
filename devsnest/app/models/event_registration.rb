@@ -23,7 +23,7 @@ class EventRegistration < ApplicationRecord
       return if template_id.blank?
 
       EmailSenderWorker.perform_async(user.email, {
-                                        'username': user_data['name'] || user.name.blank? ? user.username : user.name.titleize
+                                        'username': user_data['name'] || (user.name.blank? ? user.username : user.name.titleize)
                                       },
                                       template_id)
     end
