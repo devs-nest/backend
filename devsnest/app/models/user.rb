@@ -171,7 +171,7 @@ class User < ApplicationRecord
   end
 
   def create_referral_code
-    Rails.logger.info 'Retrying referral code generation' while update(referral_code: SecureRandom.hex(3)) == false
+    Rails.logger.info 'Retrying referral code generation' while update(referral_code: "#{self.name&.first(3)&.upcase}#{SecureRandom.hex(3).upcase}") == false
   end
 
   def self.fetch_discord_id(code)
@@ -184,12 +184,15 @@ class User < ApplicationRecord
     user_details['id']
   end
 
-  def self.fetch_google_user(code, referral_code = '')
+  def self.fetch_google_user(code, params)
+    referral_code = params[:referral_code] || ''
     user_details = fetch_google_user_details(code)
     return if user_details.nil?
 
     user = create_google_user(user_details, referral_code)
-    Referral.create(referral_code: referral_code, referred_user_id: User.last.id) if referral_code.present?
+    referral_type = 'college' if params[:is_college_student] == 'true'
+    referred_by = User.find_by(referral_code: referral_code)&.id
+    Referral.create(referral_code: referral_code, referred_user_id: User.last.id, referral_type: referral_type, referred_by: referred_by) if referred_by.present?
     user
   end
 
