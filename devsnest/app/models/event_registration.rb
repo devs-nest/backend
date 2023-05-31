@@ -28,4 +28,5 @@ class EventRegistration < ApplicationRecord
                                       template_id)
     end
   end
+
 end
