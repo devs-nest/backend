@@ -524,7 +524,7 @@ module Api
 
       def send_otp
         if params[:verification_type] == 'college_registration'
-          return render_error({ message: 'Phone Number Already Used.' }) if CollegeStudent.find_by_phone(@phone_number).exists?
+          return render_error({ message: 'Phone Number Already Used.' }) if CollegeStudent.find_by_phone(@phone_number).present?
         end
 
         otp_log = OtpLog.find_by_phone_number(@phone_number)
@@ -557,7 +557,7 @@ module Api
 
         if params[:verification_type] == 'college_registration'
           student = CollegeStudent.find_by_id(params[:student_id])
-          student&.update(phone: @phone_number, phone_verified: true)
+          student&.update(phone: @phone_number, phone_verified: true, state: 'fill_pd')
         else
           enquiry = CollegeEnquiry.find_by_phone_number(@phone_number)
           if enquiry.present?
