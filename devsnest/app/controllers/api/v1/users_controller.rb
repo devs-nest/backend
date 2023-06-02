@@ -301,7 +301,7 @@ module Api
         if user.save
           referred_by = User.find_by_referral_code(referral_code)&.id
           if referred_by.present?
-            referral_type = 'college' if params[:is_college_student] == 'true'
+            referral_type = params[:is_college_student] ? 1 : 0
             Referral.create(referral_code: referral_code, referred_user_id: user.id, referral_type: referral_type, referred_by: referred_by) if referral_code.present?
           end
           sign_in(user)
