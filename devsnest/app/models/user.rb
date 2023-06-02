@@ -190,7 +190,7 @@ class User < ApplicationRecord
     return if user_details.nil?
 
     user = create_google_user(user_details, referral_code)
-    referral_type = 'college' if params[:is_college_student] == 'true'
+    referral_type = params[:is_college_student] ? 1 : 0
     referred_by = User.find_by(referral_code: referral_code)&.id
     Referral.create(referral_code: referral_code, referred_user_id: User.last.id, referral_type: referral_type, referred_by: referred_by) if referred_by.present?
     user
