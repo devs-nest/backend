@@ -19,6 +19,8 @@ module Api
 
       # POST /verify_payment to verify payment
       def verify_payment
+        return render_error('Payment Failed') if params[:razorpay_payment_link_status] != 'paid'
+
         order = Order.where(razorpay_payment_link_id: params[:razorpay_payment_link_id]).first
         if order.present?
           order.update(razorpay_signature: params[:razorpay_signature], razorpay_payment_id: params[:razorpay_payment_id])
