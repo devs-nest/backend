@@ -24,7 +24,7 @@ module Payments
           "email": true
         },
         "reminder_enable": true,
-        "callback_url": 'http://localhost:8000/api/v1/orders/verify_payment',
+        "callback_url": ENV['RAZORPAY_CALLBACK_URL'],
         "callback_method": 'get'
       }
 

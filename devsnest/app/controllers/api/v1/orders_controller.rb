@@ -14,7 +14,9 @@ module Api
       # POST /orders to create order
       def create
         @order = Payments::Create.call(@current_user, params[:amount], params[:currency], params[:description])
-        return render json: { error: 'Order not created' }, status: :unprocessable_entity unless @order
+        return render_error('Order not created') unless @order
+
+        render_success(@order)
       end
 
       # POST /verify_payment to verify payment
