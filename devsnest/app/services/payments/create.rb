@@ -6,10 +6,10 @@ class Payments::Create < ApplicationService
     Razorpay.setup(ENV['RAZORPAY_KEY_ID'], ENV['RAZORPAY_KEY_SECRET'])
     Razorpay.headers = { 'Content-type' => 'application/json' }
 
-    ammount = amount.to_i * 100
+    amount = amount.to_i * 100
     @order = Order.new({ user_id: user.id, amount: amount, currency: currency, description: description })
 
-    para_attr = { "amount": amount, "currency": @order.currency, "receipt": "#{description}" }
+    para_attr = { "amount": amount, "currency": @order.currency, "receipt": description.to_s }
 
     razorpay_order = Razorpay::Order.create(para_attr.to_json)
     Payments::LinkCreate.call(user, @order)
