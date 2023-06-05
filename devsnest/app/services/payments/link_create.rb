@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
-# Payment Link genaration
+# Payment Link generation
 module Payments
-  # Payment Link genaration
+  # Payment Link generation
   class LinkCreate < ApplicationService
     def initialize(user, order)
       @order = order
+
+      # Set up Razorpay with API keys
       Razorpay.setup(ENV['RAZORPAY_KEY_ID'], ENV['RAZORPAY_KEY_SECRET'])
       Razorpay.headers = { 'Content-type' => 'application/json' }
 
+      # Prepare parameters for creating a Razorpay payment link
       para_attr = {
         "amount": order.amount,
         "currency": order.currency,
@@ -28,12 +31,19 @@ module Payments
         "callback_method": 'get'
       }
 
+      # Create a Razorpay payment link
       payment_link = Razorpay::PaymentLink.create(para_attr.to_json)
 
-      @order.update(razorpay_payment_link_id: payment_link.id, payment_link: payment_link.short_url, status: "paylink_#{payment_link.status}")
+      # Update the Order object with the payment link ID, short URL, and status
+      @order.update(
+        razorpay_payment_link_id: payment_link.id,
+        payment_link: payment_link.short_url,
+        status: "paylink_#{payment_link.status}"
+      )
     end
 
     def call
+      # Save the Order object and return it if successful, otherwise return nil
       @order.save ? @order : nil
     end
   end
