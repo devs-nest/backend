@@ -289,6 +289,11 @@ Rails.application.routes.draw do
           put :preview
         end
       end
+      jsonapi_resources :orders, only: %i[create] do
+        collection do
+          post :verify_payment
+        end
+      end
     end
   end
 end

@@ -3,6 +3,10 @@
 FactoryBot.define do
   factory :college_student do
   end
+  factory :order do
+    sequence(:user_id) { |n| n }
+    sequence(:razorpay_payment_id) { |n| n }
+  end
 
   factory :user_integration do
   end
@@ -244,7 +248,6 @@ FactoryBot.define do
     sequence(:user_id) { |n| n }
     sequence(:job_id) { |n| n }
   end
-
 
   factory :skill do
     sequence(:name) { |n| n }
