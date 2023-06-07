@@ -7,7 +7,7 @@ module Api
       caching
       attributes :amount, :currency, :description, :status, :razorpay_order_id, :pay_link_id, :razorpay_signature
 
-      def ammount
+      def amount
         @model.amount / 100
       end
     end
