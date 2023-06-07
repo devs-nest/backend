@@ -131,7 +131,7 @@ module Api
       end
 
       def connect_github
-        permitted_params = params.permit(%i[code]).to_h 
+        permitted_params = params.permit(%i[code]).to_h
         return render_error({ message: 'Github Access Code not found' }) unless permitted_params['code'].present?
 
         res = User.fetch_github_access_token(permitted_params['code'])
@@ -299,10 +299,12 @@ module Api
         referral_code = params[:referral_code]
         user.web_active = true
         if user.save
-          referred_by = User.find_by_referral_code(referral_code)&.id
-          if referred_by.present?
+          referred_by = User.find_by_referral_code(referral_code)
+          if referred_by.present? && referred_by.id != user.id
             referral_type = params[:is_college_student] ? 1 : 0
-            Referral.create(referral_code: referral_code, referred_user_id: user.id, referral_type: referral_type, referred_by: referred_by) if referral_code.present?
+            Referral.create(referral_code: referral_code, referred_user_id: user.id, referral_type: referral_type, referred_by: referred_by.id)
+            template_id = EmailTemplate.find_by(name: 'referral_notifier')&.template_id
+            EmailSenderWorker.perform_async(referred_by.email, { 'username': referred_by.name, 'reffered_username': user.name, 'unsubscribe_token': user.unsubscribe_token }, template_id)
           end
           sign_in(user)
           set_current_user
@@ -523,17 +525,15 @@ module Api
       end
 
       def send_otp
-        if params[:verification_type] == 'college_registration'
-          return render_error({ message: 'Phone Number Already Used.' }) if CollegeStudent.find_by_phone(@phone_number).present?
-        end
+        return render_error({ message: 'Phone Number Already Used.' }) if params[:verification_type] == 'college_registration' && CollegeStudent.find_by_phone(@phone_number).present?
 
         otp_log = OtpLog.find_by_phone_number(@phone_number)
         if otp_log.present?
           time_till_next_otp = (Time.zone.now.to_i - (otp_log.updated_at.to_i + otp_log.timeout.minutes.to_i))
           return render_error({ message: "Please Wait for #{remaining_time_label(time_till_next_otp.abs)} before sending another OTP." }) unless time_till_next_otp.positive?
         end
-        
-        otp = SecureRandom.random_number(1000000).to_s.rjust(6, '0')
+
+        otp = SecureRandom.random_number(1_000_000).to_s.rjust(6, '0')
         code, response_body = send_otp_service(@phone_number, otp)
 
         if code == 200
@@ -567,6 +567,8 @@ module Api
           end
         end
 
+        template_id = EmailTemplate.find_by(name: 'phone_number_verified')&.template_id
+        EmailSenderWorker.perform_async(@current_user.email, { 'username': @current_user.name, 'unsubscribe_token': @current_user.unsubscribe_token }, template_id)
         render_success({ message: 'Phone Number Verified.' })
       end
 

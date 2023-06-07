@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_31_073408) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_07_095019) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_073408) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "EODUXLTOzQY"
+    t.string "cuid", default: "L65cJ00wsZY"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -345,7 +345,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_073408) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "referral_code"
+    t.text "coding_exp"
+    t.text "coding_summary"
   end
 
   create_table "colleges", charset: "utf8mb3", force: :cascade do |t|
@@ -1037,11 +1038,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_073408) do
     t.integer "fe_score", default: 0
     t.integer "listmonk_subscriber_id"
     t.integer "be_score", default: 0
+    t.text "github_repos"
     t.integer "dsa_streak", default: 0
     t.date "streak_end_date"
     t.integer "last_dsa_streak", default: 0
     t.boolean "is_college_student", default: false
-    t.text "github_repos"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

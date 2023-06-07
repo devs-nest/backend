@@ -5,6 +5,8 @@
 # Table name: college_students
 #
 #  id                            :bigint           not null, primary key
+#  coding_exp                    :text(65535)
+#  coding_summary                :text(65535)
 #  diploma_passing_year          :string(255)
 #  diploma_result                :integer
 #  diploma_university_name       :string(255)

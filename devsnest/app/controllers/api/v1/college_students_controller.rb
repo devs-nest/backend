@@ -56,7 +56,7 @@ module Api
       def education_params
         params.dig(:data, :attributes).permit(:high_school_board, :high_school_name, :high_school_passing_year, :high_school_result, :higher_education_type, :diploma_university_name,
                                               :diploma_passing_year, :diploma_result, :higher_secondary_board, :higher_secondary_school_name, :higher_secondary_passing_year,
-                                              :higher_secondary_result, :high_school_board_type, :higher_secondary_board_type)
+                                              :higher_secondary_result, :high_school_board_type, :higher_secondary_board_type, :coding_summary, coding_exp: [])
       end
 
       def set_college_student
