@@ -295,8 +295,9 @@ module Api
         user = User.find_by_email(params[:email])
         return render_error({ message: 'User already exists!' }) if user.present?
 
-        user = User.new(sign_up_params)
         referral_code = params[:referral_code]
+        params.delete(:referral_code)
+        user = User.new(sign_up_params)
         user.web_active = true
         if user.save
           referred_by = User.find_by_referral_code(referral_code)
@@ -305,6 +306,8 @@ module Api
             Referral.create(referral_code: referral_code, referred_user_id: user.id, referral_type: referral_type, referred_by: referred_by.id)
             template_id = EmailTemplate.find_by(name: 'referral_notifier')&.template_id
             EmailSenderWorker.perform_async(referred_by.email, { 'username': referred_by.name, 'reffered_username': user.name, 'unsubscribe_token': user.unsubscribe_token }, template_id)
+            template_id = EmailTemplate.find_by(name: 'college_student_signup')&.template_id
+            EmailSenderWorker.perform_async(user.email, { 'username': user.name, 'unsubscribe_token': user.unsubscribe_token }, template_id)
           end
           sign_in(user)
           set_current_user
