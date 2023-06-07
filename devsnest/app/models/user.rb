@@ -190,9 +190,14 @@ class User < ApplicationRecord
     return if user_details.nil?
 
     user = create_google_user(user_details, referral_code)
-    referral_type = params[:is_college_student] ? 1 : 0
-    referred_by = User.find_by(referral_code: referral_code)&.id
-    Referral.create(referral_code: referral_code, referred_user_id: User.last.id, referral_type: referral_type, referred_by: referred_by) if referred_by.present?
+    referred_by = User.find_by_referral_code(referral_code)
+    if referred_by.present? && referred_by.id != user.id
+      referral_type = params[:is_college_student] ? 1 : 0
+      Referral.create(referral_code: referral_code, referred_user_id: user.id, referral_type: referral_type, referred_by: referred_by.id)
+      template_id = EmailTemplate.find_by(name: 'referral_notifier')&.template_id
+      EmailSenderWorker.perform_async(referred_by.email, { 'username': referred_by.name, 'reffered_username': user.name, 'unsubscribe_token': user.unsubscribe_token }, template_id)
+    end
+
     user
   end
 

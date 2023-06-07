@@ -5,6 +5,8 @@
 # Table name: college_students
 #
 #  id                            :bigint           not null, primary key
+#  coding_exp                    :text(65535)
+#  coding_summary                :text(65535)
 #  diploma_passing_year          :string(255)
 #  diploma_result                :integer
 #  diploma_university_name       :string(255)
@@ -42,5 +44,6 @@ class CollegeStudent < ApplicationRecord
   enum high_school_board_type: %i[cbse icse other_board]
   enum higher_secondary_board_type: %i[cbse_hs icse_hs other_hs_board]
 
+  serialize :coding_exp, Array
   validates_uniqueness_of :email, case_sensitive: true
 end
