@@ -38,6 +38,7 @@ RSpec.describe Api::V1::OrdersController, type: :request do
         sign_in(user)
         allow(Razorpay::Order).to receive(:create).and_return(order_create_response)
         allow(Razorpay::PaymentLink).to receive(:create).and_return(payment_link_create_response)
+        allow(ENV).to receive(:[]).and_return(1000)
 
         post '/api/v1/orders', params: {
           amount: 1000,
