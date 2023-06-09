@@ -193,13 +193,12 @@ class User < ApplicationRecord
     present_user = User.find_by(email: user_details['email'])
     user = create_google_user(user_details, referral_code)
     referred_by = User.find_by_referral_code(referral_code)
-    if !present_user.present? && referred_by.present?
+    if !present_user.present? && referred_by.present? && referred_by.is_college_student?
       referral_type = params[:is_college_student] ? 1 : 0
       Referral.create(referral_code: referral_code, referred_user_id: user.id, referral_type: referral_type, referred_by: referred_by.id)
       template_id = EmailTemplate.find_by(name: 'referral_notifier')&.template_id
       EmailSenderWorker.perform_async(referred_by.email, { 'username': referred_by.name, 'reffered_username': user.name, 'unsubscribe_token': user.unsubscribe_token }, template_id)
-      template_id = EmailTemplate.find_by(name: 'college_student_signup')&.template_id
-      EmailSenderWorker.perform_async(user.email, { 'username': user.name, 'unsubscribe_token': user.unsubscribe_token }, template_id)
+
     end
     user
   end
@@ -602,6 +601,6 @@ class User < ApplicationRecord
   end
 
   def create_college_student
-    CollegeStudent.create!(email: email,name: name, user_id: id) if is_college_student
+    CollegeStudent.create!(email: email, name: name, user_id: id) if is_college_student
   end
 end

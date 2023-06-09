@@ -15,7 +15,7 @@
 class Referral < ApplicationRecord
   has_many :coin_log, as: :pointable
   validates :referred_user_id, uniqueness: { scope: [:referral_type] }
-  enum referral_type: %i[devsnest_registration college]
+  enum referral_type: %i[devsnest_registration devsnest_college]
 
   def title
     'Refferal points'
