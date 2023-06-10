@@ -50,8 +50,6 @@ class CollegeStudent < ApplicationRecord
 
   def send_college_joining_mail
     template_id = EmailTemplate.find_by(name: 'college_student_signup')&.template_id
-    EmailSenderWorker.perform_async(email, { 'username': name, 'unsubscribe_token': self.user.unsubscribe_token }, template_id)
+    EmailSenderWorker.perform_async(email, { 'username': name, 'unsubscribe_token': user.unsubscribe_token }, template_id)
   end
-
-
 end
