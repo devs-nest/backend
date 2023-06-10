@@ -46,4 +46,10 @@ class CollegeStudent < ApplicationRecord
 
   serialize :coding_exp, Array
   validates_uniqueness_of :email, case_sensitive: true
+  after_create :send_college_joining_mail
+
+  def send_college_joining_mail
+    template_id = EmailTemplate.find_by(name: 'college_student_signup')&.template_id
+    EmailSenderWorker.perform_async(email, { 'username': name, 'unsubscribe_token': user.unsubscribe_token }, template_id)
+  end
 end
