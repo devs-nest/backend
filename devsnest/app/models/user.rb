@@ -116,10 +116,11 @@ class User < ApplicationRecord
   has_one :user_integration
   has_many :event_registrations
   has_many :edu_events, through: :event_registrations
-  has_one :college_student
+  has_one :college_student, dependent: :destroy
 
   has_many :user_skills
   has_many :skills, through: :user_skills
+  has_many :group_members, dependent: :delete_all
 
   delegate :college, to: :college_profile, allow_nil: true
 

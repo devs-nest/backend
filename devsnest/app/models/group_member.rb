@@ -25,6 +25,7 @@ class GroupMember < ApplicationRecord
   include UtilConcern
   audited
   belongs_to :group
+  belongs_to :user
   after_create :send_all_steps_completed_mail
   after_create :set_prevoiusly_joined_a_group
   after_create :send_scrum_message_in_group
@@ -32,6 +33,7 @@ class GroupMember < ApplicationRecord
   # after_commit :cache_expire
   after_commit :update_group_member_count, only: %i[create destroy]
   has_paper_trail on: %i[destroy]
+  enum bootcamp_type: %i[dsa frontend backend solana]
 
   def update_group_member_count
     return if group.group_members.count.zero?
