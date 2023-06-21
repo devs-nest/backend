@@ -115,7 +115,7 @@ module Api
         ActiveRecord::Base.transaction do
           group.group_members.create!(user_id: user.id)
           user.update(group_assigned: true)
-          raise StandardError, 'Group is already full!' if group.group_members.count > 16 and group.bootcamp_type != 'solana'
+          raise StandardError, 'Group is already full!' if group.group_members.count > 16
 
           # group.update!(members_count: group.members_count + 1) #TODO
         end
