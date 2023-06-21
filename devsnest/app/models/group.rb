@@ -44,7 +44,7 @@ class Group < ApplicationRecord
   after_create :parameterize
   before_create :assign_server
   after_commit :expire_cache
-  validates :members_count, numericality: { less_than_or_equal_to: 20, message: 'The group is full' }, unless: -> { bootcamp_type == 'solana' }
+  validates :members_count, numericality: { less_than_or_equal_to: 20, message: 'The group is full' }
   validates :members_count, numericality: { greater_than_or_equal_to: 0, message: 'The group members count can\'t be negetive' }
   validates :name, length: { minimum: 4, maximum: 33, message: 'The group name must be between 4 and 25 characters' }
   validates_uniqueness_of :name, case_sensitive: true
@@ -59,7 +59,7 @@ class Group < ApplicationRecord
   scope :v1, -> { where(version: 1) }
   scope :v2, -> { where(version: 2) }
   scope :visible, -> { where(group_type: 'public') }
-  scope :under_limited_members, -> { where('members_count < 16') }
+  scope :under_limited_members, -> { where('members_count < 20') }
 
   def parameterize
     update_attribute(:slug, name.parameterize)
@@ -245,6 +245,6 @@ class Group < ApplicationRecord
   end
 
   def self.eligible_groups
-    where("version = 2 AND group_type = 'public' AND (members_count < 16 OR bootcamp_type = 'solana')")
+    where("version = 2 AND group_type = 'public' AND members_count < 16")
   end
 end
