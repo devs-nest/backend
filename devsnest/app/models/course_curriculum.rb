@@ -23,7 +23,7 @@
 #
 class CourseCurriculum < ApplicationRecord
   belongs_to :course
-  enum course_type: %i[dsa frontend backend]
+  enum course_type: %i[dsa frontend backend solana]
   has_many :assignment_questions
 
   def next_curriculum_id
