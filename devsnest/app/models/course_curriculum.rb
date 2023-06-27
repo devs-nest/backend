@@ -52,6 +52,10 @@ class CourseCurriculum < ApplicationRecord
       submissions_succeded = BackendChallengeScore.where(user: user, backend_challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:backend_challenge_id)
       submissions_failed = BeSubmission.where(user: user, backend_challenge_id: question_ids).where.not(status: 'Accepted').distinct.pluck(:backend_challenge_id)
       assignment_questions_data = BackendChallenge.where(id: question_ids)
+    when 'solana'
+      submissions_succeded = ArticleSubmission.where(user: user, article_id: question_ids).pluck(:article_id)
+      submissions_failed = question_ids.difference submissions_succeded
+      assignment_questions_data = Article.where(id: question_ids)
     end
     assignment_questions_data.each do |assignment_question|
       question_data = {
