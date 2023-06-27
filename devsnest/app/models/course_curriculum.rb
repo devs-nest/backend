@@ -54,18 +54,24 @@ class CourseCurriculum < ApplicationRecord
       assignment_questions_data = BackendChallenge.where(id: question_ids)
     when 'solana'
       submissions_succeded = ArticleSubmission.where(user: user, article_id: question_ids).pluck(:article_id)
-      submissions_failed = question_ids.difference submissions_succeded
-      assignment_questions_data = Article.where(id: question_ids)
+      submissions_failed = []
+      assignment_questions_data = Article.where(id: question_ids).map do |question|
+        {
+          id: question.id,
+          name: question.title,
+          slug: question.slug
+        }
+      end
     end
     assignment_questions_data.each do |assignment_question|
       question_data = {
-        id: assignment_question&.id,
-        name: assignment_question&.name,
-        slug: assignment_question&.slug,
-        status: if submissions_succeded.include?(assignment_question.id)
+        id: assignment_question[:id],
+        name: assignment_question[:name],
+        slug: assignment_question[:slug],
+        status: if submissions_succeded.include?(assignment_question[:id])
                   2
                 else
-                  submissions_failed.include?(assignment_question.id) ? 1 : 0
+                  submissions_failed.include?(assignment_question[:id]) ? 1 : 0
                 end
       }
       data << question_data
