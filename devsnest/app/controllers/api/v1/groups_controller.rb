@@ -216,7 +216,7 @@ module Api
         group_data = Group.where(server_id: server.id).pluck(:name, :bootcamp_type).map do |name, bootcamp_type|
           sanitized_name = name.gsub(/[^a-zA-Z0-9 \n]/, '_').gsub(/ +/, ' ')
           channel_name = sanitized_name.split(' ').map(&:downcase).join('-') + "-channel"
-          { name: name, bootcamp_type: bootcamp_type, channel_name: group_name }
+          { name: name, bootcamp_type: bootcamp_type, channel_name: channel_name }
         end
 
         render_success({ groups: group_data })
