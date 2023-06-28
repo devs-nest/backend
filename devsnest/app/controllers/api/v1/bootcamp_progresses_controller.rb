@@ -9,7 +9,11 @@ module Api
       before_action :add_course_curriculum_id, only: :create
 
       def index
-        render json: { data: @current_user.bootcamp_progress_details }, status: :ok
+        data = @current_user.bootcamp_progress_details
+        data.each do |d|
+          d.merge!(open_to_all: true) if d['course_type'] == 'solana'
+        end
+        render json: { data: data }, status: :ok
       end
 
       def complete_day
