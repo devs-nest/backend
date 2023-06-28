@@ -17,14 +17,14 @@ MassRoleModifierWorker.perform_async('add_mass_role', discord_ids.slice(0,10), '
 MassRoleModifierWorker.perform_async('delete_mass_role', discord_ids, 'TEAM NAME')
 
 #  Group Modifier Example
-GroupModifierWorker.perform_async('create', ['V2 PHENOMENAL  CULTS Team'])
-GroupModifierWorker.perform_async('destroy', [group.name],group.server.guild_id)
+GroupModifierWorker.perform_async('create', 'solana', ['V2 Adhikram Team'])
+GroupModifierWorker.perform_async('destroy','DSA', [group.name], group.server.guild_id)
 
 GroupNotifierWorker.perform_async('V2 Alpha Tester Team', "Hello PEEPS")
 
 #  Mass group Modifier Example
 Group.v2.where(server_id:1).each do |group|
-    GroupModifierWorker.perform_async('create', [group.name],group.server.guild_id)
+    GroupModifierWorker.perform_async('create', group.bootcamp_type, [group.name],group.server.guild_id)
     discord_ids=[]
     puts("-----------------------------------------------------")
     puts(group.name)
@@ -74,3 +74,13 @@ end
 
 # Server.create(name: 'Devsnest Main', guild_id: '781576398414413854', link: 'https://discord.gg/ZqXBanhE')
 # Server.create(name: 'Devsnest Community 2.0', guild_id: '985833665940578304', link: 'https://discord.gg/rwSfztZf')
+
+
+GroupMember.pluck(:group_id).uniq.each do |id|
+    begin
+        group = Group.find(id)
+        puts(id) if group == nil
+    rescue
+        puts(id)
+    end
+end;nil
