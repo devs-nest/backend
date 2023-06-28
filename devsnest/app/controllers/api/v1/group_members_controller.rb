@@ -29,7 +29,7 @@ module Api
         end
         # we need to pass guild id here because we do not have the group now
         RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name, guild_id)
-        GroupModifierWorker.perform_async('destroy', [group_name], guild_id) if Group.find_by(id: group_id).blank?
+        GroupModifierWorker.perform_async('destroy', [group_name], bootcamp_type, guild_id) if Group.find_by(id: group_id).blank?
 
         render_success(message: 'Group left')
       rescue StandardError => e

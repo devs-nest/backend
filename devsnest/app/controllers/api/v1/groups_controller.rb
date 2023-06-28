@@ -56,7 +56,7 @@ module Api
         new_group_name = params.dig(:data, :attributes, 'name')
         return if group.nil? || new_group_name.nil?
 
-        GroupModifierWorker.perform_async('update', [group.name, new_group_name], group.server.guild_id) if group.name != new_group_name
+        GroupModifierWorker.perform_async('update', [group.name, new_group_name], group.bootcamp_type, group.server.guild_id) if group.name != new_group_name
       end
 
       def deslug
@@ -72,7 +72,7 @@ module Api
         group = Group.find_by(name: group_name)
         return render_error('Group not found') if group.nil?
 
-        GroupModifierWorker.perform_async('destroy', [group_name], group&.server&.guild_id)
+        GroupModifierWorker.perform_async('destroy', [group_name], group.bootcamp_type, group&.server&.guild_id)
         group.destroy
       end
 
@@ -149,7 +149,7 @@ module Api
         end
         # we need to pass guild id here because we do not have the group now
         RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name, guild_id)
-        GroupModifierWorker.perform_async('destroy', [group_name], guild_id) if Group.find_by(id: params[:id]).blank?
+        GroupModifierWorker.perform_async('destroy', [group_name], group.bootcamp_type, guild_id) if Group.find_by(id: params[:id]).blank?
 
         render_success(message: 'Group left')
       rescue ActiveRecord::RecordNotFound
@@ -201,7 +201,7 @@ module Api
           group = Group.find(parsed_response['data']['id'].to_i)
           # group.update!(members_count: group.members_count + 1) #TODO
           group.group_members.create!(user_id: @current_user.id)
-          GroupModifierWorker.perform_async('create', [group.name], group.server&.guild_id)
+          GroupModifierWorker.perform_async('create', [group.name], group.bootcamp_type, group.server&.guild_id)
           RoleModifierWorker.perform_async('add_role', @current_user.discord_id, group.name, group.server&.guild_id)
           send_group_change_message(@current_user, group)
           ping_discord(group, 'Instructions')
@@ -213,7 +213,13 @@ module Api
         server = Server.find_by(guild_id: params[:data][:attributes][:server_id])
         return render_error(message: 'Server not found') if server.nil?
 
-        render_success({ groups: Group.where(server_id: server.id).pluck(:name) })
+        group_data = Group.where(server_id: server.id).pluck(:name, :bootcamp_type).map do |name, bootcamp_type|
+          sanitized_name = name.gsub(/[^a-zA-Z0-9 \n]/, '_').gsub(/ +/, ' ')
+          channel_name = sanitized_name.split(' ').map(&:downcase).join('-') + "-channel"
+          { name: name, bootcamp_type: bootcamp_type, channel_name: channel_name }
+        end
+
+        render_success({ groups: group_data })
       end
 
       def team_details
