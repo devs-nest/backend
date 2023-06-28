@@ -26,6 +26,8 @@ class CourseCurriculum < ApplicationRecord
   enum course_type: %i[dsa frontend backend solana]
   has_many :assignment_questions
 
+  after_create :update_extra_data
+
   def next_curriculum_id
     extra_data['next']
   end
@@ -77,5 +79,22 @@ class CourseCurriculum < ApplicationRecord
       data << question_data
     end
     data
+  end
+
+  def update_extra_data
+    course_curriculums = CourseCurriculum.where(course_type: course_type)
+    if course_curriculums.count > 1
+      prev_course_curriculum = course_curriculums.second_to_last
+      update!(extra_data: {
+                next: nil,
+                previous: prev_course_curriculum.id
+              })
+      prev_course_curriculum.update!(extra_data: {
+                                       next: id,
+                                       previous: prev_course_curriculum.extra_data['previous']
+                                     })
+    else
+      update!(extra_data: {})
+    end
   end
 end
