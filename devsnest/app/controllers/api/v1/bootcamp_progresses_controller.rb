@@ -27,7 +27,7 @@ module Api
         _previous_curriculum_id = course_curriculum.previous_curriculum_id
         if next_curriculum_id.blank?
           bootcamp_progress.update(completed: true) if bootcamp_progress.completed == false
-          render_success({ message: 'Bootcamp Completed!', bootcamp_progress: bootcamp_progress.as_json.merge(open_to_all: true) }
+          render_success({ message: 'Bootcamp Completed!', bootcamp_progress: bootcamp_progress.as_json.merge(open_to_all: true) })
         else
           bootcamp_progress.update(course_curriculum_id: next_curriculum_id)
           render_success({ message: 'Day Completed!', bootcamp_progress: bootcamp_progress.as_json.merge(open_to_all: true) })
