@@ -9,14 +9,22 @@ module Api
       before_action :add_course_curriculum_id, only: :create
 
       def index
-        render json: { data: @current_user.bootcamp_progress_details }, status: :ok
+        data = @current_user.bootcamp_progress_details
+        data.each do |d|
+          if d[:course_type] == 'solana'
+            d.merge!(open_to_all: true) 
+          else
+            d.merge!(open_to_all: false)
+          end
+        end
+        render json: { data: data }, status: :ok
       end
 
       def complete_day
         course_curriculum_id = params.dig(:data, :attributes, :course_curriculum_id)
         user = User.get_by_cache(params.dig(:data, :attributes, :user_id))
         bootcamp_progress = BootcampProgress.find_by(user_id: user.id, course_curriculum_id: course_curriculum_id)
-        return render_error(message: 'Invalid Input.') if bootcamp_progress.blank?
+        return render_error(message: 'You have to complete previous day first.') if bootcamp_progress.blank?
 
         course_curriculum = CourseCurriculum.get_by_cache(course_curriculum_id)
         user_assignment_data = course_curriculum.user_assignment_data(user)

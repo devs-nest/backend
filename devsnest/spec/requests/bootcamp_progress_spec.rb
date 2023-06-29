@@ -59,8 +59,8 @@ RSpec.describe 'BootcampProgress', type: :request do
 
   context 'Complete Day' do
     let!(:course) { create(:course) }
-    let!(:course_curriculum) {  create(:course_curriculum, course_id: course.id, course_type: 'dsa', extra_data: { 'next': nil }) }
-    let!(:course_curriculum2) { create(:course_curriculum, course_id: course.id, course_type: 'dsa', extra_data: { 'next': course_curriculum.id }) }
+    let!(:course_curriculum2) { create(:course_curriculum, course_id: course.id, course_type: 'dsa') }
+    let!(:course_curriculum) {  create(:course_curriculum, course_id: course.id, course_type: 'dsa') }
     let!(:bootcamp_progress) { create(:bootcamp_progress, user_id: user.id, course_id: course.id, course_curriculum_id: course_curriculum2.id) }
     let!(:user) { create(:user) }
     let!(:email_template) { create(:email_template, name: 'bootcamp_completion_mail', template_id: '12345678') }

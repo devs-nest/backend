@@ -23,8 +23,10 @@
 #
 class CourseCurriculum < ApplicationRecord
   belongs_to :course
-  enum course_type: %i[dsa frontend backend]
+  enum course_type: %i[dsa frontend backend solana]
   has_many :assignment_questions
+
+  after_create :update_extra_data
 
   def next_curriculum_id
     extra_data['next']
@@ -52,20 +54,47 @@ class CourseCurriculum < ApplicationRecord
       submissions_succeded = BackendChallengeScore.where(user: user, backend_challenge_id: question_ids).where('passed_test_cases = total_test_cases').pluck(:backend_challenge_id)
       submissions_failed = BeSubmission.where(user: user, backend_challenge_id: question_ids).where.not(status: 'Accepted').distinct.pluck(:backend_challenge_id)
       assignment_questions_data = BackendChallenge.where(id: question_ids)
+    when 'solana'
+      submissions_succeded = ArticleSubmission.where(user: user, article_id: question_ids).pluck(:article_id)
+      submissions_failed = []
+      assignment_questions_data = Article.where(id: question_ids).map do |question|
+        {
+          id: question.id,
+          name: question.title,
+          slug: question.slug
+        }
+      end
     end
     assignment_questions_data.each do |assignment_question|
       question_data = {
-        id: assignment_question&.id,
-        name: assignment_question&.name,
-        slug: assignment_question&.slug,
-        status: if submissions_succeded.include?(assignment_question.id)
+        id: assignment_question[:id],
+        name: assignment_question[:name],
+        slug: assignment_question[:slug],
+        status: if submissions_succeded.include?(assignment_question[:id])
                   2
                 else
-                  submissions_failed.include?(assignment_question.id) ? 1 : 0
+                  submissions_failed.include?(assignment_question[:id]) ? 1 : 0
                 end
       }
       data << question_data
     end
     data
+  end
+
+  def update_extra_data
+    course_curriculums = CourseCurriculum.where(course_type: course_type)
+    if course_curriculums.count > 1
+      prev_course_curriculum = course_curriculums.second_to_last
+      update!(extra_data: {
+                next: nil,
+                previous: prev_course_curriculum.id
+              })
+      prev_course_curriculum.update!(extra_data: {
+                                       next: id,
+                                       previous: prev_course_curriculum.extra_data['previous']
+                                     })
+    else
+      update!(extra_data: {})
+    end
   end
 end
