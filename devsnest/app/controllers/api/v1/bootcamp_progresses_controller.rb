@@ -24,7 +24,7 @@ module Api
         course_curriculum_id = params.dig(:data, :attributes, :course_curriculum_id)
         user = User.get_by_cache(params.dig(:data, :attributes, :user_id))
         bootcamp_progress = BootcampProgress.find_by(user_id: user.id, course_curriculum_id: course_curriculum_id)
-        return render_error(message: 'Invalid Input.') if bootcamp_progress.blank?
+        return render_error(message: 'You have to complete previous day first.') if bootcamp_progress.blank?
 
         course_curriculum = CourseCurriculum.get_by_cache(course_curriculum_id)
         user_assignment_data = course_curriculum.user_assignment_data(user)
