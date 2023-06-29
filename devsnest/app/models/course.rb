@@ -6,6 +6,7 @@
 #
 #  id             :bigint           not null, primary key
 #  archived       :boolean          default(TRUE)
+#  completed      :boolean          default(FALSE)
 #  current_module :string(255)
 #  name           :string(255)
 #  created_at     :datetime         not null
