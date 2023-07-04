@@ -16,7 +16,11 @@ module Api
         # Call Payments::Create service to create a payment/order
         return render_error('Amount in not correct') unless params[:amount].present? && params[:amount].to_i == ENV['APPLICATION_FEE'].to_i
 
-        @order = Payments::Create.call(@current_user, params[:amount], params[:currency], params[:description])
+        @order = Order.find_by(user_id: @current_user.id, status: %w[paylink_created pending])
+        Payments::VerifyLink.call(@order) if @order.present?
+
+        @order = Payments::Create.call(@current_user, params[:amount], params[:currency], params[:description]) unless @order.present?
+
         return render_error('Order not created') unless @order
 
         render_success(@order)
