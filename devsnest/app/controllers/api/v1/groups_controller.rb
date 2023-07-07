@@ -255,8 +255,6 @@ module Api
 
       def course_validations
         return render_unauthorized unless @current_user.discord_active
-
-        render_unauthorized unless @current_user.is_fullstack_course_22_form_filled
       end
     end
   end

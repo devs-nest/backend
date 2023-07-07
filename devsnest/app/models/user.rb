@@ -241,7 +241,7 @@ class User < ApplicationRecord
     ServerUser.where(user_id: id, active: true).each do |server_user| # Giving other roles
       server = Server.find_by(id: server_user.server_id)
       RoleModifierWorker.perform_async('add_role', discord_id, 'Verified', server.guild_id)
-      RoleModifierWorker.perform_async('add_role', discord_id, 'DN JUNE BATCH', server.guild_id) if accepted_in_course
+      RoleModifierWorker.perform_async('add_role', discord_id, 'DN JUNE BATCH', server.guild_id)
     end
 
     return unless discord_user.present?
@@ -261,7 +261,7 @@ class User < ApplicationRecord
     ServerUser.where(user_id: id, active: true).each do |server_user| # Removing other roles
       server = Server.find_by(id: server_user.server_id)
       RoleModifierWorker.perform_async('delete_role', new_discord_id, 'Verified', server.guild_id)
-      RoleModifierWorker.perform_async('delete_role', new_discord_id, 'DN JUNE BATCH', server.guild_id) if accepted_in_course
+      RoleModifierWorker.perform_async('delete_role', new_discord_id, 'DN JUNE BATCH', server.guild_id)
     end
     discord_user = User.find_by(discord_id: new_discord_id)
     discord_user = User.create!(name: name, username: new_discord_id, email: "#{new_discord_id}@gmail.com", discord_id: new_discord_id, discord_active: true) unless discord_user.present?
@@ -420,7 +420,7 @@ class User < ApplicationRecord
       ServerUser.where(user_id: id, active: true).each do |server_user|
         server = Server.find_by(id: server_user.server_id)
         RoleModifierWorker.perform_async('add_role', discord_id, 'Verified', server.guild_id)
-        RoleModifierWorker.perform_async('add_role', discord_id, 'DN JUNE BATCH', server.guild_id) if accepted_in_course
+        RoleModifierWorker.perform_async('add_role', discord_id, 'DN JUNE BATCH', server.guild_id)
       end
       template_id = EmailTemplate.find_by(name: 'step_one_mail_with_discord_connected_lm')&.template_id
       EmailSenderWorker.perform_async(email, {
