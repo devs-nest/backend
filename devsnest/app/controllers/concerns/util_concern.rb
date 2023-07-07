@@ -55,11 +55,11 @@ module UtilConcern
       coins: user.coins,
       server_details: server_details,
       batch_leader_details: Group.where(batch_leader_id: user.id)&.pluck(:name),
-      batch_eligible: user.web_active && user.discord_active && user.accepted_in_course,
+      batch_eligible: user.web_active && user.discord_active,
       verified: user.web_active && user.discord_active,
       group_name: group.present? ? group&.name : nil,
       group_server_link: group.present? ? group&.server&.link : nil,
-      waitlisted: user.is_fullstack_course_22_form_filled == true && user.accepted_in_course == false
+      waitlisted: user.accepted_in_course == false
     }
   end
 
