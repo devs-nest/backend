@@ -44,8 +44,14 @@ module UtilConcern
   end
 
   def get_user_details(user)
-    server_details = Server.where(id: ServerUser.where(user_id: user.id)&.pluck(:server_id))&.pluck(:name)
-    group = GroupMember.find_by(user_id: user.id)&.group
+    server_details = Server.where(id: ServerUser.where(user_id: user.id)&.pluck(:server_id))&.pluck(:name) || []
+    group_ids = user.group_members.pluck(:group_id)
+    group_details = []
+    group_ids.each do |group_id|
+      group = Group.find(group_id)
+      server = group.server
+      group_details << { group_name: group.name, server_name: server.name, server_link: server.link, bootcamp_type: group.bootcamp_type }
+    end
     {
       id: user.id,
       name: user.name,
@@ -55,10 +61,8 @@ module UtilConcern
       coins: user.coins,
       server_details: server_details,
       batch_leader_details: Group.where(batch_leader_id: user.id)&.pluck(:name),
-      batch_eligible: user.web_active && user.discord_active,
       verified: user.web_active && user.discord_active,
-      group_name: group.present? ? group&.name : nil,
-      group_server_link: group.present? ? group&.server&.link : nil,
+      group_details: group_details,
       waitlisted: user.accepted_in_course == false
     }
   end
