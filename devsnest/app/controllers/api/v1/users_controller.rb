@@ -416,16 +416,16 @@ module Api
       def check_user_details
         discord_ids = params.dig(:data, :attributes, 'discord_ids')
         return render_error({ message: 'No discord_ids provided' }) if discord_ids.nil? || discord_ids.empty?
-      
+
         users = User.where(discord_id: discord_ids)
         return render_error({ message: 'Users not found' }) if users.empty?
-      
+
         data = []
         users.each do |user|
           user_details = get_user_details(user)
           data << user_details
         end
-        
+
         render_success({ user_details: data })
       end
 
