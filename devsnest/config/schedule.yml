@@ -14,9 +14,9 @@ update_group_activity_point:
   cron: "00 02 * * mon Asia/Kolkata" # every Monday at 02:00
   class: "GroupActivityPointsUpdateWorker"
 
-bootcamp_reminder_mail:
-  cron: "0 16 * * * Asia/Kolkata" # every Day at 16:00
-  class: "BootcampReminderWorker"
+# bootcamp_reminder_mail:
+#   cron: "0 16 * * * Asia/Kolkata" # every Day at 16:00
+#   class: "BootcampReminderWorker"
 
 # daily_group_ping:
 #   cron: "59 23 * * *" # every day at 23:59
