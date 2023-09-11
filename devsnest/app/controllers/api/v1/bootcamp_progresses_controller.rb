@@ -11,7 +11,7 @@ module Api
       def index
         data = @current_user.bootcamp_progress_details
         data.each do |d|
-          if d[:course_type] == 'solana'
+          if d[:course_type] == 'solana' || d[:course_name] == 'dn_airtribe_2023'
             d.merge!(open_to_all: true)
           else
             d.merge!(open_to_all: false)
