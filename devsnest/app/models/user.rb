@@ -560,8 +560,8 @@ class User < ApplicationRecord
   end
 
   def bootcamp_progress_details
-    BootcampProgress.includes(:course_curriculum).where(user_id: id).map do |progress|
-      progress.attributes.merge(course_type: progress.course_curriculum.course_type)
+    BootcampProgress.includes(:course_curriculum, :course).where(user_id: id).map do |progress|
+      progress.attributes.merge(course_type: progress.course_curriculum.course_type, course_name: progress.course.name)
     end
   end
 
