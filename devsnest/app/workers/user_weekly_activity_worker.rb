@@ -4,7 +4,7 @@
 class UserWeeklyActivityWorker
   include Sidekiq::Worker
   sidekiq_options retry: 5
-  def perform 
+  def perform
     template_id = EmailTemplate.find_by(name: 'weekly_report_lm')&.template_id
     unsub_user_ids = Unsubscribe.get_by_cache
     User.where.not(id: unsub_user_ids).where(web_active: true).each do |user|
