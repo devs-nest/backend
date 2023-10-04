@@ -137,6 +137,7 @@ class User < ApplicationRecord
   after_update :create_college_student, if: :saved_change_to_is_college_student?
   after_save :manage_list, if: proc { !Rails.env.test? && ENV['LISTMONK_LIST_CONTROL'] == 'true' }
   before_validation :create_referral_code, if: :is_referall_empty?
+  after_save :expire_dashboard_cache, if: :saved_change_to_name?
   serialize :github_repos, Array
   has_paper_trail
 
@@ -581,20 +582,23 @@ class User < ApplicationRecord
     user.merge(rank_change: user_prev_rank.zero? ? user_prev_rank : user_prev_rank - user[:rank])
   end
 
-  def self.get_dashboard_by_cache(id)
+  def get_dashboard_by_cache
     Rails.cache.fetch("user_dashboard_#{id}", expires_in: 1.day) do
-      user = User.find_by_id(id)
       {
-        name: user.name,
-        dsa_solved: Challenge.count_solved(user.id),
+        name: name,
+        dsa_solved: Challenge.count_solved(id),
         dsa_solved_by_difficulty: Challenge.split_by_difficulty,
-        fe_solved: FrontendChallenge.count_solved(user.id),
+        fe_solved: FrontendChallenge.count_solved(id),
         fe_solved_by_topic: FrontendChallenge.split_by_topic,
-        tha_details: user.tha_details, # Bootcamp Progress
-        leaderboard_details: user.leaderboard_details('dsa'),
-        fe_leaderboard_details: user.leaderboard_details('frontend')
+        tha_details: tha_details, # Bootcamp Progress
+        leaderboard_details: leaderboard_details('dsa'),
+        fe_leaderboard_details: leaderboard_details('frontend')
       }
     end
+  end
+
+  def expire_dashboard_cache
+    User.expire_dashboard_cache(id)
   end
 
   def self.expire_dashboard_cache(id)

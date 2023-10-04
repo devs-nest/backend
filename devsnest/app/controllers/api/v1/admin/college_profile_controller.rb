@@ -36,9 +36,10 @@ module Api
 
           data = []
           college_profiles.each do |college_profile|
-            next if college_profile.user.blank?
+            user = college_profile.user
+            next if user.blank?
 
-            data << User.get_dashboard_by_cache(college_profile.user.id).as_json
+            data << user.get_dashboard_by_cache
           end
           render json: { data: data.as_json }
         end
