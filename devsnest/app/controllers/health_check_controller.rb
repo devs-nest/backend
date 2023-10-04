@@ -2,6 +2,7 @@
 
 class HealthCheckController < ApplicationController
   def index
-    render_success
+    sidekiq_procs = Sidekiq::ProcessSet.new
+    render_success if sidekiq_procs.size > 0
   end
 end
