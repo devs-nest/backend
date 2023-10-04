@@ -26,6 +26,5 @@ class FrontendChallengeScore < ApplicationRecord
 
   def evaluate_scores
     EvaluateScoreWorker.perform_async(user_id, 'frontend')
-    User.expire_dashboard_cache(user_id)
   end
 end
