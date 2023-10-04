@@ -30,6 +30,7 @@
 #  parent_phone                  :string(255)
 #  phone                         :string(255)
 #  phone_verified                :boolean          default(FALSE)
+#  referral_code                 :string(255)
 #  state                         :integer          default("verify_phone")
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null

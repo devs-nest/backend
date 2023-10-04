@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_07_160405) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "MXTEB22NhzM"
+    t.string "cuid", default: "EODUXLTOzQY"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -345,6 +345,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_07_160405) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "referral_code"
     t.text "coding_exp"
     t.text "coding_summary"
   end

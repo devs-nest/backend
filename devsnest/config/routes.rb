@@ -3,6 +3,7 @@
 Rails.application.routes.draw do
   resources :user_integrations
   get '/health_check', to: 'health_check#index'
+  get '/sidekiq_check', to: 'health_check#sidekiq_check'
 
   # Sidekiq Web UI, only for admins.
   Sidekiq::Web.use ActionDispatch::Cookies
