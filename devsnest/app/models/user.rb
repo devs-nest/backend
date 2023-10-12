@@ -123,7 +123,7 @@ class User < ApplicationRecord
   has_many :skills, through: :user_skills
   has_many :group_members, dependent: :delete_all
 
-  delegate :college, to: :college_profile, allow_nil: true
+  # delegate :college, to: :college_profile, allow_nil: true
 
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user

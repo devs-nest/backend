@@ -8,7 +8,6 @@ module Api
                  :working_status, :is_fullstack_course_22_form_filled, :phone_number, :working_role, :company_name, :college_year, :is_college_form_filled, :accepted_in_course,
                  :enrolled_for_course_image_url, :referral_code, :coins, :github_token, :is_college_student, :dn_airtribe_student
       attributes :group_id, :group_name, :group_version
-      attributes :college_name
       attributes :solved, :total_by_difficulty, :fe_solved, :fe_total_by_topic
       attributes :activity
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
@@ -28,7 +27,7 @@ module Api
       end
 
       def self.updatable_fields(context)
-        super - %i[score group_id group_name discord_id password college_name coins]
+        super - %i[score group_id group_name discord_id password coins]
       end
 
       def group_id
@@ -42,16 +41,16 @@ module Api
       end
 
       def colleges
-        @model.college_profile.collect { |cps| cps.college&.slug }
+        @model.college_profile.collect { |cps| {
+            slug: cps.college&.slug,
+            name: cps.college&.name
+          }
+        }
       end
 
       def group_version
         member = GroupMember.where(user_id: @model.id).first
         member.present? ? member.group&.version : nil
-      end
-
-      def college_name
-        @model.college.nil? ? nil : @model.college.name
       end
 
       def solved
