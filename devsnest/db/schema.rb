@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_17_123039) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_12_192606) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_17_123039) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "_0GfcEg2ss0"
+    t.string "cuid", default: "GIsnLwSP52E"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -355,6 +355,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_17_123039) do
   create_table "colleges", charset: "utf8mb3", force: :cascade do |t|
     t.string "name"
     t.boolean "is_verified", default: false
+    t.string "slug"
   end
 
   create_table "companies", charset: "utf8mb3", force: :cascade do |t|

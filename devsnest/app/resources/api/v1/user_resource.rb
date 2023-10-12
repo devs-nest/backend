@@ -4,7 +4,7 @@ module Api
   module V1
     class UserResource < JSONAPI::Resource
       attributes :email, :name, :password, :web_active, :username, :score, :discord_active, :batch, :grad_status, :grad_specialization, :grad_year, :grad_start, :grad_end,
-                 :github_url, :linkedin_url, :resume_url, :dob, :registration_num, :college_id, :image_url, :google_id, :bot_token, :update_count, :login_count, :discord_id, :is_verified,
+                 :github_url, :linkedin_url, :resume_url, :dob, :registration_num, :colleges, :image_url, :google_id, :bot_token, :update_count, :login_count, :discord_id, :is_verified,
                  :working_status, :is_fullstack_course_22_form_filled, :phone_number, :working_role, :company_name, :college_year, :is_college_form_filled, :accepted_in_course,
                  :enrolled_for_course_image_url, :referral_code, :coins, :github_token, :is_college_student, :dn_airtribe_student
       attributes :group_id, :group_name, :group_version
@@ -39,6 +39,10 @@ module Api
       def group_name
         member = GroupMember.where(user_id: @model.id).first
         member.present? ? member.group&.name : nil
+      end
+
+      def colleges
+        @model.college_profile.collect { |cps| cps.college&.slug }
       end
 
       def group_version
@@ -116,7 +120,7 @@ module Api
       def fe_rank
         @model.leaderboard_details('frontend')
       end
-      
+
       def dsa_streak
         @model.dsa_streak
       end

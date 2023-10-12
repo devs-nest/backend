@@ -7,11 +7,13 @@
 #  id          :bigint           not null, primary key
 #  is_verified :boolean          default(FALSE)
 #  name        :string(255)
+#  slug        :string(255)
 #
 class College < ApplicationRecord
   has_many :college_profiles
   has_many :college_invites
   has_many :college_structure
+  before_save { self.slug = name.parameterize }
 
   def self.create_college(college_name)
     College.create(name: college_name)
