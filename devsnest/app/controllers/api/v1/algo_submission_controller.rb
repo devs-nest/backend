@@ -10,6 +10,8 @@ module Api
 
       def context
         { user: @current_user }
+
+        
       end
 
       def create
