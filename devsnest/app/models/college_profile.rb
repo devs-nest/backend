@@ -8,6 +8,7 @@
 #  authority_level      :integer
 #  department           :integer
 #  email                :string(255)
+#  roll_number          :string(255)      not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  college_id           :integer

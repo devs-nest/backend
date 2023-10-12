@@ -18,16 +18,18 @@ module Api
         
         return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
         
+        return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
 
         skip_pass = User.find_by_email(data[:email]).blank?
         data_to_encode = {
           email: data[:email],
+          roll_number: data[:roll_number]
           initiated_at: Time.now
         }
 
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
-          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0)
+          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0, roll_number: data[:roll_number])
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college.id)
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
@@ -47,12 +49,15 @@ module Api
         data = params.dig(:data, :attributes)
         return render_error('Domain mismatched') if College.domains_matched?(@current_college_user.college_profile.email, data[:email])
 
+        return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
+
         data_to_encode = {
           email: data[:email],
+          roll_number: data[:roll_number],
           initiated_at: Time.now
         }
-
-        college_id = @current_college_user.college.id
+        current_college = @current_college_user.college
+        college_id = current_college.id
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
 
         skip_pass = User.find_by_email(data[:email]).blank?
@@ -60,12 +65,12 @@ module Api
         ActiveRecord::Base.transaction do
           c_struc = CollegeStructure.find_by_name(data[:structure])
           college_profile = CollegeProfile.create!(email: data[:email], college_id: college_id, college_structure_id: c_struc&.id, authority_level: data[:authority_level],
-                                                   department: data[:department])
+                                                   department: data[:department], roll_number: data[:roll_number])
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id)
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
-                                            collegename: @current_college_user.college.name,
+                                            collegename: current_college.name,
                                             username: data[:email].split("@")[0],
                                             code: encrypted_code,
                                             skip_pass: skip_pass

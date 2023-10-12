@@ -32,13 +32,15 @@ module Api
           college = @current_college_user.college_profile.college
           college_structure_path = [batch, course, branch, specialization, section].compact.join('/')
           college_structure = CollegeStructure.where('college_id = ? AND name LIKE ?', college.id, "%#{college_structure_path}%")
-          college_profiles = college.college_profiles.where(college_structure_id: college_structure.pluck(:id))
+          # college_profiles = college.college_profiles.where(college_structure_id: college_structure.pluck(:id))
+          college_profiles = CollegeProfile.includes(:user).where(college_id: college.id, college_structure_id: college_structure.pluck(:id))
 
           data = []
           college_profiles.each do |college_profile|
             user = college_profile.user
             next if user.blank?
 
+            data << college.activity
             data << user.get_dashboard_by_cache
           end
           render json: { data: data.as_json }
