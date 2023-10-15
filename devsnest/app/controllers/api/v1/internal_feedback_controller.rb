@@ -19,7 +19,7 @@ module Api
       def check_feedback_count
         count = internal_feedback_counter
 
-        render_error({ message: 'You can Only Create 5 feedbacks in 1 day of this type' }) if count == 5
+        render_error({ message: 'You can Only Create 5 feedbacks in 1 day of this type' }) if count >= 5
       end
 
       def user_assigner
@@ -29,7 +29,7 @@ module Api
 
       def internal_feedback_counter
         feedback_type = params[:data][:attributes][:feedback_type]
-        InternalFeedback.where(user_id: @current_user.id).where(feedback_type: feedback_type).where(created_at: date_parser).count
+        InternalFeedback.where(user_id: @current_user.id, feedback_type: feedback_type, created_at: date_parser).count
       end
 
       def date_parser
