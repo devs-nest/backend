@@ -41,15 +41,15 @@ class College < ApplicationRecord
     students_completed_be_bootcamp = []
     college_profiles.each do |college_profile|
       user_id = college_profile.user_id
-      user_dsa_solved = dsa_solved[user_id]
+      user_dsa_solved = dsa_solved[user_id].to_i
 
-      students_completed_dsa_bootcamp >> college_profile.id if user_dsa_solved >= (total_dsa_questions * 70 / 100)
+      students_completed_dsa_bootcamp << college_profile.id if user_dsa_solved >= (total_dsa_questions * 70 / 100)
 
-      user_fe_solved = fe_solved[user_id]
-      students_completed_fe_bootcamp >> college_profile.id if user_fe_solved >= (total_fe_questions * 70 / 100)
+      user_fe_solved = fe_solved[user_id].to_i
+      students_completed_fe_bootcamp << college_profile.id if user_fe_solved >= (total_fe_questions * 70 / 100)
 
-      user_be_solved = be_solved[user_id]
-      students_completed_be_bootcamp >> college_profile.id if user_be_solved >= (total_be_questions * 70 / 100)
+      user_be_solved = be_solved[user_id].to_i
+      students_completed_be_bootcamp << college_profile.id if user_be_solved >= (total_be_questions * 70 / 100)
     end
 
     {
