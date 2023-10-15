@@ -21,9 +21,7 @@ class College < ApplicationRecord
     email1.split('@')[-1] == email2.split('@')[-1]
   end
 
-
   def self.activity(id)
-    data = {}
     college_profiles = CollegeProfile.where(college_id: id, authority_level: 'student')
     user_ids = college_profiles.map(&:user_id).compact.uniq
 
@@ -45,23 +43,17 @@ class College < ApplicationRecord
       user_id = college_profile.user_id
       user_dsa_solved = dsa_solved[user_id]
 
-      if user_dsa_solved >= (total_dsa_questions * 70/100)
-        students_completed_dsa_bootcamp >> college_profile.id
-      end
+      students_completed_dsa_bootcamp >> college_profile.id if user_dsa_solved >= (total_dsa_questions * 70 / 100)
 
       user_fe_solved = fe_solved[user_id]
-      if user_fe_solved >= (total_fe_questions * 70/100)
-        students_completed_fe_bootcamp >> college_profile.id
-      end
+      students_completed_fe_bootcamp >> college_profile.id if user_fe_solved >= (total_fe_questions * 70 / 100)
 
       user_be_solved = be_solved[user_id]
-      if user_be_solved >= (total_be_questions * 70/100)
-        students_completed_be_bootcamp >> college_profile.id
-      end
+      students_completed_be_bootcamp >> college_profile.id if user_be_solved >= (total_be_questions * 70 / 100)
     end
-    
-    { 
-      students_active_in_last_month: students_active_in_last_month, 
+
+    {
+      students_active_in_last_month: students_active_in_last_month,
       students_completed_dsa_bootcamp: students_completed_dsa_bootcamp,
       students_completed_fe_bootcamp: students_completed_fe_bootcamp,
       students_completed_be_bootcamp: students_completed_be_bootcamp
