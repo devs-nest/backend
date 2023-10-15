@@ -33,7 +33,7 @@ module Api
       end
 
       def date_parser
-        Date.today.beginning_of_day..Date.today.end_of_day
+        Date.current.beginning_of_day..Date.current.end_of_day
       end
     end
   end

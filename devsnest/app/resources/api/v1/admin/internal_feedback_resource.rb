@@ -10,7 +10,8 @@ module Api
         paginator :paged
 
         filter :span, apply: lambda { |records, value, _options|
-          records.where('created_at >= ?', Date.parse(value[0]))
+          # Parsing the value in IST time zone
+          records.where('created_at >= ?', DateTime.parse(value[0].in_time_zone('Asia/Kolkata').to_s))
         }
 
         def self.records(options = {})
