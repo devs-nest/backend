@@ -23,7 +23,7 @@ module Api
         skip_pass = User.find_by_email(data[:email]).blank?
         data_to_encode = {
           email: data[:email],
-          roll_number: data[:roll_number]
+          roll_number: data[:roll_number],
           initiated_at: Time.now
         }
 
