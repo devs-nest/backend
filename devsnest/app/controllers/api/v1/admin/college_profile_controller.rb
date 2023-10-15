@@ -40,10 +40,9 @@ module Api
             user = college_profile.user
             next if user.blank?
 
-            data << college.activity
             data << user.get_dashboard_by_cache
           end
-          render json: { data: data.as_json }
+          render json: { data: data.as_json, college_activity: college.activity.as_json }
         end
       end
     end

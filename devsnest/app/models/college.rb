@@ -54,9 +54,9 @@ class College < ApplicationRecord
 
     {
       students_active_in_last_month: students_active_in_last_month,
-      students_completed_dsa_bootcamp: students_completed_dsa_bootcamp,
-      students_completed_fe_bootcamp: students_completed_fe_bootcamp,
-      students_completed_be_bootcamp: students_completed_be_bootcamp
+      students_completed_dsa_bootcamp: students_completed_dsa_bootcamp.count,
+      students_completed_fe_bootcamp: students_completed_fe_bootcamp.count,
+      students_completed_be_bootcamp: students_completed_be_bootcamp.count
     }
   end
 
