@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_07_160405) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_12_081503) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_07_160405) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "MXTEB22NhzM"
+    t.string "cuid", default: "_0GfcEg2ss0"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -290,6 +290,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_07_160405) do
     t.integer "authority_level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "roll_number", null: false
   end
 
   create_table "college_profiles", charset: "utf8mb3", force: :cascade do |t|
@@ -301,6 +302,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_07_160405) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "roll_number", null: false
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
   end
 
