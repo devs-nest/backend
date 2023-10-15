@@ -5,6 +5,6 @@ class HealthCheckController < ApplicationController
     return render_success if Rails.env.test?
 
     sidekiq_procs = Sidekiq::ProcessSet.new
-    render_success if sidekiq_procs.empty?
+    render_success if sidekiq_procs.size.positive?
   end
 end
