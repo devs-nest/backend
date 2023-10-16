@@ -5,7 +5,7 @@ module Api
     class CollegeController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :set_current_college_user, except: %i[create]
-      before_action :college_admin_auth, only: %i[show invite structure_schema structure]
+      before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure]
       before_action :admin_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite]
 
@@ -18,7 +18,6 @@ module Api
 
         return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
 
-        return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
 
         skip_pass = User.find_by_email(data[:email]).blank?
         data_to_encode = {

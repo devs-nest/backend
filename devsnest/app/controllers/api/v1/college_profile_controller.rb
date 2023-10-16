@@ -5,7 +5,7 @@ module Api
     class CollegeProfileController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :set_current_college_user
-      before_action :college_admin_auth, only: %i[index]
+      before_action :set_college, :college_admin_auth, only: %i[index]
       before_action :check_college_verification
       before_action :check_id, only: %i[index]
 

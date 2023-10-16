@@ -76,14 +76,22 @@ class ApplicationController < ActionController::API
     render_unauthorized
   end
 
+  def set_college
+    college_id = params[:id] || params[:college_id]
+    @college = College.find_by(id: college_id)
+    return true if @college.present?
+
+    render_unauthorized
+  end
+
   def college_admin_auth
-    return true if @current_college_user.present? && @current_college_user&.college_profile.where(authority_level: 'superadmin').present?
+    return true if @current_college_user.present? && @current_college_user&.college_profile.where(college_id: @college&.id, authority_level: 'superadmin').present?
 
     render_unauthorized
   end
 
   def check_college_verification
-    return true if @current_college_user.present? && @current_college_user&.college_profile&.college.is_verified
+    return true if @college.is_verified
 
     render_unauthorized('College is not verified, we are on it.')
   end

@@ -7,7 +7,7 @@ module Api
       class CollegeProfileController < ApplicationController
         include JSONAPI::ActsAsResourceController
         before_action :set_current_college_user, except: %i[create]
-        before_action :college_admin_auth, only: %i[show iimport_students dashboard_details]
+        before_action :set_college, :college_admin_auth, only: %i[show iimport_students dashboard_details]
 
         def import_students
           file = params[:file]
