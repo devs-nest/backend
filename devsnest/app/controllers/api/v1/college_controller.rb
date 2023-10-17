@@ -47,7 +47,7 @@ module Api
 
       def invite
         data = params.dig(:data, :attributes)
-        return render_error('Domain mismatched') if College.domains_matched?(@current_college_user.college_profile.email, data[:email])
+        return render_error('Domain mismatched') unless College.domains_matched?(@current_college_user.college_profile.email, data[:email])
 
         return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
 
