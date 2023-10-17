@@ -78,7 +78,7 @@ class ApplicationController < ActionController::API
 
   def set_college
     college_id = params[:id] || params[:college_id]
-    @college = College.find_by(id: college_id)
+    @college = College.find_by(slug: college_id)
     return true if @college.present?
 
     render_unauthorized
