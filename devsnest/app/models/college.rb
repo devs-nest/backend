@@ -16,7 +16,7 @@ class College < ApplicationRecord
   before_save { self.slug = name.parameterize }
 
   # validates :slug, presence: true, uniqueness: true
-  self.primary_key = 'slug'
+  # self.primary_key = 'slug'
 
   def self.create_college(college_name)
     College.create(name: college_name)
