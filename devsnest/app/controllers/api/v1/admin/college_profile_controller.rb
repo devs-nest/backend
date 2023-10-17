@@ -33,7 +33,8 @@ module Api
           college_structure_path = [batch, course, branch, specialization, section].compact.join('/')
           college_structure = CollegeStructure.where('college_id = ? AND name LIKE ?', college.id, "%#{college_structure_path}%")
           # college_profiles = college.college_profiles.where(college_structure_id: college_structure.pluck(:id))
-          college_profiles = CollegeProfile.includes(:user).where(college_id: college.id, college_structure_id: college_structure.pluck(:id))
+          college_profiles = CollegeProfile.includes(:user).where(college_id: college.id, college_structure_id: college_structure.pluck(:id),
+                                                                  authority_level: 'student')
 
           data = []
           college_profiles.each do |college_profile|
