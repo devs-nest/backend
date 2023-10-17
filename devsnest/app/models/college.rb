@@ -21,28 +21,26 @@ class College < ApplicationRecord
     email1.split('@')[-1] == email2.split('@')[-1]
   end
 
-  def self.activity(id)
+  def students_completed_bootcamp(end_time)
     college_profiles = CollegeProfile.where(college_id: id, authority_level: 'student')
     user_ids = college_profiles.map(&:user_id).compact.uniq
 
-    dsa_solved = UserChallengeScore.where(user_id: user_ids).where('created_at >= ?', Time.zone.now - 1.month).group(:user_id).count
+    dsa_solved = UserChallengeScore.where(user_id: user_ids).where('created_at <= ?', end_time).group(:user_id).count
     total_dsa_questions = Challenge.where(is_active: true).count
 
-    fe_solved = FrontendChallengeScore.where(user_id: user_ids).where('created_at >= ?', Time.zone.now - 1.month).group(:user_id).count
+    fe_solved = FrontendChallengeScore.where(user_id: user_ids).where('created_at <= ?', end_time).group(:user_id).count
     total_fe_questions = FrontendChallenge.where(is_active: true).count
 
-    be_solved = BackendChallengeScore.where(user_id: user_ids).where('created_at >= ?', Time.zone.now - 1.month).group(:user_id).count
+    be_solved = BackendChallengeScore.where(user_id: user_ids).where('created_at <= ?', end_time).group(:user_id).count
     total_be_questions = BackendChallenge.where(is_active: true).count
-
-    students_active_in_last_month = (user_ids & [dsa_solved.keys, fe_solved.keys, be_solved.keys].flatten).count
 
     students_completed_dsa_bootcamp = []
     students_completed_fe_bootcamp = []
     students_completed_be_bootcamp = []
     college_profiles.each do |college_profile|
       user_id = college_profile.user_id
-      user_dsa_solved = dsa_solved[user_id].to_i
 
+      user_dsa_solved = dsa_solved[user_id].to_i
       students_completed_dsa_bootcamp << college_profile.id if user_dsa_solved >= (total_dsa_questions * 70 / 100)
 
       user_fe_solved = fe_solved[user_id].to_i
@@ -51,7 +49,29 @@ class College < ApplicationRecord
       user_be_solved = be_solved[user_id].to_i
       students_completed_be_bootcamp << college_profile.id if user_be_solved >= (total_be_questions * 70 / 100)
     end
+    [students_completed_dsa_bootcamp, students_completed_fe_bootcamp, students_completed_be_bootcamp]
+  end
 
+  def bootcamp_completed_till_last_month
+    Rails.cache.fetch("bootcamp_completed_till_last_month_#{id}", expires_in: 1.day) do
+      students_completed_dsa_bootcamp, students_completed_fe_bootcamp, students_completed_be_bootcamp = students_completed_bootcamp(Time.zone.now - 1.month)
+      {
+        students_completed_dsa_bootcamp: students_completed_dsa_bootcamp.count,
+        students_completed_fe_bootcamp: students_completed_fe_bootcamp.count,
+        students_completed_be_bootcamp: students_completed_be_bootcamp.count
+      }
+    end
+  end
+
+  def self.activity(id)
+    college_profiles = CollegeProfile.where(college_id: id, authority_level: 'student')
+    user_ids = college_profiles.map(&:user_id).compact.uniq
+    dsa_solved = UserChallengeScore.where(user_id: user_ids).where('created_at >= ?', Time.zone.now - 1.month).pluck(:user_id)
+    fe_solved = FrontendChallengeScore.where(user_id: user_ids).where('created_at >= ?', Time.zone.now - 1.month).pluck(:user_id)
+    be_solved = BackendChallengeScore.where(user_id: user_ids).where('created_at >= ?', Time.zone.now - 1.month).pluck(:user_id)
+    students_active_in_last_month = (user_ids & [dsa_solved, fe_solved, be_solved].flatten).count
+
+    students_completed_dsa_bootcamp, students_completed_fe_bootcamp, students_completed_be_bootcamp = students_completed_bootcamp(Time.zone.now)
     {
       students_active_in_last_month: students_active_in_last_month,
       students_completed_dsa_bootcamp: students_completed_dsa_bootcamp.count,
@@ -61,7 +81,7 @@ class College < ApplicationRecord
   end
 
   def activity
-    Rails.cache.fetch("college_activity_#{id}", expires_in: 6.hours) do
+    Rails.cache.fetch("college_activity_#{id}", expires_in: 1.day) do
       College.activity(id)
     end
   end
