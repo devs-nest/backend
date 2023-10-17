@@ -17,6 +17,7 @@
 #  company_name                       :string(255)
 #  discord_active                     :boolean          default(FALSE)
 #  discord_username                   :string(255)
+#  dn_airtribe_student                :boolean          default(FALSE)
 #  dob                                :date
 #  dsa_skill                          :integer          default(0)
 #  dsa_streak                         :integer          default(0)

@@ -11,6 +11,11 @@
 #  edu_event_id :integer
 #  user_id      :integer
 #
+# Indexes
+#
+#  index_event_registrations_on_edu_event_id              (edu_event_id)
+#  index_event_registrations_on_user_id_and_edu_event_id  (user_id,edu_event_id) UNIQUE
+#
 class EventRegistration < ApplicationRecord
   belongs_to :edu_event
   belongs_to :user
