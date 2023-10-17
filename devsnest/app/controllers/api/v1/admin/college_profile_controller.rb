@@ -40,7 +40,7 @@ module Api
             user = college_profile.user
             next if user.blank?
 
-            data << user.get_dashboard_by_cache
+            data << user.get_dashboard_by_cache.merge!(id: user.id, roll_number: college_profile.roll_number)
           end
           render json: { data: data.as_json, college_activity: college.activity.as_json }
         end

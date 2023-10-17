@@ -17,7 +17,8 @@
 #
 # Indexes
 #
-#  index_college_profiles_on_email  (email) UNIQUE
+#  index_college_profiles_on_email        (email) UNIQUE
+#  index_college_profiles_on_roll_number  (roll_number) UNIQUE
 #
 class CollegeProfile < ApplicationRecord
   belongs_to :user, optional: true
@@ -27,8 +28,9 @@ class CollegeProfile < ApplicationRecord
   enum authority_level: %i[superadmin admin head student]
 
   validates_presence_of :email
+  validates_uniqueness_of :roll_number
 
   def is_admin?
-    authority_level == 0
+    authority_level.zero?
   end
 end
