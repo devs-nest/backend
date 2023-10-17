@@ -149,7 +149,7 @@ Rails.application.routes.draw do
           post :update_user_group
         end
       end
-      jsonapi_resources :college, only: %i[create show] do
+      jsonapi_resources :college, only: %i[create show], param: :slug do
         member do
           post :invite, :join, :structure
           get :structure_schema

@@ -356,6 +356,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_12_192606) do
     t.string "name"
     t.boolean "is_verified", default: false
     t.string "slug"
+    t.index ["slug"], name: "index_colleges_on_slug", unique: true
   end
 
   create_table "companies", charset: "utf8mb3", force: :cascade do |t|
