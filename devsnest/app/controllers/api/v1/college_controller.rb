@@ -10,7 +10,7 @@ module Api
       before_action :check_college_verification, only: %i[show invite]
 
       def context
-        { user: @current_college_user, college: @current_college_user&.college }
+        { user: @current_college_user, college: @college }
       end
 
       def create
