@@ -55,6 +55,7 @@ class CollegeStructure < ApplicationRecord
         2020-2024
         2021-2025
         2022-2026
+        2023-2027
       ],
       bca: %w[
         2018-2021
@@ -62,6 +63,7 @@ class CollegeStructure < ApplicationRecord
         2020-2023
         2021-2024
         2022-2025
+        2023-2026
       ],
       bba: %w[
         2018-2021
@@ -69,6 +71,7 @@ class CollegeStructure < ApplicationRecord
         2020-2023
         2021-2024
         2022-2025
+        2023-2026
       ],
       bsc: %w[
         2018-2021
@@ -76,6 +79,7 @@ class CollegeStructure < ApplicationRecord
         2020-2023
         2021-2024
         2022-2025
+        2023-2026
       ]
     },
     branch: {
