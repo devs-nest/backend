@@ -32,7 +32,8 @@ class Certification < ApplicationRecord
       'course_dsa_frontend_backend': 'Devsnest Course',
       'community_batch_leader': 'Batch Lead',
       'community_student_mentor': 'Student Mentor',
-      'community_moderator': 'Community Moderator'
+      'community_moderator': 'Community Moderator',
+      'course_solana': 'Devsnest Solana Bootcamp'
     }
 
     type_title_hashmap[type.to_sym]
@@ -56,6 +57,8 @@ class Certification < ApplicationRecord
       "This certificate of appreciation is awarded to #{name} for being an outstanding Student Mentor in the Devsnest Community. Their contribution is deeply valued by all the lives they have touched."
     when 'community_moderator'
       "This certificate of appreciation is awarded to #{name} for being an outstanding Community Moderator in the Devsnest Community. Their contribution is deeply valued by all the lives they have touched."
+    when 'course_solana'
+      "This is to certify that #{name} has successfully completed the Devsnest Solana Bootcamp.\n You are AWESOME!"
     end
   end
 
