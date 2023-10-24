@@ -174,7 +174,7 @@ class User < ApplicationRecord
   end
 
   def create_referral_code
-    Rails.logger.info 'Retrying referral code generation' while update(referral_code: "#{self.name&.first(3)&.upcase}#{SecureRandom.hex(3).upcase}") == false
+    Rails.logger.info 'Retrying referral code generation' while update(referral_code: "#{name&.first(3)&.upcase}#{SecureRandom.hex(3).upcase}") == false
   end
 
   def self.fetch_discord_id(code)
@@ -232,6 +232,14 @@ class User < ApplicationRecord
       google_id: google_id,
       is_verified: true
     )
+
+    # Accept all college invitations
+    college_profile = CollegeProfile.find_by(email: email)
+
+    return if college_profile.blank?
+
+    college_invites = CollegeInvite.where(college_profile_id: college_profile.id)
+    college_invites.update_all(status: 1)
   end
 
   def merge_discord_user(discord_id, discord_user)
