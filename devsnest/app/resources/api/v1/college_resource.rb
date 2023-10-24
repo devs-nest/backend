@@ -12,7 +12,7 @@ module Api
       def all_members
         college = context[:college]
 
-        college.college_structure.as_json(include: :college_profiles)
+        college.college_profiles.as_json(include: %i[college_structure college_invite])
       end
     end
   end
