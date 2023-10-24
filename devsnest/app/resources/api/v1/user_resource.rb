@@ -41,7 +41,8 @@ module Api
       end
 
       def colleges
-        @model.college_profile.collect { |cps| {
+        @model.college_profile.includes(:college).collect { |cps| {
+            id: cps.college.id,
             slug: cps.college&.slug,
             name: cps.college&.name
           }

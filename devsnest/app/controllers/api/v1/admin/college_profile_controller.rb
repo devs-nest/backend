@@ -29,11 +29,10 @@ module Api
           specialization = params[:specialization]
           section = params[:section]
 
-          college = @current_college_user.college_profile.college
           college_structure_path = [batch, course, branch, specialization, section].compact.join('/')
-          college_structure = CollegeStructure.where('college_id = ? AND name LIKE ?', college.id, "%#{college_structure_path}%")
+          college_structure = CollegeStructure.where('college_id = ? AND name LIKE ?', @college.id, "%#{college_structure_path}%")
           # college_profiles = college.college_profiles.where(college_structure_id: college_structure.pluck(:id))
-          college_profiles = CollegeProfile.includes(:user).where(college_id: college.id, college_structure_id: college_structure.pluck(:id),
+          college_profiles = CollegeProfile.includes(:user).where(college_id: @college.id, college_structure_id: college_structure.pluck(:id),
                                                                   authority_level: 'student')
 
           data = []
@@ -43,7 +42,7 @@ module Api
 
             data << user.get_dashboard_by_cache.merge!(id: user.id, roll_number: college_profile.roll_number)
           end
-          render json: { data: data.as_json, college_activity: college.activity.as_json }
+          render json: { data: data.as_json, college_activity: @college.activity.as_json }
         end
       end
     end

@@ -18,7 +18,6 @@ module Api
 
         return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
 
-
         skip_pass = User.find_by_email(data[:email]).blank?
         data_to_encode = {
           email: data[:email],
@@ -47,20 +46,19 @@ module Api
 
       def invite
         data = params.dig(:data, :attributes)
-        return render_error('Domain mismatched') unless College.domains_matched?(@current_college_user.college_profile.email, data[:email])
 
         return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
+
+        return render_error('Domain mismatched') unless College.domains_matched?(@college_profile&.email, data[:email])
 
         data_to_encode = {
           email: data[:email],
           roll_number: data[:roll_number],
           initiated_at: Time.now
         }
-        current_college = @current_college_user.college
-        college_id = current_college.id
-        encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
 
-        # find if the user is already present or not
+        college_id = @college.id
+        encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
         skip_pass = User.find_by_email(data[:email]).blank?
 
         ActiveRecord::Base.transaction do
@@ -125,18 +123,17 @@ module Api
       end
 
       def structure_schema
-        api_render(200, { data: { schema: CollegeStructure::SCHEMA, structure: CollegeStructure.where(college_id: @current_college_user&.college_profile&.college&.id) } })
+        api_render(200, { data: { schema: CollegeStructure::SCHEMA, structure: CollegeStructure.where(college_id: @college&.id) } })
       end
 
       def structure
         data = params.dig(:data, :attributes)
-        college = @current_college_user.college_profile.college
 
         data.each do |course, course_data|
           course_data[:batch].each do |batch|
             start_year, end_year = CollegeStructure.split_batch(batch[:period])
             year = batch[:year] || CollegeStructure.calc_year(start_year, course)
-            CollegeStructure.create!(college_id: college.id, course: course, batch: batch[:period], year: year, section: batch[:section], branch: batch[:branch])
+            CollegeStructure.create!(college_id: @college&.id, course: course, batch: batch[:period], year: year, section: batch[:section], branch: batch[:branch])
           end
         end
 
