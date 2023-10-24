@@ -15,8 +15,7 @@ class College < ApplicationRecord
   has_many :college_structure
   before_save { self.slug = name.parameterize }
 
-  # validates :slug, presence: true, uniqueness: true
-  # self.primary_key = 'slug'
+  validates :slug, uniqueness: true, allow_nil: true
 
   def self.create_college(college_name)
     College.create(name: college_name)
