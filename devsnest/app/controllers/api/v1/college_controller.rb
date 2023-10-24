@@ -15,9 +15,9 @@ module Api
 
       def create
         data = params.dig(:data, :attributes)
-        
+
         return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
-        
+
         return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
 
         skip_pass = User.find_by_email(data[:email]).blank?
@@ -26,6 +26,7 @@ module Api
           roll_number: data[:roll_number],
           initiated_at: Time.now
         }
+        encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
 
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
@@ -35,7 +36,7 @@ module Api
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
                                             collegename: college.name,
-                                            username: data[:email].split("@")[0],
+                                            username: data[:email].split('@')[0],
                                             code: encrypted_code,
                                             skip_pass: skip_pass
                                           }, template_id)
@@ -60,18 +61,19 @@ module Api
         college_id = current_college.id
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
 
+        # find if the user is already present or not
         skip_pass = User.find_by_email(data[:email]).blank?
 
         ActiveRecord::Base.transaction do
           c_struc = CollegeStructure.find_by_name(data[:structure])
           college_profile = CollegeProfile.create!(email: data[:email], college_id: college_id, college_structure_id: c_struc&.id, authority_level: data[:authority_level],
-                                                   department: data[:department], roll_number: data[:roll_number])
+                                                   department: data[:department], roll_number: data[:roll_number], status: skip_pass ? 0 : 1)
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id)
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
                                             collegename: current_college.name,
-                                            username: data[:email].split("@")[0],
+                                            username: data[:email].split('@')[0],
                                             code: encrypted_code,
                                             skip_pass: skip_pass
                                           }, template_id)
@@ -106,21 +108,19 @@ module Api
             )
           end
 
-          if invite_entitiy.college_profile.is_admin?
-            user.update(user_type: 'college_admin')
-          end
+          user.update(user_type: 'college_admin') if invite_entitiy.college_profile.is_admin?
 
           invite_entitiy.update(status: 'closed')
           invite_entitiy.college_profile.update(user: user)
         end
 
         render_success(message: 'College joined', data: {
-          data: {
-              attributes: {
-                user_type: user.user_type
-              }
-          }
-        })
+                         data: {
+                           attributes: {
+                             user_type: user.user_type
+                           }
+                         }
+                       })
       rescue StandardError => e
         render_error("Something went wrong: #{e}")
       end

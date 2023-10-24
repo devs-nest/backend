@@ -24,7 +24,7 @@ class CollegeProfile < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :college, optional: true
   belongs_to :college_structure, optional: true
-  has_one :college_invites
+  has_one :college_invite
   enum authority_level: %i[superadmin admin head student]
 
   validates_presence_of :email

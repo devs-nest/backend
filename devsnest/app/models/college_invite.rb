@@ -16,5 +16,5 @@
 class CollegeInvite < ApplicationRecord
   belongs_to :college_profile
   belongs_to :college
-  enum status: %i[pending expired closed]
+  enum status: %i[pending accepted]
 end
