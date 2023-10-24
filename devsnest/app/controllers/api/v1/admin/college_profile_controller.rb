@@ -7,7 +7,7 @@ module Api
       class CollegeProfileController < ApplicationController
         include JSONAPI::ActsAsResourceController
         before_action :set_current_college_user, except: %i[create]
-        before_action :set_college, :college_admin_auth, only: %i[show iimport_students dashboard_details]
+        before_action :set_college, :college_admin_auth, only: %i[show import_students dashboard_details]
 
         def import_students
           file = params[:file]
@@ -17,7 +17,7 @@ module Api
           # temp name
           a = $s3&.put_object(bucket: "#{ENV['S3_PREFIX']}company-image", key: key, body: file)
 
-          invalid_students = CollegeStudentImportWorker.perform_async(key, @current_college_user.college.id, params[:structure])
+          invalid_students = CollegeStudentImportWorker.perform_async(key, @college.id, params[:structure])
 
           api_render(201, { message: 'Students are being added' })
         end
