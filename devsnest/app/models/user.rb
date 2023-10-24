@@ -223,7 +223,7 @@ class User < ApplicationRecord
       return user
     end
 
-    User.create(
+    user = User.create!(
       name: name,
       email: email,
       password: Devise.friendly_token[0, 20],
@@ -236,10 +236,12 @@ class User < ApplicationRecord
     # Accept all college invitations
     college_profile = CollegeProfile.find_by(email: email)
 
-    return if college_profile.blank?
+    return user if college_profile.blank?
 
     college_invites = CollegeInvite.where(college_profile_id: college_profile.id)
     college_invites.update_all(status: 1)
+
+    user
   end
 
   def merge_discord_user(discord_id, discord_user)
