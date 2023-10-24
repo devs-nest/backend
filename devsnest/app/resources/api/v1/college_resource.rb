@@ -13,7 +13,6 @@ module Api
         college = context[:college]
 
         college.college_structure.as_json(include: :college_profiles)
-        # @model.college_profiles.as_json(include: :college_structure)
         # @model.college_profiles.map {|cp| cp.as_json.merge(cp&.college_structure&.as_json || {}) }
       end
     end
