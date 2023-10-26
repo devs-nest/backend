@@ -154,6 +154,10 @@ Rails.application.routes.draw do
           post :invite, :join, :structure
           get :structure_schema
         end
+        collection do
+          post :create_college_branch
+          get :college_branches
+        end
       end
       jsonapi_resources :college_invite, only: %i[index]
       jsonapi_resources :college_profile, only: %i[index]

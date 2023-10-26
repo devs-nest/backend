@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_12_192606) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_23_093847) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_12_192606) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "GIsnLwSP52E"
+    t.string "cuid", default: "EODUXLTOzQY"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -261,6 +261,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_12_192606) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "college_branches", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "college_id", null: false
+    t.json "branches"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["college_id"], name: "index_college_branches_on_college_id"
   end
 
   create_table "college_enquiries", charset: "utf8mb3", force: :cascade do |t|
@@ -348,6 +356,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_12_192606) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "referral_code"
     t.text "coding_exp"
     t.text "coding_summary"
   end
@@ -1082,6 +1091,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_12_192606) do
   add_foreign_key "article_submissions", "users"
   add_foreign_key "coding_room_user_mappings", "coding_rooms"
   add_foreign_key "coding_room_user_mappings", "users"
+  add_foreign_key "college_branches", "colleges"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
 end
