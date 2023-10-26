@@ -41,12 +41,13 @@ module Api
       end
 
       def colleges
-        @model.college_profile.includes(:college).collect { |cps| {
+        @model.college_profile.includes(:college).collect do |cps|
+          {
             id: cps.college.id,
             slug: cps.college&.slug,
             name: cps.college&.name
           }
-        }
+        end
       end
 
       def group_version
