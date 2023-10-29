@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_23_093847) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_29_195950) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_23_093847) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "EODUXLTOzQY"
+    t.string "cuid", default: "_0GfcEg2ss0"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -310,7 +310,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_23_093847) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "roll_number", null: false
+    t.string "roll_number"
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
     t.index ["roll_number"], name: "index_college_profiles_on_roll_number", unique: true
   end
@@ -356,7 +356,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_23_093847) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "referral_code"
     t.text "coding_exp"
     t.text "coding_summary"
   end

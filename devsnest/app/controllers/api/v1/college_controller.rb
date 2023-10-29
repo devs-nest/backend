@@ -21,14 +21,13 @@ module Api
         skip_pass = User.find_by_email(data[:email]).blank?
         data_to_encode = {
           email: data[:email],
-          roll_number: data[:roll_number],
           initiated_at: Time.now
         }
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
 
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
-          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0, roll_number: data[:roll_number])
+          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0)
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college.id)
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
