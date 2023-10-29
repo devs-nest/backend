@@ -6,7 +6,7 @@
 #
 #  id               :bigint           not null, primary key
 #  certificate_type :string(255)
-#  cuid             :string(255)      default("_0GfcEg2ss0")
+#  cuid             :string(255)      default("GIsnLwSP52E")
 #  title            :string(255)      default("")
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null

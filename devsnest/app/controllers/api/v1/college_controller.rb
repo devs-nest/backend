@@ -5,12 +5,12 @@ module Api
     class CollegeController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :set_current_college_user, except: %i[create]
-      before_action :college_admin_auth, only: %i[show invite structure_schema structure]
+      before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure]
       before_action :admin_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite]
 
       def context
-        { user: @current_college_user, college: @current_college_user&.college }
+        { user: @current_college_user, college: @college }
       end
 
       def create
@@ -18,19 +18,16 @@ module Api
 
         return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
 
-        return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
-
         skip_pass = User.find_by_email(data[:email]).blank?
         data_to_encode = {
           email: data[:email],
-          roll_number: data[:roll_number],
           initiated_at: Time.now
         }
         encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
 
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
-          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0, roll_number: data[:roll_number])
+          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0)
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college.id)
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
@@ -48,20 +45,19 @@ module Api
 
       def invite
         data = params.dig(:data, :attributes)
-        return render_error('Domain mismatched') unless College.domains_matched?(@current_college_user.college_profile.email, data[:email])
 
         return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
+
+        return render_error('Domain mismatched') unless College.domains_matched?(@college_profile&.email, data[:email])
 
         data_to_encode = {
           email: data[:email],
           roll_number: data[:roll_number],
           initiated_at: Time.now
         }
-        current_college = @current_college_user.college
-        college_id = current_college.id
-        encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
 
-        # find if the user is already present or not
+        college_id = @college.id
+        encrypted_code = $cryptor.encrypt_and_sign(data_to_encode)
         skip_pass = User.find_by_email(data[:email]).blank?
 
         ActiveRecord::Base.transaction do
@@ -126,22 +122,36 @@ module Api
       end
 
       def structure_schema
-        api_render(200, { data: { schema: CollegeStructure::SCHEMA, structure: CollegeStructure.where(college_id: @current_college_user&.college_profile&.college&.id) } })
+        api_render(200, { data: { schema: CollegeStructure::SCHEMA, structure: CollegeStructure.where(college_id: @college&.id) } })
       end
 
       def structure
         data = params.dig(:data, :attributes)
-        college = @current_college_user.college_profile.college
 
         data.each do |course, course_data|
           course_data[:batch].each do |batch|
             start_year, end_year = CollegeStructure.split_batch(batch[:period])
             year = batch[:year] || CollegeStructure.calc_year(start_year, course)
-            CollegeStructure.create!(college_id: college.id, course: course, batch: batch[:period], year: year, section: batch[:section], branch: batch[:branch])
+            CollegeStructure.create!(college_id: @college&.id, course: course, batch: batch[:period], year: year, section: batch[:section], branch: batch[:branch])
           end
         end
 
         render_success
+      end
+
+      def create_college_branch
+        college_id = params[:college_id]
+        branches = params[:branches]
+        college_branches = CollegeBranch.create!(college_id: college_id, branches: branches)
+        render_success(message: 'Branches created', data: college_branches)
+      end
+
+      def college_branches
+        college_id = params[:college_id]
+        branches_data = CollegeBranch.find_by(college_id: college_id)
+        return render_not_found('College data not found') if branches_data.blank?
+
+        render_success(data: branches_data)
       end
     end
   end

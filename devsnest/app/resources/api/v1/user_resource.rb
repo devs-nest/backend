@@ -4,11 +4,10 @@ module Api
   module V1
     class UserResource < JSONAPI::Resource
       attributes :email, :name, :password, :web_active, :username, :score, :discord_active, :batch, :grad_status, :grad_specialization, :grad_year, :grad_start, :grad_end,
-                 :github_url, :linkedin_url, :resume_url, :dob, :registration_num, :college_id, :image_url, :google_id, :bot_token, :update_count, :login_count, :discord_id, :is_verified,
+                 :github_url, :linkedin_url, :resume_url, :dob, :registration_num, :colleges, :image_url, :google_id, :bot_token, :update_count, :login_count, :discord_id, :is_verified,
                  :working_status, :is_fullstack_course_22_form_filled, :phone_number, :working_role, :company_name, :college_year, :is_college_form_filled, :accepted_in_course,
                  :enrolled_for_course_image_url, :referral_code, :coins, :github_token, :is_college_student, :dn_airtribe_student
       attributes :group_id, :group_name, :group_version
-      attributes :college_name
       attributes :solved, :total_by_difficulty, :fe_solved, :fe_total_by_topic
       attributes :activity
       attributes :discord_username, :school, :work_exp, :known_from, :dsa_skill, :webd_skill, :is_discord_form_filled
@@ -28,7 +27,7 @@ module Api
       end
 
       def self.updatable_fields(context)
-        super - %i[score group_id group_name discord_id password college_name coins]
+        super - %i[score group_id group_name discord_id password coins]
       end
 
       def group_id
@@ -41,13 +40,19 @@ module Api
         member.present? ? member.group&.name : nil
       end
 
+      def colleges
+        @model.college_profile.includes(:college).collect do |cps|
+          {
+            id: cps.college&.id,
+            slug: cps.college&.slug,
+            name: cps.college&.name
+          }
+        end
+      end
+
       def group_version
         member = GroupMember.where(user_id: @model.id).first
         member.present? ? member.group&.version : nil
-      end
-
-      def college_name
-        @model.college.nil? ? nil : @model.college.name
       end
 
       def solved
@@ -116,7 +121,7 @@ module Api
       def fe_rank
         @model.leaderboard_details('frontend')
       end
-      
+
       def dsa_streak
         @model.dsa_streak
       end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_17_123039) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_29_195950) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -263,6 +263,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_17_123039) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "college_branches", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "college_id", null: false
+    t.json "branches"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["college_id"], name: "index_college_branches_on_college_id"
+  end
+
   create_table "college_enquiries", charset: "utf8mb3", force: :cascade do |t|
     t.string "phone_number"
     t.integer "enquiry_count", default: 0
@@ -302,7 +310,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_17_123039) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "roll_number", null: false
+    t.string "roll_number"
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
     t.index ["roll_number"], name: "index_college_profiles_on_roll_number", unique: true
   end
@@ -355,6 +363,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_17_123039) do
   create_table "colleges", charset: "utf8mb3", force: :cascade do |t|
     t.string "name"
     t.boolean "is_verified", default: false
+    t.string "slug"
+    t.index ["slug"], name: "index_colleges_on_slug", unique: true
   end
 
   create_table "companies", charset: "utf8mb3", force: :cascade do |t|
@@ -1080,6 +1090,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_17_123039) do
   add_foreign_key "article_submissions", "users"
   add_foreign_key "coding_room_user_mappings", "coding_rooms"
   add_foreign_key "coding_room_user_mappings", "users"
+  add_foreign_key "college_branches", "colleges"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
 end
