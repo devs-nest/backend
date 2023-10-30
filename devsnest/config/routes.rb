@@ -151,11 +151,11 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :college, only: %i[create show], param: :slug do
         member do
-          post :invite, :join, :structure
+          post :invite, :structure
           get :structure_schema
         end
         collection do
-          post :create_college_branch
+          post :create_college_branch, :join
           get :college_branches
         end
       end
