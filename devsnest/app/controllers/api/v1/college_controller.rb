@@ -113,7 +113,8 @@ module Api
         render_success(message: 'College joined', data: {
                          data: {
                            attributes: {
-                             user_type: user.user_type
+                             user_type: user.user_type,
+                             college_slug: invite_entitiy.college_profile.college.slug
                            }
                          }
                        })
