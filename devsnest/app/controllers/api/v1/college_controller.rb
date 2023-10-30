@@ -106,7 +106,7 @@ module Api
 
           user.update(user_type: 'college_admin') if invite_entitiy.college_profile.is_admin?
 
-          invite_entitiy.update(status: 'closed')
+          invite_entitiy.update(status: 1)
           invite_entitiy.college_profile.update(user: user)
         end
 
