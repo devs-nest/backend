@@ -31,6 +31,6 @@ class CollegeProfile < ApplicationRecord
   validates_presence_of :roll_number, if: -> { authority_level == 'student' }
 
   def is_admin?
-    authority_level.zero?
+    authority_level == 'superadmin'
   end
 end
