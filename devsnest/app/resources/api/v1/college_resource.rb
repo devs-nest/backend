@@ -3,7 +3,7 @@
 module Api
   module V1
     class CollegeResource < JSONAPI::Resource
-      attributes :name, :is_verified, :admins, :all_members
+      attributes :name, :is_verified, :admins, :all_members, :college_id
       key_type :string
       primary_key :slug
 
