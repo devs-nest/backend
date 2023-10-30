@@ -86,7 +86,7 @@ class ApplicationController < ActionController::API
 
   def college_admin_auth
     @college_profile = @current_college_user&.college_profile&.where(college: @college, authority_level: 'superadmin')&.last
-    return true if @current_college_user.present? && @college_profile.present?
+    return true if @current_college_user.is_admin? || @current_college_user.present? && @college_profile.present?
 
     render_unauthorized
   end
