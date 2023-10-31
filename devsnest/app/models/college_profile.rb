@@ -22,13 +22,14 @@
 #
 class CollegeProfile < ApplicationRecord
   belongs_to :user, optional: true
-  belongs_to :college, optional: true
+  belongs_to :college
   belongs_to :college_structure, optional: true
   has_one :college_invite
   enum authority_level: %i[superadmin admin head student]
 
   validates_presence_of :email
   validates_presence_of :roll_number, if: -> { authority_level == 'student' }
+  validates_uniqueness_of :user_id, scope: :college_id
 
   def is_admin?
     authority_level == 'superadmin'

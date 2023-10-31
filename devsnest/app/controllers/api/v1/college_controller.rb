@@ -4,13 +4,13 @@ module Api
   module V1
     class CollegeController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :set_current_college_user, except: %i[create]
+      before_action :set_current_user, except: %i[create]
       before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure]
       before_action :admin_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite]
 
       def context
-        { user: @current_college_user, college: @college }
+        { user: @current_user, college: @college }
       end
 
       def create

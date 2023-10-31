@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_29_195950) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -313,6 +313,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_29_195950) do
     t.string "roll_number"
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
     t.index ["roll_number"], name: "index_college_profiles_on_roll_number", unique: true
+    t.index ["user_id", "college_id"], name: "index_college_profiles_on_user_id_and_college_id", unique: true
   end
 
   create_table "college_structures", charset: "utf8mb3", force: :cascade do |t|
