@@ -140,8 +140,8 @@ module Api
       end
 
       def create_college_branch
-        college_id = params[:college_id]
-        branches = params[:branches]
+        college_id = params.dig(:data, :college_id)
+        branches = params.dig(:data, :branches)
         college_branches = CollegeBranch.create!(college_id: college_id, branches: branches)
         render_success(message: 'Branches created', data: college_branches)
       end
