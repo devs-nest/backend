@@ -141,18 +141,18 @@ module Api
       end
 
       def create_college_branch
-        college_id = params[:college_id]
-        branches = params[:branches]
-        college_branches = CollegeBranch.create!(college_id: college_id, branches: branches)
-        render_success(message: 'Branches created', data: college_branches)
+        college_id = params.dig(:data, :college_id)
+        branches = params.dig(:data, :branches)
+        college_branches = CollegeBranch.create!(college_id: college_id, branches: branches.as_json)
+        render_success(message: 'Branches created', college_branches: college_branches)
       end
 
       def college_branches
         college_id = params[:college_id]
-        branches_data = CollegeBranch.find_by(college_id: college_id)
+        branches_data = CollegeBranch.where(college_id: college_id)
         return render_not_found('College data not found') if branches_data.blank?
 
-        render_success(data: branches_data)
+        render_success(college_branches: college_branches)
       end
     end
   end
