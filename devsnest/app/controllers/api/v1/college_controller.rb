@@ -152,7 +152,7 @@ module Api
         branches_data = CollegeBranch.where(college_id: college_id)
         return render_not_found('College data not found') if branches_data.blank?
 
-        render_success(college_branches: college_branches)
+        render_success(college_branches: branches_data)
       end
     end
   end
