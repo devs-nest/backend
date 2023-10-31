@@ -149,7 +149,7 @@ module Api
 
       def college_branches
         college_id = params[:college_id]
-        branches_data = CollegeBranch.where(college_id: college_id)
+        branches_data = CollegeBranch.where(college_id: college_id).pluck(:branches).flatten
         return render_not_found('College data not found') if branches_data.blank?
 
         render_success(college_branches: branches_data)
