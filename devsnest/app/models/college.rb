@@ -101,6 +101,7 @@ class College < ApplicationRecord
     students_completed_fe_bootcamp,
     students_completed_be_bootcamp,
     top_performing_batches = college.students_completed_bootcamp(Time.zone.now)
+
     {
       total_students: user_ids.count,
       students_active_in_last_month: students_active_in_last_month,
