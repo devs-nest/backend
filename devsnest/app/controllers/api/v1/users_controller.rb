@@ -180,7 +180,13 @@ module Api
         if user.present?
           sign_in(user)
           set_current_user
-          return render_success(user.as_json.merge({ "type": 'users' })) if @current_user.present?
+          colleges = user.college_profile.includes(:college).collect do |cps| {
+            id: cps.college&.id,
+            slug: cps.college&.slug,
+            name: cps.college&.name
+          }
+
+          return render_success(user.as_json.merge({ "type": 'users', "colleges": colleges })) if @current_user.present?
         end
         render_error({ message: 'Error occured while authenticating' })
       end
