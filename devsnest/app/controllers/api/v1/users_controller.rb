@@ -193,13 +193,15 @@ module Api
       end
 
       def college_login
-        user = CollegeProfile.find_by_email(params['email'])&.user
-        return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
+        college_profile = CollegeProfile.find_by_email(params['email'])
+        user = college_profile.try(:user)
 
         if user.present?
+          return render_error({ message: 'Invalid password or username' }) unless user.valid_password?(params[:password])
+
           sign_in(user)
           set_current_user
-          return render_success(user.as_json.merge({ "type": 'college_user', "college_id": user.college.id })) if @current_user.present?
+          return render_success(user.as_json.merge({ "type": 'college_user', "college_id": college_profile.try(:college).try(:id) })) if @current_user.present?
         end
         render_error({ message: 'Error occured while authenticating college user' })
       end
