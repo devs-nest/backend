@@ -15,7 +15,6 @@ module Api
 
       def create
         data = params.dig(:data, :attributes)
-
         return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
 
         skip_pass = User.find_by_email(data[:email]).blank?
