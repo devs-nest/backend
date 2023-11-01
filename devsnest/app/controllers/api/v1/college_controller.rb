@@ -5,7 +5,7 @@ module Api
     class CollegeController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :set_current_user, except: %i[create]
-      before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure]
+      before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure manage_college_branch college_branches]
       before_action :admin_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite]
 
@@ -141,16 +141,15 @@ module Api
       end
 
       def manage_college_branch
-        college_id = params.dig(:data, :college_id)
         branches = params.dig(:data, :branches)
         action_type = params.dig(:data, :action_type)
         college_branches = case action_type
                            when 'create'
-                             CollegeBranch.create!(college_id: college_id, branches: branches.as_json)
+                             CollegeBranch.create!(college_id: @college.id, branches: branches.as_json)
                            when 'update'
-                             CollegeBranch.find_by(college_id: college_id)
+                             CollegeBranch.find_by(college_id: @college.id)
                            when 'delete'
-                             CollegeBranch.find_by(college_id: college_id)
+                             CollegeBranch.find_by(college_id: @college.id)
                            else
                              return render_error('Invalid action type')
                            end
@@ -167,8 +166,7 @@ module Api
       end
 
       def college_branches
-        college_id = params[:college_id]
-        branches_data = CollegeBranch.where(college_id: college_id).pluck(:branches).flatten
+        branches_data = CollegeBranch.where(college_id: @college.id).pluck(:branches).flatten
         return render_not_found('College data not found') if branches_data.blank?
 
         render_success(college_branches: branches_data)
