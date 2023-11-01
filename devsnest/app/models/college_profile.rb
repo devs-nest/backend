@@ -29,7 +29,6 @@ class CollegeProfile < ApplicationRecord
 
   validates_presence_of :email
   validates_presence_of :roll_number, if: -> { authority_level == 'student' }
-  validates_uniqueness_of :user_id, scope: :college_id
 
   def is_admin?
     authority_level == 'superadmin'
