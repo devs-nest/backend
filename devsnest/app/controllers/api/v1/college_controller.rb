@@ -140,7 +140,7 @@ module Api
         render_success
       end
 
-      def create_college_branch
+      def manage_college_branch
         college_id = params.dig(:data, :college_id)
         branches = params.dig(:data, :branches)
         action_type = params.dig(:data, :action_type)

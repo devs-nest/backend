@@ -155,7 +155,7 @@ Rails.application.routes.draw do
           get :structure_schema
         end
         collection do
-          post :create_college_branch, :join
+          post :manage_college_branch, :join
           get :college_branches
         end
       end
