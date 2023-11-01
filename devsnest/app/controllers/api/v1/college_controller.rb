@@ -46,7 +46,7 @@ module Api
       def invite
         data = params.dig(:data, :attributes)
 
-        return render_error('Email or Roll Number is missing.') if data[:email].blank? || data[:roll_number].blank?
+        return render_error('Email or Roll Number is missing.') if data[:email].blank? || (data[:roll_number].blank? && data[:authority_level] != 'superadmin')
 
         return render_error('Domain mismatched') unless College.domains_matched?(@college_profile&.email, data[:email])
 
@@ -68,7 +68,7 @@ module Api
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
-                                            collegename: current_college.name,
+                                            collegename: @college.name,
                                             username: data[:email].split('@')[0],
                                             code: encrypted_code,
                                             skip_pass: skip_pass
