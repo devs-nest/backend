@@ -77,8 +77,13 @@ class ApplicationController < ActionController::API
   end
 
   def set_college
-    college_id = params[:id] || params[:college_id]
-    @college = College.find_by(slug: college_id)
+    Rails.logger.info(params)
+    @college = if params[:id].present?
+                 College.find_by(slug: params[:id])
+               elseif params[:college_id].present?
+                 College.find_by(id: params[:college_id])
+               end
+
     return true if @college.present?
 
     render_unauthorized
