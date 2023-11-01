@@ -80,7 +80,7 @@ class ApplicationController < ActionController::API
     Rails.logger.info(params)
     @college = if params[:id].present?
                  College.find_by(slug: params[:id])
-               elseif params[:college_id].present?
+               elsif params[:college_id].present?
                  College.find_by(id: params[:college_id])
                end
 
