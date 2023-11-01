@@ -180,19 +180,36 @@ module Api
         if user.present?
           sign_in(user)
           set_current_user
-          return render_success(user.as_json.merge({ "type": 'users' })) if @current_user.present?
+          colleges = user.college_profile.includes(:college).collect do |cps|
+            {
+              id: cps.college&.id,
+              slug: cps.college&.slug,
+              name: cps.college&.name
+            }
+          end
+
+          return render_success(user.as_json.merge({ "type": 'users', "colleges": colleges })) if @current_user.present?
         end
         render_error({ message: 'Error occured while authenticating' })
       end
 
       def college_login
-        user = CollegeProfile.find_by_email(params['email'])&.user
-        return render_error({ message: 'Invalid password or username' }) unless user&.valid_password?(params[:password])
+        college_profile = CollegeProfile.find_by_email(params['email'])
+        user = college_profile.try(:user)
 
         if user.present?
+          return render_error({ message: 'Invalid password or username' }) unless user.valid_password?(params[:password])
+
           sign_in(user)
-          set_current_college_user
-          return render_success(user.as_json.merge({ "type": 'college_user', "college_id": user.college.id })) if @current_college_user.present?
+          set_current_user
+          colleges = user.college_profile.includes(:college).collect do |cps|
+            {
+              id: cps.college&.id,
+              slug: cps.college&.slug,
+              name: cps.college&.name
+            }
+          end
+          return render_success(user.as_json.merge({ "type": 'users', "colleges": colleges })) if @current_user.present?
         end
         render_error({ message: 'Error occured while authenticating college user' })
       end

@@ -3,9 +3,13 @@
 module Api
   module V1
     class CollegeResource < JSONAPI::Resource
-      attributes :name, :is_verified, :admins, :all_members
+      attributes :name, :is_verified, :admins, :all_members, :college_id
       key_type :string
       primary_key :slug
+
+      def college_id
+        @model.id
+      end
 
       def admins
         @model.college_profiles.where(authority_level: 0).as_json

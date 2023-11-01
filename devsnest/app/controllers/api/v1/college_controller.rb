@@ -4,13 +4,13 @@ module Api
   module V1
     class CollegeController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :set_current_college_user, except: %i[create]
-      before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure]
+      before_action :set_current_user, except: %i[create]
+      before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure manage_college_branch college_branches]
       before_action :admin_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite]
 
       def context
-        { user: @current_college_user, college: @college }
+        { user: @current_user, college: @college }
       end
 
       def create
@@ -106,14 +106,15 @@ module Api
 
           user.update(user_type: 'college_admin') if invite_entitiy.college_profile.is_admin?
 
-          invite_entitiy.update(status: 'closed')
+          invite_entitiy.update(status: 1)
           invite_entitiy.college_profile.update(user: user)
         end
 
         render_success(message: 'College joined', data: {
                          data: {
                            attributes: {
-                             user_type: user.user_type
+                             user_type: user.user_type,
+                             college_slug: invite_entitiy.college_profile.college.slug
                            }
                          }
                        })
@@ -139,19 +140,36 @@ module Api
         render_success
       end
 
-      def create_college_branch
-        college_id = params.dig(:data, :college_id)
+      def manage_college_branch
         branches = params.dig(:data, :branches)
-        college_branches = CollegeBranch.create!(college_id: college_id, branches: branches)
-        render_success(message: 'Branches created', data: college_branches)
+        action_type = params.dig(:data, :action_type)
+        college_branches = case action_type
+                           when 'create'
+                             CollegeBranch.create!(college_id: @college.id, branches: branches.as_json)
+                           when 'update'
+                             CollegeBranch.find_by(college_id: @college.id)
+                           when 'delete'
+                             CollegeBranch.find_by(college_id: @college.id)
+                           else
+                             return render_error('Invalid action type')
+                           end
+        return render_error('CollegeBranch not found') unless college_branches
+
+        case action_type
+        when 'update'
+          college_branches.update!(branches: branches.as_json)
+        when 'delete'
+          college_branches.destroy!
+          return render_success(message: 'Branches deleted')
+        end
+        render_success(message: 'Branches created', college_branches: college_branches)
       end
 
       def college_branches
-        college_id = params[:college_id]
-        branches_data = CollegeBranch.find_by(college_id: college_id)
+        branches_data = CollegeBranch.where(college_id: @college.id).pluck(:branches).flatten
         return render_not_found('College data not found') if branches_data.blank?
 
-        render_success(data: branches_data)
+        render_success(college_branches: branches_data)
       end
     end
   end
