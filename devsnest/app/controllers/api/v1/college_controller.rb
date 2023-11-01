@@ -68,7 +68,7 @@ module Api
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
           EmailSenderWorker.perform_async(data[:email], {
-                                            collegename: current_college.name,
+                                            collegename: @college.name,
                                             username: data[:email].split('@')[0],
                                             code: encrypted_code,
                                             skip_pass: skip_pass
