@@ -143,7 +143,26 @@ module Api
       def create_college_branch
         college_id = params.dig(:data, :college_id)
         branches = params.dig(:data, :branches)
-        college_branches = CollegeBranch.create!(college_id: college_id, branches: branches.as_json)
+        action_type = params.dig(:data, :action_type)
+        college_branches = case action_type
+                           when 'create'
+                             CollegeBranch.create!(college_id: college_id, branches: branches.as_json)
+                           when 'update'
+                             CollegeBranch.find_by(college_id: college_id)
+                           when 'delete'
+                             CollegeBranch.find_by(college_id: college_id)
+                           else
+                             return render_error('Invalid action type')
+                           end
+        return render_error('CollegeBranch not found') unless college_branches
+
+        case action_type
+        when 'update'
+          college_branches.update!(branches: branches.as_json)
+        when 'delete'
+          college_branches.destroy!
+          return render_success(message: 'Branches deleted')
+        end
         render_success(message: 'Branches created', college_branches: college_branches)
       end
 
