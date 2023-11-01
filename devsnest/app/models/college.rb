@@ -27,8 +27,9 @@ class College < ApplicationRecord
   end
 
   def students_completed_bootcamp(end_time)
-    college_profiles = CollegeProfile.where(college_id: id, authority_level: 'student')
-    user_ids = college_profiles.map(&:user_id).compact.uniq
+    top_performing_batches = {}
+    college_profiles = CollegeProfile.includes(:college_structure).where(college_id: id, authority_level: 'student')
+    user_ids = college_profiles.pluck(:user_id).compact.uniq
 
     dsa_solved = UserChallengeScore.where(user_id: user_ids).where('created_at <= ?', end_time).group(:user_id).count
     total_dsa_questions = Challenge.where(is_active: true).count
@@ -43,18 +44,37 @@ class College < ApplicationRecord
     students_completed_fe_bootcamp = 0
     students_completed_be_bootcamp = 0
     college_profiles.each do |college_profile|
+      structure_name = college_profile.college_structure.name
+      unless top_performing_batches.key?(structure_name)
+        top_performing_batches[structure_name] = {
+          dsa_solved: 0,
+          fe_solved: 0,
+          be_solved: 0
+        }
+      end
+
       user_id = college_profile.user_id
 
       user_dsa_solved = dsa_solved[user_id].to_i
-      students_completed_dsa_bootcamp += 1 if user_dsa_solved >= (total_dsa_questions * 70 / 100)
+      if user_dsa_solved >= (total_dsa_questions * 70 / 100)
+        students_completed_dsa_bootcamp += 1
+        top_performing_batches[structure_name][:dsa_solved] += 1
+      end
 
       user_fe_solved = fe_solved[user_id].to_i
-      students_completed_fe_bootcamp += 1 if user_fe_solved >= (total_fe_questions * 70 / 100)
+      if user_fe_solved >= (total_fe_questions * 70 / 100)
+        students_completed_fe_bootcamp += 1
+        top_performing_batches[structure_name][:fe_solved] += 1
+      end
 
       user_be_solved = be_solved[user_id].to_i
-      students_completed_be_bootcamp += 1 if user_be_solved >= (total_be_questions * 70 / 100)
+      if user_be_solved >= (total_be_questions * 70 / 100)
+        students_completed_be_bootcamp += 1
+        top_performing_batches[structure_name][:be_solved] += 1
+      end
     end
-    [students_completed_dsa_bootcamp, students_completed_fe_bootcamp, students_completed_be_bootcamp]
+    top_performing_batches = top_performing_batches.sort_by { |_key, value| -value.values.sum }.first(3).to_h
+    [students_completed_dsa_bootcamp, students_completed_fe_bootcamp, students_completed_be_bootcamp, top_performing_batches]
   end
 
   def bootcamp_completed_till_last_month
@@ -77,14 +97,18 @@ class College < ApplicationRecord
     be_solved = BackendChallengeScore.where(user_id: user_ids).where('created_at >= ?', Time.zone.now - 1.month).pluck(:user_id)
     students_active_in_last_month = (user_ids & [dsa_solved, fe_solved, be_solved].flatten).count
 
-    students_completed_dsa_bootcamp, students_completed_fe_bootcamp, students_completed_be_bootcamp = college.students_completed_bootcamp(Time.zone.now)
+    students_completed_dsa_bootcamp,
+    students_completed_fe_bootcamp,
+    students_completed_be_bootcamp,
+    top_performing_batches = college.students_completed_bootcamp(Time.zone.now)
     {
       total_students: user_ids.count,
       students_active_in_last_month: students_active_in_last_month,
       students_completed_dsa_bootcamp: students_completed_dsa_bootcamp,
       students_completed_fe_bootcamp: students_completed_fe_bootcamp,
       students_completed_be_bootcamp: students_completed_be_bootcamp,
-      students_completed_bootcamp_till_last_month: college.bootcamp_completed_till_last_month
+      students_completed_bootcamp_till_last_month: college.bootcamp_completed_till_last_month,
+      top_performing_batches: top_performing_batches
     }
   end
 

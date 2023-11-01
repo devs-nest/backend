@@ -44,16 +44,20 @@ update_group_activity_point:
 #     timeline: "scrum_start"
 
 user_streak_reset:
-  cron: "00 00 * * * Asia/Kolkata" # every day at 00:00
+  cron: "00 00 * * * Asia/Kolkata" # every day at 00:00 AM IST
   class: "StreakChangerWorker"
 
 user_streak_break_notifier:
-  cron: "00 8 * * * Asia/Kolkata" # every day at 00:00
+  cron: "00 8 * * * Asia/Kolkata" # every day at 08:00 AM IST
   class: "StreakBreakNotifierWorker"
 
 user_streak_notifier:
-  cron: "00 6 * * * Asia/Kolkata" # every day at 00:00
+  cron: "00 6 * * * Asia/Kolkata" # every day at 06:00 AM IST
   class: "StreakNotifierWorker"
+
+refresh_college_activity:
+  cron: "00 3 * * * Asia/Kolkata" # every day at 03:00 AM IST
+  class: "RefreshCollegeActivityWorker"
 
 # weekly_report_notifier:
 #   cron: "00 9 * * sun Asia/Kolkata" # every day at 09:00
