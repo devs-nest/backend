@@ -17,6 +17,7 @@ module Api
 
       def all_members
         college = context[:college]
+        return {} if college.blank?
 
         college.college_profiles.where(authority_level: 'student').as_json(include: %i[college_structure college_invite])
       end
