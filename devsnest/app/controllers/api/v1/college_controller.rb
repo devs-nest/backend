@@ -47,6 +47,7 @@ module Api
 
         return render_error('Email or Roll Number is missing.') if data[:email].blank? || (data[:roll_number].blank? && data[:authority_level] != 'superadmin')
 
+        Rails.logger.info(@college_profile)
         return render_error('Domain mismatched') unless College.domains_matched?(@college_profile&.email, data[:email])
 
         data_to_encode = {
