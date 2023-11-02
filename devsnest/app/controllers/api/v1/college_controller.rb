@@ -4,7 +4,7 @@ module Api
   module V1
     class CollegeController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :set_current_user, except: %i[create]
+      before_action :set_current_user
       before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure manage_college_branch college_branches]
       before_action :admin_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite]
@@ -48,7 +48,7 @@ module Api
         return render_error('Email or Roll Number is missing.') if data[:email].blank? || (data[:roll_number].blank? && data[:authority_level] != 'superadmin')
 
         Rails.logger.info(@college_profile)
-        return render_error('Domain mismatched') unless College.domains_matched?(@college_profile&.email, data[:email])
+        return render_error('Domain mismatched') unless College.domains_matched?(@college_profile.email || '', data[:email])
 
         data_to_encode = {
           email: data[:email],
