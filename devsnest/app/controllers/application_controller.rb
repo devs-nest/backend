@@ -92,6 +92,7 @@ class ApplicationController < ActionController::API
   def college_admin_auth
     Rails.logger.info("################################")
     Rails.logger.info(@current_user.attributes)
+    Rails.logger.info(@college.attributes)
     Rails.logger.info(@current_user&.college_profile&.where(college: @college, authority_level: 'superadmin')&.last)
 
     @college_profile = @current_user&.college_profile&.where(college: @college, authority_level: 'superadmin')&.last
