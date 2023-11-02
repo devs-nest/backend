@@ -15,6 +15,7 @@ class College < ApplicationRecord
   has_many :college_structure
   has_many :college_branches
   before_save { self.slug = name.parameterize }
+  default_scope { where(is_verified: 'red') }
 
   validates :slug, uniqueness: true, allow_nil: true
 
