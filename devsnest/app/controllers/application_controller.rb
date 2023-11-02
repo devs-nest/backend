@@ -90,6 +90,7 @@ class ApplicationController < ActionController::API
   end
 
   def college_admin_auth
+    puts @current_user&.college_profile
     @college_profile = @current_user&.college_profile&.where(college: @college, authority_level: 'superadmin')&.last
     return true if @current_user.is_admin? || @college_profile.present?
 
