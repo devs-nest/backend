@@ -4,20 +4,21 @@ module Api
   module V1
     class CollegeController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :set_current_user, except: %i[create]
+      before_action :user_auth
       before_action :set_college, :college_admin_auth, only: %i[show invite structure_schema structure manage_college_branch college_branches]
       before_action :admin_auth, only: %i[create]
       before_action :check_college_verification, only: %i[show invite]
 
       def context
-        { user: @current_user, college: @college }
+        { user: @current_user, action: params[:action] }
       end
 
       def create
         data = params.dig(:data, :attributes)
-        return render_unauthorized('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
+        return render_unprocessable('Already a college member or already submitted a request') if CollegeProfile.find_by_email(data[:email]).present?
 
-        skip_pass = User.find_by_email(data[:email]).blank?
+        user = User.find_by_email(data[:email])
+        skip_pass = user.blank?
         data_to_encode = {
           email: data[:email],
           initiated_at: Time.now
@@ -26,7 +27,7 @@ module Api
 
         ActiveRecord::Base.transaction do
           college = College.create!(name: data[:name])
-          college_profile = CollegeProfile.create(college_id: college.id, email: data[:email], authority_level: 0)
+          college_profile = CollegeProfile.create(user: user, college_id: college.id, email: data[:email], authority_level: 0)
           CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college.id)
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
@@ -47,7 +48,7 @@ module Api
 
         return render_error('Email or Roll Number is missing.') if data[:email].blank? || (data[:roll_number].blank? && data[:authority_level] != 'superadmin')
 
-        return render_error('Domain mismatched') unless College.domains_matched?(@college_profile&.email, data[:email])
+        return render_error('Domain mismatched') unless College.domains_matched?(@college_profile.email.to_s, data[:email].to_s)
 
         data_to_encode = {
           email: data[:email],
