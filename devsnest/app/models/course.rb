@@ -8,6 +8,7 @@
 #  archived       :boolean          default(TRUE)
 #  current_module :string(255)
 #  name           :string(255)
+#  visibility     :integer          default("private_course"), not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #
@@ -17,4 +18,7 @@
 #
 class Course < ApplicationRecord
   has_many :course_curriculums, dependent: :delete_all
+  has_many :bootcamp_accesses, dependent: :destroy
+
+  enum visibility: %i[private_course public_course]
 end
