@@ -20,7 +20,7 @@ module Api
           return render_error('course_name is required inside filter') if params.require(:filter).class == String
 
           params.require(:filter).require(:course_name)
-          @course_id = Course.find_by(name: course_name)&.id
+          @course_id = Course.find_by(name: params[:filter][:course_name])&.id
         elsif params[:action] == 'show'
           @course_id = params[:id]
         end
