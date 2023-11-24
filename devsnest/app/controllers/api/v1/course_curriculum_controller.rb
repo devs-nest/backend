@@ -20,16 +20,22 @@ module Api
           return render_error('course_name is required inside filter') if params.require(:filter).class == String
 
           params.require(:filter).require(:course_name)
-          @course_id = Course.find_by(name: params[:filter][:course_name])&.id
+          @course = Course.find_by(name: params[:filter][:course_name])
         elsif params[:action] == 'show'
-          @course_id = params[:id]
+          @course = CourseCurriculum.find_by_id(params[:id])&.course
         end
       end
 
       def verify_accessibility
-        # TODO: flow for the college_access
-        user_access = BootcampAccess.find_by(course_id: @course_id, accessible_id: @current_user.id, accessible_type: 'User')
-        return render_error('You do not have access to the given bootcamp.') if user_access.nil? || user_access[:status] != 'granted'
+        return true if @course.visibility == "public_course"
+
+        user_access = BootcampAccess.find_by(course_id: @course.id, accessible_id: @current_user.id, accessible_type: 'User')
+        college_access = BootcampAccess.find_by(course_id: @course.id, accessible_id: @current_user.college_id, accessible_type: 'College') if @current_user.college_id
+        return render_error('You do not have access to the given bootcamp.') if access_not_granted?(user_access) && access_not_granted?(college_access)
+      end
+
+      def access_not_granted?(data)
+        data.nil? || data[:status] != 'granted'
       end
     end
   end
