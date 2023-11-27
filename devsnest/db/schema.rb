@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_26_080018) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -415,8 +415,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.json "extra_data"
+    t.integer "course_module_id"
     t.index ["course_id", "course_type"], name: "index_course_curriculums_on_course_id_and_course_type"
     t.index ["course_id", "day"], name: "index_course_curriculums_on_course_id_and_day"
+  end
+
+  create_table "course_modules", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "course_id"
+    t.integer "module_type"
+    t.integer "questions_table"
+    t.integer "best_submissions_table"
+    t.integer "submissions_table"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "courses", charset: "utf8mb3", force: :cascade do |t|

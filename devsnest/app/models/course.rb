@@ -16,5 +16,6 @@
 #  index_courses_on_name  (name)
 #
 class Course < ApplicationRecord
+  has_many :course_modules, dependent: :delete_all
   has_many :course_curriculums, dependent: :delete_all
 end
