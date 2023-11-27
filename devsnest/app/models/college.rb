@@ -14,6 +14,8 @@ class College < ApplicationRecord
   has_many :college_invites
   has_many :college_structure
   has_many :college_branches
+
+  has_many :course_modules
   before_save { self.slug = name.parameterize }
 
   validates :slug, uniqueness: true, allow_nil: true

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_26_080018) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_27_184509) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_26_080018) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "_0GfcEg2ss0"
+    t.string "cuid", default: "GIsnLwSP52E"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -298,7 +298,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_26_080018) do
     t.integer "authority_level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "roll_number", null: false
   end
 
   create_table "college_profiles", charset: "utf8mb3", force: :cascade do |t|
@@ -313,7 +312,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_26_080018) do
     t.string "roll_number"
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
     t.index ["roll_number"], name: "index_college_profiles_on_roll_number", unique: true
-    t.index ["user_id", "college_id"], name: "index_college_profiles_on_user_id_and_college_id", unique: true
   end
 
   create_table "college_structures", charset: "utf8mb3", force: :cascade do |t|
@@ -428,6 +426,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_26_080018) do
     t.integer "submissions_table"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_paid", default: false
+    t.integer "timeline_status", default: 0
+    t.integer "college_id"
   end
 
   create_table "courses", charset: "utf8mb3", force: :cascade do |t|
