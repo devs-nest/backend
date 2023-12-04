@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # access management for bootcamp
-class BootcampAccess < ApplicationRecord
+class CourseModuleAccess < ApplicationRecord
   belongs_to :accessible, polymorphic: true
-  belongs_to :course
+  belongs_to :course_module
 
   enum status: %i[requested payment_pending granted]
 end

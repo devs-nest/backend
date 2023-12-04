@@ -19,7 +19,6 @@
 class Course < ApplicationRecord
   has_many :course_modules, dependent: :delete_all
   has_many :course_curriculums, dependent: :delete_all
-  has_many :bootcamp_accesses, dependent: :destroy
 
   enum visibility: %i[private_course public_course]
 end

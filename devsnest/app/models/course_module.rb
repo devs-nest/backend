@@ -5,6 +5,7 @@ class CourseModule < ApplicationRecord
   belongs_to :course
   belongs_to :college, optional: true
   has_many :course_curriculums, dependent: :delete_all
+  has_many :course_module_accesses, dependent: :delete_all
 
   # The values of each type of module type are synced in the rest of the enums,
   # Please follow that while adding new module types
@@ -13,6 +14,7 @@ class CourseModule < ApplicationRecord
   enum submissions_table: %i[AlgoSubmission FeSubmission BeSubmission]
   enum best_submissions_table: %i[UserChallengeScore FrontendChallengeScore BackendChallengeScore]
   enum timeline_status: %i[new_module comming_soon locked open]
+  enum visibility: %i[private_module public_module]
 
   before_create :sync_rest_columns_with_module_type
 
