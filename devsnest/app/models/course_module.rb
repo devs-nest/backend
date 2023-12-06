@@ -2,8 +2,6 @@
 
 # Course Module table
 class CourseModule < ApplicationRecord
-  belongs_to :course
-  belongs_to :college, optional: true
   has_many :course_curriculums, dependent: :delete_all
   has_many :course_module_accesses, dependent: :delete_all
 
@@ -15,6 +13,7 @@ class CourseModule < ApplicationRecord
   enum best_submissions_table: %i[UserChallengeScore FrontendChallengeScore BackendChallengeScore]
   enum timeline_status: %i[new_module comming_soon locked open]
   enum visibility: %i[private_module public_module]
+  # CourseModule.create!(module_type:"dsa", question_table: 0,submissions_table: 0,best_submissions_table: 0,timeline_status: "open", visibility: "public_mode")
 
   before_create :sync_rest_columns_with_module_type
 

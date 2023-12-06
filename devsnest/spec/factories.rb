@@ -6,6 +6,13 @@ FactoryBot.define do
     status { 1 }
     course_curriculum { nil }
   end
+  factory :product_discount do
+    
+  end
+
+  factory :product_price do
+    
+  end
 
   factory :college_student do
   end

@@ -13,6 +13,7 @@
 #  status                   :string(255)
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  product_price_id         :integer
 #  razorpay_order_id        :string(255)
 #  razorpay_payment_id      :string(255)
 #  razorpay_payment_link_id :string(255)

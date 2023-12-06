@@ -36,7 +36,7 @@ class AlgoSubmission < ApplicationRecord
   after_commit :assign_score_into_rooms, if: :execution_completed, on: %i[create update]
   include AlgoHelper
 
-  scope :accessible, -> { where.not(status: 'Stale') }
+  scope :accessor, -> { where.not(status: 'Stale') }
 
   def self.add_submission(source_code, lang, test_case, mode, submission_id = nil)
     controller = %w[run run_sample].include?(mode) ? 'run-submission' : 'algo-submission'

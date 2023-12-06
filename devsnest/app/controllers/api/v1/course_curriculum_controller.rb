@@ -22,9 +22,9 @@ module Api
       def verify_accessibility
         return true if @course_module.visibility == "public_module"
 
-        user_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessible_id: @current_user.id, accessible_type: 'User')
+        user_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessor_id: @current_user.id, accessor_type: 'User')
         college_profile_user_ids = CollegeProfile.where(user_id: @current_user.id).pluck(:id)
-        college_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessible_id: college_profile_user_ids, accessible_type: 'College') if college_profile_user_ids
+        college_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessor_id: college_profile_user_ids, accessor_type: 'College') if college_profile_user_ids
         return render_error('You do not have access to the given bootcamp.') if access_not_granted?(user_access) && access_not_granted?(college_access)
       end
 

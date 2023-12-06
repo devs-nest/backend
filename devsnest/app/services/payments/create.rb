@@ -2,7 +2,7 @@
 
 # Create a payment
 class Payments::Create < ApplicationService
-  def initialize(user, amount, currency, description)
+  def initialize(user, amount, currency, description, product_price_id)
     # Set up Razorpay with API keys
     Razorpay.setup(ENV['RAZORPAY_KEY_ID'], ENV['RAZORPAY_KEY_SECRET'])
     Razorpay.headers = { 'Content-type' => 'application/json' }
@@ -11,7 +11,7 @@ class Payments::Create < ApplicationService
     amount = amount.to_i * 100
 
     # Create a new Order object with user, amount, currency, and description
-    @order = Order.new({ user_id: user.id, amount: amount, currency: currency, description: description })
+    @order = Order.new({ user_id: user.id, amount: amount, currency: currency, description: description, product_price_id: product_price_id })
 
     # Prepare parameters for creating a Razorpay order
     para_attr = { "amount": amount, "currency": @order.currency, "receipt": description.to_s }

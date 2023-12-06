@@ -298,9 +298,16 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :orders, only: %i[create] do
         collection do
-          post :verify_payment
+          # TODO: Make this a Post request Changed it for testing
+          get :verify_payment
         end
       end
+      jsonapi_resources :product_prices, only: %i[create show] do
+        collection do 
+          get :active_courses
+        end
+      end
+      jsonapi_resources :product_discounts, only: %i[create show]
     end
   end
 end

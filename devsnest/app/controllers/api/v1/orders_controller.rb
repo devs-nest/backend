@@ -14,12 +14,15 @@ module Api
       # POST /orders to create an order
       def create
         # Call Payments::Create service to create a payment/order
-        return render_error('Amount in not correct') unless params[:amount].present? && params[:amount].to_i == ENV['APPLICATION_FEE'].to_i
+        product_price = ProductPrice.find_by(id: params[:product_price_id])
+        return render_error('Product is not registered') unless product_price.present?
+        return render_error('Amount in not correct') unless params[:amount].present? && params[:amount].to_i == product_price.price
 
-        @order = Order.find_by(user_id: @current_user.id, status: %w[paylink_created pending])
+        # TODO: can have multiple types of orders
+        @order = Order.find_by(user_id: @current_user.id, status: %w[paylink_created pending], product_price_id: params[:product_price_id])
         Payments::VerifyLink.call(@order) if @order.present?
 
-        @order = Payments::Create.call(@current_user, params[:amount], params[:currency], params[:description]) unless @order.present?
+        @order = Payments::Create.call(@current_user, params[:amount], params[:currency], params[:description], params[:product_price_id]) unless @order.present?
 
         return render_error('Order not created') unless @order
 
@@ -32,16 +35,16 @@ module Api
         return render_error('Payment Failed') if params[:razorpay_payment_link_status] != 'paid'
 
         # Find the order associated with the payment link ID
-        order = Order.where(user_id: @current_user.id, razorpay_payment_link_id: params[:razorpay_payment_link_id]).first
-
+        # order = Order.where(user_id: @current_user.id, razorpay_payment_link_id: params[:razorpay_payment_link_id]).first
+        order = Order.where(razorpay_payment_link_id: params[:razorpay_payment_link_id]).first
         if order.present?
           # Update the order with the signature and payment ID
           order.update(razorpay_signature: params[:razorpay_signature], razorpay_payment_id: params[:razorpay_payment_id])
 
           # Call Payments::Verify service to verify the payment
           response = Payments::Verify.call(order)
-          college_student = CollegeStudent.find_by(user_id: order.user_id)
-          college_student.update(state: 5) if college_student.present?
+          # After Success let the process decide what to do
+          Order.determine_succession_order(response) if response.status == 'Paid'
           render_success(response)
         else
           render_error('Order not found')
