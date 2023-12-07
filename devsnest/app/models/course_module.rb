@@ -4,6 +4,7 @@
 class CourseModule < ApplicationRecord
   has_many :course_curriculums, dependent: :delete_all
   has_many :course_module_accesses, dependent: :delete_all
+  has_many :colleges, through: :course_module_accesses, source: :accessor, source_type: 'College'
 
   # The values of each type of module type are synced in the rest of the enums,
   # Please follow that while adding new module types
@@ -13,7 +14,6 @@ class CourseModule < ApplicationRecord
   enum best_submissions_table: %i[UserChallengeScore FrontendChallengeScore BackendChallengeScore]
   enum timeline_status: %i[new_module comming_soon locked open]
   enum visibility: %i[private_module public_module]
-  # CourseModule.create!(module_type:"dsa", question_table: 0,submissions_table: 0,best_submissions_table: 0,timeline_status: "open", visibility: "public_mode")
 
   before_create :sync_rest_columns_with_module_type
 
@@ -23,22 +23,41 @@ class CourseModule < ApplicationRecord
   end
 
   # rubocop:disable Metrics/AbcSize
-  def activity(user_ids, end_time)
+  def activity(college_profile_ids, end_time, top_performing_batches)
+    college_profiles = CollegeProfile.includes(:college_structure).where(id: college_profile_ids)
+
+    user_ids = college_profiles.pluck(:user_id).compact.uniq
     question_ids = course_curriculums.includes(:assignment_questions).flat_map do |curriculum|
       curriculum.assignment_questions.pluck(:question_id)
     end
     best_submissions = best_submissions_table.constantize.where("user_id = ? AND #{questions_table.underscore}_id = ?", user_ids, question_ids)
                                              .where('created_at <= ?', end_time).group(:user_id).count
-    total_questions = questions_table.constantize.where(is_active: true).count
+    total_questions = questions_table.constantize.where(id: question_ids).count
     course_completion_threshold = (total_questions * 70 / 100)
     passed_students_count = 0
 
-    user_ids.each do |user_id|
+    college_profiles.each do |college_profile|
+      structure_name = college_profile.college_structure.name
+      top_performing_batches[structure_name] = Hash.new(0) unless top_performing_batches.key?(structure_name)
+
+      user_id = college_profile.user_id
       user_solved = best_submissions[user_id].to_i
-      passed_students_count += 1 if user_solved >= course_completion_threshold
+      if user_solved >= course_completion_threshold
+        passed_students_count += 1
+        top_performing_batches[structure_name]["#{module_type}_solved"] += 1
+      end
     end
 
     { "students_completed_#{module_type}_bootcamp": passed_students_count }
   end
   # rubocop:enable Metrics/AbcSize
+
+  def students_active_in_last_month(user_ids)
+    question_ids = course_curriculums.includes(:assignment_questions).flat_map do |curriculum|
+      curriculum.assignment_questions.pluck(:question_id)
+    end
+
+    best_submissions_table.constantize.where(user_id: user_ids)
+                          .where("#{questions_table.underscore}_id = ? AND created_at >= ?", question_ids, Time.zone.now - 1.month).pluck(:user_id)
+  end
 end
