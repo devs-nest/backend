@@ -128,5 +128,6 @@ Rails.application.configure do
   config.hosts << 'api.harry.devsnest.in'
   config.hosts << 'api.ron.devsnest.in'
   config.hosts << 'api.hermione.devsnest.in'
-  config.hosts << 'old.devsnest.in'
+  config.hosts << 'api-gate.devsnest.in'
+  config.hosts << '3.6.219.170'
 end
