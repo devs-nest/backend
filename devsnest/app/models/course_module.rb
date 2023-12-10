@@ -30,8 +30,11 @@ class CourseModule < ApplicationRecord
     question_ids = course_curriculums.includes(:assignment_questions).flat_map do |curriculum|
       curriculum.assignment_questions.pluck(:question_id)
     end
-    best_submissions = best_submissions_table.constantize.where("user_id = ? AND #{questions_table.underscore}_id = ?", user_ids, question_ids)
-                                             .where('created_at <= ?', end_time).group(:user_id).count
+    best_submissions = best_submissions_table.constantize
+                                             .where(user_id: user_ids, "#{questions_table.underscore}_id": question_ids)
+                                             .where('created_at <= ?', end_time)
+                                             .group(:user_id)
+                                             .count
     total_questions = questions_table.constantize.where(id: question_ids).count
     course_completion_threshold = (total_questions * 70 / 100)
     passed_students_count = 0
@@ -45,7 +48,7 @@ class CourseModule < ApplicationRecord
       next unless user_solved >= course_completion_threshold
 
       passed_students_count += 1
-      top_performing_batches[structure_name][[module_type]] += 1
+      top_performing_batches[structure_name][module_type] += 1
     end
 
     { module_type => passed_students_count }
@@ -58,6 +61,6 @@ class CourseModule < ApplicationRecord
     end
 
     best_submissions_table.constantize.where(user_id: user_ids)
-                          .where("#{questions_table.underscore}_id = ? AND created_at >= ?", question_ids, Time.zone.now - 1.month).pluck(:user_id)
+                          .where("#{questions_table.underscore}_id = ? AND created_at >= ?", question_ids, Time.zone.now - 1.month).pluck(:user_id).count
   end
 end
