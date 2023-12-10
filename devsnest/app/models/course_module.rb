@@ -42,13 +42,13 @@ class CourseModule < ApplicationRecord
 
       user_id = college_profile.user_id
       user_solved = best_submissions[user_id].to_i
-      if user_solved >= course_completion_threshold
-        passed_students_count += 1
-        top_performing_batches[structure_name]["#{module_type}_solved"] += 1
-      end
+      next unless user_solved >= course_completion_threshold
+
+      passed_students_count += 1
+      top_performing_batches[structure_name][[module_type]] += 1
     end
 
-    { "students_completed_#{module_type}_bootcamp": passed_students_count }
+    { module_type => passed_students_count }
   end
   # rubocop:enable Metrics/AbcSize
 
