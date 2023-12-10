@@ -8,13 +8,13 @@ class ApplicationController < ActionController::API
   before_action :initialize_redis_lb
   before_action :set_paper_trail_whodunnit
 
-  def default_url_options
-    if Rails.env.production?
-      {:host => "api.devsnest.in"}
-    else  
-      {}
-    end
-  end
+  # def default_url_options
+  #   if Rails.env.production?
+  #     {:host => "api.devsnest.in"}
+  #   else  
+  #     {}
+  #   end
+  # end
 
   def user_for_paper_trail
     @current_user ? @current_user.id : 'Public user'
