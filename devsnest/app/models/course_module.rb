@@ -60,7 +60,10 @@ class CourseModule < ApplicationRecord
       curriculum.assignment_questions.pluck(:question_id)
     end
 
-    best_submissions_table.constantize.where(user_id: user_ids)
-                          .where("#{questions_table.underscore}_id = ? AND created_at >= ?", question_ids, Time.zone.now - 1.month).pluck(:user_id).count
+    best_submissions_table.constantize
+                          .where(user_id: user_ids, "#{questions_table.underscore}_id": question_ids)
+                          .where('created_at >= ?', Time.zone.now - 1.month)
+                          .pluck(:user_id)
+                          .count
   end
 end
