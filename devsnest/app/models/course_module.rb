@@ -64,6 +64,5 @@ class CourseModule < ApplicationRecord
                           .where(user_id: user_ids, "#{questions_table.underscore}_id": question_ids)
                           .where('created_at >= ?', Time.zone.now - 1.month)
                           .pluck(:user_id)
-                          .count
   end
 end

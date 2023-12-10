@@ -38,7 +38,7 @@ class College < ApplicationRecord
     students_completed_modules_till_now = {}
     top_performing_batches = {}
     college.course_modules.each do |course_module|
-      active_students << course_module.students_active_in_last_month(user_ids)
+      active_students += course_module.students_active_in_last_month(user_ids)
       students_completed_modules_till_last_month.merge!(course_module.activity(college_profiles.ids, Time.zone.now - 1.month, top_performing_batches))
       students_completed_modules_till_now.merge!(course_module.activity(college_profiles.ids, Time.zone.now, top_performing_batches))
     end
