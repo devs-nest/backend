@@ -21,14 +21,14 @@ module Api
 
       def me
         @current_user.update(login_count: @current_user.login_count + 1) if @current_user.login_count < 3
-        redirect_to api_v1_user_url(@current_user)
+        redirect_to api_v1_user_url(@current_user), :protocol => 'https://'
       end
 
       def get_by_username
         user = User.find_by(username: params[:id])
         return render_not_found unless user.present?
 
-        redirect_to api_v1_user_url(user)
+        redirect_to api_v1_user_url(user), :protocol => 'https://'
       end
 
       def get_token
