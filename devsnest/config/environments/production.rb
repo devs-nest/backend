@@ -130,4 +130,5 @@ Rails.application.configure do
   config.hosts << 'api.hermione.devsnest.in'
   config.hosts << 'api-gate.devsnest.in'
   config.hosts << '3.6.219.170'
+  config.hosts << 'd29yhyu68h7usz.cloudfront.net'
 end
