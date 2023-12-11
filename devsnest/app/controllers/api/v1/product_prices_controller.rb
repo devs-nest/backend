@@ -9,16 +9,16 @@ module Api
 
 
       def active_courses
-        user_courses = CourseModuleAccess.where(accessor_id: @current_user.id, accessor_type: 'User').pluck(:course_module_id)
+        user_courses = CourseModuleAccess.where(accessor: @current_user).pluck(:course_module_id)
         product_prices = ProductPrice.where(active: true, product_type: 'Course')
         data = []
 
         product_prices.each do |product_price|
           data << {
-            "product_name": product_price.product_name,
-            "product_price": product_price.price,
+            "course_name": product_price.product_name,
+            "course_price": product_price.price,
             "paid": (user_courses & product_price.product_id).present?,
-            "product_id": product_price.product_id,
+            "course_id": product_price.product_id,
           }
         end
 
