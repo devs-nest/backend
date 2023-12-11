@@ -3,7 +3,7 @@
 module Api
   module V1
     class CourseCurriculumResource < JSONAPI::Resource
-      attributes :topic, :course_id, :course_type, :day, :video_link, :resources, :locked
+      attributes :topic, :course_id, :course_type, :day, :video_link, :resources, :locked, :course_module_id
       attributes :assignment_questions
 
       filter :course_name, apply: lambda { |records, value, _options|
@@ -12,6 +12,7 @@ module Api
       }
       filter :course_type
       filter :day
+      filter :course_module_id
 
       def assignment_questions
         @model.user_assignment_data(context[:user])

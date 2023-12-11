@@ -18,9 +18,9 @@
 #
 class BootcampProgress < ApplicationRecord
   belongs_to :user
-  belongs_to :course
+  belongs_to :course, optional: true
+  belongs_to :course_module, optional: true
   belongs_to :course_curriculum
-  validates_uniqueness_of :user_id, scope: %i[course_id course_curriculum_id]
 
   after_create :send_welcome_mail
   after_update :send_completion_mail, if: ->(obj) { obj.previous_changes.key?('completed') && obj.completed == true }

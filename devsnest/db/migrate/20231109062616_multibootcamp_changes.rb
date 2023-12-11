@@ -37,5 +37,6 @@ class MultibootcampChanges < ActiveRecord::Migration[7.0]
     add_column :orders, :product_price_id, :integer
     add_column :course_curriculums, :course_module_id, :integer
     add_reference :course_module_accesses, :course_module, foreign_key: true, null: false, index: true
+    add_column :bootcamp_progresses, :course_module_id, :integer
   end
 end
