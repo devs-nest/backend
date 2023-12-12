@@ -7,9 +7,8 @@ module Api
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
 
-
       def active_courses
-        user_courses = CourseModuleAccess.where(accessor: @current_user).pluck(:course_module_id)
+        user_courses = CourseModuleAccess.where(accessor: @current_user, status: 'granted').pluck(:course_module_id)
         product_prices = ProductPrice.where(active: true, product_type: 'Course')
         data = []
 
@@ -18,14 +17,12 @@ module Api
             "course_name": product_price.product_name,
             "course_price": product_price.price,
             "paid": (user_courses & product_price.product_id).present?,
-            "course_id": product_price.product_id,
+            "course_id": product_price.product_id
           }
         end
 
-        return render_success(data: data)
+        render_success(data: data)
       end
-
     end
   end
 end
-
