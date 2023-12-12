@@ -573,7 +573,7 @@ class User < ApplicationRecord
 
   def bootcamp_progress_details
     BootcampProgress.includes(:course_module).where(user_id: id).map do |progress|
-      progress.attributes.merge(course_module_type: progress.course_module.module_type)
+      progress.attributes.merge(course_module_type: progress.course_module.try(:module_type))
     end
   end
 
