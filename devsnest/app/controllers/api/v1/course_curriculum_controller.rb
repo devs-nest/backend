@@ -16,15 +16,17 @@ module Api
       private
 
       def set_course_module
-        @course_module = CourseModule.find(params[:course_module_id])
+        course_module_id = params[:course_module_id] || params.dig(:filter, :course_module_id)
+        @course_module = CourseModule.find_by_id(course_module_id)
+        return false if @course_module.blank?
       end
 
       def verify_accessibility
-        return true if @course_module.visibility == "public_module"
+        return true if @course_module.visibility == 'public_module'
 
-        user_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessor_id: @current_user.id, accessor_type: 'User')
-        college_profile_user_ids = CollegeProfile.where(user_id: @current_user.id).pluck(:id)
-        college_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessor_id: college_profile_user_ids, accessor_type: 'College') if college_profile_user_ids
+        user_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessor: @current_user)
+        college_ids = CollegeProfile.where(user_id: @current_user.id).pluck(:college_id)
+        college_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessor_id: college_ids, accessor_type: 'College') if college_ids
         return render_error('You do not have access to the given bootcamp.') if access_not_granted?(user_access) && access_not_granted?(college_access)
       end
 
