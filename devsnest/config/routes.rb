@@ -122,6 +122,8 @@ Rails.application.routes.draw do
           post :sourcecode_io, :disconnect_user
           post :add_repo, :remove_repo
           post :send_otp, :verify_phone_number
+          post :check_user_submission
+          post :check_user_consistency
         end
       end
 
