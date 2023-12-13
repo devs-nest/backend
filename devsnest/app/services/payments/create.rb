@@ -2,7 +2,12 @@
 
 # Create a payment
 class Payments::Create < ApplicationService
-  def initialize(user, amount, currency, description, product_price_id)
+  def initialize(user, params)
+    amount = params[:amount]
+    currency = params[:currency]
+    description = params[:description]
+    product_price_id = params[:product_price_id]
+    redirect_url = params[:redirect_url]
     # Set up Razorpay with API keys
     Razorpay.setup(ENV['RAZORPAY_KEY_ID'], ENV['RAZORPAY_KEY_SECRET'])
     Razorpay.headers = { 'Content-type' => 'application/json' }
@@ -20,7 +25,7 @@ class Payments::Create < ApplicationService
     razorpay_order = Razorpay::Order.create(para_attr.to_json)
 
     # Call LinkCreate service to create a link for the payment
-    Payments::LinkCreate.call(user, @order)
+    Payments::LinkCreate.call(user, @order, redirect_url)
 
     # Update the Order object with the Razorpay order ID
     @order.update(razorpay_order_id: razorpay_order.id)

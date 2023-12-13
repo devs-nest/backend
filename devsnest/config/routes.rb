@@ -298,8 +298,7 @@ Rails.application.routes.draw do
       end
       jsonapi_resources :orders, only: %i[create] do
         collection do
-          # TODO: Make this a Post request Changed it for testing
-          get :verify_payment
+          post :verify_payment
         end
       end
       jsonapi_resources :product_prices, only: %i[create show] do

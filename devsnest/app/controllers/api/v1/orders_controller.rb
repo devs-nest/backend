@@ -22,7 +22,7 @@ module Api
         @order = Order.find_by(user_id: @current_user.id, status: %w[paylink_created pending], product_price_id: params[:product_price_id])
         Payments::VerifyLink.call(@order) if @order.present?
 
-        @order = Payments::Create.call(@current_user, params[:amount], params[:currency], params[:description], params[:product_price_id]) unless @order.present?
+        @order = Payments::Create.call(@current_user, params) unless @order.present?
 
         return render_error('Order not created') unless @order
 
