@@ -597,6 +597,67 @@ module Api
         render_success({ message: 'Phone Number Verified.' })
       end
 
+      def check_user_submission
+        discord_ids = params[:discord_ids]
+        endtime = params[:endtime]
+        users = User.where(discord_active: true, discord_id: discord_ids)
+
+        algo_data = AlgoSubmission.where(user_id: users.pluck(:id)).where('created_at >= ?', endtime).group(:user_id).distinct.count(:challenge_id)
+        frontend_data = FeSubmission.where(user_id: users.pluck(:id)).where('created_at >= ?', endtime).group(:user_id).distinct.count(:frontend_challenge_id)
+        backend_data = BeSubmission.where(user_id: users.pluck(:id)).where('created_at >= ?', endtime).group(:user_id).distinct.count(:backend_challenge_id)
+
+        # Get sum of all submissions
+        data = {}
+
+        # Combine all submission counts for each user
+        users.each do |user|
+          total_submissions = (algo_data[user.id] || 0) + (frontend_data[user.id] || 0) + (backend_data[user.id] || 0)
+          data[user.name] = total_submissions if total_submissions.positive?
+        end
+
+        # Sort the data hash by submission counts in descending order
+        sorted_data = data.sort_by { |_user, submissions| -submissions }.to_h
+
+        render_success({ data: sorted_data })
+      end
+
+      def check_user_consistency
+        days = params[:days].to_i || nil
+        discord_ids = params[:discord_ids]
+        users = User.where(discord_active: true, discord_id: discord_ids)
+        start_of_day = days&.days&.ago&.beginning_of_day
+
+        algo_data = AlgoSubmission.where(user_id: users.pluck(:id)).where('created_at >= ?', start_of_day).group(:user_id, :created_at).pluck(:user_id, :created_at, 'COUNT(challenge_id)')
+        fe_data = FeSubmission.where(user_id: users.pluck(:id)).where('created_at >= ?', start_of_day).group(:user_id, :created_at).pluck(:user_id, :created_at, 'COUNT(frontend_challenge_id)')
+        be_data = BeSubmission.where(user_id: users.pluck(:id)).where('created_at >= ?', start_of_day).group(:user_id, :created_at).pluck(:user_id, :created_at, 'COUNT(backend_challenge_id)')
+
+        data = Hash.new { |h, k| h[k] = { created_at_set: Set.new, total_challenge_count: 0 } }
+
+        algo_data.each do |user_id, created_at, count|
+          data[user_id][:created_at_set] << created_at.to_date
+          data[user_id][:total_challenge_count] += count
+        end
+        fe_data.each do |user_id, created_at, count|
+          data[user_id][:created_at_set] << created_at.to_date
+          data[user_id][:total_challenge_count] += count
+        end
+        be_data.each do |user_id, created_at, count|
+          data[user_id][:created_at_set] << created_at.to_date
+          data[user_id][:total_challenge_count] += count
+        end
+
+        data.each do |_user_id, values|
+          user = User.find_by_id(_user_id)
+          values[:user_name] = user.name
+          values[:discord_id] = user.discord_id
+          unique_dates_count = values[:created_at_set].count
+          values[:consistent] = unique_dates_count == days
+          values[:unique_created_at_count] = unique_dates_count
+        end
+
+        render_success({ data: data.transform_values { |value| value.except(:created_at_set) } })
+      end
+
       private
 
       def sign_up_params
