@@ -44,7 +44,7 @@ class ApplicationController < ActionController::API
   end
 
   def user_auth
-    @current_user = User.find(1)
+    # @current_user = User.find(1) ADHIKRAM BHAIYA OP
     return true if @current_user.present?
 
     render_unauthorized
