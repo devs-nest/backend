@@ -186,14 +186,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_062616) do
     t.boolean "completed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "course_module_id"
     t.index ["user_id"], name: "index_bootcamp_progresses_on_user_id"
   end
 
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "P78jC6_Z2cQ"
+    t.string "cuid", default: "5PV8wyS+HVM"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -422,7 +421,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_062616) do
   create_table "course_module_accesses", charset: "utf8mb3", force: :cascade do |t|
     t.string "accessor_type", null: false
     t.bigint "accessor_id", null: false
-    t.integer "status", default: 0
+    t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "course_module_id", null: false

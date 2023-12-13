@@ -15,6 +15,7 @@ module Api
 
         product_prices.each do |product_price|
           data << {
+            "product_id": product_price.id,
             "course_name": product_price.product_name,
             "course_price": product_price.price,
             "paid": (user_courses & product_price.product_id).present?,
