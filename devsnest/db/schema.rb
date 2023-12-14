@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_09_062616) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -855,6 +855,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_062616) do
     t.boolean "active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "redirect_url", default: ""
   end
 
   create_table "projects", charset: "utf8mb3", force: :cascade do |t|
