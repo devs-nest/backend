@@ -646,8 +646,8 @@ module Api
           data[user_id][:total_challenge_count] += count
         end
 
-        data.each do |_user_id, values|
-          user = User.find_by_id(_user_id)
+        data.each do |user_id, values|
+          user = User.find_by_id(user_id)
           values[:user_name] = user.name
           values[:discord_id] = user.discord_id
           unique_dates_count = values[:created_at_set].count
