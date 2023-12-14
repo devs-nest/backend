@@ -611,7 +611,7 @@ module Api
 
         # Combine all submission counts for each user
         users.each do |user|
-          total_submissions = (algo_data[user.id] || 0) + (frontend_data[user.id] || 0) + (backend_data[user.id] || 0)
+          total_submissions = algo_data[user.id].to_i + frontend_data[user.id].to_i + backend_data[user.id].to_i
           data[user.name] = total_submissions if total_submissions.positive?
         end
 
@@ -622,7 +622,7 @@ module Api
       end
 
       def check_user_consistency
-        days = params[:days].to_i || nil
+        days = params[:days].to_i
         discord_ids = params[:discord_ids]
         users = User.where(discord_active: true, discord_id: discord_ids)
         start_of_day = days&.days&.ago&.beginning_of_day
