@@ -18,21 +18,22 @@ module LeaderboardDevsnest
   REDIS_CONNECTION = {
     redis_connection: Redis.new(url: 'redis://redis:6379/0',
                                 db: ENV['REDIS_DB_LB'],
+                                password: ENV['REDIS_PASS'],
                                 timeout: 3600)
   }.freeze
 
   class DSAInitializer
-    RedisConnection = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 3600) }
+    RedisConnection = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 3600, password: ENV['REDIS_PASS']) }
     LB = CompetitionRankingLeaderboard.new('dn_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
   end
 
   class FEInitializer
-    RedisConnection = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 3600) }
+    RedisConnection = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 3600, password: ENV['REDIS_PASS']) }
     LB = CompetitionRankingLeaderboard.new('fe_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
   end
 
   class BEInitializer
-    RedisConnection = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 3600) }
+    RedisConnection = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 3600, password: ENV['REDIS_PASS']) }
     LB = CompetitionRankingLeaderboard.new('be_leaderboard', Devsnest::Application::REDIS_OPTIONS, RedisConnection)
   end
 
@@ -42,7 +43,7 @@ module LeaderboardDevsnest
     end
 
     def call
-      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800) }
+      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800, password: ENV['REDIS_PASS']) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
@@ -53,7 +54,7 @@ module LeaderboardDevsnest
     end
 
     def call
-      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800) }
+      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800, password: ENV['REDIS_PASS']) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
@@ -64,7 +65,7 @@ module LeaderboardDevsnest
     end
 
     def call
-      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800) }
+      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800, password: ENV['REDIS_PASS']) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
@@ -75,7 +76,7 @@ module LeaderboardDevsnest
     end
 
     def call
-      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800) }
+      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800, password: ENV['REDIS_PASS']) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
@@ -86,7 +87,7 @@ module LeaderboardDevsnest
     end
 
     def call
-      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800) }
+      redis = { redis_connection: Redis.new(url: 'redis://redis:6379/0', db: ENV['REDIS_DB_LB'], timeout: 1800, password: ENV['REDIS_PASS']) }
       CompetitionRankingLeaderboard.new(@name, Devsnest::Application::REDIS_OPTIONS, redis)
     end
   end
