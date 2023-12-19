@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :bootcamp_access do
+    accessible { nil }
+    status { 1 }
+    course_curriculum { nil }
+  end
+  factory :product_discount do
+    
+  end
+
+  factory :product_price do
+    
+  end
+
   factory :college_student do
   end
   factory :order do

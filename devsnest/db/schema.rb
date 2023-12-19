@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "_0GfcEg2ss0"
+    t.string "cuid", default: "5PV8wyS+HVM"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -298,7 +298,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
     t.integer "authority_level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "roll_number", null: false
   end
 
   create_table "college_profiles", charset: "utf8mb3", force: :cascade do |t|
@@ -313,7 +312,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
     t.string "roll_number"
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
     t.index ["roll_number"], name: "index_college_profiles_on_roll_number", unique: true
-    t.index ["user_id", "college_id"], name: "index_college_profiles_on_user_id_and_college_id", unique: true
   end
 
   create_table "college_structures", charset: "utf8mb3", force: :cascade do |t|
@@ -415,8 +413,32 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.json "extra_data"
+    t.integer "course_module_id"
     t.index ["course_id", "course_type"], name: "index_course_curriculums_on_course_id_and_course_type"
     t.index ["course_id", "day"], name: "index_course_curriculums_on_course_id_and_day"
+  end
+
+  create_table "course_module_accesses", charset: "utf8mb3", force: :cascade do |t|
+    t.string "accessor_type", null: false
+    t.bigint "accessor_id", null: false
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "course_module_id", null: false
+    t.index ["accessor_type", "accessor_id"], name: "index_course_module_accesses_on_accessor"
+    t.index ["course_module_id"], name: "index_course_module_accesses_on_course_module_id"
+  end
+
+  create_table "course_modules", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "module_type"
+    t.integer "questions_table"
+    t.integer "best_submissions_table"
+    t.integer "submissions_table"
+    t.boolean "is_paid", default: false
+    t.integer "timeline_status", default: 0
+    t.integer "visibility", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "courses", charset: "utf8mb3", force: :cascade do |t|
@@ -791,6 +813,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
     t.string "currency"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "product_price_id"
   end
 
   create_table "organizations", charset: "utf8mb3", force: :cascade do |t|
@@ -814,6 +837,25 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["phone_number"], name: "index_otp_logs_on_phone_number"
+  end
+
+  create_table "product_discounts", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "product_id"
+    t.decimal "discount", precision: 10, scale: 2
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "product_prices", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "price"
+    t.string "product_type", null: false
+    t.string "product_name"
+    t.text "product_id"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "redirect_url", default: ""
   end
 
   create_table "projects", charset: "utf8mb3", force: :cascade do |t|
@@ -1092,6 +1134,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_31_173009) do
   add_foreign_key "coding_room_user_mappings", "coding_rooms"
   add_foreign_key "coding_room_user_mappings", "users"
   add_foreign_key "college_branches", "colleges"
+  add_foreign_key "course_module_accesses", "course_modules"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
 end

@@ -127,7 +127,7 @@ class User < ApplicationRecord
 
   before_save :markdown_encode, if: :will_save_change_to_markdown?
   after_create :assign_bot_to_user
-  after_create :send_registration_email
+  # after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
   after_update :update_user_coins_for_signup
@@ -572,8 +572,8 @@ class User < ApplicationRecord
   end
 
   def bootcamp_progress_details
-    BootcampProgress.includes(:course_curriculum, :course).where(user_id: id).map do |progress|
-      progress.attributes.merge(course_type: progress.course_curriculum.course_type, course_name: progress.course.name)
+    BootcampProgress.includes(:course_module).where(user_id: id).map do |progress|
+      progress.attributes.merge(course_module_type: progress.course_module.try(:module_type))
     end
   end
 

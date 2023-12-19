@@ -4,7 +4,7 @@
 module Payments
   # Payment Link generation
   class LinkCreate < ApplicationService
-    def initialize(user, order)
+    def initialize(user, order, redirect_url)
       @order = order
 
       # Set up Razorpay with API keys
@@ -27,7 +27,7 @@ module Payments
           "email": true
         },
         "reminder_enable": true,
-        "callback_url": ENV['RAZORPAY_CALLBACK_URL'],
+        "callback_url": redirect_url || ENV['RAZORPAY_CALLBACK_URL'],
         "callback_method": 'get'
       }
 

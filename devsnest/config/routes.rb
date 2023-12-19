@@ -303,6 +303,12 @@ Rails.application.routes.draw do
           post :verify_payment
         end
       end
+      jsonapi_resources :product_prices, only: %i[create show] do
+        collection do 
+          get :active_courses
+        end
+      end
+      jsonapi_resources :product_discounts, only: %i[create show]
     end
   end
 end

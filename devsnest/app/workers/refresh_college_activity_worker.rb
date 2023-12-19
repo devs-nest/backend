@@ -5,6 +5,6 @@ class RefreshCollegeActivityWorker
   include Sidekiq::Worker
 
   def perform
-    College.all.map(&:activity)
+    College.where(is_verified: true).map(&:activity)
   end
 end
