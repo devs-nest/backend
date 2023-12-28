@@ -22,7 +22,7 @@
 #  index_course_curriculums_on_course_id_and_day          (course_id,day)
 #
 class CourseCurriculum < ApplicationRecord
-  belongs_to :course
+  belongs_to :course, optional: true
   belongs_to :course_module
   enum course_type: %i[dsa frontend backend solana]
   has_many :assignment_questions

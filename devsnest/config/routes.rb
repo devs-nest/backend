@@ -71,6 +71,7 @@ Rails.application.routes.draw do
         jsonapi_resources :college_form, only: %i[index]
         jsonapi_resources :link, only: %i[index update create destroy]
         jsonapi_resources :course, only: %i[index update create destroy]
+        jsonapi_resources :course_module, only: %i[show index update create destroy]
         jsonapi_resources :course_curriculum, only: %i[show index update create destroy]
         jsonapi_resources :assignment_question, only: %i[index update create destroy] do
           collection do
