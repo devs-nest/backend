@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_28_091609) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -186,13 +186,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
     t.boolean "completed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "course_module_id"
     t.index ["user_id"], name: "index_bootcamp_progresses_on_user_id"
   end
 
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "5PV8wyS+HVM"
+    t.string "cuid", default: "P78jC6_Z2cQ"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -421,12 +422,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
   create_table "course_module_accesses", charset: "utf8mb3", force: :cascade do |t|
     t.string "accessor_type", null: false
     t.bigint "accessor_id", null: false
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "course_module_id", null: false
     t.index ["accessor_type", "accessor_id"], name: "index_course_module_accesses_on_accessor"
     t.index ["course_module_id"], name: "index_course_module_accesses_on_course_module_id"
+  end
+
+  create_table "course_module_mappings", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "course_module_id"
+    t.integer "course_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id", "course_module_id"], name: "course_module_mapping_index"
   end
 
   create_table "course_modules", charset: "utf8mb3", force: :cascade do |t|

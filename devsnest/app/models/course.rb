@@ -17,8 +17,9 @@
 #  index_courses_on_name  (name)
 #
 class Course < ApplicationRecord
-  has_many :course_modules, dependent: :delete_all
-  belongs_to :product, polymorphic: true
+  has_many :course_module_mappings
+  has_many :course_modules, through: :course_module_mappings, dependent: :delete_all
+  belongs_to :product, polymorphic: true, optional: true
   has_many :course_curriculums, dependent: :delete_all
 
   enum visibility: %i[private_course public_course]

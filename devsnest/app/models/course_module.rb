@@ -2,6 +2,8 @@
 
 # Course Module table
 class CourseModule < ApplicationRecord
+  has_many :course_module_mappings
+  has_many :courses, through: :course_module_mappings
   has_many :course_curriculums, dependent: :delete_all
   has_many :course_module_accesses, dependent: :delete_all
   has_many :colleges, through: :course_module_accesses, source: :accessor, source_type: 'College'
