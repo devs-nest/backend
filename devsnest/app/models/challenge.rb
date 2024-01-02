@@ -32,7 +32,6 @@ class Challenge < ApplicationRecord
   enum difficulty: %i[easy_level medium_level hard_level foundation]
   enum content_type: %i[topic sub_topic]
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queue heaps dynamicprogramming backtracking greedy maths]
-  enum execution_type: %i[template direct]
   has_many :algo_submissions
   has_many :run_submissions
   has_many :algo_templates
@@ -122,7 +121,10 @@ class Challenge < ApplicationRecord
       'tree': {
       }
     }
-    return if input_format.nil? || output_format.nil? || not_implemented.dig(topic.to_sym, language[1].to_sym)
+
+    return AlgoTemplate.create(challenge_id: id, language_id: language[0], head: '', body: '', tail: '') if input_format.nil? && output_format.nil?
+
+    return if not_implemented.dig(topic.to_sym, language[1].to_sym)
 
     template_gen =
       case language[1]
