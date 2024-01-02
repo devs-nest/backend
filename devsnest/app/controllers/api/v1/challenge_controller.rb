@@ -76,6 +76,11 @@ module Api
         templates = {}
 
         Language.all.pluck(:id, :name, :judge_zero_id).each do |language|
+          if challenge.execution_type == 'direct'
+            templates[language[1]] = { judge_zero_id: language[2] }
+            next
+          end
+
           template = challenge.algo_templates.find_by(challenge_id: challenge_id, language_id: language[0]) # FIX
           template = challenge.create_template(language) if template.nil?
           next if template.nil?
