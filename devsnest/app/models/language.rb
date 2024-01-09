@@ -20,6 +20,4 @@
 #  judge_zero_id        :integer
 #
 class Language < ApplicationRecord
-  has_many :language_challenge_mappings, dependent: :destroy
-  has_many :challenges, through: :language_challenge_mappings
 end
