@@ -5,7 +5,7 @@ module Api
     # api for challenge test controller
     class ChallengeResource < JSONAPI::Resource
       attributes :topic, :difficulty, :name, :question_body, :score, :priority, :slug
-      attributes :submission_status
+      attributes :submission_status, :supported_languages
       filter :difficulty
       filter :topic
       filter :parent_id
@@ -37,6 +37,10 @@ module Api
             submission.passed_test_cases == submission.total_test_cases ? 'solved' : 'attempted'
           end
         end
+      end
+
+      def supported_languages
+        @model.supported_languages.select(:id, :name, :judge_zero_id, :language_description).as_json
       end
     end
   end
