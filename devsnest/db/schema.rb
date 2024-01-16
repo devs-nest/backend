@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_28_091609) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -448,6 +448,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_28_091609) do
     t.integer "visibility", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
   end
 
   create_table "courses", charset: "utf8mb3", force: :cascade do |t|
@@ -732,6 +733,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_28_091609) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
+  create_table "language_challenge_mappings", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "challenge_id", null: false
+    t.bigint "language_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["challenge_id"], name: "index_language_challenge_mappings_on_challenge_id"
+    t.index ["language_id"], name: "index_language_challenge_mappings_on_language_id"
+  end
+
   create_table "languages", charset: "utf8mb3", force: :cascade do |t|
     t.integer "judge_zero_id"
     t.string "name"
@@ -963,6 +973,34 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_28_091609) do
     t.text "logo", size: :medium
   end
 
+  create_table "sql_challenges", charset: "utf8mb3", force: :cascade do |t|
+    t.string "title"
+    t.integer "score"
+    t.integer "difficulty"
+    t.boolean "is_active"
+    t.string "created_by"
+    t.integer "user_id"
+    t.string "slug"
+    t.string "topic"
+    t.text "question_body"
+    t.boolean "status"
+    t.string "expected_output"
+    t.string "initial_sql_file"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "sql_challenge_user_index"
+  end
+
+  create_table "sql_submissions", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "sql_challenge_id"
+    t.integer "score"
+    t.boolean "passed"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "sql_challenge_id"], name: "sql_submission_user_challenge_index"
+  end
+
   create_table "submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "content_id"
@@ -1146,4 +1184,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_28_091609) do
   add_foreign_key "course_module_accesses", "course_modules"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
+  add_foreign_key "language_challenge_mappings", "challenges"
+  add_foreign_key "language_challenge_mappings", "languages"
 end
