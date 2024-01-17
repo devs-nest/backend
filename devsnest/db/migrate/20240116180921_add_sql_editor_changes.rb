@@ -1,7 +1,7 @@
 class AddSqlEditorChanges < ActiveRecord::Migration[7.0]
   def change
     create_table :sql_challenges do |t|
-      t.string :title
+      t.string :name
       t.integer :score
       t.integer :difficulty
       t.boolean :is_active
@@ -10,11 +10,12 @@ class AddSqlEditorChanges < ActiveRecord::Migration[7.0]
       t.string :slug
       t.string :topic
       t.text :question_body
-      t.boolean :status
+      t.integer :submission_status
       t.text :expected_output
       t.string :initial_sql_file
 
       t.index [:user_id], name: 'sql_challenge_user_index'
+      t.index [:slug], name: 'sql_challenge_slug_index', unique: true
 
       t.timestamps
     end

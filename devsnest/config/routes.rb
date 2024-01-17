@@ -310,7 +310,7 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :product_discounts, only: %i[create show]
-      jsonapi_resources :sql_challenge, only: %i[index show] do
+      jsonapi_resources :sql_challenge, only: %i[index show], param: :slug do
         collection do
           post :save_result
         end

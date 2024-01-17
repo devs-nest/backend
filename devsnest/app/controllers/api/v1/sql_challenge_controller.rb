@@ -7,6 +7,12 @@ module Api
       before_action :user_auth
       before_action :check_params, only: :save_result
 
+      def context
+        {
+          action: params[:action]
+        }
+      end
+
       def save_result
         return render_error('User ID does not match current logged in user') if @current_user.id != params[:user_id]
 

@@ -974,7 +974,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
   end
 
   create_table "sql_challenges", charset: "utf8mb3", force: :cascade do |t|
-    t.string "title"
+    t.string "name"
     t.integer "score"
     t.integer "difficulty"
     t.boolean "is_active"
@@ -983,11 +983,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.string "slug"
     t.string "topic"
     t.text "question_body"
-    t.boolean "status"
-    t.string "expected_output"
+    t.integer "submission_status"
+    t.text "expected_output"
     t.string "initial_sql_file"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "sql_challenge_slug_index", unique: true
     t.index ["user_id"], name: "sql_challenge_user_index"
   end
 
