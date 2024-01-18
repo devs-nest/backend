@@ -10,7 +10,6 @@ class AddSqlEditorChanges < ActiveRecord::Migration[7.0]
       t.string :slug
       t.string :topic
       t.text :question_body
-      t.integer :submission_status
       t.text :expected_output
       t.string :initial_sql_file
 

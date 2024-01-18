@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       # end
       devise_for :users, skip: %i[registrations]
       namespace :admin do
+        jsonapi_resources :sql_challenge, param: :slug
         jsonapi_resources :internal_feedback, only: %i[index update]
         jsonapi_resources :users, only: %i[index] do
           collection do
@@ -305,7 +306,7 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :product_prices, only: %i[create show] do
-        collection do 
+        collection do
           get :active_courses
         end
       end

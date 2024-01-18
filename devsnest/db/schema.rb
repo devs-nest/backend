@@ -983,7 +983,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.string "slug"
     t.string "topic"
     t.text "question_body"
-    t.integer "submission_status"
     t.text "expected_output"
     t.string "initial_sql_file"
     t.datetime "created_at", null: false

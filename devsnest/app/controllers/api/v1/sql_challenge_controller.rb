@@ -2,6 +2,7 @@
 
 module Api
   module V1
+    # Controller for Sql Challenge
     class SqlChallengeController < ApplicationController
       include JSONAPI::ActsAsResourceController
       before_action :user_auth
@@ -9,7 +10,8 @@ module Api
 
       def context
         {
-          action: params[:action]
+          action: params[:action],
+          user: @current_user
         }
       end
 
