@@ -737,15 +737,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
-  create_table "language_challenge_mappings", charset: "utf8mb3", force: :cascade do |t|
-    t.bigint "challenge_id", null: false
-    t.bigint "language_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["challenge_id"], name: "index_language_challenge_mappings_on_challenge_id"
-    t.index ["language_id"], name: "index_language_challenge_mappings_on_language_id"
-  end
-
   create_table "languages", charset: "utf8mb3", force: :cascade do |t|
     t.integer "judge_zero_id"
     t.string "name"
@@ -1169,6 +1160,4 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
   add_foreign_key "course_module_access", "course_modules", column: "course_modules_id"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
-  add_foreign_key "language_challenge_mappings", "challenges"
-  add_foreign_key "language_challenge_mappings", "languages"
 end
