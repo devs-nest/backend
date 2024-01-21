@@ -19,7 +19,7 @@ module Api
         return render_error('User ID does not match current logged in user') if @current_user.id != params[:user_id]
 
         user = User.find_by_id(params[:user_id])
-        sql_challenge = SqlChallenge.find_by_id(params[:sql_challenge_id])
+        sql_challenge = SqlChallenge.find_by_slug(params[:sql_challenge_slug])
 
         return render_not_found if user.nil? || sql_challenge.nil?
 
@@ -32,7 +32,7 @@ module Api
       private
 
       def check_params
-        return render_error('Invalid params') if params[:user_id].nil? || params[:sql_challenge_id].nil? || params[:score].nil? || params[:passed].nil?
+        return render_error('Invalid params') if params[:user_id].nil? || params[:sql_challenge_slug].nil? || params[:score].nil? || params[:passed].nil?
       end
     end
   end
