@@ -12,7 +12,7 @@ class CourseModule < ApplicationRecord
   # Please follow that while adding new module types
   enum module_type: %i[dsa frontend backend solana sql]
   enum questions_table: %i[Challenge FrontendChallenge BackendChallenge Article SqlChallenge]
-  enum submissions_table: %i[AlgoSubmission FeSubmission BeSubmission ArticleSubmission SqlSubmission]
+  enum submissions_table: %i[AlgoSubmission FeSubmission BeSubmission ArticleSubmission SqlDummySubmission]
   enum best_submissions_table: %i[UserChallengeScore FrontendChallengeScore BackendChallengeScore SolanaChallengeScore SqlSubmission]
   enum timeline_status: %i[new_module comming_soon locked open]
   enum visibility: %i[private_module public_module]
