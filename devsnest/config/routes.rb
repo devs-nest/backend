@@ -3,6 +3,7 @@
 Rails.application.routes.draw do
   resources :user_integrations
   get '/health_check', to: 'health_check#index'
+  get '/sitemap', to: 'sitemap#index'
 
   # Sidekiq Web UI, only for admins.
   Sidekiq::Web.use ActionDispatch::Cookies
@@ -19,6 +20,7 @@ Rails.application.routes.draw do
       # end
       devise_for :users, skip: %i[registrations]
       namespace :admin do
+        jsonapi_resources :sql_challenge, param: :slug
         jsonapi_resources :internal_feedback, only: %i[index update]
         jsonapi_resources :users, only: %i[index] do
           collection do
@@ -305,11 +307,16 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :product_prices, only: %i[create show] do
-        collection do 
+        collection do
           get :active_courses
         end
       end
       jsonapi_resources :product_discounts, only: %i[create show]
+      jsonapi_resources :sql_challenge, only: %i[index show], param: :slug do
+        collection do
+          post :save_result
+        end
+      end
     end
   end
 end
