@@ -14,9 +14,11 @@ class CourseModule < ApplicationRecord
   enum questions_table: %i[Challenge FrontendChallenge BackendChallenge Article SqlChallenge]
   enum submissions_table: %i[AlgoSubmission FeSubmission BeSubmission ArticleSubmission SqlDummySubmission]
   enum best_submissions_table: %i[UserChallengeScore FrontendChallengeScore BackendChallengeScore SolanaChallengeScore SqlSubmission]
+  ################################################################
+
   enum timeline_status: %i[new_module comming_soon locked open]
   enum visibility: %i[private_module public_module]
-  enum granularity_type: %i[day question]
+  enum granularity_type: %i[day question] # Type on which the questions will be shown in LMS
 
   before_create :sync_rest_columns_with_module_type
 

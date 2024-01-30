@@ -13,6 +13,15 @@ module Api
         { user: @current_user }
       end
 
+      def index
+        resource_records = CourseCurriculum.where(course_module_id: @course_module&.id)
+        resources = resource_records.map { |record| CourseCurriculumResource.new(record, { user: @current_user }) }
+        extra_data = {
+          granularity_type: @course_module&.granularity_type
+        }
+        render json: JSONAPI::ResourceSerializer.new(CourseCurriculumResource).serialize_to_hash(resources).merge!(extra_data)
+      end
+
       private
 
       def set_course_module
