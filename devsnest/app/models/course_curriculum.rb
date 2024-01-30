@@ -26,6 +26,7 @@ class CourseCurriculum < ApplicationRecord
   belongs_to :course_module
   enum course_type: %i[dsa frontend backend solana]
   has_many :assignment_questions
+  serialize :contents, Array
 
   after_create :update_extra_data
 
