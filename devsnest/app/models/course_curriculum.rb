@@ -83,7 +83,7 @@ class CourseCurriculum < ApplicationRecord
   end
 
   def update_extra_data
-    course_curriculums = CourseCurriculum.where(course_id: course_id, course_type: course_type)
+    course_curriculums = CourseCurriculum.where(course_module_id: course_module_id)
     if course_curriculums.count > 1
       prev_course_curriculum = course_curriculums.second_to_last
       update!(extra_data: {
