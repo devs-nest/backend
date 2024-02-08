@@ -52,7 +52,8 @@ class Group < ApplicationRecord
   enum group_type: %i[public private], _prefix: :group
   enum language: %i[english hindi]
   enum classification: %i[students professionals]
-  enum bootcamp_type: %i[dsa frontend backend solana]
+  # Temporary change for adding JTD bootcamp type
+  enum bootcamp_type: %i[dsa frontend backend solana jtd]
 
   has_paper_trail
 
