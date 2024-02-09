@@ -126,7 +126,7 @@ class User < ApplicationRecord
   # delegate :college, to: :college_profile, allow_nil: true
 
   before_save :markdown_encode, if: :will_save_change_to_markdown?
-  after_create :assign_bot_to_user
+  after_create :assign_bot_to_user, :add_user_to_listmonk
   # after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
@@ -618,5 +618,17 @@ class User < ApplicationRecord
 
   def create_college_student
     CollegeStudent.create!(email: email, name: name, user_id: id) if is_college_student
+  end
+
+  def add_user_to_listmonk
+    return if self.web_active == false
+
+    response = $listmonk.add_subscriber(self, [])
+    if response.success?
+      parsed_out_id = JSON.parse(response.body)['data']['id']
+      update_column(:listmonk_subscriber_id, parsed_out_id)
+    else
+      p JSON.parse(response.body)
+    end
   end
 end
