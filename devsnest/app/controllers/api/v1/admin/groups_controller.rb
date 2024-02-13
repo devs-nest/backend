@@ -47,6 +47,61 @@ module Api
 
           render_success({ message: 'Batch Leader Assigned Successfully!' })
         end
+
+        def add_user
+          user = User.find_by(id: params[:user_id])
+          return render_error(message: 'User Not Found') if user.nil?
+
+          user.update!(accepted_in_course: true)
+          group = Group.find_by(params[:id])
+          return render_error(message: 'Group Not Found') if group.nil?
+
+          GroupMember.where(user_id: user.id).includes(:group).each do |group_member|
+            return render_error(message: "User already present in the #{group.bootcamp_type} group") if group_member.group.bootcamp_type == group.bootcamp_type
+          end
+
+          ActiveRecord::Base.transaction do
+            group.group_members.create!(user_id: user.id)
+            user.update(group_assigned: true)
+            raise StandardError, 'Group is already full!' if group.group_members.count > 16
+          end
+          RoleModifierWorker.perform_async('add_role', user&.discord_id, group&.name, group&.server&.guild_id)
+          send_group_change_message(user, group)
+          api_render(200, { id: group.id, type: 'groups', slug: group.slug, message: 'Group joined' })
+        rescue ActiveRecord::RecordInvalid => e
+          render_error(message: e)
+        rescue ActiveRecord::RecordNotUnique
+          user.update(group_assigned: true)
+          render_error(message: 'User already present in the given group')
+        rescue StandardError => e
+          render_error(message: e)
+        end
+
+        def remove_user
+          user = User.find_by(id: params[:user_id])
+          return render_error(message: 'User not found') if user.nil?
+
+          group = Group.find(params[:id])
+          return render_error(message: 'Group not found') if group.nil?
+
+          group_name = group.name
+          guild_id = Server.find_by(id: group.server_id)&.guild_id
+
+          ActiveRecord::Base.transaction do
+            group.group_members.find_by!(user_id: user.id).destroy
+            group.reassign_leader(user.id)
+            user.update(group_assigned: false)
+          end
+          # we need to pass guild id here because we do not have the group now
+          RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name, guild_id)
+          GroupModifierWorker.perform_async('destroy', [group_name], group.bootcamp_type, guild_id) if Group.find_by(id: params[:id]).blank?
+
+          render_success(message: 'Group left')
+        rescue ActiveRecord::RecordNotFound
+          render_error(message: 'User not in this group')
+        rescue StandardError => e
+          render_error(message: "Something went wrong! : #{e}")
+        end
       end
     end
   end
