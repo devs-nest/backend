@@ -26,6 +26,7 @@
 #
 class Scrum < ApplicationRecord
   validates :user_id, uniqueness: { scope: :creation_date }
+  belongs_to :group
 
   before_create do
     self.creation_date = Date.current
