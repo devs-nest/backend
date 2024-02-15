@@ -550,7 +550,7 @@ class User < ApplicationRecord
   end
 
   def tha_details
-    current_course = Course.last
+    current_course = Course.first # Adding Course.first for handling old groups
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     current_module = current_course.current_module
     case current_module

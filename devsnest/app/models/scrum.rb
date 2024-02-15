@@ -50,7 +50,7 @@ class Scrum < ApplicationRecord
   end
 
   def update_solved_assignments
-    current_course = Course.last
+    current_course = group.course || Course.first # Adding Course.first for handling old groups
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     current_module = current_course.current_module
     case current_module

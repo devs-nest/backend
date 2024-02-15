@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -186,13 +186,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.boolean "completed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "course_module_id"
     t.index ["user_id"], name: "index_bootcamp_progresses_on_user_id"
   end
 
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "EODUXLTOzQY"
+    t.string "cuid", default: "P78jC6_Z2cQ"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -355,7 +356,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "referral_code"
     t.text "coding_exp"
     t.text "coding_summary"
   end
@@ -415,21 +415,21 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.datetime "updated_at", null: false
     t.json "extra_data"
     t.integer "course_module_id"
+    t.integer "content_type", default: 0
+    t.text "contents"
     t.index ["course_id", "course_type"], name: "index_course_curriculums_on_course_id_and_course_type"
     t.index ["course_id", "day"], name: "index_course_curriculums_on_course_id_and_day"
   end
 
-  create_table "course_module_access", charset: "utf8mb3", force: :cascade do |t|
-    t.string "accessible_type", null: false
-    t.bigint "accessible_id", null: false
-    t.integer "status"
+  create_table "course_module_accesses", charset: "utf8mb3", force: :cascade do |t|
+    t.string "accessor_type", null: false
+    t.bigint "accessor_id", null: false
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "course_module_id", null: false
-    t.bigint "course_modules_id", null: false
-    t.index ["accessible_type", "accessible_id"], name: "index_course_module_access_on_accessible"
-    t.index ["course_module_id"], name: "index_course_module_access_on_course_module_id"
-    t.index ["course_modules_id"], name: "index_course_module_access_on_course_modules_id"
+    t.index ["accessor_type", "accessor_id"], name: "index_course_module_accesses_on_accessor"
+    t.index ["course_module_id"], name: "index_course_module_accesses_on_course_module_id"
   end
 
   create_table "course_module_mappings", charset: "utf8mb3", force: :cascade do |t|
@@ -441,18 +441,17 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
   end
 
   create_table "course_modules", charset: "utf8mb3", force: :cascade do |t|
-    t.integer "course_id"
     t.integer "module_type"
     t.integer "questions_table"
     t.integer "best_submissions_table"
     t.integer "submissions_table"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.boolean "is_paid", default: false
     t.integer "timeline_status", default: 0
-    t.integer "college_id"
     t.integer "visibility", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "name"
+    t.integer "granularity_type", default: 0, null: false
   end
 
   create_table "courses", charset: "utf8mb3", force: :cascade do |t|
@@ -636,7 +635,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.time "scrum_start_time", default: "2000-01-01 14:30:00"
     t.time "scrum_end_time", default: "2000-01-01 15:00:00"
     t.integer "activity_point", default: 0
-    t.integer "bootcamp_type", default: 0
+    t.integer "module_type", default: 0
+    t.integer "course_id"
     t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true
@@ -737,6 +737,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
   end
 
+  create_table "language_challenge_mappings", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "challenge_id", null: false
+    t.bigint "language_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["challenge_id"], name: "index_language_challenge_mappings_on_challenge_id"
+    t.index ["language_id"], name: "index_language_challenge_mappings_on_language_id"
+  end
+
   create_table "languages", charset: "utf8mb3", force: :cascade do |t|
     t.integer "judge_zero_id"
     t.string "name"
@@ -827,6 +836,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.string "currency"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "product_price_id"
   end
 
   create_table "organizations", charset: "utf8mb3", force: :cascade do |t|
@@ -850,6 +860,25 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["phone_number"], name: "index_otp_logs_on_phone_number"
+  end
+
+  create_table "product_discounts", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "product_id"
+    t.decimal "discount", precision: 10, scale: 2
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "product_prices", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "price"
+    t.string "product_type", null: false
+    t.string "product_name"
+    t.text "product_id"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "redirect_url", default: ""
   end
 
   create_table "projects", charset: "utf8mb3", force: :cascade do |t|
@@ -1156,8 +1185,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180921) do
   add_foreign_key "coding_room_user_mappings", "coding_rooms"
   add_foreign_key "coding_room_user_mappings", "users"
   add_foreign_key "college_branches", "colleges"
-  add_foreign_key "course_module_access", "course_modules"
-  add_foreign_key "course_module_access", "course_modules", column: "course_modules_id"
+  add_foreign_key "course_module_accesses", "course_modules"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
+  add_foreign_key "language_challenge_mappings", "challenges"
+  add_foreign_key "language_challenge_mappings", "languages"
 end

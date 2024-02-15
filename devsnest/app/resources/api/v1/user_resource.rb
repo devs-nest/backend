@@ -110,7 +110,7 @@ module Api
       end
 
       def current_module
-        course = Course.last
+        course = Course.first # Adding Course.first for handling old groups
         course.try(:current_module)
       end
 
