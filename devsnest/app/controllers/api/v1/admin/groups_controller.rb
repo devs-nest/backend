@@ -53,7 +53,7 @@ module Api
           return render_error(message: 'User Not Found') if user.nil?
 
           user.update!(accepted_in_course: true)
-          group = Group.find_by(id: params[:group_id])
+          group = Group.find_by(id: params[:id])
           return render_error(message: 'Group Not Found') if group.nil?
 
           GroupMember.where(user_id: user.id).includes(:group).each do |group_member|
