@@ -76,32 +76,6 @@ module Api
         rescue StandardError => e
           render_error(message: e)
         end
-
-        def remove_user
-          user = User.find_by(id: params[:user_id])
-          return render_error(message: 'User not found') if user.nil?
-
-          group = Group.find(params[:id])
-          return render_error(message: 'Group not found') if group.nil?
-
-          group_name = group.name
-          guild_id = Server.find_by(id: group.server_id)&.guild_id
-
-          ActiveRecord::Base.transaction do
-            group.group_members.find_by!(user_id: user.id).destroy
-            group.reassign_leader(user.id)
-            user.update(group_assigned: false)
-          end
-          # we need to pass guild id here because we do not have the group now
-          RoleModifierWorker.perform_async('delete_role', user.discord_id, group.name, guild_id)
-          GroupModifierWorker.perform_async('destroy', [group_name], group.bootcamp_type, guild_id) if Group.find_by(id: params[:id]).blank?
-
-          render_success(message: 'Group left')
-        rescue ActiveRecord::RecordNotFound
-          render_error(message: 'User not in this group')
-        rescue StandardError => e
-          render_error(message: "Something went wrong! : #{e}")
-        end
       end
     end
   end
