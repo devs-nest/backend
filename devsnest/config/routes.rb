@@ -80,11 +80,15 @@ Rails.application.routes.draw do
             post :add_assignment_questions
           end
         end
-        jsonapi_resources :groups, only: %i[] do
+        jsonapi_resources :groups, only: %i[create] do
           collection do
             post :merge_two_groups
             get :fetch_group_details
             post :assign_batch_leader
+          end
+          member do
+            post :add_user
+            put :remove_user
           end
         end
         jsonapi_resources :reward, only: %i[create]
