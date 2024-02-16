@@ -88,7 +88,6 @@ Rails.application.routes.draw do
           end
           member do
             post :add_user
-            put :remove_user
           end
         end
         jsonapi_resources :reward, only: %i[create]
