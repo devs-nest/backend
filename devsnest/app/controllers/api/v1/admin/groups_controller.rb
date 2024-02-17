@@ -52,6 +52,8 @@ module Api
           user = User.find_by(id: params[:user_id])
           return render_error(message: 'User Not Found') if user.nil?
 
+          return render_error(message: 'Discord not connected.') if user.discord_active == false
+
           user.update!(accepted_in_course: true)
           group = Group.find_by(id: params[:id])
           return render_error(message: 'Group Not Found') if group.nil?
