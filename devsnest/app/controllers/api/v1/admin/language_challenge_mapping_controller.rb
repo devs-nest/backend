@@ -8,11 +8,12 @@ module Api
         include JSONAPI::ActsAsResourceController
         before_action :admin_auth
 
-        def destroy
-          challenge_id = params.dig(:data, :attributes, :challenge_id)
-          language_id = params.dig(:data, :attributes, :language_id)
-          LanguageChallengeMapping.destroy_by(challenge_id: challenge_id, language_id: language_id)
-          render_success({ message: 'Language Mapping deleted successfully!!' })
+        def index
+          challenge_id = params[:challenge_id]
+          return render_error('challenge_id is required!') if challenge_id.nil?
+
+          language_challenge_mapping = LanguageChallengeMapping.where(challenge_id: challenge_id)
+          render_success({ data: language_challenge_mapping })
         end
       end
     end
