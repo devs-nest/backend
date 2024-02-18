@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
+
+ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -414,6 +415,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
     t.datetime "updated_at", null: false
     t.json "extra_data"
     t.integer "course_module_id"
+    t.integer "content_type", default: 0
+    t.text "contents"
     t.index ["course_id", "course_type"], name: "index_course_curriculums_on_course_id_and_course_type"
     t.index ["course_id", "day"], name: "index_course_curriculums_on_course_id_and_day"
   end
@@ -439,6 +442,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
     t.integer "visibility", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
+    t.integer "granularity_type", default: 0, null: false
   end
 
   create_table "courses", charset: "utf8mb3", force: :cascade do |t|
@@ -622,7 +627,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
     t.time "scrum_start_time", default: "2000-01-01 14:30:00"
     t.time "scrum_end_time", default: "2000-01-01 15:00:00"
     t.integer "activity_point", default: 0
-    t.integer "bootcamp_type", default: 0
+    t.integer "module_type", default: 0
+    t.integer "course_id"
     t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true
@@ -721,6 +727,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
     t.string "jti", null: false
     t.datetime "exp", precision: nil
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
+  end
+
+  create_table "language_challenge_mappings", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "challenge_id", null: false
+    t.bigint "language_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["challenge_id"], name: "index_language_challenge_mappings_on_challenge_id"
+    t.index ["language_id"], name: "index_language_challenge_mappings_on_language_id"
   end
 
   create_table "languages", charset: "utf8mb3", force: :cascade do |t|
@@ -954,6 +969,34 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
     t.text "logo", size: :medium
   end
 
+  create_table "sql_challenges", charset: "utf8mb3", force: :cascade do |t|
+    t.string "name"
+    t.integer "score"
+    t.integer "difficulty"
+    t.boolean "is_active"
+    t.string "created_by"
+    t.integer "user_id"
+    t.string "slug"
+    t.string "topic"
+    t.text "question_body"
+    t.text "expected_output"
+    t.string "initial_sql_file"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "sql_challenge_slug_index", unique: true
+    t.index ["user_id"], name: "sql_challenge_user_index"
+  end
+
+  create_table "sql_submissions", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "sql_challenge_id"
+    t.integer "score"
+    t.boolean "passed"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "sql_challenge_id"], name: "sql_submission_user_challenge_index"
+  end
+
   create_table "submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "content_id"
@@ -1137,4 +1180,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_14_124126) do
   add_foreign_key "course_module_accesses", "course_modules"
   add_foreign_key "job_skill_mappings", "jobs"
   add_foreign_key "job_skill_mappings", "skills"
+  add_foreign_key "language_challenge_mappings", "challenges"
+  add_foreign_key "language_challenge_mappings", "languages"
 end
