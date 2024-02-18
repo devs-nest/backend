@@ -5,7 +5,7 @@ namespace :subscribers do
   task add_subscribers: :environment do
     desc 'add subscribers'
 
-    User.all.in_batches(of: 100) do |batch|
+    User.where(web_active: true).all.in_batches(of: 100) do |batch|
       batch.each do |user|
         current_subscriber = $listmonk.get_subscribers_details(email: user.email)
 

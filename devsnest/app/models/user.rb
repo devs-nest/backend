@@ -126,7 +126,7 @@ class User < ApplicationRecord
   # delegate :college, to: :college_profile, allow_nil: true
 
   before_save :markdown_encode, if: :will_save_change_to_markdown?
-  after_create :assign_bot_to_user
+  after_create :assign_bot_to_user, :add_user_to_listmonk
   # after_create :send_registration_email
   after_update :send_step_one_mail
   after_update :send_step_two_mail_if_discord_active_false
@@ -549,8 +549,10 @@ class User < ApplicationRecord
     { rank: rank, score: main_lb&.score_for(username) } # Can add other leaderboard details in future
   end
 
-  def tha_details
-    current_course = Course.last
+  def tha_details(college_id = nil)
+    # Temporary solution for JTD Bootcamp
+    course_associated_with_college = College.find_by_id(college_id)&.course_modules&.first&.courses&.first
+    current_course = course_associated_with_college || Course.first # Adding Course.first for handling old groups
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     current_module = current_course.current_module
     case current_module
@@ -593,7 +595,7 @@ class User < ApplicationRecord
     user.merge(rank_change: user_prev_rank.zero? ? user_prev_rank : user_prev_rank - user[:rank])
   end
 
-  def get_dashboard_by_cache
+  def get_dashboard_by_cache(college_id = nil)
     Rails.cache.fetch("user_dashboard_#{id}", expires_in: 1.day) do
       {
         name: name,
@@ -601,7 +603,7 @@ class User < ApplicationRecord
         dsa_solved_by_difficulty: Challenge.split_by_difficulty,
         fe_solved: FrontendChallenge.count_solved(id),
         fe_solved_by_topic: FrontendChallenge.split_by_topic,
-        tha_details: tha_details, # Bootcamp Progress
+        tha_details: tha_details(college_id), # Bootcamp Progress
         leaderboard_details: leaderboard_details('dsa'),
         fe_leaderboard_details: leaderboard_details('frontend')
       }
@@ -618,5 +620,17 @@ class User < ApplicationRecord
 
   def create_college_student
     CollegeStudent.create!(email: email, name: name, user_id: id) if is_college_student
+  end
+
+  def add_user_to_listmonk
+    return if self.web_active == false
+
+    response = $listmonk.add_subscriber(self, [])
+    if response.success?
+      parsed_out_id = JSON.parse(response.body)['data']['id']
+      update_column(:listmonk_subscriber_id, parsed_out_id)
+    else
+      p JSON.parse(response.body)
+    end
   end
 end

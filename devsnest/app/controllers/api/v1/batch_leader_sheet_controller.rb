@@ -35,7 +35,8 @@ module Api
       def authorize_create
         user = User.find_by(id: params[:data][:attributes][:user_id])
         group = Group.find_by(id: params[:data][:attributes][:group_id])
-        return true if (user.id == group.batch_leader_id) && ((@current_user.id == user.id) || (@current_user.user_type == 'admin'))
+        # Give access when user is either batch leader or admin
+        return true if (user.id == group.batch_leader_id && @current_user.id == user.id) || @current_user.user_type == 'admin'
 
         render_error('message': 'You cannot Create this sheet')
       end
