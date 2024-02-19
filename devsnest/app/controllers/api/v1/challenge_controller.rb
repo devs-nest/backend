@@ -44,7 +44,7 @@ module Api
         challenge_hash = challenge.as_json.except('input_format', 'output_format')
         supported_languages = challenge.supported_languages.select(:id, :name, :judge_zero_id, :language_description).as_json
 
-        data = [challenge_hash, sample_test_cases, { 'type' => 'challenge' }, { supported_languages: supported_languages }]
+        data = [challenge_hash, sample_test_cases, { 'type' => 'challenge', supported_languages: supported_languages }]
         data_hash = data.inject(&:merge)
 
         api_render(200, data_hash)

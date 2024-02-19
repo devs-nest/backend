@@ -9,10 +9,12 @@ module Api
         before_action :admin_auth
 
         def index
-          challenge_id = params[:challenge_id]
-          return render_error('challenge_id is required!') if challenge_id.nil?
+          challenge = Challenge.find_by_id(params[:challenge_id])
+          return render_not_found('challenge') if challenge.nil?
 
-          language_challenge_mapping = LanguageChallengeMapping.where(challenge_id: challenge_id)
+          language_challenge_mapping = LanguageChallengeMapping.where(challenge_id: challenge.id).includes(:language).map do |record|
+            record.attributes.merge(language_name: record.language.name)
+          end
           render_success({ data: language_challenge_mapping })
         end
       end
