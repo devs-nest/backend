@@ -105,6 +105,7 @@ Rails.application.routes.draw do
           end
         end
         jsonapi_resources :projects, only: %i[index create destroy]
+        jsonapi_resources :language_challenge_mapping, only: %i[index create destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do

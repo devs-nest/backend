@@ -29,7 +29,7 @@
 #  index_challenges_on_slug  (slug) UNIQUE
 #
 class Challenge < ApplicationRecord
-  enum difficulty: %i[easy_level medium_level hard_level]
+  enum difficulty: %i[easy_level medium_level hard_level foundation]
   enum content_type: %i[topic sub_topic]
   enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queue heaps dynamicprogramming backtracking greedy maths]
   has_many :algo_submissions
@@ -42,6 +42,8 @@ class Challenge < ApplicationRecord
   has_many :room_best_submissions
   belongs_to :user
   has_many :assingment_questions
+  has_many :language_challenge_mappings, dependent: :destroy
+  has_many :languages, through: :language_challenge_mappings
   after_create :create_slug
   validates_uniqueness_of :name, :slug, case_sensitive: true
   before_save :regenerate_challenge_leaderboard, if: :will_save_change_to_score?
@@ -117,11 +119,7 @@ class Challenge < ApplicationRecord
   end
 
   def create_template(language)
-    not_implemented = {
-      'tree': {
-      }
-    }
-    return if input_format.nil? || output_format.nil? || not_implemented.dig(topic.to_sym, language[1].to_sym)
+    return AlgoTemplate.create(challenge_id: id, language_id: language[0], head: '', body: '', tail: '') if input_format.nil? && output_format.nil?
 
     template_gen =
       case language[1]
@@ -188,6 +186,10 @@ class Challenge < ApplicationRecord
 
   def remove_saved_templates
     AlgoTemplate.where(challenge_id: id).destroy_all
+  end
+
+  def supported_languages
+    languages.present? ? languages : Language.all
   end
 end
 
