@@ -44,7 +44,7 @@ module JtdHelper
     groups.each do |gu|
       csv = []
       csv << head
-      scrums = Scrum.where(group_id: gu.id, updated_at: data_range)
+      scrums = Scrum.where(group_id: gu.id, updated_at: data_range).orders(updated_at: :desc)
       scrums.each do |scrum|
         csv << scrum.attributes.values
       end
