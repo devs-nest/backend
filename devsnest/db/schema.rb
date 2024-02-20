@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_12_181636) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -532,6 +532,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_12_181636) do
   create_table "file_upload_records", charset: "utf8mb3", force: :cascade do |t|
     t.integer "status"
     t.integer "file_type"
+    t.date "start_date"
+    t.date "end_date"
+    t.string "filename"
     t.integer "user_id"
     t.string "file"
     t.datetime "created_at", null: false
@@ -655,6 +658,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_12_181636) do
     t.time "scrum_end_time", default: "2000-01-01 09:30:00"
     t.integer "activity_point", default: 0
     t.integer "bootcamp_type", default: 0
+    t.integer "course_id"
     t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true

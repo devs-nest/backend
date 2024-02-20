@@ -1,14 +1,14 @@
 require 'zip'
 
 module JtdHelper
-  def self.jtd_user_progress(date_range)
+  def self.jtd_user_progress(date_range, dstring)
     groups = Group.jtd
     current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     csvs = []
     gids = []
 
-    rows = ['user_id', 'username' 'dsa_attempted', 'dsa_solved', 'dsa_new_solved', 'fe_attempted', 'fe_solved', 'fe_new_solved', 'be_attempted', 'be_solved', 'be_new_solved']
+    rows = ['user_id', 'username', 'dsa_attempted', 'dsa_solved', 'dsa_new_solved', 'fe_attempted', 'fe_solved', 'fe_new_solved', 'be_attempted', 'be_solved', 'be_new_solved']
     groups.each do |group|
       csv = []
       csv << rows
@@ -32,10 +32,10 @@ module JtdHelper
       csvs << csv
     end
 
-    write_zip(csvs, gids, 'user_data')
+    write_zip(csvs, gids, 'user_details', dstring)
   end
 
-  def self.jtd_scrum_details(data_range)
+  def self.jtd_scrum_details(date_range, dstring)
     groups = Group.jtd
     head = Scrum.column_names
     csvs = []
@@ -44,7 +44,7 @@ module JtdHelper
     groups.each do |gu|
       csv = []
       csv << head
-      scrums = Scrum.where(group_id: gu.id, updated_at: data_range).order(updated_at: :desc)
+      scrums = Scrum.where(group_id: gu.id, updated_at: date_range).order(updated_at: :desc)
       scrums.each do |scrum|
         csv << scrum.attributes.values
       end
@@ -53,11 +53,12 @@ module JtdHelper
       csvs << csv
     end
 
-    write_zip(csvs, gids, 'scrum_data')
+    write_zip(csvs, gids, 'scrum_details', dstring)
   end
 
-  def self.write_zip(csvs, gids, csv_key)
-    key = "#{csv_key}-#{DateTime.now.to_i}.zip"
+  def self.write_zip(csvs, gids, csv_key, dstring)
+    range = range.to_a
+    key = "#{csv_key}-#{dstring}-#{DateTime.current.to_date}.zip"
     zip = Zip::OutputStream.write_buffer do |zipfile|
       csvs.each_with_index do |csv_rows, index|
         csv_filename = "#{gids[index]}-#{DateTime.now.to_i}.csv"
@@ -70,6 +71,6 @@ module JtdHelper
 
     bucket = "jtd-data"
     $s3.put_object(bucket: bucket, key: key, body: zip)
-    "https://#{bucket}.s3.ap-south-1.amazonaws.com/#{key}"
+    ["https://#{bucket}.s3.ap-south-1.amazonaws.com/#{key}", key]
   end
 end
