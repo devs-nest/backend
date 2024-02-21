@@ -12,10 +12,11 @@ class FileUploadWorker
     case type
     when 'user_details'
       url, file_name = JtdHelper.jtd_user_progress(delta, "#{s.to_date}-#{e.to_date}")
-      file_record.update(file: url, status: 1, filename: file_name, start_date: s, end_date: e)
     when 'scrum_details'
       url, file_name = JtdHelper.jtd_scrum_details(delta, "#{s.to_date}-#{e.to_date}")
-      file_record.update(file: url, status: 1, filename: file_name, start_date: s, end_date: e)
+    when 'batch_leader_details'
+      url, file_name = JtdHelper.batch_leader_details(delta, "#{s.to_date}-#{e.to_date}")
     end
+    file_record.update(file: url, status: 1, filename: file_name, start_date: s, end_date: e)
   end
 end

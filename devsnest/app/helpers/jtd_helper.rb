@@ -56,6 +56,26 @@ module JtdHelper
     write_zip(csvs, gids, 'scrum_details', dstring)
   end
 
+  def self.batch_leader_details(date_range, dstring)
+    key = "batch-leader-#{dstring}-#{DateTime.current.to_date}.csv"
+    bl_data = BatchLeaderSheet.joins("inner join `groups` on `groups`.`id` = `batch_leader_sheets`.`group_id`")
+                    .where(groups: { bootcamp_type: 4 })
+                    .where(creation_week: date_range)
+                    .order({ user_id: :asc, creation_week: :desc })
+    head = BatchLeaderSheet.column_names
+    bcsv = []
+    bcsv << head
+
+    bl_data.each do |bld|
+      bcsv << bld.attributes.values
+    end
+
+    csv_string = CSV.generate { |csv| bcsv.each { |row| csv << row } }
+    bucket = "jtd-data"
+    $s3.put_object(bucket: bucket, key: key, body: csv_string)
+    ["https://#{bucket}.s3.ap-south-1.amazonaws.com/#{key}", key]
+  end
+
   def self.write_zip(csvs, gids, csv_key, dstring)
     range = range.to_a
     key = "#{csv_key}-#{dstring}-#{DateTime.current.to_date}.zip"

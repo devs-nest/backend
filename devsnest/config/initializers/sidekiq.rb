@@ -3,11 +3,11 @@
 require 'sidekiq/web'
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: 'redis://localhost:6379/0', namespace: "app3_sidekiq_#{Rails.env}", password: ENV['REDIS_PASS'] }
+  config.redis = { url: 'redis://redis:6379/0', namespace: "app3_sidekiq_#{Rails.env}", password: ENV['REDIS_PASS'] }
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: 'redis://localhost:6379/0', namespace: "app3_sidekiq_#{Rails.env}", password: ENV['REDIS_PASS'] }
+  config.redis = { url: 'redis://redis:6379/0', namespace: "app3_sidekiq_#{Rails.env}", password: ENV['REDIS_PASS'] }
 end
 
 schedule_file = 'config/schedule.yml'
