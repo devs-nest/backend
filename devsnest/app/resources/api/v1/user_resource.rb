@@ -41,11 +41,16 @@ module Api
       end
 
       def colleges
-        @model.college_profile.includes(:college).collect do |cps|
+        # Add all verified colleges in case of admin users
+        list_of_colleges = @model.admin? ? College.where(is_verified: true) : []
+        college_ids = @model.college_profile.pluck(:college_id)
+        list_of_colleges += College.where(id: college_ids)
+
+        list_of_colleges.uniq.collect do |college|
           {
-            id: cps.college&.id,
-            slug: cps.college&.slug,
-            name: cps.college&.name
+            id: college&.id,
+            slug: college&.slug,
+            name: college&.name
           }
         end
       end
