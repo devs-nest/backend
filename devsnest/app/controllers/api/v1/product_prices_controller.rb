@@ -16,7 +16,8 @@ module Api
         data = []
 
         product_prices.each do |product_price|
-          next if (user_courses & product_price.product_id).blank? && product_price.price.positive?
+          # Give all the products for admin
+          next if ((user_courses & product_price.product_id).blank? && product_price.price.positive?) && !user.admin?
 
           data << {
             "product_id": product_price.id,
