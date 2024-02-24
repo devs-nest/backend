@@ -31,7 +31,7 @@
 class Challenge < ApplicationRecord
   enum difficulty: %i[easy_level medium_level hard_level foundation]
   enum content_type: %i[topic sub_topic]
-  enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queue heaps dynamicprogramming backtracking greedy maths]
+  enum topic: %i[arrays strings hashmap tree matrix graph linkedlist stacks binarysearch queue heaps dynamicprogramming backtracking greedy maths python_questions]
   has_many :algo_submissions
   has_many :run_submissions
   has_many :algo_templates
