@@ -17,6 +17,11 @@ module Api
 
       paginator :paged
 
+      def topic
+        # Temporary fix for foundation questions formatting for frontend
+        @model.topic == 'python_questions' ? 'python' : @model.topic
+      end
+
       def self.records(options = {})
         if options[:context][:challenge_id].nil?
           super(options).where(is_active: true)
