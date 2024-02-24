@@ -4,8 +4,8 @@ class FileUploadWorker
   include Sidekiq::Worker
 
   def perform(type, range, file_record_id)
-    s = Time.parse(range[0]).beginning_of_day
-    e = Time.parse(range[1]).end_of_day
+    s = Time.parse(range[0]).to_date
+    e = Time.parse(range[1]).to_date
     delta = s..e
     file_record = FileUploadRecord.find_by(id: file_record_id)
 

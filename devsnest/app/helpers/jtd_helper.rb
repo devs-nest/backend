@@ -3,50 +3,63 @@ require 'zip'
 module JtdHelper
   def self.jtd_user_progress(date_range, dstring)
     groups = Group.jtd
-    current_course = Course.last
-    course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
-    csvs = []
-    gids = []
 
-    rows = ['user_id', 'username', 'dsa_attempted', 'dsa_solved', 'dsa_new_solved', 'fe_attempted', 'fe_solved', 'fe_new_solved', 'be_attempted', 'be_solved', 'be_new_solved']
-    groups.each do |group|
-      csv = []
-      csv << rows
-      group.group_members.each do |gu|
-        user = gu.user
-        dsa_solved_count = UserChallengeScore.where(user_id: user.id, updated_at: date_range).where('passed_test_cases = total_test_cases').count
-        dsa_attempted_count = UserChallengeScore.where(user_id: user.id, updated_at: date_range).count
-        dsa_new_count = UserChallengeScore.where(user_id: user.id, created_at: date_range).where('passed_test_cases = total_test_cases').count
+    csv1 = []
+    user_head = ['username', 'user email', 'dsa solved', 'frontend solved', 'backend solved']
+    csv1 << user_head
 
-        fe_solved_count = FrontendChallengeScore.where(user_id: user.id, updated_at: date_range).where('passed_test_cases = total_test_cases').count
-        fe_attempted_count = FrontendChallengeScore.where(user_id: user.id, updated_at: date_range).count
-        fe_new_count = FrontendChallengeScore.where(user_id: user.id, created_at: date_range).where('passed_test_cases = total_test_cases').count
-
-        be_solved_count = BackendChallengeScore.where(user_id: user.id, updated_at: date_range).where('passed_test_cases = total_test_cases').count
-        be_attempted_count = BackendChallengeScore.where(user_id: user.id, updated_at: date_range).count
-        be_new_count = BackendChallengeScore.where(user_id: user.id, created_at: date_range).where('passed_test_cases = total_test_cases').count
-
-        csv << [user.id, user.username, dsa_attempted_count, dsa_solved_count, dsa_new_count, fe_attempted_count, fe_solved_count, fe_new_count, be_attempted_count, be_solved_count, be_new_count]
-      end
-      gids << group.name
-      csvs << csv
+    groups.joins(group_members: :user).select('users.id as user_id, users.username as username, users.email as email').each do |user|
+      user_dsa_solved = UserChallengeScore.where(user_id: user.user_id, updated_at: date_range).where('passed_test_cases = total_test_cases').count
+      user_fe_solved = FrontendChallengeScore.where(user_id: user.user_id, updated_at: date_range).where('passed_test_cases = total_test_cases').count
+      user_be_solved = BackendChallengeScore.where(user_id: user.user_id, updated_at: date_range).where('passed_test_cases = total_test_cases').count
+      csv1 << [user.username, user.email, user_dsa_solved, user_fe_solved, user_be_solved]
     end
 
+    csv2 = []
+    head = ['username', 'user email', 'date', 'dsa attempted', 'dsa solved', 'dsa new solved', 'frontend attempted', 'frontend solved', 'frontend new solved', 'backend attempted', 'backend solved', 'backend new solved']
+    csv2 << head
+    date_range.each do |day|
+      groups.each do |group|
+        group.group_members.joins(:user).order('users.username ASC').select('users.id as user_id, users.username as username, users.email as email').each do |gu|
+          dsa_solved_count = UserChallengeScore.where(user_id: gu.user_id, updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+          dsa_attempted_count = UserChallengeScore.where(user_id: gu.user_id, updated_at: day.beginning_of_day..day.end_of_day).count
+          dsa_new_count = UserChallengeScore.where(user_id: gu.user_id, created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+
+          fe_solved_count = FrontendChallengeScore.where(user_id: gu.user_id, updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+          fe_attempted_count = FrontendChallengeScore.where(user_id: gu.user_id, updated_at: day.beginning_of_day..day.end_of_day).count
+          fe_new_count = FrontendChallengeScore.where(user_id: gu.user_id, created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+
+          be_solved_count = BackendChallengeScore.where(user_id: gu.user_id, updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+          be_attempted_count = BackendChallengeScore.where(user_id: gu.user_id, updated_at: day.beginning_of_day..day.end_of_day).count
+          be_new_count = BackendChallengeScore.where(user_id: gu.user_id, created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+
+          csv2 << [gu.username, gu.email, day, dsa_attempted_count, dsa_solved_count, dsa_new_count, fe_attempted_count, fe_solved_count, fe_new_count, be_attempted_count, be_solved_count, be_new_count]
+        end
+      end
+    end
+
+    gids = ['user_details', 'user_daily_data']
+    csvs = [csv1, csv2]
     write_zip(csvs, gids, 'user_details', dstring)
   end
 
   def self.jtd_scrum_details(date_range, dstring)
     groups = Group.jtd
-    head = Scrum.column_names
+    cols = Scrum.column_names - ['id', 'updated_at', 'created_at']
+    head = cols.map(&:humanize)
     csvs = []
     gids = []
 
     groups.each do |gu|
       csv = []
       csv << head
-      scrums = Scrum.where(group_id: gu.id, updated_at: date_range).order(updated_at: :desc)
+      scrums = Scrum.where(group_id: gu.id, updated_at: date_range).joins('inner join users on users.id = scrums.user_id').select('scrums.*, users.username as username').order(updated_at: :desc)
       scrums.each do |scrum|
-        csv << scrum.attributes.values
+        req_fields = scrum.attributes.slice(*cols)
+        req_fields['user_id'] = scrum.username
+        req_fields['group_id'] = gu.name
+
+        csv << req_fields.values
       end
 
       gids << gu.name
@@ -59,15 +72,25 @@ module JtdHelper
   def self.batch_leader_details(date_range, dstring)
     key = "batch-leader-#{dstring}-#{DateTime.current.to_date}.csv"
     bl_data = BatchLeaderSheet.joins("inner join `groups` on `groups`.`id` = `batch_leader_sheets`.`group_id`")
+                    .joins("inner join `users` on `users`.`id` = `batch_leader_sheets`.`user_id`")
                     .where(groups: { bootcamp_type: 4 })
                     .where(creation_week: date_range)
                     .order({ user_id: :asc, creation_week: :desc })
-    head = BatchLeaderSheet.column_names
+                    .select("*, `users`.username as username, `groups`.`name` as groupname")
+    cols = BatchLeaderSheet.column_names - ['id']
+    head = cols.map(&:humanize) - ['Tl tha', 'Vtl tha'] + ['Team leader assignments', 'Vice team leader assignments']
     bcsv = []
     bcsv << head
 
     bl_data.each do |bld|
-      bcsv << bld.attributes.values
+      req_fields = bld.attributes.slice(*cols)
+      req_fields['user_id'] = bld.username
+      req_fields['group_id'] = bld.groupname
+      req_fields["active_members"] = req_fields["active_members"].try(:join, ', ')
+      req_fields["par_active_members"] = req_fields["par_active_members"].try(:join, ', ')
+      req_fields["inactive_members"] = req_fields["inactive_members"].try(:join, ', ')
+      req_fields["doubt_session_taker"] = req_fields["doubt_session_taker"].try(:join, ', ')
+      bcsv << req_fields.values
     end
 
     csv_string = CSV.generate { |csv| bcsv.each { |row| csv << row } }
