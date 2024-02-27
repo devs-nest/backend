@@ -2,7 +2,11 @@ require 'zip'
 
 module JtdHelper
   def self.jtd_user_progress(date_range, dstring)
-    groups = Group.jtd
+    college_structure_path = '2024-2028/btech/cs'
+    college = College.find_by_name('jtd')
+
+    college_structure = CollegeStructure.where('college_id = ? AND name LIKE ?', college.id, "%#{college_structure_path}%")
+    college_profiles = CollegeProfile.includes(:user).where(college_id: @college.id, college_structure_id: college_structure.pluck(:id), authority_level: 'student')
     current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     current_module = current_course.current_module
@@ -16,7 +20,7 @@ module JtdHelper
     total_assignments_be_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'BackendChallenge').pluck(:question_id).uniq
 
 
-    groups.joins(group_members: :user).select('users.id as user_id, users.username as username, users.email as email').each do |user|
+    college_profiles.joins(:user).select('users.id as user_id, users.username as username, users.email as email').each do |user|
       user_dsa_solved = UserChallengeScore.where(user_id: user.user_id, challenge_id: total_assignments_dsa_ids, updated_at: date_range).where('passed_test_cases = total_test_cases').count
       user_fe_solved = FrontendChallengeScore.where(user_id: user.user_id, challenge_id: total_assignments_fe_ids, updated_at: date_range).where('passed_test_cases = total_test_cases').count
       user_be_solved = BackendChallengeScore.where(user_id: user.user_id, challenge_id: total_assignments_be_ids, updated_at: date_range).where('passed_test_cases = total_test_cases').count
@@ -27,25 +31,23 @@ module JtdHelper
     head = ['username', 'user email', 'date', 'dsa attempted', 'dsa solved', 'dsa new solved', 'frontend attempted', 'frontend solved', 'frontend new solved', 'backend attempted', 'backend solved', 'backend new solved']
     csv2 << head
     date_range.each do |day|
-      groups.each do |group|
-        group.group_members.joins(:user).order('users.username ASC').select('users.id as user_id, users.username as username, users.email as email').each do |gu|
-          dsa_q = UserChallengeScore.where(user_id: gu.user_id, challenge_id: total_assignments_dsa_ids)
-          dsa_solved_count = dsa_q.where(updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
-          dsa_attempted_count = dsa_q.where(updated_at: day.beginning_of_day..day.end_of_day).count
-          dsa_new_count = dsa_q.where(created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+      college_profiles.joins(:user).order('users.username ASC').select('users.id as user_id, users.username as username, users.email as email').each do |gu|
+        dsa_q = UserChallengeScore.where(user_id: gu.user_id, challenge_id: total_assignments_dsa_ids)
+        dsa_solved_count = dsa_q.where(updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+        dsa_attempted_count = dsa_q.where(updated_at: day.beginning_of_day..day.end_of_day).count
+        dsa_new_count = dsa_q.where(created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
 
-          fe_q = FrontendChallengeScore.where(user_id: gu.user_id, challenge_id: total_assignments_fe_ids)
-          fe_solved_count = fe_q.where(updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
-          fe_attempted_count = fe_q.where(updated_at: day.beginning_of_day..day.end_of_day).count
-          fe_new_count = fe_q.where(created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+        fe_q = FrontendChallengeScore.where(user_id: gu.user_id, challenge_id: total_assignments_fe_ids)
+        fe_solved_count = fe_q.where(updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+        fe_attempted_count = fe_q.where(updated_at: day.beginning_of_day..day.end_of_day).count
+        fe_new_count = fe_q.where(created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
 
-          be_q = BackendChallengeScore.where(user_id: gu.user_id, challenge_id: total_assignments_be_ids)
-          be_solved_count = be_q.where(updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
-          be_attempted_count = be_q.where(updated_at: day.beginning_of_day..day.end_of_day).count
-          be_new_count = be_q.where(created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+        be_q = BackendChallengeScore.where(user_id: gu.user_id, challenge_id: total_assignments_be_ids)
+        be_solved_count = be_q.where(updated_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
+        be_attempted_count = be_q.where(updated_at: day.beginning_of_day..day.end_of_day).count
+        be_new_count = be_q.where(created_at: day.beginning_of_day..day.end_of_day).where('passed_test_cases = total_test_cases').count
 
-          csv2 << [gu.username, gu.email, day, dsa_attempted_count, dsa_solved_count, dsa_new_count, fe_attempted_count, fe_solved_count, fe_new_count, be_attempted_count, be_solved_count, be_new_count]
-        end
+        csv2 << [gu.username, gu.email, day, dsa_attempted_count, dsa_solved_count, dsa_new_count, fe_attempted_count, fe_solved_count, fe_new_count, be_attempted_count, be_solved_count, be_new_count]
       end
     end
 
