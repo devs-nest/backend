@@ -22,7 +22,7 @@ module Api
       end
 
       def verify_accessibility
-        return true if @course_module.visibility == 'public_module'
+        return true if @course_module.visibility == 'public_module' || @current_user.admin?
 
         user_access = CourseModuleAccess.find_by(course_module_id: @course_module.id, accessor: @current_user)
         college_ids = CollegeProfile.where(user_id: @current_user.id).pluck(:college_id)

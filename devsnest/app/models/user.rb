@@ -549,8 +549,10 @@ class User < ApplicationRecord
     { rank: rank, score: main_lb&.score_for(username) } # Can add other leaderboard details in future
   end
 
-  def tha_details
-    current_course = Course.last
+  def tha_details(college_id = nil)
+    # Temporary solution for JTD Bootcamp
+    course_associated_with_college = College.find_by_id(college_id)&.course_modules&.first&.courses&.first
+    current_course = course_associated_with_college || Course.first # Adding Course.first for handling old groups
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     current_module = current_course.current_module
     case current_module
@@ -593,7 +595,7 @@ class User < ApplicationRecord
     user.merge(rank_change: user_prev_rank.zero? ? user_prev_rank : user_prev_rank - user[:rank])
   end
 
-  def get_dashboard_by_cache
+  def get_dashboard_by_cache(college_id = nil)
     Rails.cache.fetch("user_dashboard_#{id}", expires_in: 1.day) do
       {
         name: name,
@@ -601,7 +603,7 @@ class User < ApplicationRecord
         dsa_solved_by_difficulty: Challenge.split_by_difficulty,
         fe_solved: FrontendChallenge.count_solved(id),
         fe_solved_by_topic: FrontendChallenge.split_by_topic,
-        tha_details: tha_details, # Bootcamp Progress
+        tha_details: tha_details(college_id), # Bootcamp Progress
         leaderboard_details: leaderboard_details('dsa'),
         fe_leaderboard_details: leaderboard_details('frontend')
       }

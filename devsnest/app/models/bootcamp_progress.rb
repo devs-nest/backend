@@ -43,6 +43,9 @@ class BootcampProgress < ApplicationRecord
     template_id = EmailTemplate.find_by(name: 'bootcamp_completion_mail_lm').try(:template_id)
     return if user.blank? || template_id.blank?
 
+    # Not generating certificates automatically for JTD bootcamp students
+    return if course_curriculum&.course_module&.name&.split(' ')&.first == 'JTD'
+
     type = Certification.get_type_from_course_type(course_curriculum.course_type)
     certificate = Certification.find_by(user_id: user.id, certificate_type: type)
     if certificate.blank?

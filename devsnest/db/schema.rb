@@ -415,6 +415,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.datetime "updated_at", null: false
     t.json "extra_data"
     t.integer "course_module_id"
+    t.integer "content_type", default: 0
     t.text "contents"
     t.index ["course_id", "course_type"], name: "index_course_curriculums_on_course_id_and_course_type"
     t.index ["course_id", "day"], name: "index_course_curriculums_on_course_id_and_day"
@@ -423,20 +424,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
   create_table "course_module_accesses", charset: "utf8mb3", force: :cascade do |t|
     t.string "accessor_type", null: false
     t.bigint "accessor_id", null: false
-    t.integer "status", default: 0
+    t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "course_module_id", null: false
     t.index ["accessor_type", "accessor_id"], name: "index_course_module_accesses_on_accessor"
     t.index ["course_module_id"], name: "index_course_module_accesses_on_course_module_id"
-  end
-
-  create_table "course_module_mappings", charset: "utf8mb3", force: :cascade do |t|
-    t.integer "course_module_id"
-    t.integer "course_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["course_id", "course_module_id"], name: "course_module_mapping_index"
   end
 
   create_table "course_modules", charset: "utf8mb3", force: :cascade do |t|
@@ -657,7 +650,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.time "scrum_start_time", default: "2000-01-01 09:00:00"
     t.time "scrum_end_time", default: "2000-01-01 09:30:00"
     t.integer "activity_point", default: 0
-    t.integer "bootcamp_type", default: 0
+    t.integer "module_type", default: 0
     t.integer "course_id"
     t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true

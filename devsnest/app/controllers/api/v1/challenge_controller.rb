@@ -42,8 +42,9 @@ module Api
 
         sample_test_cases = challenge.fetch_sample_test_cases
         challenge_hash = challenge.as_json.except('input_format', 'output_format')
+        supported_languages = challenge.supported_languages.select(:id, :name, :judge_zero_id, :language_description).as_json
 
-        data = [challenge_hash, sample_test_cases, { 'type' => 'challenge' }]
+        data = [challenge_hash, sample_test_cases, { 'type' => 'challenge', supported_languages: supported_languages }]
         data_hash = data.inject(&:merge)
 
         api_render(200, data_hash)
@@ -75,7 +76,7 @@ module Api
 
         templates = {}
 
-        Language.all.pluck(:id, :name, :judge_zero_id).each do |language|
+        challenge.supported_languages.pluck(:id, :name, :judge_zero_id).each do |language|
           template = challenge.algo_templates.find_by(challenge_id: challenge_id, language_id: language[0]) # FIX
           template = challenge.create_template(language) if template.nil?
           next if template.nil?

@@ -64,7 +64,7 @@ module Api
           c_struc = CollegeStructure.find_by_name(data[:structure])
           college_profile = CollegeProfile.create!(email: data[:email], college_id: college_id, college_structure_id: c_struc&.id, authority_level: data[:authority_level],
                                                    department: data[:department], roll_number: data[:roll_number])
-          CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id, status: skip_pass ? 0 : 1)
+          CollegeInvite.create!(college_profile: college_profile, uid: encrypted_code, college_id: college_id)
 
           template_id = EmailTemplate.find_by(name: 'college_join_lm')&.template_id
           EmailSenderWorker.perform_async(data[:email], {

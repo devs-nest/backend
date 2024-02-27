@@ -5,7 +5,7 @@ module Api
     # api for challenge test controller
     class ChallengeResource < JSONAPI::Resource
       attributes :topic, :difficulty, :name, :question_body, :score, :priority, :slug
-      attributes :submission_status
+      attributes :submission_status, :supported_languages
       filter :difficulty
       filter :topic
       filter :parent_id
@@ -16,6 +16,11 @@ module Api
       }
 
       paginator :paged
+
+      def topic
+        # Temporary fix for foundation questions formatting for frontend
+        @model.topic == 'python_questions' ? 'python' : @model.topic
+      end
 
       def self.records(options = {})
         if options[:context][:challenge_id].nil?
@@ -37,6 +42,10 @@ module Api
             submission.passed_test_cases == submission.total_test_cases ? 'solved' : 'attempted'
           end
         end
+      end
+
+      def supported_languages
+        @model.supported_languages.select(:id, :name, :judge_zero_id, :language_description).as_json
       end
     end
   end

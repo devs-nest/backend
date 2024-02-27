@@ -41,6 +41,7 @@ class Group < ApplicationRecord
   audited
   has_many :group_members, dependent: :destroy
   belongs_to :server
+  belongs_to :course, optional: true
   after_create :parameterize
   before_create :assign_server
   after_commit :expire_cache
@@ -189,7 +190,7 @@ class Group < ApplicationRecord
   end
 
   def weekly_data
-    current_course = Course.last
+    current_course = course || Course.first # Adding Course.first for handling old groups
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     scrum_data = Scrum.where(creation_date: Date.today.last_week.beginning_of_week..Date.today.last_week.end_of_week, group_id: id)
     total_scrums = scrum_data.pluck(:creation_date).uniq.compact.count

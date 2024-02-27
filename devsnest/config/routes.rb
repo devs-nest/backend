@@ -80,12 +80,15 @@ Rails.application.routes.draw do
             post :add_assignment_questions
           end
         end
-        jsonapi_resources :groups, only: %i[] do
+        jsonapi_resources :groups, only: %i[create] do
           collection do
             post :merge_two_groups
             get :fetch_group_details, :studend_reports
             post :assign_batch_leader
             post :student_details
+          end
+          member do
+            post :add_user
           end
         end
         jsonapi_resources :reward, only: %i[create]
@@ -103,6 +106,7 @@ Rails.application.routes.draw do
           end
         end
         jsonapi_resources :projects, only: %i[index create destroy]
+        jsonapi_resources :language_challenge_mapping, only: %i[index create destroy]
       end
       jsonapi_resources :users, only: %i[index show update create] do
         member do
