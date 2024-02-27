@@ -19,7 +19,6 @@ module JtdHelper
     total_assignments_fe_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'FrontendChallenge').pluck(:question_id).uniq
     total_assignments_be_ids = AssignmentQuestion.where(course_curriculum_id: course_curriculum_ids, question_type: 'BackendChallenge').pluck(:question_id).uniq
 
-
     college_profiles.joins(:user).select('users.id as user_id, users.username as username, users.email as email').each do |user|
       user_dsa_solved = UserChallengeScore.where(user_id: user.user_id, challenge_id: total_assignments_dsa_ids, updated_at: date_range).where('passed_test_cases = total_test_cases').count
       user_fe_solved = FrontendChallengeScore.where(user_id: user.user_id, challenge_id: total_assignments_fe_ids, updated_at: date_range).where('passed_test_cases = total_test_cases').count
