@@ -553,7 +553,7 @@ class User < ApplicationRecord
     # Temporary solution for JTD Bootcamp
     course_associated_with_college = College.find_by_id(college_id)&.course_modules&.first&.courses&.first
     current_course = course_associated_with_college || Course.first # Adding Course.first for handling old groups
-    course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
+    course_curriculum_ids = current_course&.course_curriculums&.where(locked: false)&.pluck(:id) || []
     current_module = current_course.current_module
     case current_module
     when 'dsa'
@@ -623,7 +623,7 @@ class User < ApplicationRecord
   end
 
   def add_user_to_listmonk
-    return if self.web_active == false
+    return if web_active == false
 
     response = $listmonk.add_subscriber(self, [])
     if response.success?
