@@ -6,7 +6,7 @@ module JtdHelper
     college = College.find_by_name('jtd')
 
     college_structure = CollegeStructure.where('college_id = ? AND name LIKE ?', college.id, "%#{college_structure_path}%")
-    college_profiles = CollegeProfile.includes(:user).where(college_id: @college.id, college_structure_id: college_structure.pluck(:id), authority_level: 'student')
+    college_profiles = CollegeProfile.includes(:user).where(college_id: college.id, college_structure_id: college_structure.pluck(:id), authority_level: 'student')
     current_course = Course.last
     course_curriculum_ids = current_course&.course_curriculums&.pluck(:id) || []
     current_module = current_course.current_module
