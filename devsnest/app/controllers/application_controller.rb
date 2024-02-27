@@ -11,7 +11,7 @@ class ApplicationController < ActionController::API
   # def default_url_options
   #   if Rails.env.production?
   #     {:host => "api.devsnest.in"}
-  #   else  
+  #   else
   #     {}
   #   end
   # end
@@ -88,7 +88,7 @@ class ApplicationController < ActionController::API
   def set_college
     Rails.logger.info(params)
     @college = if params[:id].present?
-                 College.find_by(slug: params[:id])
+      College.find_by(slug: params[:id])
                elsif params[:college_id].present?
                  College.find_by(id: params[:college_id])
                end

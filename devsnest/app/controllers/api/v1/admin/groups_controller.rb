@@ -48,6 +48,23 @@ module Api
           render_success({ message: 'Batch Leader Assigned Successfully!' })
         end
 
+        def student_details
+          type = params[:type]
+          start_date = params[:start_date]
+          end_date = params[:end_date]
+          return render_error(message: "Params missing") unless [type, start_date, end_date].all?
+
+          file_record = FileUploadRecord.create(status: 0, user: @current_user, file_type: type)
+          FileUploadWorker.perform_async(type, [start_date, end_date], file_record.id)
+
+          render_success({message: 'File request queued'})
+        end
+
+        def studend_reports
+          render_success({ message: 'Reports Fetched', data: FileUploadRecord.where(user: @current_user) })
+        end
+        
+
         def add_user
           user = User.find_by(id: params[:user_id])
           return render_error(message: 'User Not Found') if user.nil?

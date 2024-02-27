@@ -62,6 +62,7 @@ class Group < ApplicationRecord
   scope :v2, -> { where(version: 2) }
   scope :visible, -> { where(group_type: 'public') }
   scope :under_limited_members, -> { where('members_count < 16') }
+  scope :jtd, -> { where(bootcamp_type: 4) }
 
   def parameterize
     update_attribute(:slug, name.parameterize)

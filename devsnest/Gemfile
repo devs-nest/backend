@@ -81,6 +81,8 @@ gem 'sendgrid-ruby', '~> 6.6'
 
 gem 'whenever'
 
+gem 'rubyzip'
+
 gem 'paper_trail'
 
 gem 'octokit', '~> 4.0'

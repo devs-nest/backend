@@ -83,8 +83,9 @@ Rails.application.routes.draw do
         jsonapi_resources :groups, only: %i[create] do
           collection do
             post :merge_two_groups
-            get :fetch_group_details
+            get :fetch_group_details, :studend_reports
             post :assign_batch_leader
+            post :student_details
           end
           member do
             post :add_user
