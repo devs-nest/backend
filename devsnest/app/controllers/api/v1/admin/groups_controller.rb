@@ -52,6 +52,7 @@ module Api
           type = params[:type]
           start_date = params[:start_date]
           end_date = params[:end_date]
+          return render_error(message: "Params missing") unless [type, start_date, end_date].all?
 
           file_record = FileUploadRecord.create(status: 0, user: @current_user, file_type: type)
           FileUploadWorker.perform_async(type, [start_date, end_date], file_record.id)
