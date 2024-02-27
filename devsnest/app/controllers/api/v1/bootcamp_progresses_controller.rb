@@ -11,7 +11,9 @@ module Api
       def index
         data = @current_user.bootcamp_progress_details
         data.each do |d|
-          if d[:course_type] == 'solana' || d[:course_name] == 'dn_airtribe_2023'
+          # Temporary fix for JTD Bootcamp
+          jtd_course = d[:course_module_name]&.split(' ')&.first == 'JTD'
+          if d[:course_type] == 'solana' || d[:course_name] == 'dn_airtribe_2023' || jtd_course
             d.merge!(open_to_all: true)
           else
             d.merge!(open_to_all: false)
