@@ -118,20 +118,21 @@ Rails.application.routes.draw do
           post :register
           post :reset_password, :reset_password_initiator
           post :email_verification, :email_verification_initiator
-          get :report, :leaderboard, :me, :get_token
+          get :report, :leaderboard, :me
           post :upload_i_have_enrolled_for_course_image
           put :left_discord, :update_bot_token_to_google_user, :onboard, :update_discord_username, :upload_files
           post :login, :college_login, :connect_discord, :connect_github, :create_github_repo
           delete :logout
           get :unsubscribe
-          get :check_group_name
-          get :check_user_details
+          post :check_group_name
+          post :check_user_details
           get :dashboard_details, :github_ping, :repo_files
           post :sourcecode_io, :disconnect_user
           post :add_repo, :remove_repo
           post :send_otp, :verify_phone_number
           post :check_user_submission
           post :check_user_consistency
+          post :get_token
         end
       end
 
@@ -143,8 +144,8 @@ Rails.application.routes.draw do
       jsonapi_resources :groups, only: %i[show index create update] do
         jsonapi_relationships
         collection do
-          get :server_details
-          get :team_details
+          post :server_details
+          post :team_details
           delete :delete_group
           put :update_group_name, :update_batch_leader
           post :promote, :join
