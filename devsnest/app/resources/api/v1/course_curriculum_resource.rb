@@ -23,7 +23,21 @@ module Api
       end
 
       def contents
-        
+        return [] if @model.course_module.granularity_type == 'question'
+
+        user_assignment_data = @model.user_assignment_data(context[:user])
+        data = []
+        @model.contents.each do |content|
+          data << if content['type'] != 'question'
+                    content
+                  else
+                    {
+                      'type': content['type'],
+                      details: user_assignment_data.select { |assignment| assignment if assignment[:id] == content['id'] }.first
+                    }
+                  end
+        end
+        data
       end
     end
   end
