@@ -15,7 +15,11 @@ module Api
       filter :course_module_id
 
       def assignment_questions
-        @model.user_assignment_data(context[:user])
+        if @model.course_module.granularity_type == 'question'
+          @model.user_assignment_data(context[:user])
+        else
+          []
+        end
       end
     end
   end
