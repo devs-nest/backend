@@ -15,7 +15,7 @@ module Api
       filter :course_module_id
 
       def assignment_questions
-        if @model.course_module.granularity_type == 'question'
+        if @model.course_module.granularity_type != 'question'
           @model.user_assignment_data(context[:user])
         else
           []
@@ -23,7 +23,7 @@ module Api
       end
 
       def contents
-        return [] if @model.course_module.granularity_type == 'question'
+        return [] if @model.course_module.granularity_type != 'question'
 
         user_assignment_data = @model.user_assignment_data(context[:user])
         data = []
