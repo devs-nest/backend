@@ -4,7 +4,7 @@ module Api
   module V1
     class CourseCurriculumResource < JSONAPI::Resource
       attributes :topic, :course_id, :course_type, :day, :video_link, :resources, :locked, :course_module_id
-      attributes :assignment_questions
+      attributes :assignment_questions, :contents
 
       filter :course_name, apply: lambda { |records, value, _options|
         course = Course.find_by(name: value[0])
@@ -20,6 +20,10 @@ module Api
         else
           []
         end
+      end
+
+      def contents
+        
       end
     end
   end

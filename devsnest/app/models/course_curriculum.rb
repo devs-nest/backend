@@ -26,6 +26,7 @@ class CourseCurriculum < ApplicationRecord
   belongs_to :course_module
   enum course_type: %i[dsa frontend backend solana sql]
   has_many :assignment_questions
+  serialize :contents, Array
 
   after_create :update_extra_data
 
@@ -65,6 +66,10 @@ class CourseCurriculum < ApplicationRecord
           slug: question.slug
         }
       end
+    when 'sql'
+      submissions_succeded = SqlSubmission.where(user: user, sql_challenge_id: question_ids, passed: true).pluck(:sql_challenge_id)
+      submissions_failed = SqlSubmission.where(user: user, sql_challenge_id: question_ids, passed: false).distinct.pluck(:sql_challenge_id)
+      assignment_questions_data = SqlChallenge.where(id: question_ids)
     end
     assignment_questions_data.each do |assignment_question|
       question_data = {
