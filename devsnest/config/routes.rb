@@ -261,6 +261,9 @@ Rails.application.routes.draw do
         end
       end
       jsonapi_resources :article, only: %i[index show] do
+        member do
+          post :mark_as_seen
+        end
         collection do
           get :fetch_by_slug
           post :create_submission
