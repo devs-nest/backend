@@ -26,15 +26,18 @@ module Api
         return [] if @model.course_module.granularity_type != 'question'
 
         user_assignment_data = @model.user_assignment_data(context[:user])
-        user_blog_data = context[:user].user_article_activities
+        user_article_data = @model.user_article_data(context[:user])
         data = []
         @model.contents.each do |content|
-          data << if content['type'] != 'question'
-                    content
-                  else
+          data << if content['type'] == 'question'
                     {
                       'type': content['type'],
                       details: user_assignment_data.select { |assignment| assignment if assignment[:id] == content['id'] }.first
+                    }
+                  else
+                    {
+                      'type': content['type'],
+                      'details': user_article_data.select { |article| article if article[:id] == content['id'] }.first
                     }
                   end
         end

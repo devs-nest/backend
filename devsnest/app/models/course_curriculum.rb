@@ -87,6 +87,27 @@ class CourseCurriculum < ApplicationRecord
     data
   end
 
+  def user_article_data(user)
+    data = []
+    return data if user.blank?
+
+    all_article_ids = contents.select { |content| content['id'] if content['type'] == 'blog' }
+    articles = Article.where(id: all_article_ids)
+    user_seen_articles = UserArticleActivity.where(user_id: user.id, article_id: all_article_ids, seen: true).pluck(:article_id)
+
+    articles.each do |article|
+      question_data = {
+        id: article.id,
+        name: article.name,
+        slug: article.slug,
+        status: user_seen_articles.include?(article.id) ? 1 : 0
+      }
+
+      data << question_data
+    end
+    data
+  end
+
   def update_extra_data
     course_curriculums = CourseCurriculum.where(course_module_id: course_module_id)
     if course_curriculums.count > 1
