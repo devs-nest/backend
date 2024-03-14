@@ -91,7 +91,7 @@ class CourseCurriculum < ApplicationRecord
     data = []
     return data if user.blank?
 
-    all_article_ids = contents.select { |content| content['id'] if content['type'] == 'blog' }
+    all_article_ids = contents.map { |content| content['id'] if content['type'] == 'blog' }.compact.uniq
     articles = Article.where(id: all_article_ids)
     user_seen_articles = UserArticleActivity.where(user_id: user.id, article_id: all_article_ids, seen: true).pluck(:article_id)
 
