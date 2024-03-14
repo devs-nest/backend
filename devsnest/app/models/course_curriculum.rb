@@ -98,7 +98,7 @@ class CourseCurriculum < ApplicationRecord
     articles.each do |article|
       question_data = {
         id: article.id,
-        name: article.name,
+        name: article.title,
         slug: article.slug,
         status: user_seen_articles.include?(article.id) ? 1 : 0
       }
