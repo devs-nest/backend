@@ -26,6 +26,7 @@ module Api
         return [] if @model.course_module.granularity_type != 'question'
 
         user_assignment_data = @model.user_assignment_data(context[:user])
+        user_blog_data = context[:user].user_article_activities
         data = []
         @model.contents.each do |content|
           data << if content['type'] != 'question'

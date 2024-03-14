@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_14_071124) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -47,6 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.bigint "article_id", null: false
     t.bigint "user_id", null: false
     t.string "submission_link"
+    t.index ["article_id", "user_id"], name: "index_article_submissions_on_article_id_and_user_id", unique: true
     t.index ["article_id"], name: "index_article_submissions_on_article_id"
     t.index ["user_id"], name: "index_article_submissions_on_user_id"
   end
@@ -62,6 +63,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.string "slug"
     t.integer "resource_type", null: false
     t.index ["resource_type"], name: "index_articles_on_resource_type"
+    t.index ["slug"], name: "index_articles_on_slug", unique: true
   end
 
   create_table "assignment_questions", charset: "utf8mb3", force: :cascade do |t|
@@ -120,8 +122,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.string "testcases_path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "is_project", default: false
-    t.string "banner"
     t.string "active_path"
     t.text "files"
     t.string "folder_name"
@@ -130,6 +130,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.text "protected_paths"
     t.string "template"
     t.integer "challenge_type", default: 0
+    t.boolean "is_project", default: false
     t.index ["slug"], name: "index_backend_challenges_on_slug", unique: true
   end
 
@@ -186,13 +187,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "course_module_id"
-    t.index ["user_id", "course_id", "course_curriculum_id"], name: "bootcamp_progress_index", unique: true
+    t.index ["user_id"], name: "index_bootcamp_progresses_on_user_id"
   end
 
   create_table "certifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.string "certificate_type"
-    t.string "cuid", default: "ra4wrcUuVO8"
+    t.string "cuid", default: "P78jC6_Z2cQ"
     t.string "title", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -212,13 +213,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.boolean "is_active", default: false
     t.text "tester_code"
     t.integer "user_id"
+    t.json "input_format"
+    t.json "output_format"
     t.integer "content_type"
     t.string "unique_id"
     t.string "parent_id"
-    t.json "input_format"
-    t.json "output_format"
     t.integer "course_curriculum_id"
-    t.integer "execution_type", default: 0
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
 
@@ -304,13 +304,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
   create_table "college_profiles", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "college_id"
+    t.integer "college_structure_id"
     t.integer "authority_level"
     t.integer "department"
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "roll_number"
-    t.integer "college_structure_id"
     t.index ["email"], name: "index_college_profiles_on_email", unique: true
     t.index ["roll_number"], name: "index_college_profiles_on_roll_number", unique: true
   end
@@ -424,12 +424,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
   create_table "course_module_accesses", charset: "utf8mb3", force: :cascade do |t|
     t.string "accessor_type", null: false
     t.bigint "accessor_id", null: false
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "course_module_id", null: false
     t.index ["accessor_type", "accessor_id"], name: "index_course_module_accesses_on_accessor"
     t.index ["course_module_id"], name: "index_course_module_accesses_on_course_module_id"
+  end
+
+  create_table "course_module_mappings", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "course_module_id"
+    t.integer "course_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id", "course_module_id"], name: "course_module_mapping_index"
   end
 
   create_table "course_modules", charset: "utf8mb3", force: :cascade do |t|
@@ -476,9 +484,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.date "starting_date"
     t.date "ending_date"
     t.string "organizer"
+    t.json "form_columns"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.json "form_columns"
   end
 
   create_table "email_templates", charset: "utf8mb3", force: :cascade do |t|
@@ -569,7 +577,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_project", default: false
-    t.string "banner"
     t.index ["slug"], name: "index_frontend_challenges_on_slug", unique: true
   end
 
@@ -619,16 +626,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.index ["user_id"], name: "index_group_members_on_user_id"
   end
 
-  create_table "groupcalls", charset: "utf8mb3", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "choice"
-    t.integer "week"
-    t.integer "year"
-    t.integer "group_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "groups", charset: "utf8mb3", force: :cascade do |t|
     t.integer "owner_id"
     t.integer "batch_id"
@@ -647,8 +644,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.text "description"
     t.integer "server_id", default: 1
     t.boolean "five_members_flag", default: false
-    t.time "scrum_start_time", default: "2000-01-01 09:00:00"
-    t.time "scrum_end_time", default: "2000-01-01 09:30:00"
+    t.time "scrum_start_time", default: "2000-01-01 14:30:00"
+    t.time "scrum_end_time", default: "2000-01-01 15:00:00"
     t.integer "activity_point", default: 0
     t.integer "module_type", default: 0
     t.integer "course_id"
@@ -797,26 +794,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.text "template"
   end
 
-  create_table "mentee_feedbacks", charset: "utf8mb3", force: :cascade do |t|
-    t.string "user_id"
-    t.integer "mentee_id"
-    t.text "feedback"
-    t.integer "effort"
-    t.integer "understanding"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "mentor_feedbacks", charset: "utf8mb3", force: :cascade do |t|
-    t.string "user_id"
-    t.integer "mentor_id"
-    t.text "feedback"
-    t.integer "timeGiven"
-    t.integer "capability"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "minibootcamp_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "frontend_question_id"
@@ -840,15 +817,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["frontend_question_id"], name: "index_minibootcamps_on_frontend_question_id"
-  end
-
-  create_table "mmts", charset: "utf8mb3", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "mentor_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["mentor_id"], name: "index_mmts_on_mentor_id", unique: true
-    t.index ["user_id"], name: "index_mmts_on_user_id", unique: true
   end
 
   create_table "notification_bots", charset: "utf8mb3", force: :cascade do |t|
@@ -1085,6 +1053,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.index ["user_id", "content_id", "content_type"], name: "index_upvotes_on_user_id_and_content_id_and_content_type", unique: true
   end
 
+  create_table "user_article_activities", charset: "utf8mb3", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "article_id", null: false
+    t.boolean "seen", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "article_id"], name: "index_user_article_activities"
+  end
+
   create_table "user_challenge_scores", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -1095,6 +1072,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "challenge_id"], name: "index_user_challenge_scores_on_user_id_and_challenge_id", unique: true
+  end
+
+  create_table "user_integration_caches", charset: "utf8mb3", force: :cascade do |t|
+    t.text "leetcode_cache", size: :medium
+    t.text "gfg_cache", size: :medium
+    t.text "hackerrank_cache", size: :medium
+    t.text "github_cache", size: :medium
+    t.integer "user_integration_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "user_integrations", charset: "utf8mb3", force: :cascade do |t|
@@ -1146,11 +1133,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.string "registration_num"
     t.integer "grad_start"
     t.integer "grad_end"
-    t.string "bot_token"
-    t.string "google_id"
     t.integer "user_type", default: 0
     t.integer "update_count", default: 0
     t.integer "login_count", default: 0
+    t.string "bot_token"
+    t.string "google_id"
     t.string "discord_username"
     t.string "school"
     t.string "work_exp"
@@ -1159,8 +1146,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.integer "webd_skill", default: 0
     t.boolean "is_discord_form_filled", default: false
     t.text "markdown"
-    t.integer "bot_id"
     t.boolean "group_assigned", default: false
+    t.integer "bot_id"
     t.boolean "is_verified", default: false
     t.string "working_status"
     t.boolean "is_fullstack_course_22_form_filled", default: false
@@ -1206,20 +1193,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_102943) do
     t.date "creation_week"
     t.integer "batch_leader_rating"
     t.integer "group_activity_rating"
-    t.string "extra_activity"
-    t.string "comments"
+    t.text "extra_activity"
+    t.text "comments"
     t.integer "moral_status"
-    t.string "obstacles"
+    t.text "obstacles"
     t.json "todo_list"
     t.index ["group_id", "creation_week"], name: "index_weekly_todos_on_group_id_and_creation_week", unique: true
-  end
-
-  create_table "writeups", charset: "utf8mb3", force: :cascade do |t|
-    t.integer "user_id"
-    t.text "description"
-    t.integer "week"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "article_submissions", "articles"
