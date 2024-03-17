@@ -122,6 +122,7 @@ class User < ApplicationRecord
   has_many :user_skills
   has_many :skills, through: :user_skills
   has_many :group_members, dependent: :delete_all
+  has_many :user_article_activities, dependent: :destroy
 
   # delegate :college, to: :college_profile, allow_nil: true
 

@@ -6,6 +6,7 @@ module Api
       # Course Module Resource
       class CourseModuleResource < JSONAPI::Resource
         attributes :name, :module_type, :is_paid, :timeline_status, :visibility, :created_at, :updated_at
+        attributes :granularity_type
       end
     end
   end

@@ -24,8 +24,9 @@
 class CourseCurriculum < ApplicationRecord
   belongs_to :course, optional: true
   belongs_to :course_module
-  enum course_type: %i[dsa frontend backend solana]
+  enum course_type: %i[dsa frontend backend solana sql]
   has_many :assignment_questions
+  serialize :contents, Array
 
   after_create :update_extra_data
 
@@ -65,6 +66,10 @@ class CourseCurriculum < ApplicationRecord
           slug: question.slug
         }
       end
+    when 'sql'
+      submissions_succeded = SqlSubmission.where(user: user, sql_challenge_id: question_ids, passed: true).pluck(:sql_challenge_id)
+      submissions_failed = SqlSubmission.where(user: user, sql_challenge_id: question_ids, passed: false).distinct.pluck(:sql_challenge_id)
+      assignment_questions_data = SqlChallenge.where(id: question_ids)
     end
     assignment_questions_data.each do |assignment_question|
       question_data = {
@@ -77,6 +82,27 @@ class CourseCurriculum < ApplicationRecord
                   submissions_failed.include?(assignment_question[:id]) ? 1 : 0
                 end
       }
+      data << question_data
+    end
+    data
+  end
+
+  def user_article_data(user)
+    data = []
+    return data if user.blank?
+
+    all_article_ids = contents.map { |content| content['id'] if content['type'] == 'blog' }.compact.uniq
+    articles = Article.where(id: all_article_ids)
+    user_seen_articles = UserArticleActivity.where(user_id: user.id, article_id: all_article_ids, seen: true).pluck(:article_id)
+
+    articles.each do |article|
+      question_data = {
+        id: article.id,
+        name: article.title,
+        slug: article.slug,
+        status: user_seen_articles.include?(article.id) ? 1 : 0
+      }
+
       data << question_data
     end
     data

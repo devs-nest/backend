@@ -5,7 +5,7 @@ module Api
     # Article Controller
     class ArticleController < ApplicationController
       include JSONAPI::ActsAsResourceController
-      before_action :user_auth, only: %i[create_submission]
+      before_action :user_auth, only: %i[create_submission mark_as_seen]
 
       def index
         resource_type = params[:resource_type]
@@ -34,6 +34,16 @@ module Api
           article_submission.save!
         end
         render_success(article_submission.as_json)
+      end
+
+      def mark_as_seen
+        article = Article.find_by(id: params['id'])
+
+        return render_not_found if article.nil?
+
+        UserArticleActivity.find_or_create_by(user_id: @current_user.id, article_id: article.id).update!(seen: true)
+
+        render_success({ message: 'Article Marked as seen' })
       end
     end
   end
