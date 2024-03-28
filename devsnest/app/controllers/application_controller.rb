@@ -19,8 +19,10 @@ class ApplicationController < ActionController::API
 
   def set_current_tenant
     subdomain = request.subdomain
+    origin = request.origin
     @current_tenant = Tenant.find_by(subdomain: subdomain)
     Rails.logger.info "current subdomain: #{subdomain}"
+    Rails.logger.info "origin: #{origin}"
     return render_not_found if @current_tenant.nil?
   end
 
