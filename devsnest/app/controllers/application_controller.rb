@@ -112,8 +112,6 @@ class ApplicationController < ActionController::API
   end
 
   def set_current_user
-    origin = request.origin
-    Rails.logger.info "Origin: #{origin}"
     @current_user = nil
     @current_user = current_api_v1_user if current_api_v1_user.present?
   end
