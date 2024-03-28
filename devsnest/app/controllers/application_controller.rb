@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::API
   include ApiRenderConcern
   include UtilConcern
+  before_action :set_current_tenant
   before_action :set_current_user
   before_action :validate_bot_user
   before_action :initialize_redis_lb
@@ -15,6 +16,13 @@ class ApplicationController < ActionController::API
   #     {}
   #   end
   # end
+
+  def set_current_tenant
+    subdomain = request.subdomain
+    @current_tenant = Tenant.find_by(subdomain: subdomain)
+    Rails.logger.info "current subdomain: #{subdomain}"
+    return render_not_found if @current_tenant.nil?
+  end
 
   def user_for_paper_trail
     @current_user ? @current_user.id : 'Public user'

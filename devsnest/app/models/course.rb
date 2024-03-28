@@ -17,6 +17,7 @@
 #  index_courses_on_name  (name)
 #
 class Course < ApplicationRecord
+  belongs_to :tenant
   has_many :course_module_mappings
   has_many :course_modules, through: :course_module_mappings, dependent: :delete_all
   belongs_to :product, polymorphic: true, optional: true

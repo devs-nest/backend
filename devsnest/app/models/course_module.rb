@@ -2,6 +2,7 @@
 
 # Course Module table
 class CourseModule < ApplicationRecord
+  belongs_to :tenant
   has_many :course_module_mappings
   has_many :courses, through: :course_module_mappings
   has_many :course_curriculums, dependent: :delete_all

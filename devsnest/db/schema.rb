@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_30_182211) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_27_110318) do
   create_table "algo_submissions", charset: "utf8mb3", force: :cascade do |t|
     t.integer "user_id"
     t.integer "challenge_id"
@@ -452,6 +452,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_30_182211) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.integer "granularity_type", default: 0, null: false
+    t.integer "tenant_id", null: false
+    t.index ["tenant_id"], name: "index_course_modules_on_tenant_id"
   end
 
   create_table "courses", charset: "utf8mb3", force: :cascade do |t|
@@ -460,7 +462,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_30_182211) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "current_module"
+    t.integer "tenant_id", null: false
     t.index ["name"], name: "index_courses_on_name"
+    t.index ["tenant_id"], name: "index_courses_on_tenant_id"
   end
 
   create_table "discussions", charset: "utf8mb3", force: :cascade do |t|
@@ -649,9 +653,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_30_182211) do
     t.integer "activity_point", default: 0
     t.integer "module_type", default: 0
     t.integer "course_id"
+    t.integer "tenant_id", null: false
     t.index ["members_count"], name: "index_groups_on_members_count"
     t.index ["name"], name: "index_groups_on_name", unique: true
     t.index ["slug"], name: "index_groups_on_slug", unique: true
+    t.index ["tenant_id"], name: "index_groups_on_tenant_id"
   end
 
   create_table "hackathons", charset: "utf8mb3", force: :cascade do |t|
@@ -1024,6 +1030,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_30_182211) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "content_id"], name: "index_submissions_on_user_id_and_content_id", unique: true
+  end
+
+  create_table "tenants", charset: "utf8mb3", force: :cascade do |t|
+    t.string "domain", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "testcases", charset: "utf8mb3", force: :cascade do |t|

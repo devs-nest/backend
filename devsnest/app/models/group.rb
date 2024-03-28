@@ -40,6 +40,7 @@ class Group < ApplicationRecord
   # belongs_to :batch
   audited
   has_many :group_members, dependent: :destroy
+  belongs_to :tenant
   belongs_to :server
   belongs_to :course, optional: true
   after_create :parameterize
