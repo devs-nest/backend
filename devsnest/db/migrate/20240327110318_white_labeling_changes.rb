@@ -1,7 +1,7 @@
 class WhiteLabelingChanges < ActiveRecord::Migration[7.0]
   def change
     create_table :tenants do |t|
-      t.string :domain, null: false
+      t.string :subdomain, null: false
       t.string :name, null: false
 
       t.timestamps null: false
